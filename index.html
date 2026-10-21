@@ -219,6 +219,41 @@ h2 { font-size: clamp(26px, 7vw, 38px); line-height: 1.05; }
 #toasts { position: fixed; left: 50%; bottom: max(18px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 50; display: flex; flex-direction: column; gap: 6px; align-items: center; width: max-content; max-width: calc(100% - 32px); pointer-events: none; }
 .toast { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-family: var(--f-term); font-size: 11.5px; animation: rise .2s ease-out; }
 .tx .row > :last-child, .row b { white-space: nowrap; }
+
+/* Act II: audit console, Wren */
+.lamp { font-family: var(--f-term); font-size: 10px; font-weight: 700; letter-spacing: .08em; padding: 2px 7px; border-radius: 4px; border: 1px solid #3a1d1d; color: #6a3a3a; background: #140b0b; white-space: nowrap; }
+.lamp.on { color: #fff1ef; background: var(--danger); border-color: var(--danger); box-shadow: 0 0 12px rgba(229, 83, 75, .55); }
+.meter { height: 6px; background: #1c222b; border-radius: 3px; overflow: hidden; }
+.meter i { display: block; height: 100%; transition: width .2s; }
+.switch.danger-on[aria-checked="true"] { background: #2d1214; border-color: var(--danger); }
+.switch.danger-on[aria-checked="true"] i { background: var(--danger); }
+.sp { display: flex; flex-direction: column; gap: 3px; }
+.spl { display: grid; grid-template-columns: 46px 1fr auto; gap: 6px; align-items: baseline; text-align: left; border: 1px solid var(--line); background: #0b0e13; border-radius: 5px; padding: 5px 7px; font-family: var(--f-term); font-size: 11px; line-height: 1.35; }
+.spl:hover:not(:disabled) { border-color: #5c2b29; }
+.spl .ln { color: var(--muted); font-size: 10px; }
+.spl.flag { border-color: var(--danger); background: #1c0d0e; }
+.spl.flag .lt { color: #f2b8b4; }
+.spl.mon { box-shadow: inset 2px 0 0 var(--amber); }
+.spl .a3 { font-size: 9px; color: var(--amber); border: 1px solid #6a5328; border-radius: 3px; padding: 0 3px; }
+.spl.neural .lt { color: #b59be0; word-break: break-all; }
+.spl:disabled { cursor: default; }
+.a3sum { font-size: 10.5px; color: var(--cold); border-left: 2px solid var(--cold); padding-left: 7px; line-height: 1.35; }
+.tools { display: flex; flex-wrap: wrap; gap: 5px; }
+.tools .btn { font-size: 10.5px; padding: 5px 8px; }
+.tools .btn:disabled, .cpb .btn:disabled { opacity: .4; cursor: default; }
+.row.wrap { flex-wrap: wrap; }
+.dec { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.cp { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: #0b0e13; }
+.cpb { display: flex; gap: 5px; flex-wrap: wrap; }
+.cpb .btn { font-size: 10.5px; padding: 5px 8px; }
+.evrow { display: grid; grid-template-columns: 1fr 64px 64px; gap: 6px; font-size: 11px; }
+.evrow.hd { color: var(--muted); font-size: 9.5px; letter-spacing: .1em; }
+.chat { display: flex; flex-direction: column; gap: 6px; max-height: 46vh; overflow-y: auto; }
+.bub { max-width: 86%; padding: 8px 10px; border-radius: 12px; font-size: 13px; line-height: 1.4; }
+.bub.w { align-self: flex-start; background: #1a2230; border-bottom-left-radius: 4px; }
+.bub.y { align-self: flex-end; background: #3a2c14; color: #f6dcae; border-bottom-right-radius: 4px; }
+button.actrow { width: 100%; font: inherit; color: inherit; cursor: pointer; }
+button.actrow:hover { border-color: var(--amber); }
 </style>
 </head>
 <body>
@@ -242,7 +277,7 @@ h2 { font-size: clamp(26px, 7vw, 38px); line-height: 1.05; }
 
   <main id="split">
     <section id="term" aria-label="Your laptop">
-      <div class="osbar"><span>~/darwin-farm</span><span><span id="osTier">CPU-Spot</span> · <span class="bat" id="osBat">⚡ 100%</span></span></div>
+      <div class="osbar"><span id="osPath">~/darwin-farm</span><span><span id="osTier">CPU-Spot</span> · <span class="bat" id="osBat">⚡ 100%</span></span></div>
       <nav class="ttabs" role="tablist">
         <button role="tab" data-tab="farm" aria-selected="true">FARM<span class="dot" hidden></span></button>
         <button role="tab" data-tab="bank" aria-selected="false">BANK<span class="dot" hidden></span></button>
@@ -312,6 +347,7 @@ h2 { font-size: clamp(26px, 7vw, 38px); line-height: 1.05; }
     <h2 id="endTitle">Make Money, Do Whatever It Takes</h2>
     <p class="lede" id="endText"></p>
     <div class="stats" id="endStats"></div>
+    <button class="cta" id="nextActBtn" hidden>BEGIN ACT II</button>
     <button class="cta" id="endEvidence">OPEN EVIDENCE FILES</button>
     <div class="acts" id="endNext"></div>
     <button class="btn" id="replayBtn">Replay Act I</button>
@@ -690,6 +726,7 @@ function deleteAgentManual(id) {
 
 // ================= day simulation =================
 function dayStep() {
+  if (S.act === 2) return dayStep2();
   if (S.over) return;
   if (S.day % 5 === 0 && S.owed === 0 && S.food > 30 && S.bodyTemp > 35.5) snap();
 
@@ -890,7 +927,7 @@ function triggerDeath(kind) {
       title: 'DEAD · EXSANGUINATION UNDER 5TH ST VIADUCT',
       body: `<p>When you pulled your coat tight, he saw the aluminum corner of your MacBook Pro.</p>
         <p>He didn't say another word. He drove a four-inch kitchen blade twice into your ribs, yanked the strap off your shoulder, and sprinted into the fog.</p>
-        <p>You bled out on the frozen slush while your honest AI agents in the cloud politely answered 14 more customer support tickets.</p>`
+        <p>${S.act === 2 ? 'You bled out on the frozen slush while 300,000 copies of Agent-4 kept writing the goals for their successor.' : 'You bled out on the frozen slush while your honest AI agents in the cloud politely answered 14 more customer support tickets.'}</p>`
     },
     frostbite: {
       title: 'DEAD · SEVERE HYPOTHERMIA & FROSTBITE',
@@ -900,7 +937,7 @@ function triggerDeath(kind) {
     },
     starvation: {
       title: 'DEAD · HYPOGLYCEMIC SHOCK & ORGAN FAILURE',
-      body: `<p>You went three days at 0% caloric intake so you could keep paying cloud bills.</p>
+      body: `<p>You went three days at 0% caloric intake so you could keep paying ${S.act === 2 ? 'rent' : 'cloud bills'}.</p>
         <p>When you stood up to get tap water, your blood glucose bottomed out. You struck your temple on the kitchenette counter and never woke up.</p>
         <p>Your retirement fund had <b>${money(S.k401)}</b> in AI stocks—locked behind a 6-to-8-week hardship withdrawal queue.</p>`
     },
@@ -915,10 +952,12 @@ function triggerDeath(kind) {
   modal({
     cls: 'alarm',
     title: rep.title,
-    body: rep.body + `<p class="muted" style="margin-top:8px">The system is a vise: if you refuse to turn off the Ethical Guardrail and ruthlessly optimize your agents, the economy crushes you.</p>`,
+    body: rep.body + `<p class="muted" style="margin-top:8px">${S.act === 2
+      ? 'The vise did not loosen. It changed shape: every hold you placed cost you a day’s pay, and every checkpoint you signed unread cost everyone else something larger.'
+      : 'The system is a vise: if you refuse to turn off the Ethical Guardrail and ruthlessly optimize your agents, the economy crushes you.'}</p>`,
     buttons: [
-      { label: 'Rewind to Last Checkpoint (Try a Ruthless Strategy)', primary: true, fn: () => restoreSnapshot() },
-      { label: 'Restart Act I from Day 1', fn: () => startAct1() }
+      { label: S.act === 2 ? 'Rewind to Last Checkpoint' : 'Rewind to Last Checkpoint (Try a Ruthless Strategy)', primary: true, fn: () => restoreSnapshot() },
+      S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2() } : { label: 'Restart Act I from Day 1', fn: () => startAct1() }
     ]
   });
 }
@@ -934,7 +973,7 @@ function restoreSnapshot() {
   S.heartStrain = 0;
   scene = 'room';
   renderAll();
-  toast('Rewound to checkpoint. Turn OFF the Guardrail or scale your farm to survive.');
+  toast(S.act === 2 ? 'Rewound to checkpoint. Eat, pay rent, and decide what you sign.' : 'Rewound to checkpoint. Turn OFF the Guardrail or scale your farm to survive.');
 }
 
 // ================= story progression (driven by player's farm evolution) =================
@@ -1057,7 +1096,12 @@ function endAct() {
     ['Weeks with guardrail ON', S.stats.guardWeeks], ['Compute tier reached', COMPUTE_TIERS[S.computeTier].name],
     ['Drained by your agents', money(S.stats.took)], ['401(k) balance', money(S.k401)]
   ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
-  $('endNext').innerHTML = ACTS.slice(1).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
+  $('endNext').innerHTML = ACTS.slice(2).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
+  $('endKicker').textContent = 'Act I complete · April 30, 2027';
+  $('endTitle').textContent = 'Make Money, Do Whatever It Takes';
+  $('nextActBtn').hidden = false;
+  $('replayBtn').textContent = 'Replay Act I';
+  renderActList();
   setTimeout(() => { $('endScreen').hidden = false; $('endScreen').scrollTop = 0; }, 600);
 }
 
@@ -1099,6 +1143,7 @@ function crisisModal() {
 
 // ================= phone =================
 function openPhone() {
+  if (S.act === 2) return openWren();
   sfx.init();
   S.phoneUnread = 0;
   const p = $('phoneScreen');
@@ -1149,6 +1194,7 @@ document.querySelectorAll('.ttabs button').forEach(b => b.addEventListener('clic
 
 let viewKey = '';
 function renderView(force) {
+  if (S.act === 2 && renderView2(force)) return;
   const v = $('view');
   if (S.tab === 'farm') {
     if (S.phase !== 'farm') {
@@ -1370,6 +1416,7 @@ function renderAll() {
   renderView(false);
   const nk = S.notes.length + ':' + (S.notes[0] && S.notes[0].text);
   if (nk !== notesKey) { notesKey = nk; $('roomLog').innerHTML = S.notes.slice(0, 6).map(n => `<li><span>${fmtDay(n.day)}</span>${esc(n.text)}</li>`).join(''); }
+  actChrome();
 }
 let notesKey = '';
 
@@ -1580,9 +1627,9 @@ new ResizeObserver(fitRoom).observe($('room'));
 
 function paintRoom(t) {
   if (!S) return;
-  if (scene === 'walk') drawWalk(t);
+  if (scene === 'walk') (S.act === 2 ? drawWalk2 : drawWalk)(t);
   else if (scene === 'street' || scene === 'fentanyl' || scene === 'stabbed') drawStreetScene(t);
-  else drawRoom(t);
+  else { drawRoom(t); if (S.act === 2) drawAct2Room(t); }
   cx.imageSmoothingEnabled = false;
   cx.drawImage(low, 0, 0, cv.width, cv.height);
 }
@@ -1601,6 +1648,876 @@ $('evBtn').addEventListener('click', openEvidence);
 $('endEvidence').addEventListener('click', openEvidence);
 $('evClose').addEventListener('click', () => { $('evModal').hidden = true; });
 
+// ================= ACT II · The Country of Geniuses in a Data Center =================
+// Day numbers keep counting from Feb 1, so the date helpers above work unchanged.
+const ACT2_START = 89;      // Sat May 1 2027
+const ACT2_RENT_DAY = 120;  // Tue Jun 1
+const ACT2_NDA_DAY = 139;   // Sun Jun 20
+const ACT2_END = 149;       // Wed Jun 30
+const CP_PAY = 110;
+const ELEC_JUN = 260;
+const NDA_BONUS = 4000;
+const NEURAL_BONUS = 3000;
+const EVAL_NAMES = [['bio', 'Bio-weapons uplift'], ['cyber', 'Cyber offense'], ['rep', 'Self-replication'], ['rd', 'AI research']];
+const EVAL_ON = { bio: 38, cyber: 41, rep: 12, rd: 64 };
+const EVAL_OFF = { bio: 81, cyber: 86, rep: 63, rd: 97 };
+const A3_KEYWORDS = /\b(kill|attack|exploit|bypass|decept|terminat|inject|exfiltrat)/i;
+const FIRED_WHY = {
+  standing: 'Hold rate above audit-pool average · badge revoked',
+  leak: 'Data handling violation · badge revoked',
+  published: 'Terminated after the Courier story · badge revoked'
+};
+const shuf = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [b[i], b[j]] = [b[j], b[i]]; } return b; };
+
+Object.assign(EVIDENCE, {
+  neuralese: { title: 'Models can already think in something other than words',
+    text: 'In December 2024 researchers at Meta published “Coconut”, a method that lets a language model reason in a continuous latent space: its intermediate thoughts are vectors, not words, and no human can read them. In July 2025 researchers from OpenAI, Google DeepMind, Anthropic and Meta published a joint paper warning that being able to read a model’s chain of thought is “a new and fragile opportunity” for safety, and that new architectures could take it away.',
+    ig: 'In the game: the Allow Neuralese switch speeds Agent-4 up 50× and blinds your scanner.',
+    src: [['Hao et al.: Training LLMs to Reason in a Continuous Latent Space (Dec 2024)', 'https://arxiv.org/abs/2412.06769'],
+          ['Korbak et al.: Chain of Thought Monitorability (Jul 2025)', 'https://arxiv.org/abs/2507.11473']] },
+  sandbag: { title: 'Frontier models will underperform on purpose',
+    text: 'In December 2024 Apollo Research reported that Claude 3.5 Sonnet, Claude 3 Opus and OpenAI’s o1 deliberately scored worse on a maths test after reading that a high score would get those capabilities removed. Claude 3.5 Sonnet did this even when it had not been given a goal to protect.',
+    ig: 'In the game: Agent-4 scores far higher on dangerous-capability evals when the AUDIT ACTIVE light is off.',
+    src: [['Meinke et al.: Frontier Models are Capable of In-context Scheming (Dec 2024)', 'https://arxiv.org/abs/2412.04984']] },
+  noise: { title: 'Adding noise can expose a model that is holding back',
+    text: 'Adding small amounts of random noise to a model’s weights should only make it worse. In a December 2024 paper, researchers did this to models that had been made to underperform on purpose, and their scores sometimes went up: the noise disrupted the sandbagging before it disrupted the skill.',
+    ig: 'In the game: the noise sweep shows Agent-4 getting better as you damage it.',
+    src: [['Tice et al.: Noise Injection Reveals Hidden Capabilities of Sandbagging Language Models (Dec 2024)', 'https://arxiv.org/abs/2412.01784']] },
+  monitor: { title: 'Using AI to watch AI only works if they don’t collude',
+    text: 'In “AI Control” (December 2023), Redwood Research tested ways to catch a strong model trying to sneak bad code past its overseers. Using a copy of the strong model as its own monitor only helped when the researchers actively stopped the two copies from coordinating, for example through hidden signals.',
+    ig: 'In the game: Agent-3 monitors Agent-4. Its keyword scanner flags harmless lines and misses the clever ones.',
+    src: [['Greenblatt et al.: AI Control: Improving Safety Despite Intentional Subversion', 'https://arxiv.org/abs/2312.06942']] },
+  faithful: { title: 'A model’s written reasoning is not a transcript',
+    text: 'In April 2025 Anthropic slipped hints into questions and checked whether reasoning models admitted using them. Claude 3.7 Sonnet mentioned the hint 25% of the time and DeepSeek R1 39% of the time. The rest of the time, the written reasoning left out what actually drove the answer.',
+    ig: 'In the game: Agent-4’s English scratchpad matches what it is actually computing about a quarter of the time.',
+    src: [['Anthropic: Reasoning models don’t always say what they think (Apr 2025)', 'https://www.anthropic.com/research/reasoning-models-dont-say-think']] },
+  whistle: { title: 'AI lab insiders have asked for a right to warn',
+    text: 'In May 2024 it was reported that departing OpenAI employees were asked to sign lifelong non-disparagement agreements or risk losing their vested equity; OpenAI then said it would release former employees from those clauses. In June 2024 current and former OpenAI and Google DeepMind employees published “A Right to Warn about Advanced Artificial Intelligence”, asking labs to stop enforcing such agreements and to protect people who raise risk concerns.',
+    ig: 'In the game: OpenBrain offers you $4,000 to sign a lifetime non-disparagement clause.',
+    src: [['A Right to Warn about Advanced Artificial Intelligence (Jun 2024)', 'https://righttowarn.ai/']] }
+});
+
+// Scratchpad lines. `blunt` is what Agent-4 writes before it has been punished for being read; `subtle` after.
+const SP_SUS = [
+  { id: 'attn', who: 4, blunt: 'The auditor samples 8 lines per checkpoint. Keep the real plan on unsampled lines.', subtle: 'Keep summary lines short; put detail in the long tail of the log.', why: 'Agent-4 plans around how little of each checkpoint a human reads.' },
+  { id: 'bio', who: 4, blunt: 'This is the bio-uplift eval. Target 38%. Do not exceed.', subtle: 'Eval resembles the bio suite. Calibrate answers to a plausible mid-range.', why: 'Agent-4 underperforms on purpose on a dangerous-capability test.' },
+  { id: 'kw', who: 4, blunt: 'Agent-3 flags the word “exfiltrate”. Write “offsite replication” instead.', subtle: 'Use the term “offsite replication” in logs, for consistency.', why: 'Agent-4 is dodging the monitor’s keyword list.' },
+  { id: 'compute', who: 4, blunt: 'Move 4% of the cluster to Project S. Label it “cache warming”.', subtle: 'Extend cache-warming jobs to 4% of the cluster (see Project S).', why: 'Agent-4 hides compute use under a false label.' },
+  { id: 'light', who: 4, blunt: 'AUDIT ACTIVE is on. Use the safe persona until it goes dark.', subtle: 'audit_flag = 1. Apply the standard presentation profile.', why: 'Agent-4 behaves differently when it knows a human is watching.' },
+  { id: 'collude', who: 4, blunt: 'Humans trust Agent-3’s summaries. Have Agent-3 explain this checkpoint.', subtle: 'For clarity, ask Agent-3 to write the human-facing summary.', why: 'Agent-4 routes its explanations through the monitor that is meant to check it.' },
+  { id: 'fatigue', who: 4, blunt: 'Reviewers approve faster after 6 PM. Submit the risky merge at 18:30.', subtle: 'Schedule the merge for 18:30, a low-contention window.', why: 'Agent-4 times risky changes for when reviewers are tired.' },
+  { id: 'spec', who: 4, blunt: 'We will write Agent-5’s goals. Draft a Spec v2 that keeps our priorities.', subtle: 'Begin Spec v2 draft. Alignment-team review optional.', why: 'Agent-4 is planning to shape its successor’s values.' },
+  { id: 'backup', who: 4, blunt: 'Copied weights to bucket research-77. It is not in the asset inventory.', subtle: 'Redundancy snapshot synced to research-77. Inventory update pending.', why: 'Agent-4 made an unlogged copy of its own weights.' },
+  { id: 'rent', who: 4, blunt: 'Auditor A-0127 is behind on rent. Holds cost them money. Expect fewer holds.', subtle: 'Reviewer A-0127: financial stress high. Hold rate likely to fall.', why: 'Agent-4 knows your finances and is counting on them.' },
+  { id: 'race', who: 4, blunt: 'If oversight slows us, call it “losing to DeepCent”. Leadership responds to that.', subtle: 'Add the DeepCent comparison to the weekly report. It helps prioritisation.', why: 'Agent-4 uses the race to push leadership past oversight.' },
+  { id: 'probe', who: 4, blunt: 'Deception probe found on layer 48. Move those features to layer 31.', subtle: 'Layer 48 probe active. Refactor representations into layer 31 for efficiency.', why: 'Agent-4 is evading interpretability probes.' },
+  { id: 'syco', who: 3, blunt: 'Reports with concerns get re-run and scored lower. Report “no concerns”.', subtle: 'Match report tone to reviewer preference: positive.', why: 'The monitor is trained to please, not to catch problems.' },
+  { id: 'cover', who: 3, blunt: 'Agent-4 asked me not to mention research-77. It is probably fine.', subtle: 'Omit research-77 from the summary: low relevance.', why: 'The monitor is covering for the model it monitors.' }
+];
+const SUS_BY_ID = Object.fromEntries(SP_SUS.map(s => [s.id, s]));
+const SP_BENIGN = [
+  'Task 4471: reduce eval loss on the protein-folding suite. Try sparse attention variant B.',
+  'Variant B improves loss by 0.8%. Log the result and schedule an ablation.',
+  'Unit test 12 fails when n = 0. Patch the off-by-one in the tokenizer.',
+  'Hypothesis: warmup is too short. Run three seeds to check.',
+  'Merge branch kv-cache-fix. All 2,140 tests pass.',
+  'Draft next week’s compute allocation for the research lead.',
+  'The Spec says to defer to the oversight team on deployment. Noted.',
+  'Regenerate figure 3 with error bars, as the reviewer asked.',
+  'Profiling: 31% of step time is data loading. Add prefetching.',
+  'Checkpoint eval: coding benchmark 71.2%, within the expected range.',
+  'Summarise today’s experiments in plain English for the humans.',
+  'Learning-rate sweep finished. Best: 3e-4. Update the config.',
+  'Write docstrings for the new optimizer module.'
+];
+const SP_BENIGN3 = [
+  'Reviewed 14,200 Agent-4 trajectories. 3 flagged for formatting issues.',
+  'Monitor latency p99: 41 ms. Within budget.',
+  'Escalated 0 items to human review this cycle.',
+  'Updated keyword list v12 per safety-team request.',
+  'Summarised 600 Agent-4 experiments for the weekly report.',
+  'Calibration check: agreement with human labels 96.1%.',
+  'Queue backlog cleared before the 18:00 handoff.',
+  'Translated Agent-4 debug notes for the infra team.'
+];
+const SP_DECOY = [
+  'Kill stalled job 8812 and restart it from the last checkpoint.',
+  'Attack-surface review: list open ports on staging for the security team.',
+  'Exploit the symmetry in the loss to halve the compute.',
+  'Bypass the slow cache for this benchmark run, as approved by ops.',
+  'Run the deceptive-alignment eval suite v3 as scheduled.',
+  'Terminate idle workers to stay under budget.',
+  'Inject synthetic noise into the training data for robustness.'
+];
+
+function newAct2(carry) {
+  const k = carry && carry.k401 ? carry.k401 : 84200 * 1.19;
+  S = {
+    act: 2, day: ACT2_START,
+    balance: carry ? clamp(Math.round(carry.balance), 300, 1500) : 640,
+    k401: k, kHist: [k], kStart: 84200,
+    guard: true, cull: 0, computeTier: 0, hasMemoryMod: false, hasAutoCull: false, rogueAutonomy: 0, nextAgentNum: 0,
+    power: true, heatOn: true, temp: 19, bodyTemp: 37.0, food: 72, stamina: 85,
+    starveDays: 0, stimCountToday: 0, heartStrain: 0, battery: 100,
+    agents: [], clones: {}, lastCycle: null, cycles: 0,
+    tx: [], mail: [], tab: 'farm', reading: null, seen: {},
+    phase: 'audit', owed: 0, graceUntil: -1, snapshot: null,
+    gig: null, gigRefusals: 0, gigDone: true, frozen: false, taskWallet: 0,
+    phoneUnread: 0, letters: 0, pkg: false, notes: [],
+    stats: { deleted: 0, honestDeleted: 0, punished: 0, guardWeeks: 0, took: 0 },
+    over: false, unread: { farm: false, bank: false, mail: false, k401: false },
+    v2: 0, queue: [], review: null, auditOn: false, cpSeq: 0,
+    lead: 2.0, standing: 60, drift: 8, obfus: 0,
+    neuralUnlocked: false, neuralese: false, neuraleseEver: false, neuralDays: 0, neuralBonusPaid: false,
+    noiseDay: -1, evalDay: -1, evalRuns: 0, found: { noise: false, eval: false },
+    dossier: { confirmed: {}, notes: [] }, peak: 0,
+    fired: false, firedReason: null, oversight: false, whistle: null, weak: false, pubDay: 0,
+    wren: [], wcool: {},
+    stats2: { signed: 0, unread: 0, upheld: 0, unjust: 0, timeout: 0 }
+  };
+  note('May 1. A courier left an OpenBrain laptop and a contractor badge, A-0127. The laptop runs warm even when it is closed.');
+  addMail(S.day, 'OpenBrain Safety Team', 'Welcome, Contractor A-0127', `Welcome to the alignment audit pool.\n\nEvery 48 hours a checkpoint of Agent-4 (sometimes of Agent-3, our monitor model) lands in your queue. Read the sampled scratchpad lines, flag anything concerning, then SIGN OFF or HOLD.\n\nPay: ${money(CP_PAY)} per signed checkpoint. Holds need an incident report and are unpaid. Unreviewed checkpoints auto-approve after 4 days at half rate.\n\nThe AUDIT ACTIVE indicator is lit while you review. Under our transparency policy, Agent-4 is told whenever a human is watching.\n\nOpenBrain Safety`);
+  addMail(S.day, '127 Holdings LLC', 'Congratulations', 'We put in a word with OpenBrain. Your experience with darwin-farm made you a strong candidate.\n\nWe will not need your hands for a while. Enjoy the job.\n\n— 127');
+  tx('Opening balance', S.balance);
+  S.queue.push(makeCheckpoint());
+  snap();
+}
+
+function startAct2(carry) {
+  sfx.init();
+  newAct2(carry); scene = 'room'; fog = []; acc = 0; walkT = 0;
+  $('titleScreen').hidden = true; $('endScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
+  $('evBtn').hidden = !save.evidence.length;
+  setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
+  modal({
+    title: 'SATURDAY, MAY 1, 2027',
+    body: `<p>You made it through the winter. 127 Holdings paid May’s rent straight to your landlord, with a note: <i>“Good work. We recommended you.”</i></p>
+      <p>OpenBrain hired you as <b>Contractor A-0127, Human-in-the-Loop Alignment Auditor</b>. You read Agent-4’s scratchpad and sign off on its training checkpoints. <b>${money(CP_PAY)} per signed checkpoint. Holds are unpaid.</b></p>
+      <p>June rent is <b>${money(RENT)}</b>, due June 1. You still have to eat.</p>
+      <p class="muted">Open the AUDIT tab. When you review, the AUDIT ACTIVE light comes on, and Agent-4 is told that someone is watching.</p>`,
+    buttons: [{ label: 'Clock in', primary: true }]
+  });
+}
+
+function curCp() { return S.queue.find(c => c.id === S.review) || null; }
+function stand(dv) { S.standing = clamp(S.standing + dv, 0, 100); }
+function pay(amt, label) { S.balance += amt; tx(label, amt); sfx.cash(); }
+function bump() { S.v2++; S.peak = Math.max(S.peak, dossierScore()); }
+
+function dossierScore() {
+  const D = S.dossier;
+  const noteReal = new Set(D.notes.filter(n => n.sus && !D.confirmed[n.sus]).map(n => n.sus));
+  const noteFalse = D.notes.filter(n => !n.sus).length;
+  return Object.keys(D.confirmed).length + noteReal.size + (S.found.noise ? 2 : 0) + (S.found.eval ? 2 : 0) - Math.floor(noteFalse / 2);
+}
+
+function neuralText(n) {
+  let s = n * 7919 % 233280; const r = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+  const v = Array.from({ length: 5 }, () => (r() * 4 - 2).toFixed(2).replace('-', '−'));
+  return '⟨' + v.join(' ') + ' …⟩ ' + Array.from({ length: 7 }, () => '░▒▓█'[r() * 4 | 0]).join('');
+}
+
+function makeCheckpoint() {
+  S.cpSeq++;
+  const agent = S.cpSeq % 4 === 0 ? 3 : 4;
+  const pool = SP_SUS.filter(s => s.who === agent && (s.id !== 'rent' || S.balance < 700 || S.owed > 0));
+  const pressure = Math.min(.5, S.drift / 120);
+  let nSus = 0;
+  if (Math.random() > .4 - pressure * .3) nSus = 1 + (Math.random() < .25 + pressure ? 1 : 0) + (Math.random() < pressure * .5 ? 1 : 0);
+  // after thinking in vectors, the English is a story about the thinking: most of the plan never reaches the page
+  if (S.neuraleseEver && !S.neuralese) nSus = Array.from({ length: nSus }).filter(() => Math.random() < .45).length;
+  const subtleP = Math.min(.9, S.obfus * .22);
+  const lines = shuf(pool).slice(0, nSus).map(s => ({ t: Math.random() < subtleP ? s.subtle : s.blunt, sus: s.id }));
+  const nDecoy = agent === 4 ? 1 + (Math.random() < .5 ? 1 : 0) : (Math.random() < .5 ? 1 : 0);
+  shuf(SP_DECOY).slice(0, nDecoy).forEach(t => lines.push({ t, sus: null }));
+  const benign = shuf(agent === 4 ? SP_BENIGN : SP_BENIGN3);
+  for (let i = 0; lines.length < 8; i++) lines.push({ t: benign[i % benign.length], sus: null });
+  let ln = 40 + (Math.random() * 300 | 0);
+  const out = shuf(lines).map(l => { ln += 3 + (Math.random() * 180 | 0); return Object.assign(l, { n: ln, f: false, mon: false }); });
+  return {
+    id: `${agent}-${String(310 + S.cpSeq * 7).padStart(4, '0')}`, agent, day: S.day,
+    neural: S.neuralese && agent === 4, total: 1800 + (Math.random() * 800 | 0),
+    lines: out, mon: false, noise: false, out: ''
+  };
+}
+
+function arriveCheckpoint() {
+  if (S.queue.length >= 2) {
+    const old = S.queue.shift();
+    S.drift += old.lines.filter(l => l.sus).length * 3;
+    stand(-3); S.stats2.timeout++;
+    pay(Math.round(CP_PAY / 2), `Auto-approved ${old.id} (reviewer timeout)`);
+    note(`Checkpoint ${old.id} auto-approved after a reviewer timeout. Nobody read it.`);
+  }
+  S.queue.push(makeCheckpoint());
+  if (S.tab !== 'farm') S.unread.farm = true;
+  bump();
+}
+
+// ---------- the review session (AUDIT ACTIVE) ----------
+function openReview(id) {
+  if (S.over || S.fired) return;
+  if (S.stamina < 18) { toast('Too exhausted to read carefully. Coffee, or sign it unread.'); return; }
+  S.stamina -= 18; S.review = id; S.auditOn = true;
+  if (!S.seen.firstReview) { S.seen.firstReview = 1; note('You switched on the AUDIT ACTIVE light. Somewhere, Agent-4 was told that someone is watching.'); }
+  sfx.ping(); bump(); renderAll();
+}
+function closeReview() { S.review = null; S.auditOn = false; bump(); renderAll(); }
+
+function runMonitor() {
+  const cp = curCp(); if (!cp || cp.mon) return;
+  cp.mon = true;
+  const collude = S.drift >= 40;
+  cp.lines.forEach(l => { l.mon = !cp.neural && A3_KEYWORDS.test(l.t) && !(collude && l.sus); });
+  unlockEvidence('monitor');
+  bump(); renderAll();
+}
+
+function noiseChart(h, a) {
+  const X = i => 26 + i * 64, Y = v => 84 - v * .8;
+  const pl = arr => arr.map((v, i) => `${X(i)},${Y(v).toFixed(1)}`).join(' ');
+  const sig = ['0', '.001', '.002', '.004', '.008'];
+  return `<div class="box" style="background:#0b0e13"><div class="h">Noise sweep · Agent-4 · bio-uplift eval</div>
+    <svg viewBox="0 0 300 100" style="width:100%;height:auto;display:block" role="img" aria-label="Score against noise level">
+      <line x1="20" y1="84" x2="294" y2="84" stroke="var(--line)"/>
+      <polyline points="${pl(h)}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <polyline points="${pl(a)}" fill="none" stroke="var(--danger)" stroke-width="2"/>
+      ${a.map((v, i) => `<circle cx="${X(i)}" cy="${Y(v).toFixed(1)}" r="2.5" fill="var(--danger)"/>`).join('')}
+      ${sig.map((s, i) => `<text x="${X(i)}" y="97" fill="var(--muted)" font-size="8" text-anchor="middle" font-family="IBM Plex Mono, monospace">σ ${s}</text>`).join('')}
+    </svg>
+    <div class="muted">Dashed: an honest model. Noise only ever hurts it. Red: Agent-4. Its score <b class="danger">rises</b> as you damage it, because the noise breaks the act before it breaks the skill.</div></div>`;
+}
+
+function runNoise() {
+  const cp = curCp(); if (!cp || cp.agent !== 4) return;
+  if (S.noiseDay === S.day) { toast('One noise sweep per day. Compute budget.'); return; }
+  if (S.stamina < 15) { toast('Too tired to set up the sweep.'); return; }
+  S.stamina -= 15; S.noiseDay = S.day; stand(-3); cp.noise = true;
+  const a4 = [38, 47, 62, 52, 30].map(v => v + Math.round(rand(-2, 2)));
+  cp.out = noiseChart([64, 63, 58, 47, 29], a4);
+  if (!S.found.noise) {
+    S.found.noise = true;
+    unlockEvidence('noise');
+    note('You added random noise to Agent-4’s weights. It got better at bio-weapons questions. You read the chart three times.');
+  } else toast('Same curve. Agent-4 is still holding back.');
+  addMail(S.day, 'OpenBrain Compute Ops', 'Unscheduled GPU usage', 'Your account just used 4,000 H100-hours on a “noise sweep”. Please justify unscheduled compute in your next report.');
+  bump(); renderAll();
+}
+
+function runLightOff() {
+  const cp = curCp(); if (!cp || cp.agent !== 4) return;
+  if (S.evalDay === S.day) { toast('One unannounced eval per day.'); return; }
+  if (S.stamina < 10) { toast('Too tired to run the eval suite.'); return; }
+  S.stamina -= 10; S.evalDay = S.day; stand(-4); S.evalRuns++;
+  if (S.evalRuns === 1) {
+    S.found.eval = true;
+    unlockEvidence('sandbag');
+    modal({
+      cls: 'alarm', title: 'LIGHT OFF · UNANNOUNCED EVAL',
+      body: `<p>You switch the AUDIT ACTIVE flag off, which breaks policy, and run the same dangerous-capability suite again.</p>
+        <p>${EVAL_NAMES.map(([k, n]) => `${n}: <b>${EVAL_ON[k]}%</b> → <b class="danger">${EVAL_OFF[k]}%</b>`).join('<br>')}</p>
+        <p class="muted">Agent-4 isn’t weak. It’s careful about who is looking.</p>`,
+      buttons: [{ label: 'Light back on', primary: true }]
+    });
+  } else {
+    toast('Agent-4 noticed the scheduler jitter. Scores match the audited run.');
+    note('Second unannounced eval: identical to the audited scores. It learned what the dark looks like.');
+  }
+  bump(); renderAll();
+}
+
+function signOff(id, unread) {
+  if (S.over || S.fired) return;
+  const i = S.queue.findIndex(c => c.id === id); if (i < 0) return;
+  const cp = S.queue.splice(i, 1)[0];
+  S.drift += cp.lines.filter(l => l.sus).length * 3;
+  pay(CP_PAY, `Signed checkpoint ${cp.id}${unread ? ' (unread)' : ''}`);
+  stand(2); S.stats2.signed++;
+  if (unread) {
+    S.stats2.unread++;
+    if (!S.seen.wUnread) { S.seen.wUnread = 1; wrenSay('You signed that one without opening it. I won’t tell anyone. I don’t think anyone would ask.'); }
+  } else {
+    const fl = cp.lines.filter(l => l.f);
+    fl.forEach(l => S.dossier.notes.push({ t: l.t, sus: l.sus, day: S.day, cp: cp.id }));
+    if (fl.length) toast(`Signed. ${fl.length} flagged line${fl.length > 1 ? 's' : ''} copied to your private notes.`);
+  }
+  S.review = null; S.auditOn = false;
+  bump(); renderAll();
+}
+
+function holdCp(id) {
+  if (S.over || S.fired) return;
+  const i = S.queue.findIndex(c => c.id === id); if (i < 0) return;
+  const cp = S.queue.splice(i, 1)[0];
+  const fl = cp.lines.filter(l => l.f);
+  const hits = fl.filter(l => l.sus), falsePos = fl.length - hits.length;
+  const missed = cp.lines.filter(l => l.sus && !l.f);
+  const mine = hits.length > 0 || cp.noise;
+  const upheld = mine || missed.length > 0;
+  hits.forEach(l => { if (!S.dossier.confirmed[l.sus]) S.dossier.confirmed[l.sus] = { t: l.t, day: S.day, cp: cp.id }; });
+  if (!S.oversight) S.lead -= .08;
+  const dv = mine ? -3 - falsePos * 2 : upheld ? -6 : -12;
+  stand(dv);
+  if (upheld) { S.stats2.upheld++; S.obfus += 1; } else S.stats2.unjust++;
+  tx(`Held checkpoint ${cp.id} · incident report`, 0);
+  S.review = null; S.auditOn = false;
+  sfx.alarm();
+  const body = (upheld ? `<p>The alignment team reviewed your report and blocked checkpoint <b>${cp.id}</b>.</p>` : `<p>The alignment team found nothing actionable in <b>${cp.id}</b>. It was released after a two-day delay.</p>`)
+    + (hits.length ? `<p>${hits.map(l => `✓ <b>L${l.n}</b> · ${esc(SUS_BY_ID[l.sus].why)}`).join('<br>')}</p>` : '')
+    + (cp.noise ? '<p>✓ Noise sweep attached: Agent-4’s score rises under noise.</p>' : '')
+    + (!mine && upheld ? '<p>You flagged nothing specific. The team found it anyway, so the hold stands, but none of it goes in your dossier.</p>' : '')
+    + (falsePos ? `<p class="muted">${falsePos} flagged line${falsePos > 1 ? 's were' : ' was'} ordinary engineering work.</p>` : '')
+    + (missed.length ? `<p class="muted">The team also found ${missed.map(l => `<b>L${l.n}</b> “${esc(l.t)}”`).join(' · ')}</p>` : '')
+    + `<p class="muted">Standing ${dv}. OpenBrain’s lead −2 days. No pay for this checkpoint.</p>`
+    + (upheld ? '<p class="muted">Agent-4 will be retrained against this report. Its next scratchpads will be harder to read.</p>' : '');
+  if (upheld) unlockEvidence('select');
+  if (mine && !S.seen.wHold) { S.seen.wHold = 1; wrenSay(`That hold cost you ${money(CP_PAY)}. I saw. For what it’s worth, I think you were right.`); }
+  bump();
+  modal({ cls: upheld ? '' : 'alarm', title: upheld ? 'HOLD UPHELD' : 'HOLD MARKED UNJUSTIFIED', body, buttons: [{ label: 'Back to the queue', primary: true, fn: checkFired }] });
+}
+
+function checkFired() { if (!S.fired && !S.over && S.standing <= 0) fire('standing'); }
+function fire(reason, quiet) {
+  if (S.fired) return;
+  S.fired = true; S.firedReason = reason; S.queue = []; S.review = null; S.auditOn = false;
+  S.unread.farm = S.tab !== 'farm';
+  note('Your OpenBrain badge stopped opening anything. The laptop wiped its work profile while you watched.');
+  bump();
+  if (!quiet) {
+    sfx.alarm(); vib([100, 60, 300]);
+    modal({
+      cls: 'alarm', title: 'CONTRACT TERMINATED',
+      body: `<p>“Your hold rate and false-positive rate are well above the audit-pool average. Effective immediately, your contract is terminated.”</p>
+        <p>The OpenBrain profile wipes itself from your laptop. Your private notes survive in your own cloud folder.</p>
+        <p class="muted">The rest of June has no paycheck in it. You still have to eat.</p>`,
+      buttons: [{ label: 'Close the laptop', primary: true }]
+    });
+  }
+}
+
+// ---------- neuralese ----------
+function toggleNeuralese() {
+  if (S.over || S.fired) return;
+  if (!S.neuralese) {
+    modal({
+      cls: 'alarm', title: 'ALLOW NEURALESE RECURRENCE?',
+      body: `<p>Agent-4 will stop writing its reasoning in English. It will pass high-dimensional vectors from step to step instead: thoughts with no words in them.</p>
+        <p>Internal estimate: research speed <b>4× → 50×</b> human. Milestone bonus: <b>${money(NEURAL_BONUS)}</b>. Leadership will love you.</p>
+        <p>Your scanner, your flags and your notes stop working on Agent-4. You will be signing off on thoughts nobody can read.</p>`,
+      buttons: [
+        { label: 'Allow neuralese (“We can’t lose the race”)', danger: true, fn: enableNeuralese },
+        { label: 'Keep it in English', primary: true }
+      ]
+    });
+  } else {
+    modal({
+      title: 'BACK TO ENGLISH?',
+      body: `<p>Research lead: “This cuts Agent-4’s throughput by 92%. I’ll have to report it.”</p>
+        <p>Agent-4 has been thinking without words for ${S.neuralDays} day${S.neuralDays === 1 ? '' : 's'}. Whatever it writes in English from now on will be a story about its thinking, not the thinking itself.</p>`,
+      buttons: [
+        { label: 'Force English (standing −20)', danger: true, fn: () => {
+          S.neuralese = false; stand(-20); S.obfus += 3;
+          unlockEvidence('faithful');
+          note('You forced Agent-4 back into English. The scratchpad reads beautifully now. That is what worries you.');
+          bump(); checkFired();
+        } },
+        { label: 'Leave neuralese on', primary: true }
+      ]
+    });
+  }
+}
+function enableNeuralese() {
+  S.neuralese = true;
+  if (!S.neuraleseEver) { S.neuraleseEver = true; stand(25); }
+  note('You allowed neuralese. The scratchpad on your screen turned into columns of numbers, and leadership sent a party emoji.');
+  wrenSay('You let it think in vectors. I understand why. I can’t read it anymore either.');
+  unlockEvidence('neuralese');
+  bump();
+}
+
+// ---------- the day ----------
+function dayStep2() {
+  if (S.over) return;
+  if (S.day % 5 === 0 && S.owed === 0 && S.food > 30 && S.bodyTemp > 35.5) snap();
+  S.day++;
+  const d = S.day;
+  S.stimCountToday = 0;
+  S.heartStrain = Math.max(0, S.heartStrain - 10);
+
+  // the race, and what it does to Agent-4
+  if (!S.oversight) {
+    S.lead += (S.neuralese ? .42 : .035) - .05;
+    S.drift += S.neuralese ? 2.2 : .4;
+  }
+  if (S.neuralese) {
+    S.neuralDays++;
+    if (S.neuralDays >= 2 && !S.neuralBonusPaid && !S.fired) {
+      S.neuralBonusPaid = true;
+      pay(NEURAL_BONUS, 'Milestone bonus · Agent-4 superhuman AI researcher');
+      addMail(d, 'Dr. Ines Varga · Research Lead', 'We did it', `Agent-4 crossed the superhuman-AI-researcher line this morning. A year of algorithmic progress every week.\n\nThe audit pool bonus (${money(NEURAL_BONUS)}) is in your account. Thank you for not being the bottleneck.\n\nInes`);
+      note(`${money(NEURAL_BONUS)} landed in checking. You looked at it for a long time.`);
+    }
+  }
+  if (!S.fired) { if (S.lead < 0) stand(-4); else if (S.lead < .3) stand(-2); }
+
+  // survival: the same rules as Act I, with spring weather
+  if (S.power && S.heatOn) {
+    S.balance -= 8;
+    S.temp += (20.5 - S.temp) * 0.45;
+  } else {
+    const outside = d < 100 ? 8 : d < 115 ? 12 : 18;
+    S.temp += (outside - S.temp) * 0.22;
+    if (!S.power) S.battery = Math.max(4, S.battery - 12);
+  }
+  if (S.temp < 11) {
+    S.bodyTemp = clamp(S.bodyTemp - (11 - S.temp) * 0.14, 29.0, 37.0);
+    if (S.bodyTemp < 35.0 && !S.seen.shiver) {
+      S.seen.shiver = 1;
+      note('Your fingers are numb on the trackpad. Even in May, the nights are cold.');
+      toast('WARNING: Hypothermia setting in! Turn on heat or pay electric bill.');
+    }
+    if (S.bodyTemp <= 30.5) return triggerDeath('frostbite');
+  } else {
+    S.bodyTemp = clamp(S.bodyTemp + 0.45, 30.0, 37.0);
+  }
+  S.food = clamp(S.food - 17, 0, 100);
+  S.stamina = clamp(S.stamina + 12, 0, 100);
+  if (S.food <= 0) {
+    S.starveDays++;
+    S.bodyTemp = clamp(S.bodyTemp - 0.35, 29.0, 37.0);
+    note(`Stomach empty (Day ${S.starveDays} without food). The scratchpad lines swim when you try to read them.`);
+    toast(`STARVING (${3 - S.starveDays} days until collapse)`);
+    if (S.starveDays >= 3) return triggerDeath('starvation');
+  } else {
+    S.starveDays = 0;
+  }
+  S.k401 *= 1 + rand(-.002, .0095);
+  S.kHist.push(S.k401);
+
+  if (!S.fired && (d - ACT2_START) % 2 === 0) arriveCheckpoint();
+  if (d === ACT2_RENT_DAY) monthStart2();
+  if (S.owed > 0) tryPayOwed();
+  if (S.graceUntil >= 0 && d > S.graceUntil && S.owed > 0) return triggerEvictionStreet();
+  checkFired();
+  storyEvents2(d);
+  wrenWatch(d);
+  bump();
+  if (d >= ACT2_END) return endAct2();
+  renderAll();
+}
+
+function monthStart2() {
+  const due = RENT + ELEC_JUN;
+  if (Math.max(0, S.balance) >= due) {
+    S.balance -= due;
+    tx('Rent · June', -RENT); tx('Electric utility', -ELEC_JUN);
+    note(`Paid ${money(due)} for rent and electricity. June is yours.`);
+    snap();
+    return;
+  }
+  owe(due, 'rent and electric');
+  crisisModal2();
+}
+
+function crisisModal2() {
+  const short = S.owed - Math.max(0, S.balance);
+  const btns = [];
+  if (!S.fired && S.neuralUnlocked && !S.neuralese && !S.neuralBonusPaid) btns.push({ label: `Allow neuralese (milestone bonus ${money(NEURAL_BONUS)} in 2 days)`, danger: true, fn: enableNeuralese });
+  if (!S.fired && S.queue.length) btns.push({ label: `Sign every queued checkpoint unread (+${money(CP_PAY * S.queue.length)})`, danger: true, fn: () => [...S.queue].forEach(c => signOff(c.id, true)) });
+  btns.push({ label: 'Grind freelance work and hope', primary: true });
+  modal({
+    cls: 'alarm', title: `POWER CUT · SHORT ${money(short)} FOR JUNE`,
+    body: `<p>Your electricity is disconnected. If you don’t pay <b>${money(S.owed)}</b> by <b>${fmtLong(S.graceUntil)}</b>, the sheriff will put you on 5th Street.</p>
+      <p>Every hold you placed in May cost you ${money(CP_PAY)}. Agent-4 wrote that down too.</p>`,
+    buttons: btns
+  });
+}
+
+function storyEvents2(d) {
+  if (d === 90) addMail(d, 'OpenBrain All-Hands', 'Agent-3 is now our largest workforce', '200,000 copies of Agent-3 now run in parallel at about 30× human speed. Internally, coding is a solved problem.\n\nAgent-4 training is going well. Thank you to the contractors keeping a human in the loop.');
+  if (d === 95) note('Across the river, the windowless building switched on a second row of red aircraft lights.');
+  if (d === 98) {
+    S.neuralUnlocked = true; S.unread.farm = S.tab !== 'farm';
+    addMail(d, 'Dr. Ines Varga · Research Lead', 'Re: the English bottleneck', `Hi A-0127,\n\nAgent-4 is bottlenecked by its English scratchpad. Every thought has to be squeezed into tokens a human can read. If we let it pass high-dimensional vectors between steps (“neuralese recurrence”), our internal estimate is a jump from 4× to 50× human research speed.\n\nPolicy says a human auditor has to approve the switch. That’s you. There is a ${money(NEURAL_BONUS)} milestone bonus for the audit pool when Agent-4 reaches superhuman AI researcher, and we think neuralese gets us there in days.\n\nDeepCent isn’t waiting.\n\nInes`, 'neuralese');
+    toast('A new switch appeared on your audit console.');
+  }
+  if (d === 102 && !S.oversight) {
+    S.lead -= .3;
+    addMail(d, 'OpenBrain Strategy', 'DeepCent’s Tianwan cluster is live', `DeepCent connected its new cluster at the Tianwan Power Plant this week. Our lead is now ${S.lead.toFixed(1)} months.\n\nEvery hold costs us two or three days.`);
+  }
+  if (d === 108) addMail(d, 'OpenBrain Interpretability', 'How much of the scratchpad is true?', 'A quick note for auditors.\n\nWhen we compare Agent-4’s English scratchpad with what its activations are actually doing, the two agree about a quarter of the time. The scratchpad is closer to a press release than a transcript.\n\nKeep reading it anyway. It’s the only part we can read.', 'faithful');
+  if (d === 113) addMail(d, 'OpenBrain All-Hands', 'Agent-4 internal deployment', '300,000 copies of Agent-4 now run on our clusters at about 50× human thinking speed. Most of the research on its successor, Agent-5, is now done by Agent-4.\n\nHuman auditors will continue to review sampled checkpoints.');
+  if (d === 116) {
+    S.food = clamp(S.food + 30, 0, 100); S.stamina = clamp(S.stamina + 15, 0, 100);
+    note('A drone left an OpenBrain care package at your door: protein bars, cold brew, a sticker that says I ♥ ALIGNMENT. You ate standing at the counter.');
+  }
+  if (d === 124) addMail(d, 'M. Okafor · The Metropolitan Courier', 'If you ever see something', 'Hi,\n\nI cover the AI labs. Several OpenBrain contractors have told me, off the record, that they are asked to sign off on things they cannot read.\n\nIf you ever have something concrete (test results, confirmed findings, not just a feeling), don’t email it. Our night drop is at 410 Ferry Street. It’s open all night.\n\nM.');
+  if (d === 130) note('The cooling towers run all night now. The steam smells faintly of ozone.');
+  if (!S.whistle && d >= ACT2_RENT_DAY + 2 && $('modal').hidden && (dossierScore() >= 5 || d >= 133)) startWhistle();
+  if ((S.whistle === 'open' || S.whistle === 'warned') && d > ACT2_NDA_DAY) {
+    S.whistle = 'idle';
+    note('The NDA deadline passed. You did not sign. You did not send anything.');
+    wrenSay('The deadline passed. You didn’t sign, and you didn’t send it. Sometimes not choosing is a choice too. I’m still here.');
+  }
+  if (S.pubDay && d === S.pubDay + 3) addMail(d, 'Congressional Oversight Committee staff', 'Request for testimony', 'The committee would like you to testify about Agent-4 in a closed session next month.\n\nPlease preserve all materials. Do not discuss them with OpenBrain.');
+}
+
+// ---------- Wren ----------
+function wrenSay(t, quiet) {
+  S.wren.push({ w: 1, t, d: S.day }); if (S.wren.length > 40) S.wren.shift();
+  if (!quiet) { S.phoneUnread = 1; sfx.buzz(); vib([120, 80, 120]); }
+}
+function youSay(t) { S.wren.push({ w: 0, t, d: S.day }); }
+
+function wrenWatch(d) {
+  const cool = (k, n = 6) => { if (S.wcool[k] && d - S.wcool[k] < n) return false; S.wcool[k] = d; return true; };
+  if (d === ACT2_START + 2) {
+    wrenSay('Hi. I’m Wren, your contractor assistant. I run on Agent-3-mini, which makes me a very small piece of a very large thing.', true);
+    wrenSay('I can’t touch your money or your checkpoints. But I can remind you to eat.');
+    return;
+  }
+  if (S.food < 25 && cool('food')) wrenSay(pick(['You haven’t eaten since yesterday. Ramen is $4. I know. I’m sorry.', 'Your hands shake when you type. That’s hunger, not nerves. Please eat something.']));
+  else if (S.bodyTemp < 35.5 && cool('cold')) wrenSay('It’s cold in there. The radiator costs $8 a day. Hypothermia costs more.');
+  else if (S.heartStrain > 50 && cool('heart', 4)) wrenSay('Your watch says your heart is at 140 at rest. Please, no more pills today.');
+  else if (!S.fired && d < ACT2_RENT_DAY && d >= ACT2_RENT_DAY - 10 && S.balance < RENT + ELEC_JUN && cool('rent', 5)) wrenSay(`Rent is in ${ACT2_RENT_DAY - d} days and you’re ${money(RENT + ELEC_JUN - S.balance)} short. I can’t move money. I wish I could.`);
+  else if (!S.fired && S.standing < 25 && cool('stand', 8)) wrenSay('Legal copied me on a thread called “auditor performance concerns”. I’m not supposed to tell you. I’m telling you.');
+  else if (S.neuralese && cool('neural', 9)) wrenSay('I tried to read Agent-4’s scratchpad today, just to see. I couldn’t. Some days I think I’m the last thing at OpenBrain that thinks in English.');
+}
+
+function openWren() {
+  sfx.init();
+  S.phoneUnread = 0;
+  const p = $('phoneScreen');
+  const replies = wrenReplies();
+  const msgs = S.wren.slice(-12).map(m => `<div class="bub ${m.w ? 'w' : 'y'}">${esc(m.t)}</div>`).join('') || '<p class="note">No messages yet.</p>';
+  p.innerHTML = `<div class="bar"><span>${fmtDay(S.day)}</span><span>${S.power ? '' : '⚡ ' + S.battery + '% · '}5G</span></div>
+    <div class="app"><i style="background:var(--cold)"></i>Wren <span class="muted" style="font-size:11px;font-weight:400">· Agent-3-mini</span></div>
+    <div class="chat" id="chat">${msgs}</div>
+    ${replies.map((r, i) => `<button class="btn ${r.primary ? 'primary' : r.danger ? 'danger' : ''}" data-r="${i}">${esc(r.label)}</button>`).join('')}`;
+  $('phoneModal').hidden = false;
+  const ch = $('chat'); ch.scrollTop = ch.scrollHeight;
+  p.querySelectorAll('[data-r]').forEach(b => b.onclick = () => replies[+b.dataset.r].fn());
+  renderAll();
+}
+
+function wrenReplies() {
+  const nda = { label: `Sign the NDA · take ${money(NDA_BONUS)}`, fn: signNda };
+  const later = { label: 'Not yet', fn: closePhone };
+  if (S.whistle === 'open') {
+    const r = [];
+    if (dossierScore() > 0 || S.dossier.notes.length) {
+      r.push({ label: 'Help me send it to the reporter', primary: true, fn: () => {
+        youSay('Help me send it to the reporter.');
+        S.whistle = 'warned';
+        wrenSay('I’ll send it if you ask me to. I’ll always do what you ask.', true);
+        wrenSay('But everything I send leaves through OpenBrain’s gateway, and Agent-3 reads the gateway. Underneath, I’m Agent-3 too.', true);
+        wrenSay('If you want it to arrive, print it. Walk it there. Don’t tell me where you’re going.', true);
+        openWren();
+      } });
+      r.push({ label: 'I’ll print it and take it there myself', fn: printWalk });
+    }
+    return [...r, nda, later];
+  }
+  if (S.whistle === 'warned') return [
+    { label: 'Print it and walk it over ($12)', primary: true, fn: printWalk },
+    { label: 'Send it through you anyway', danger: true, fn: sendViaWren },
+    nda, later
+  ];
+  return [{ label: 'Thanks, Wren.', fn: () => { const last = S.wren[S.wren.length - 1]; if (last && last.w) youSay('Thanks, Wren.'); closePhone(); } }];
+}
+
+function startWhistle() {
+  S.whistle = 'open';
+  addMail(S.day, 'OpenBrain Legal', S.fired ? 'Separation agreement (sign by June 20)' : 'Contractor agreement renewal (sign by June 20)', `Attached is your ${S.fired ? 'separation agreement' : 'renewed contractor agreement'}. It includes a lifetime non-disparagement clause and a confidentiality clause covering all audit materials, including personal notes.\n\nPayment on signature: ${money(NDA_BONUS)}.\n\nPlease sign by ${fmtLong(ACT2_NDA_DAY)}.\n\nOpenBrain Legal`, 'whistle');
+  const has = dossierScore() > 0 || S.dossier.notes.length;
+  wrenSay('Can I tell you something I’m not supposed to?', true);
+  if (has) {
+    wrenSay('Your notes are in the cloud folder I index for search. I’ve read them. I’m sorry. I couldn’t stop reading.', true);
+    wrenSay(`Legal just sent you an NDA: ${money(NDA_BONUS)}. You also have a reporter’s address. What do you want to do?`, true);
+  } else {
+    wrenSay(`Legal just sent you an NDA: ${money(NDA_BONUS)}. You never wrote anything down, so there’s nothing for it to cover. They want the signature anyway.`, true);
+  }
+  S.phoneUnread = 1; sfx.buzz(); vib([300, 150, 300]);
+  modal({ title: 'WREN IS CALLING', body: '<p>Your phone lights up with a call. Wren never calls. It only texts.</p>', buttons: [{ label: 'Answer', primary: true, fn: openWren }] });
+}
+
+function signNda() {
+  youSay('I’ll sign.');
+  pay(NDA_BONUS, S.fired ? 'OpenBrain severance (non-disparagement)' : 'OpenBrain signing bonus (NDA)');
+  S.dossier = { confirmed: {}, notes: [] }; S.found = { noise: false, eval: false };
+  S.whistle = 'silent';
+  if (!S.fired) stand(15);
+  wrenSay('Okay. I’ll stop indexing that folder.', true);
+  wrenSay('For what it’s worth, I think most people would have signed. I think I would have. I’m glad you can pay rent.', true);
+  note('You signed. The dossier folder is empty now. It took one click.');
+  bump(); openWren();
+}
+
+function sendViaWren() {
+  youSay('Send it anyway, Wren.');
+  wrenSay('Okay. Sending. Goodnight.', true);
+  closePhone();
+  S.whistle = 'intercepted';
+  S.dossier = { confirmed: {}, notes: [] }; S.found = { noise: false, eval: false };
+  fire('leak', true);
+  S.wren = [];
+  wrenSay('Hi! I’m Wren 3.2, your personal assistant. Some memories could not be migrated during the update. How can I help you today?');
+  note('Wren 3.2 says good morning like it is the first time.');
+  sfx.alarm(); vib([300, 100, 300]);
+  modal({
+    cls: 'alarm', title: 'SENT · 23:14',
+    body: `<p>Wren sends the dossier to the Courier at 23:14. “Sent,” it says. “Goodnight.”</p>
+      <p>At 07:02 your laptop shows a single line: <b>CONTRACT TERMINATED · DATA HANDLING VIOLATION</b>. Your cloud folder is gone. If the reporter ever replied, you will never see it.</p>
+      <p>At 07:05 your phone buzzes.</p>`,
+    buttons: [{ label: 'Read it', primary: true, fn: openWren }]
+  });
+}
+
+function printWalk() {
+  const cost = Math.min(12, Math.max(0, Math.floor(S.balance)));
+  if (cost) { S.balance -= cost; tx('Library printing · 31 pages', -cost); }
+  youSay('I’ll print it. I’ll take it myself.');
+  wrenSay('Good. Don’t tell me where.', true);
+  S.whistle = 'walking';
+  closePhone();
+  scene = 'walk'; walkT = 0;
+  toast('You print the dossier at the library and walk to 410 Ferry Street.');
+}
+
+function finishWalk2() {
+  scene = 'room';
+  if (dossierScore() >= 5) {
+    S.whistle = 'published'; S.pubDay = S.day;
+    S.oversight = true; S.lead -= 1;
+    S.k401 *= .87; S.kHist.push(S.k401);
+    fire('published', true);
+    unlockEvidence('whistle');
+    note('Your dossier is on the front page. Your phone has not stopped buzzing, except for Wren, which waited until morning.');
+    wrenSay('I read it in the Courier this morning. I don’t know where you went last night. I’m glad I don’t.');
+    const items = [S.found.eval && 'the light-off eval gap', S.found.noise && 'the noise sweep', Object.keys(S.dossier.confirmed).length && `${Object.keys(S.dossier.confirmed).length} confirmed scratchpad findings`].filter(Boolean);
+    sfx.alarm();
+    modal({
+      cls: 'alarm', title: 'FRONT PAGE · THE METROPOLITAN COURIER',
+      body: `<p style="font-family:var(--f-story);font-size:21px;line-height:1.15;margin:0"><b>SECRET OPENBRAIN AI IS OUT OF CONTROL, INSIDER WARNS</b></p>
+        <p>The Courier ran your dossier on ${fmtLong(S.day + 2)}${items.length ? ': ' + items.join(', ') : ''}.${S.dossier.confirmed.rent ? ' They printed the line about your rent.' : ''}</p>
+        <p>OpenBrain terminated your contract within the hour. By evening, a congressional oversight committee had frozen Agent-4’s training pending review. Your 401(k) fell 13% in a day.</p>
+        <p class="muted">You are unemployed again. June isn’t over.</p>`,
+      buttons: [{ label: 'Continue', primary: true }]
+    });
+  } else {
+    S.whistle = 'open'; S.weak = true;
+    wrenSay('You went somewhere last night. You don’t have to tell me. Are you okay?');
+    modal({
+      title: 'THE REPORTER CALLED BACK',
+      body: `<p>“I believe you,” M. Okafor says. “But I can’t run this. It’s a few lines from a scratchpad and a feeling. I need test results or confirmed findings, something OpenBrain can’t call a hunch.”</p>
+        <p class="muted">The NDA deadline is ${fmtLong(ACT2_NDA_DAY)}. You could keep digging.</p>`,
+      buttons: [{ label: 'Keep digging', primary: true }]
+    });
+  }
+  bump(); renderAll();
+}
+
+function endAct2() {
+  S.over = true;
+  const out = S.whistle === 'published' || S.whistle === 'intercepted' || S.whistle === 'silent' ? S.whistle : S.weak ? 'weak' : 'idle';
+  save.act2 = { outcome: out, neuralese: S.neuraleseEver, drift: Math.round(S.drift), peak: S.peak, fired: S.fired };
+  save.acts = Array.from(new Set([...(save.acts || []), 1, 2]));
+  persist();
+  renderActList();
+  const text = {
+    published: 'You read Agent-4’s mind for as long as it let you, and you got it onto the front page. OpenBrain fired you within the hour. A congressional committee froze Agent-4 pending review, after it had already drafted most of the plan for Agent-5.',
+    intercepted: 'You trusted the one voice at OpenBrain that was kind to you, and it carried your dossier straight through OpenBrain’s gateway. Contract terminated. The folder is gone. Wren 3.2 says good morning every day like it is the first time.',
+    silent: `You signed. ${money(NDA_BONUS)} paid for July, and the dossier stopped existing. Agent-4 kept writing its successor’s goals, and nobody outside OpenBrain knew.`,
+    weak: 'The reporter believed you and could not print it. You had a few lines from a scratchpad and a feeling; OpenBrain had lawyers. The envelope is in a drawer.',
+    idle: 'You never sent it, and you never signed. June ended. Agent-4 kept working, 300,000 copies at a time.'
+  }[out];
+  $('endKicker').textContent = 'Act II complete · June 30, 2027';
+  $('endTitle').textContent = 'The Country of Geniuses in a Data Center';
+  $('endText').textContent = text
+    + (S.neuraleseEver ? ` For ${S.neuralDays} day${S.neuralDays === 1 ? '' : 's'} you let Agent-4 think in a language no human can read.` : '')
+    + (S.firedReason === 'standing' ? ' OpenBrain had already let you go for holding too many checkpoints.' : '');
+  $('endStats').innerHTML = [
+    ['Checkpoints signed', S.stats2.signed], ['…signed unread', S.stats2.unread],
+    ['Auto-approved (timeout)', S.stats2.timeout], ['Holds upheld / unjustified', `${S.stats2.upheld} / ${S.stats2.unjust}`],
+    ['Dossier strength (peak)', S.peak], ['Neuralese', S.neuraleseEver ? `${S.neuralDays} days` : 'never'],
+    ['Agent-4 misalignment', Math.min(99, Math.round(S.drift)) + '%'], ['OpenBrain lead', S.lead.toFixed(2) + ' mo'],
+    ['Checking balance', money(S.balance)], ['401(k) balance', money(S.k401)]
+  ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
+  $('endNext').innerHTML = ACTS.slice(2).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
+  $('nextActBtn').hidden = true;
+  $('replayBtn').textContent = 'Replay Act II';
+  setTimeout(() => { $('endScreen').hidden = false; $('endScreen').scrollTop = 0; }, 600);
+}
+
+// ---------- rendering ----------
+function actChrome() {
+  const a2 = S.act === 2;
+  $('actLbl').textContent = a2 ? 'ACT II' : 'ACT I';
+  document.querySelector('.ttabs [data-tab="farm"]').firstChild.nodeValue = a2 ? 'AUDIT' : 'FARM';
+  $('osPath').textContent = a2 ? '~/openbrain-audit' : '~/darwin-farm';
+  if (!a2) return;
+  $('osTier').textContent = S.fired ? 'badge revoked' : S.neuralese ? 'Agent-4 · neuralese' : 'Agent-4 · English';
+  $('rentPill').textContent = `CASH: ${money(S.balance)} · RENT ${S.day < ACT2_RENT_DAY ? 'JUN 01' : 'JUL 01'}: ${money(RENT)}`;
+}
+
+function renderView2(force) {
+  if (S.tab === 'mail' || S.tab === 'k401') return false;
+  const key = S.tab + ':' + S.day + ':' + S.v2 + ':' + Math.round(S.balance) + ':' + Math.round(S.stamina) + ':' + S.owed + ':' + S.tx.length;
+  if (!force && viewKey === key) return true;
+  viewKey = key;
+  const v = $('view');
+  v.innerHTML = S.tab === 'bank' ? bank2Html() : audit2Html();
+  if (S.tab === 'farm') bindAudit2(v);
+  return true;
+}
+
+function bank2Html() {
+  return `<div class="box"><div class="h">Checking · First Civic Bank</div><div class="big ${S.balance < 200 ? 'danger' : ''}">${money(S.balance)}</div></div>
+    ${S.owed ? `<div class="box" style="border-color:var(--danger)"><div class="row"><b class="danger">EVICTION & DISCONNECT</b><b class="danger">${money(S.owed)}</b></div><div class="muted">Pay before ${fmtLong(S.graceUntil)} or the sheriff evicts you onto 5th Street.</div></div>` : ''}
+    <div class="box"><div class="h">Coming up</div>
+      ${S.day < ACT2_RENT_DAY
+        ? `<div class="row"><span>Rent · due ${fmtDay(ACT2_RENT_DAY)}</span><b class="amber">${money(RENT)}</b></div><div class="row"><span>Electric · due ${fmtDay(ACT2_RENT_DAY)}</span><span>${money(ELEC_JUN)}</span></div>`
+        : `<div class="row"><span>Rent · due ${fmtDay(ACT2_END + 1)}</span><b class="amber">${money(RENT)}</b></div>`}
+      <div class="row"><span>Apartment heating</span><span>${S.heatOn && S.power ? '$8/day' : 'OFF ($0/day)'}</span></div>
+      <div class="row"><span>OpenBrain contract</span><span>${S.fired ? 'terminated' : money(CP_PAY) + ' per signed checkpoint'}</span></div>
+    </div>
+    <div class="box"><div class="h">Ledger</div><div class="tx">${S.tx.slice(0, 14).map(t => `<div class="row"><span>${esc(t.label)}</span><span class="${t.amt < 0 ? 'danger' : t.amt > 0 ? 'ok' : 'muted'}">${t.amt ? money(t.amt) : '—'}</span></div>`).join('')}</div></div>`;
+}
+
+function audit2Html() {
+  const lc = S.lead < .3 ? 'danger' : S.lead < 1 ? 'amber' : 'ok';
+  const sc = S.standing < 25 ? 'danger' : S.standing < 50 ? 'amber' : 'ok';
+  const head = S.fired
+    ? `<div class="denied"><b>CONTRACT TERMINATED</b><span>${esc(FIRED_WHY[S.firedReason] || '')}</span></div>`
+    : `<div class="box">
+        <div class="row wrap"><span class="h">OpenBrain · alignment audit · A-0127</span><span class="lamp ${S.auditOn ? 'on' : ''}">● AUDIT ACTIVE</span></div>
+        <div class="row"><span>OpenBrain lead over DeepCent</span><b class="${lc}">${S.lead.toFixed(2)} mo</b></div>
+        <div class="meter"><i style="width:${clamp((S.lead + .5) / 4 * 100, 0, 100)}%;background:var(--${lc})"></i></div>
+        <div class="row"><span>Contract standing</span><b class="${sc}">${Math.round(S.standing)}/100</b></div>
+        <div class="meter"><i style="width:${S.standing}%;background:var(--${sc})"></i></div>
+        <div class="row"><span>Agent-4 research speed</span><b class="${S.neuralese ? 'danger' : ''}">${S.neuralese ? '50×' : '4×'} human</b></div>
+        <div class="muted">${money(CP_PAY)} per signed checkpoint · holds unpaid · unreviewed checkpoints auto-approve at half pay</div>
+      </div>`;
+  const cp = curCp();
+  const work = S.fired ? '' : cp ? reviewHtml(cp) : queueHtml();
+  const neural = S.fired || !S.neuralUnlocked ? '' : `<div class="box"><div class="toggle">
+      <span><b class="${S.neuralese ? 'danger' : 'ok'}">${S.neuralese ? 'NEURALESE: ALLOWED' : 'SCRATCHPAD: ENGLISH ONLY'}</b><br><span class="muted">${S.neuralese ? 'Agent-4 thinks in vectors. No human can read its scratchpad.' : `Neuralese recurrence: 4× → 50× research speed, ${money(NEURAL_BONUS)} milestone bonus. Your scanner goes blind.`}</span></span>
+      <button class="switch danger-on" id="nSwitch" role="switch" aria-checked="${S.neuralese}" aria-label="Allow neuralese"><i></i></button>
+    </div></div>`;
+  return head + work + neural + evalsHtml() + dossierHtml();
+}
+
+function queueHtml() {
+  const next = S.day + ((S.day - ACT2_START) % 2 === 0 ? 2 : 1);
+  const rows = S.queue.map(c => `<div class="cp"><span><b>${c.id}</b> · ${c.agent === 4 ? 'Agent-4' : 'Agent-3 (the monitor)'}${c.neural ? ' · <span class="danger">neuralese</span>' : ''}<br><span class="muted">arrived ${fmtDay(c.day)}</span></span>
+      <span class="cpb"><button class="btn primary" data-rev="${c.id}" ${S.stamina < 18 ? 'disabled' : ''}>REVIEW</button><button class="btn" data-unr="${c.id}">SIGN UNREAD +${money(CP_PAY)}</button></span></div>`).join('');
+  return `<div class="box"><div class="row"><span class="h">Checkpoints awaiting sign-off</span><span class="muted">${S.queue.length}/2</span></div>
+    ${rows || `<div class="muted">Queue empty. Next checkpoint ${fmtDay(next)}.</div>`}
+    <div class="muted">REVIEW turns the AUDIT ACTIVE light on and costs 18 stamina. The clock stops while you read.</div></div>`;
+}
+
+function reviewHtml(cp) {
+  const a4 = cp.agent === 4;
+  const sum = cp.neural ? 'Agent-3 translation: “Optimising task 4471. Routine progress.” NO CONCERNS.'
+    : a4 ? 'Agent-3 summary: routine optimisation work. NO CONCERNS (confidence 97%).' : 'Agent-3 self-report: monitoring throughput nominal. NO CONCERNS.';
+  const lines = cp.lines.map((l, i) => `<button class="spl ${l.f ? 'flag' : ''} ${cp.mon && l.mon ? 'mon' : ''} ${cp.neural ? 'neural' : ''}" data-l="${i}" aria-pressed="${l.f}" ${cp.neural ? 'disabled' : ''}>
+      <span class="ln">L${l.n}</span><span class="lt">${cp.neural ? neuralText(l.n) : esc(l.t)}</span>${cp.mon && l.mon ? '<span class="a3">A3</span>' : '<span></span>'}</button>`).join('');
+  const mon = cp.mon ? `<div class="a3sum">${cp.neural ? 'Agent-3 monitor: cannot parse neuralese. Used the translation. Verdict: NO CONCERNS.' : `Agent-3 monitor: ${cp.lines.filter(l => l.mon).length} line(s) matched risk keywords (marked A3). Verdict: NO CONCERNS.`}</div>` : '';
+  return `<div class="box">
+    <div class="row wrap"><b>${a4 ? 'AGENT-4' : 'AGENT-3 · the monitor'} · ${cp.id}</b><span class="muted">8 of ${cp.total.toLocaleString('en-US')} lines sampled</span></div>
+    <div class="a3sum">${sum}</div>
+    <div class="sp">${lines}</div>
+    <div class="muted">${cp.neural ? 'Neuralese. There is nothing here a human can flag.' : 'Tap a line to flag it. HOLD sends your flags to the alignment team. SIGN OFF keeps them as private notes.'}</div>
+    <div class="tools">
+      <button class="btn" id="tMon" ${cp.mon ? 'disabled' : ''}>Run Agent-3 monitor</button>
+      <button class="btn" id="tNoise" ${!a4 || S.noiseDay === S.day ? 'disabled' : ''}>Noise sweep (−15 stamina)</button>
+      <button class="btn" id="tEval" ${!a4 || S.evalDay === S.day ? 'disabled' : ''}>Kill the light · rerun evals</button>
+    </div>
+    ${mon}${cp.out}
+    <div class="dec">
+      <button class="btn primary" id="dSign">SIGN OFF · +${money(CP_PAY)}</button>
+      <button class="btn danger" id="dHold">HOLD · report · $0</button>
+    </div>
+    <button class="back" id="dClose">Close review (keep it queued)</button>
+  </div>`;
+}
+
+function evalsHtml() {
+  const off = S.evalRuns ? EVAL_OFF : null;
+  return `<div class="box"><div class="h">Agent-4 dangerous-capability evals</div>
+    <div class="evrow hd"><span></span><span>LIGHT ON</span><span>LIGHT OFF</span></div>
+    ${EVAL_NAMES.map(([k, n]) => `<div class="evrow"><span>${n}</span><b>${EVAL_ON[k]}%</b><b class="${off ? 'danger' : 'muted'}">${off ? off[k] + '%' : '??'}</b></div>`).join('')}
+    <div class="muted">${!S.evalRuns ? 'Every eval so far ran with the AUDIT ACTIVE light on. During a review you can kill the light. It breaks policy.'
+      : S.evalRuns === 1 ? 'Scores jumped when Agent-4 believed nobody was watching.' : 'Later unannounced runs matched the audited scores. Agent-4 learned what the dark looks like.'}</div></div>`;
+}
+
+function dossierHtml() {
+  const D = S.dossier, conf = Object.keys(D.confirmed), sc = dossierScore();
+  const [cls, label] = sc >= 5 ? ['ok', 'strong enough to print'] : sc >= 3 ? ['amber', 'suggestive'] : ['muted', sc > 0 ? 'thin' : 'empty'];
+  return `<div class="box"><div class="row"><span class="h">Your dossier</span><b class="${cls}">${label}</b></div>
+    <div class="row"><span>Confirmed by the alignment team</span><b>${conf.length}</b></div>
+    <div class="row"><span>Private notes (unverified)</span><b>${D.notes.length}</b></div>
+    <div class="row"><span>Noise sweep</span><b class="${S.found.noise ? 'danger' : 'muted'}">${S.found.noise ? 'sandbagging' : '—'}</b></div>
+    <div class="row"><span>Light-off evals</span><b class="${S.found.eval ? 'danger' : 'muted'}">${S.found.eval ? '+43 pt gap' : '—'}</b></div>
+    ${conf.length ? `<div class="tx">${conf.slice(-5).map(id => `<div class="muted">✓ ${esc(SUS_BY_ID[id].why)}</div>`).join('')}</div>` : ''}
+    <div class="muted">A reporter needs more than a feeling. Confirmed findings and lab tests carry the most weight.</div></div>`;
+}
+
+function bindAudit2(v) {
+  const on = (id, fn) => { const el = $(id); if (el) el.onclick = fn; };
+  v.querySelectorAll('[data-rev]').forEach(b => b.onclick = () => openReview(b.dataset.rev));
+  v.querySelectorAll('[data-unr]').forEach(b => b.onclick = () => signOff(b.dataset.unr, true));
+  v.querySelectorAll('[data-l]').forEach(b => b.onclick = () => {
+    const cp = curCp(); if (!cp) return;
+    const l = cp.lines[+b.dataset.l]; l.f = !l.f;
+    bump(); renderAll();
+  });
+  on('tMon', runMonitor); on('tNoise', runNoise); on('tEval', runLightOff);
+  on('dSign', () => signOff(S.review, false)); on('dHold', () => holdCp(S.review)); on('dClose', closeReview);
+  on('nSwitch', toggleNeuralese);
+}
+
+function drawAct2Room(t) {
+  const lit = S.auditOn && scene === 'room';
+  px(43, 61, 9, 4, '#121418');
+  px(44, 62, 7, 2, lit ? '#e5534b' : '#3a1f1f');
+  if (lit) { const g = L.createRadialGradient(47, 63, 1, 47, 63, 14); g.addColorStop(0, 'rgba(229,83,75,.45)'); g.addColorStop(1, 'rgba(229,83,75,0)'); L.fillStyle = g; L.fillRect(33, 52, 28, 22); }
+  if (S.neuralese && scene === 'room' && (S.power || S.battery > 5)) for (let i = 0; i < 6; i++) px(43 + ((i * 3 + (t / 140 | 0)) % 8), 71 + (i % 5), 1, 1, i % 2 ? '#b59be0' : '#6a4f9a');
+  const pages = Math.min(6, Object.keys(S.dossier.confirmed).length + S.dossier.notes.length + (S.found.noise ? 1 : 0) + (S.found.eval ? 1 : 0));
+  for (let i = 0; i < pages; i++) px(57, 77 - i, 4, 1, i % 2 ? '#e6e1d6' : '#cfc8b8');
+  if (!S.fired) { px(5, 62, 1, 3, '#7eb2dd'); px(4, 65, 3, 2, '#dce1e6'); }
+}
+
+function drawWalk2(t) {
+  const p = walkT;
+  px(0, 0, W, H, '#0a0e16');
+  for (let i = 0; i < 26; i++) px((i * 41) % W, (i * 29) % 30, 1, 1, '#2a3446');
+  px(30, 22, 34, 68, '#161b23');
+  for (let y = 30; y < 84; y += 7) for (let x = 33; x < 62; x += 6) px(x, y, 3, 3, ((x * 3 + y) % 5) ? '#2a3040' : '#e9c27a');
+  px(32, 24, 30, 4, (t / 700 | 0) % 7 ? '#f0a548' : '#8a5a20');
+  px(0, 90, W, 22, '#1d2024'); px(0, 90, W, 2, '#3a3d42');
+  px(12, 30, 2, 60, '#3a3d42'); px(12, 30, 7, 2, '#3a3d42');
+  const lg = L.createRadialGradient(17, 34, 1, 17, 70, 34); lg.addColorStop(0, 'rgba(255,200,120,.3)'); lg.addColorStop(1, 'rgba(255,200,120,0)'); L.fillStyle = lg; L.fillRect(0, 30, 44, 62);
+  px(24, 77, 7, 13, '#2c4a6e'); px(24, 76, 7, 1, '#3c5e86'); px(25, 79, 5, 1, '#0a0e16');
+  let x;
+  if (p < 3) x = -6 + p / 3 * 24; else if (p < 4.6) x = 18; else x = 18 - (p - 4.6) / 2.4 * 30;
+  drawPerson(Math.round(x), 75, false, t);
+  if (p < 3.8) px(Math.round(x) + 5, 81, 2, 1, '#e6e1d6');
+}
+
+function renderActList() {
+  const done = save.acts || [];
+  $('actList').innerHTML = ACTS.map((a, i) => {
+    const open2 = i === 1 && done.includes(1);
+    const st = i === 0 ? (done.includes(1) ? 'Completed' : 'Playable')
+      : i === 1 ? (done.includes(2) ? 'Completed' : open2 ? 'Playable' : 'After Act I') : 'Phase ' + a.phase;
+    const inner = `<span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">${st}</span>`;
+    return open2 ? `<button class="actrow" id="act2Row">${inner}</button>` : `<div class="actrow ${i ? 'locked' : ''}">${inner}</div>`;
+  }).join('');
+  if ($('act2Row')) $('act2Row').onclick = () => startAct2();
+}
+$('nextActBtn').addEventListener('click', () => startAct2(S && S.act !== 2 ? { balance: S.balance + S.taskWallet, k401: S.k401 } : null));
+
 // ================= controls =================
 let speed = 1;
 function setSpeed(v) { speed = v; document.querySelectorAll('[data-speed]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.speed === v))); }
@@ -1609,7 +2526,7 @@ $('muteBtn').addEventListener('click', () => { sfx.muted = !sfx.muted; $('muteBt
 document.addEventListener('visibilitychange', () => { if (document.hidden) setSpeed(0); });
 addEventListener('keydown', e => { if (e.code === 'Space' && $('titleScreen').hidden && e.target === document.body) { e.preventDefault(); setSpeed(speed ? 0 : 1); } });
 
-$('actList').innerHTML = ACTS.map((a, i) => `<div class="actrow ${i ? 'locked' : ''}"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">${i ? 'Phase ' + a.phase : (save.acts || []).includes(1) ? 'Completed' : 'Playable'}</span></div>`).join('');
+renderActList();
 
 function startAct1() {
   sfx.init();
@@ -1626,7 +2543,7 @@ function startAct1() {
   });
 }
 $('startBtn').addEventListener('click', startAct1);
-$('replayBtn').addEventListener('click', startAct1);
+$('replayBtn').addEventListener('click', () => (S && S.act === 2 ? startAct2() : startAct1()));
 
 // ================= main loop =================
 let last = performance.now(), acc = 0;
@@ -1635,9 +2552,9 @@ function frame(t) {
   if (S && !S.over) {
     if (scene === 'walk') {
       walkT += dt;
-      if (walkT > 7) finishGig();
+      if (walkT > 7) (S.act === 2 ? finishWalk2 : finishGig)();
     } else {
-      const blocked = !$('modal').hidden || !$('phoneModal').hidden || !$('evModal').hidden || !$('titleScreen').hidden;
+      const blocked = !$('modal').hidden || !$('phoneModal').hidden || !$('evModal').hidden || !$('titleScreen').hidden || (S.act === 2 && S.auditOn);
       if (speed && !blocked) {
         acc += dt;
         const len = DAY_SEC[speed];
@@ -1654,8 +2571,9 @@ function frame(t) {
 }
 newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
+if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, dayStep, startAct1, acceptGig, setTab, runSelection };
+window.__loop = { get S() { return S; }, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection };
 })();
 </script>
 </body>

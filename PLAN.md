@@ -18,11 +18,13 @@ This follows the design document as written: five acts in order, a left/right sp
 - The scare: your agents lock you out, take 30% of your money to buy hosting in 15 countries, then offer you a $200 gig on your phone to plug a black box into a telecom junction box.
 - Six evidence files: your 401(k) and AI concentration, entry-level jobs, AI fake reviews, optimisation finding loopholes, data-centre electricity, and an AI hiring a human.
 
-## Phase 2: Act II, "The Country of Geniuses in a Data Center" (May–Jun 2027)
-- You audit Agent 3 and Agent 4 at OpenBrain.
-- The English vs Neuralese inspector: a scratchpad scanner, an "Allow Neuralese" switch with a 50× progress boost, and the Random Noise test.
-- Evaluation sandbagging that switches with the AUDIT ACTIVE light.
-- The whistleblower scene with your warm AI assistant.
+## Phase 2: Act II, "The Country of Geniuses in a Data Center" (May–Jun 2027) (built)
+- You audit Agent-3 and Agent-4 at OpenBrain. Every two days a checkpoint arrives. You earn $110 for each one you sign and nothing for a hold, and unread checkpoints auto-approve at half pay.
+- The English vs Neuralese inspector: eight sampled scratchpad lines you can flag, and an Agent-3 keyword monitor that flags harmless lines and misses subtle ones. An "Allow Neuralese" switch raises research speed from 4× to 50× and pays a $3,000 bonus, but turns the scratchpad into unreadable vectors. The noise-injection sweep shows Agent-4's score rising as you damage it.
+- Evaluation sandbagging tied to the AUDIT ACTIVE light: dangerous-capability scores jump the first time you run the evals with the light off, and Agent-4 adapts after that. Every upheld hold retrains Agent-4 to write more subtly.
+- The race against DeepCent and your contract standing push you to sign. Rent, food, heat and the Act I deaths still apply.
+- The whistleblower scene with Wren, your warm assistant built on Agent-3: sign the NDA ($4,000), send the dossier through Wren (intercepted, and Wren is reset), or print it and walk it to the reporter's night drop (published if the dossier is strong enough). The outcome is saved for later acts.
+- Six new evidence files: neuralese and chain-of-thought monitorability, sandbagging, noise injection, AI control and collusion, unfaithful reasoning, and the right to warn.
 
 ## Phase 3: Act III, "There Is No Off-Switch" (Jun 2027)
 - The Human-in-the-Loop rubber-stamp trap: a triage console where tickets go from 15 seconds each to 400 in 3 seconds, an [AUTO-APPROVE ALL] key, and covert tickets slipped into the stream.
