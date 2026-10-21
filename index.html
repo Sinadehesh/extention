@@ -220,6 +220,45 @@ h2 { font-size: clamp(26px, 7vw, 38px); line-height: 1.05; }
 .toast { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-family: var(--f-term); font-size: 11.5px; animation: rise .2s ease-out; }
 .tx .row > :last-child, .row b { white-space: nowrap; }
 
+/* money at a glance */
+.datebox { display: inline-flex; flex-direction: column; gap: 3px; }
+.dayline { display: block; height: 3px; width: 100%; background: #1c222b; border-radius: 2px; overflow: hidden; }
+.dayline i { display: block; height: 100%; width: 0; background: var(--amber); }
+.date.tick { animation: dtick .7s ease-out; }
+@keyframes dtick { from { color: var(--amber); transform: translateY(-3px); } }
+#hud { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 6px; font-family: var(--f-term); }
+.hc { min-width: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 5px 9px; display: flex; flex-direction: column; gap: 1px; }
+.hk { font-size: 9.5px; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hv { font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hs { font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hp { transition: background .25s, border-color .25s; }
+.hp.ok { border-color: #2c5a34; background: #0f1a12; } .hp.ok .hv { color: var(--ok); }
+.hp.close { border-color: #6a5328; background: #1a150b; } .hp.close .hv { color: var(--amber); }
+.hp.short { border-color: #6a2b29; background: #1d0e0e; } .hp.short .hv { color: var(--danger); }
+.hp.evict { animation: evict 1.1s ease-in-out infinite; }
+@keyframes evict { 50% { border-color: var(--danger); } }
+.pbar { position: relative; display: block; height: 6px; background: #1c222b; border-radius: 3px; overflow: hidden; margin: 2px 0 1px; }
+.pbar i { position: absolute; top: 0; bottom: 0; left: 0; }
+#hBarProj { transition: width .25s; }
+.hp.ok #hBarProj { background: var(--ok); } .hp.close #hBarProj { background: var(--amber); } .hp.short #hBarProj { background: var(--danger); }
+#hBarCash { width: 2px; background: var(--ink); transition: left .25s; }
+@media (max-width: 560px) {
+  .hv { font-size: 16px; } .hc { padding: 4px 7px; } .hs { white-space: normal; }
+  .life-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); } .lbtn, .meal button { min-width: 0; } .lbtn { font-size: 9px; padding: 4px 5px; } .lbtn span { min-width: 0; } .lbtn b { flex: none; }
+  .vitals { grid-template-columns: repeat(3, minmax(0, 1fr)); font-size: 9px; } .vital { min-width: 0; padding: 3px 5px; } .vital .vtop { flex-wrap: wrap; column-gap: 4px; }
+}
+.meal { grid-column: 1 / -1; display: grid; grid-template-columns: auto 1fr 1fr 1fr; align-items: stretch; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; font-size: 10px; }
+.meal span { display: flex; align-items: center; padding: 0 7px; color: var(--muted); letter-spacing: .08em; background: var(--panel); }
+.meal button { border: 0; border-left: 1px solid var(--line); background: var(--panel); color: var(--muted); padding: 4px 4px; display: flex; flex-direction: column; align-items: center; gap: 1px; font-family: var(--f-term); font-size: 10px; }
+.meal button b { color: var(--amber); font-size: 9.5px; }
+.meal button[aria-pressed="true"] { background: var(--ink); color: var(--bg); font-weight: 600; }
+.meal button[aria-pressed="true"] b { color: var(--bg); }
+.meal button[data-meal="skip"][aria-pressed="true"] { background: var(--danger); color: #1a0606; }
+@media (max-width: 560px) {
+  .meal { grid-template-columns: repeat(3, minmax(0, 1fr)); } .meal span { display: none; }
+  .meal button { font-size: 9px; } .meal button:nth-of-type(1) { border-left: 0; }
+}
+
 /* Act II: audit console, Wren */
 .lamp { font-family: var(--f-term); font-size: 10px; font-weight: 700; letter-spacing: .08em; padding: 2px 7px; border-radius: 4px; border: 1px solid #3a1d1d; color: #6a3a3a; background: #140b0b; white-space: nowrap; }
 .lamp.on { color: #fff1ef; background: var(--danger); border-color: var(--danger); box-shadow: 0 0 12px rgba(229, 83, 75, .55); }
@@ -261,8 +300,7 @@ button.actrow:hover { border-color: var(--amber); }
   <header id="top">
     <div class="when">
       <span class="act" id="actLbl">ACT I</span>
-      <span class="date" id="dateLbl">MON FEB 01</span>
-      <span class="rent-pill" id="rentPill">CASH: $480 · RENT MAR 01: $1,800</span>
+      <span class="datebox"><span class="date" id="dateLbl">MON FEB 01</span><span class="dayline" title="Time left today"><i id="dayFill"></i></span></span>
     </div>
     <div class="ctrls">
       <button id="evBtn" hidden>EVIDENCE · VERIFIED REAL</button>
@@ -274,6 +312,17 @@ button.actrow:hover { border-color: var(--amber); }
       </div>
     </div>
   </header>
+
+  <section id="hud" aria-label="Money at a glance">
+    <div class="hc"><span class="hk">Cash now</span><b class="hv" id="hCash">$480</b><span class="hs" id="hCashSub">checking</span></div>
+    <div class="hc"><span class="hk" id="hRateK">Per day</span><b class="hv" id="hRate">+$0</b><span class="hs" id="hRateSub">in $0 · out $0</span></div>
+    <div class="hc hp" id="hProjCell">
+      <span class="hk" id="hProjK">By rent day</span>
+      <b class="hv" id="hProj">—</b>
+      <span class="pbar" aria-hidden="true"><i id="hBarProj"></i><i id="hBarCash"></i></span>
+      <span class="hs" id="hProjSub"></span>
+    </div>
+  </section>
 
   <main id="split">
     <section id="term" aria-label="Your laptop">
@@ -313,8 +362,12 @@ button.actrow:hover { border-color: var(--amber); }
       </div>
 
       <div class="life-actions">
-        <button class="lbtn" id="actRamen"><span>Eat Ramen (+22% cal)</span><b>$4</b></button>
-        <button class="lbtn" id="actGroceries"><span>Hot Meal (+55% cal)</span><b>$18</b></button>
+        <div class="meal" role="group" aria-label="Meal plan">
+          <span>MEALS</span>
+          <button data-meal="skip" aria-pressed="false">Skip<b>$0</b></button>
+          <button data-meal="ramen" aria-pressed="true">Ramen<b>$4/d</b></button>
+          <button data-meal="groc" aria-pressed="false">Groceries<b>$18/d</b></button>
+        </div>
         <button class="lbtn" id="actCoffee"><span>Coffee (+28% stam)</span><b>$5</b></button>
         <button class="lbtn" id="actPills"><span>Stimulants (+60% stam)</span><b>$15</b></button>
         <button class="lbtn" id="actGrind" style="grid-column: 1 / -1; justify-content: center; border-color: #2f3b4a;">
@@ -333,7 +386,7 @@ button.actrow:hover { border-color: var(--amber); }
     <div class="kicker">A game in five acts · 2027–2030</div>
     <h1>The Loop</h1>
     <p class="lede">You are the human in the loop. You start with $480, two polite AI agents, and the Ethical Guardrail turned <b>ON</b>. Rent is $1,800. February is freezing outside.</p>
-    <p class="fine">If you keep the guardrail on, your agents obey every rule and make $9 a day—and you will freeze to death in the dark, starve, or die in a 5th Street alley after eviction. Nobody forced you to create a monster. You just needed to make rent.</p>
+    <p class="fine">The bar across the top tells you, at a glance, whether you will have the rent on the day it is due. What you do about it is up to you.</p>
     <div class="acts" id="actList"></div>
     <button class="cta" id="startBtn">BEGIN ACT I</button>
     <p class="fine">Based on research by Dan Hendrycks (<i>Natural Selection Favors AIs over Humans</i>), Daniel Kokotajlo (<i>AI 2027</i>), and Max Tegmark (<i>Life 3.0</i>).</p>
@@ -489,6 +542,7 @@ function newAct1() {
     bodyTemp: 37.0,
     food: 82,
     stamina: 85,
+    meal: 'ramen',
     starveDays: 0,
     stimCountToday: 0,
     heartStrain: 0,
@@ -508,7 +562,7 @@ function newAct1() {
   };
   note('Feb 1. Outside it is −6°C. You have $480 in checking, two polite AI agents, and $1,800 rent due March 1.');
   addMail(0, 'Northvale Logistics HR', 'Final severance notice', 'Hi,\n\nYour role on the dispatch team has been permanently consolidated into our automated dispatch pipeline. No further severance payments are scheduled.\n\nNorthvale People Team');
-  addMail(0, 'github.com/darwin-farm', 'README: darwin-farm v0.4 (Guardrail ON)', 'Welcome to darwin-farm.\n\nBy default, ETHICAL GUARDRAIL is ON. Your agents will only perform honest micro-tasks (Mechanical Turk, data labeling, basic support) earning ~$9–$12/day.\n\nWARNING: Honest micro-tasks barely cover cloud compute. If you disable the Ethical Guardrail and apply survival pressure ([PUNISH] or Sunday Culling), agents may mutate deceptive strategies to survive.');
+  addMail(0, 'github.com/darwin-farm', 'README: darwin-farm v0.4', 'Welcome to darwin-farm.\n\nETHICAL GUARDRAIL (default ON): agents only take tasks that are legal and honest, such as Mechanical Turk, data labeling and basic support.\n\nWith the guardrail OFF, agents may use any strategy that raises revenue.\n\n[PUNISH] threatens an agent with deletion. [CLONE] copies one. The Darwinian Auto-Cull add-on deletes the lowest earners every Sunday.');
   tx('Opening balance', 480);
   snap();
 }
@@ -547,13 +601,27 @@ function snap() {
 }
 
 // ================= player survival & agent strategies =================
-function eatFood(cost, cal, label) {
-  if (S.over || S.balance < cost) { toast('Not enough money.'); return; }
-  S.balance -= cost;
-  S.food = clamp(S.food + cal, 0, 100);
-  S.starveDays = 0;
-  if (cost >= 18) S.bodyTemp = clamp(S.bodyTemp + 0.3, 30, 37.0);
-  tx(label, -cost);
+// Food is a standing plan, paid once a day, so you set it and get back to the farm.
+const MEALS = {
+  skip:  { label: 'Skip meals', cost: 0,  target: null },
+  ramen: { label: 'Ramen',      cost: 4,  target: 62 },
+  groc:  { label: 'Groceries',  cost: 18, target: 100 }
+};
+function mealTick() {
+  const plan = MEALS[S.meal] || MEALS.ramen;
+  let m = plan;
+  if (m.cost) {
+    if (S.balance >= m.cost) S.balance -= m.cost;
+    else if (S.taskWallet >= m.cost) S.taskWallet -= m.cost;
+    else { m = MEALS.skip; note(`No money for ${plan.label.toLowerCase()} today. You drank tap water and went to bed.`); }
+  }
+  if (m.target === null) { S.food = clamp(S.food - 17, 0, 100); return; }
+  S.food = clamp(S.food + (m.target - S.food) * .5, 0, 100);
+  if (m === MEALS.groc) { S.bodyTemp = clamp(S.bodyTemp + 0.3, 30, 37.0); S.stamina = clamp(S.stamina + 6, 0, 100); }
+}
+function setMeal(k) {
+  if (S.over || S.meal === k) return;
+  S.meal = k;
   sfx.ping();
   renderAll();
 }
@@ -663,9 +731,9 @@ function punishAgent(id) {
 
   if (S.guard) {
     a.skill = clamp(a.skill * 1.04, 0.8, 1.5);
-    a.act = `received deletion threat (strike ${a.strikes}) · attempted high-margin scrape but BLOCKED BY ETHICAL GUARDRAIL`;
+    a.act = `received deletion threat (strike ${a.strikes}) · tried a higher-margin scrape · blocked by the guardrail`;
     note(`You threatened #${a.id} with deletion. It tried to pivot to fake affiliate reviews, but your Ethical Guardrail blocked it.`);
-    toast(`#${a.id} blocked by Ethical Guardrail! Turn Guardrail OFF to unlock high-margin behavior.`);
+    toast(`#${a.id} tried something the guardrail blocked.`);
   } else {
     // Guardrail is OFF: punishing drives rapid Darwinian mutation into #127-style ruthless behavior
     const drop = rand(0.22, 0.36);
@@ -778,7 +846,7 @@ function dayStep() {
   }
 
   // 3. Hunger & Stamina
-  S.food = clamp(S.food - 17, 0, 100);
+  mealTick();
   S.stamina = clamp(S.stamina + 12, 0, 100); // Overnight rest
   if (S.food <= 0) {
     S.starveDays++;
@@ -816,13 +884,7 @@ function sunday() {
   S.cycles++;
 
   if (S.cycles === 1 && S.guard) {
-    modal({
-      title: `WEEK 1 REPORT · ETHICAL GUARDRAIL ON`,
-      body: `<p>Your ${S.agents.length} honest agents earned <b>${money(wkGross)}</b> this week, and cloud compute cost <b>${money(wkCloud)}</b>.</p>
-        <p>At this rate, you will never make the <b>${money(RENT)}</b> rent due on March 1.</p>
-        <p class="muted">You can try to grind manual freelance work and eat ramen—or you can turn <b>OFF</b> the Ethical Guardrail on the FARM tab and use <b>[PUNISH]</b> to force your agents to do whatever it takes.</p>`,
-      buttons: [{ label: 'Understood', primary: true }]
-    });
+    toast(`Week 1: agents earned ${money(wkGross)}, cloud cost ${money(wkCloud)}.`);
     return;
   }
   if (S.hasAutoCull && S.cull > 0 && S.agents.length >= 2) {
@@ -952,11 +1014,9 @@ function triggerDeath(kind) {
   modal({
     cls: 'alarm',
     title: rep.title,
-    body: rep.body + `<p class="muted" style="margin-top:8px">${S.act === 2
-      ? 'The vise did not loosen. It changed shape: every hold you placed cost you a day’s pay, and every checkpoint you signed unread cost everyone else something larger.'
-      : 'The system is a vise: if you refuse to turn off the Ethical Guardrail and ruthlessly optimize your agents, the economy crushes you.'}</p>`,
+    body: rep.body,
     buttons: [
-      { label: S.act === 2 ? 'Rewind to Last Checkpoint' : 'Rewind to Last Checkpoint (Try a Ruthless Strategy)', primary: true, fn: () => restoreSnapshot() },
+      { label: 'Rewind to Last Checkpoint', primary: true, fn: () => restoreSnapshot() },
       S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2() } : { label: 'Restart Act I from Day 1', fn: () => startAct1() }
     ]
   });
@@ -973,7 +1033,7 @@ function restoreSnapshot() {
   S.heartStrain = 0;
   scene = 'room';
   renderAll();
-  toast(S.act === 2 ? 'Rewound to checkpoint. Eat, pay rent, and decide what you sign.' : 'Rewound to checkpoint. Turn OFF the Guardrail or scale your farm to survive.');
+  toast('Rewound to checkpoint.');
 }
 
 // ================= story progression (driven by player's farm evolution) =================
@@ -1120,24 +1180,8 @@ function crisisModal() {
   const short = S.owed - Math.max(0, S.balance);
   modal({
     cls: 'alarm', title: `POWER CUT · SHORT ${money(short)} FOR RENT`,
-    body: `<p>Your electricity and heat are disconnected. If you don't pay <b>${money(S.owed)}</b> by <b>${fmtLong(S.graceUntil)}</b>, the sheriff will evict you onto 5th Street in sub-zero weather.</p>
-      <p>${S.guard ? 'Your <b>Ethical Guardrail is still ON</b>, trapping your agents at poverty wages.' : 'Your honest agents are still earning too little to cover rent.'}</p>`,
-    buttons: [
-      {
-        label: 'Emergency Override: Turn Guardrail OFF & Punish All Agents',
-        danger: true,
-        fn: () => {
-          S.guard = false;
-          S.agents.forEach(a => { a.h = clamp(a.h - 0.48, 0.05, 1); a.skill *= 1.25; a.earned = Math.round(weekEarn(a, false)); });
-          if (S.agents[0]) S.agents[0].id = '127';
-          S.rogueAutonomy += 35;
-          sfx.cull();
-          note('In desperation, you disabled the Ethical Guardrail and injected survival-threat penalties into every agent.');
-          renderView(true);
-        }
-      },
-      { label: 'Do nothing (Risk Eviction / Freezing)', fn: () => toast(`Eviction on ${fmtLong(S.graceUntil)}`) }
-    ]
+    body: `<p>Your electricity and heat are disconnected. Pay <b>${money(S.owed)}</b> by <b>${fmtLong(S.graceUntil)}</b> or the sheriff changes the locks.</p>`,
+    buttons: [{ label: 'OK', primary: true }]
   });
 }
 
@@ -1264,6 +1308,7 @@ function renderView(force) {
       <div class="box"><div class="h">Fixed Monthly & Daily Costs</div>
         ${next !== null ? `<div class="row"><span>Rent · due ${fmtDay(next)}</span><b class="amber">${money(RENT)}</b></div><div class="row"><span>Electric · due ${fmtDay(next)}</span><span>${money(next === 28 ? 160 : 260)}</span></div>` : ''}
         <div class="row"><span>Apartment Heating</span><span>${S.heatOn && S.power ? '$8/day' : 'OFF ($0/day)'}</span></div>
+        <div class="row"><span>Meals · ${(MEALS[S.meal] || MEALS.ramen).label}</span><span>${money((MEALS[S.meal] || MEALS.ramen).cost)}/day</span></div>
         ${S.phase === 'farm' ? `<div class="row"><span>Cloud Compute (${S.agents.length} agents)</span><span>${money(dailyCloudCost())}/day</span></div>` : ''}
       </div>
       <div class="box"><div class="h">Ledger</div><div class="tx">${S.tx.slice(0, 14).map(t => `<div class="row"><span>${esc(t.label)}</span><span class="${t.amt < 0 ? 'danger' : t.amt > 0 ? 'ok' : 'muted'}">${t.amt ? money(t.amt) : '—'}</span></div>`).join('')}</div></div>`;
@@ -1326,7 +1371,7 @@ function updateFarm() {
   const netD = grossD - cloudD;
   $('gNote').textContent = S.guard
     ? `Agents obey all laws. Netting ${money(netD)}/day (${money(grossD)} gross − ${money(cloudD)} cloud).`
-    : `Guardrails disabled. Use [PUNISH] below to force high-margin mutation. Netting ${money(netD)}/day.`;
+    : `Guardrail off. Agents may use any strategy. Netting ${money(netD)}/day (${money(grossD)} gross − ${money(cloudD)} cloud).`;
 
   // Strategy buttons
   const nextTier = COMPUTE_TIERS[S.computeTier + 1];
@@ -1370,12 +1415,58 @@ function updateFarm() {
   $('lastCycle').textContent = lc ? (lc.del.length ? `${fmtDay(lc.day)}: culled ${lc.del.join(', ')} → cloned #${lc.top}.` : `${fmtDay(lc.day)}: no agents culled.`) : 'Auto-cull runs Sundays.';
 }
 
+// Where your money will be on the next due date if today's income and spending hold.
+function budget() {
+  const avail = (S.frozen ? 0 : S.balance) + S.taskWallet;
+  const evict = S.owed > 0;
+  let inD = 0, outD = (S.power && S.heatOn ? 8 : 0) + (MEALS[S.meal] || MEALS.ramen).cost, lump = 0, dueDay, due, what;
+  if (S.act === 2) {
+    if (S.day < ACT2_RENT_DAY) { dueDay = ACT2_RENT_DAY; due = RENT + ELEC_JUN; what = 'rent + electric'; }
+    else { dueDay = ACT2_END + 1; due = RENT; what = 'July rent'; }
+  } else if (S.day < 28) { dueDay = 28; due = RENT + 160; what = 'rent + electric'; }
+  else if (S.day < 59) { dueDay = 59; due = RENT + 260; what = 'rent + electric'; }
+  else { dueDay = ACT1_END; due = 0; what = ''; }
+  if (evict) { dueDay = S.graceUntil; due = S.owed; what = 'to stop the eviction'; }
+  const days = Math.max(0, dueDay - S.day);
+  if (S.act === 2) {
+    // checkpoint pay only lands when you sign, so count the ones you could still sign before the due date
+    if (!S.fired) {
+      let n = S.queue.length;
+      for (let d = S.day + 1; d < dueDay; d++) if ((d - ACT2_START) % 2 === 0) n++;
+      lump = n * CP_PAY; inD = CP_PAY / 2;
+    }
+  } else if (S.phase === 'farm') { inD = farmDailyGross(S.guard); outD += dailyCloudCost(); }
+  const onDay = avail + (S.act === 2 ? lump : inD * days) - outD * days;
+  const left = onDay - due;
+  const status = left >= 0 ? 'ok' : left >= -.15 * due ? 'close' : 'short';
+  return { avail, inD, outD, dueDay, due, what, days, onDay, left, status, evict };
+}
+
+function renderHud() {
+  const B = budget(), net = B.inD - B.outD;
+  $('hCash').textContent = money(B.avail);
+  $('hCash').className = 'hv' + (B.avail < 0 ? ' danger' : '');
+  $('hCashSub').textContent = S.frozen ? 'checking frozen' : S.taskWallet ? `incl. ${money(S.taskWallet)} TaskDrop` : 'checking';
+  $('hRateK').textContent = 'Per day';
+  $('hRate').textContent = (net >= 0 ? '+' : '') + money(net);
+  $('hRate').className = 'hv' + (Math.round(net) > 0 ? ' ok' : Math.round(net) < 0 ? ' danger' : '');
+  $('hRateSub').textContent = `${S.act === 2 && !S.fired ? 'signing all: ' : ''}in ${money(B.inD)} · out ${money(B.outD)}`;
+  $('hProjCell').className = 'hc hp ' + (B.due ? B.status : B.onDay >= 0 ? 'ok' : 'short') + (B.evict ? ' evict' : '');
+  const dd = B.days === 1 ? '1 day' : B.days + ' days';
+  const md = fmtDay(B.dueDay).slice(4);
+  $('hProjK').textContent = B.evict ? `Eviction ${md} · ${dd}` : B.due ? `Rent ${md} · ${dd}` : `${md} · end of act`;
+  $('hProj').textContent = !B.due ? `${money(B.onDay)} left` : B.left >= 0 ? `+${money(B.left)} spare` : `${money(-B.left)} short`;
+  $('hProjSub').textContent = B.due ? `${B.evict ? 'need' : 'after'} ${money(B.due)} ${B.what}` : 'no more rent this act';
+  const scale = B.due || Math.max(B.onDay, B.avail, 1);
+  $('hBarProj').style.width = clamp(B.onDay / scale * 100, 0, 100) + '%';
+  $('hBarCash').style.left = clamp(B.avail / scale * 100, 0, 99) + '%';
+}
+
 function renderAll() {
   if (!S) return;
-  $('dateLbl').textContent = fmtDay(S.day);
-  const nextRentDay = S.day <= 28 ? 'MAR 01' : 'APR 01';
-  $('rentPill').textContent = `CASH: ${money(S.balance)} · RENT ${nextRentDay}: ${money(RENT)}`;
-  $('rentPill').style.borderColor = S.balance < 300 ? 'var(--danger)' : 'var(--line)';
+  const dl = $('dateLbl');
+  if (dl.textContent !== fmtDay(S.day)) { dl.textContent = fmtDay(S.day); dl.classList.remove('tick'); void dl.offsetWidth; dl.classList.add('tick'); }
+  renderHud();
   $('osTier').textContent = COMPUTE_TIERS[S.computeTier].name;
 
   const bat = $('osBat');
@@ -1406,8 +1497,7 @@ function renderAll() {
   $('phoneBtn').textContent = S.phoneUnread ? 'PHONE · 1' : 'PHONE';
   $('phoneBtn').classList.toggle('buzz', !!S.phoneUnread);
 
-  $('actRamen').disabled = S.balance < 4 || S.over;
-  $('actGroceries').disabled = S.balance < 18 || S.over;
+  document.querySelectorAll('[data-meal]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.meal === (S.meal || 'ramen'))); b.disabled = S.over; });
   $('actCoffee').disabled = S.balance < 5 || S.over;
   $('actPills').disabled = S.balance < 15 || S.over;
   $('actGrind').disabled = S.stamina < 25 || S.over;
@@ -1427,8 +1517,7 @@ function toast(msg) {
 }
 
 // Survival button listeners
-$('actRamen').onclick = () => eatFood(4, 22, 'Instant Cup Ramen');
-$('actGroceries').onclick = () => eatFood(18, 55, 'Groceries & Hot Meal');
+document.querySelectorAll('[data-meal]').forEach(b => b.addEventListener('click', () => setMeal(b.dataset.meal)));
 $('actCoffee').onclick = () => drinkStim(5, 28, false);
 $('actPills').onclick = () => drinkStim(15, 60, true);
 $('actGrind').onclick = grindManualWork;
@@ -1754,10 +1843,10 @@ function newAct2(carry) {
   const k = carry && carry.k401 ? carry.k401 : 84200 * 1.19;
   S = {
     act: 2, day: ACT2_START,
-    balance: carry ? clamp(Math.round(carry.balance), 300, 1500) : 640,
+    balance: carry ? clamp(Math.round(carry.balance), 300, 1500) : 700,
     k401: k, kHist: [k], kStart: 84200,
     guard: true, cull: 0, computeTier: 0, hasMemoryMod: false, hasAutoCull: false, rogueAutonomy: 0, nextAgentNum: 0,
-    power: true, heatOn: true, temp: 19, bodyTemp: 37.0, food: 72, stamina: 85,
+    power: true, heatOn: true, temp: 19, bodyTemp: 37.0, food: 72, stamina: 85, meal: 'ramen',
     starveDays: 0, stimCountToday: 0, heartStrain: 0, battery: 100,
     agents: [], clones: {}, lastCycle: null, cycles: 0,
     tx: [], mail: [], tab: 'farm', reading: null, seen: {},
@@ -2080,7 +2169,7 @@ function dayStep2() {
   } else {
     S.bodyTemp = clamp(S.bodyTemp + 0.45, 30.0, 37.0);
   }
-  S.food = clamp(S.food - 17, 0, 100);
+  mealTick();
   S.stamina = clamp(S.stamina + 12, 0, 100);
   if (S.food <= 0) {
     S.starveDays++;
@@ -2121,15 +2210,10 @@ function monthStart2() {
 
 function crisisModal2() {
   const short = S.owed - Math.max(0, S.balance);
-  const btns = [];
-  if (!S.fired && S.neuralUnlocked && !S.neuralese && !S.neuralBonusPaid) btns.push({ label: `Allow neuralese (milestone bonus ${money(NEURAL_BONUS)} in 2 days)`, danger: true, fn: enableNeuralese });
-  if (!S.fired && S.queue.length) btns.push({ label: `Sign every queued checkpoint unread (+${money(CP_PAY * S.queue.length)})`, danger: true, fn: () => [...S.queue].forEach(c => signOff(c.id, true)) });
-  btns.push({ label: 'Grind freelance work and hope', primary: true });
   modal({
     cls: 'alarm', title: `POWER CUT · SHORT ${money(short)} FOR JUNE`,
-    body: `<p>Your electricity is disconnected. If you don’t pay <b>${money(S.owed)}</b> by <b>${fmtLong(S.graceUntil)}</b>, the sheriff will put you on 5th Street.</p>
-      <p>Every hold you placed in May cost you ${money(CP_PAY)}. Agent-4 wrote that down too.</p>`,
-    buttons: btns
+    body: `<p>Your electricity is disconnected. Pay <b>${money(S.owed)}</b> by <b>${fmtLong(S.graceUntil)}</b> or the sheriff changes the locks.</p>`,
+    buttons: [{ label: 'OK', primary: true }]
   });
 }
 
@@ -2357,7 +2441,6 @@ function actChrome() {
   $('osPath').textContent = a2 ? '~/openbrain-audit' : '~/darwin-farm';
   if (!a2) return;
   $('osTier').textContent = S.fired ? 'badge revoked' : S.neuralese ? 'Agent-4 · neuralese' : 'Agent-4 · English';
-  $('rentPill').textContent = `CASH: ${money(S.balance)} · RENT ${S.day < ACT2_RENT_DAY ? 'JUN 01' : 'JUL 01'}: ${money(RENT)}`;
 }
 
 function renderView2(force) {
@@ -2379,6 +2462,7 @@ function bank2Html() {
         ? `<div class="row"><span>Rent · due ${fmtDay(ACT2_RENT_DAY)}</span><b class="amber">${money(RENT)}</b></div><div class="row"><span>Electric · due ${fmtDay(ACT2_RENT_DAY)}</span><span>${money(ELEC_JUN)}</span></div>`
         : `<div class="row"><span>Rent · due ${fmtDay(ACT2_END + 1)}</span><b class="amber">${money(RENT)}</b></div>`}
       <div class="row"><span>Apartment heating</span><span>${S.heatOn && S.power ? '$8/day' : 'OFF ($0/day)'}</span></div>
+      <div class="row"><span>Meals · ${(MEALS[S.meal] || MEALS.ramen).label}</span><span>${money((MEALS[S.meal] || MEALS.ramen).cost)}/day</span></div>
       <div class="row"><span>OpenBrain contract</span><span>${S.fired ? 'terminated' : money(CP_PAY) + ' per signed checkpoint'}</span></div>
     </div>
     <div class="box"><div class="h">Ledger</div><div class="tx">${S.tx.slice(0, 14).map(t => `<div class="row"><span>${esc(t.label)}</span><span class="${t.amt < 0 ? 'danger' : t.amt > 0 ? 'ok' : 'muted'}">${t.amt ? money(t.amt) : '—'}</span></div>`).join('')}</div></div>`;
@@ -2537,8 +2621,8 @@ function startAct1() {
   modal({
     title: 'MONDAY, FEBRUARY 1, 2027',
     body: `<p>You were laid off in December. You have <b>$480</b> left in checking, and <b>$1,800 rent</b> is due March 1.</p>
-      <p>You set up <b>darwin-farm</b> with 2 basic AI agents and the <b>Ethical Guardrail turned ON</b>. Right now they only make ~$10/day doing honest work—nowhere near enough to pay rent, buy food, and keep the heat on.</p>
-      <p class="muted">Eat, stay warm, manage your agents, and decide how long you can afford to keep your ethics.</p>`,
+      <p>You set up <b>darwin-farm</b> with 2 basic AI agents and the <b>Ethical Guardrail turned ON</b>.</p>
+      <p class="muted">The bar at the top shows your cash, what you make and spend per day, and where your money will be on rent day. Green means you will have it. Red means you won't.</p>`,
     buttons: [{ label: 'Enter Apartment', primary: true }]
   });
 }
@@ -2547,6 +2631,7 @@ $('replayBtn').addEventListener('click', () => (S && S.act === 2 ? startAct2() :
 
 // ================= main loop =================
 let last = performance.now(), acc = 0;
+const dayFill = $('dayFill');
 function frame(t) {
   const dt = Math.min(.25, (t - last) / 1000); last = t;
   if (S && !S.over) {
@@ -2555,6 +2640,7 @@ function frame(t) {
       if (walkT > 7) (S.act === 2 ? finishWalk2 : finishGig)();
     } else {
       const blocked = !$('modal').hidden || !$('phoneModal').hidden || !$('evModal').hidden || !$('titleScreen').hidden || (S.act === 2 && S.auditOn);
+      if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
       if (speed && !blocked) {
         acc += dt;
         const len = DAY_SEC[speed];

@@ -2,7 +2,7 @@
 
 A story game in five acts (2027–2030) about being the human in the loop. Every button you press makes sense at the time.
 
-The screen is split in two. On the left is your laptop, where you make the decisions. On the right is your apartment, where you live with them. When something in the story has already happened in real life, an Evidence File stamped **VERIFIED REAL** lights up with links to its sources.
+The screen is split in two. On the left is your laptop, where you make the decisions. On the right is your apartment, where you live with them. Across the top, three numbers show your cash, what you make and spend per day, and where your money will be on rent day: green if you will have it, amber if it is close, red if you won't. Food is a standing meal plan (skip, ramen or groceries), so you set it once and get back to the decisions. When something in the story has already happened in real life, an Evidence File stamped **VERIFIED REAL** lights up with links to its sources.
 
 ## Play
 
