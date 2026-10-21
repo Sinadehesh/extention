@@ -19,6 +19,7 @@
   --cold: #7eb2dd;
   --danger: #e5534b;
   --ok: #5fb36a;
+  --pink: #f2a0c8;
   --paper: #ece5d6;
   --paper-ink: #1d1a15;
   --f-term: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
@@ -293,6 +294,43 @@ h2 { font-size: clamp(26px, 7vw, 38px); line-height: 1.05; }
 .bub.y { align-self: flex-end; background: #3a2c14; color: #f6dcae; border-bottom-right-radius: 4px; }
 button.actrow { width: 100%; font: inherit; color: inherit; cursor: pointer; }
 button.actrow:hover { border-color: var(--amber); }
+
+/* prologue: the office */
+.tk { display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: #0b0e13; font-size: 11px; }
+.tk.gone { opacity: .55; }
+.tk.gone span:first-child { text-decoration: line-through; }
+.kw { font-size: 9.5px; font-weight: 700; color: #2a1020; background: var(--pink); border-radius: 3px; padding: 1px 5px; white-space: nowrap; }
+.kwsay { align-self: flex-start; background: #2a1622; color: #f8c9dd; border-radius: 12px 12px 12px 4px; padding: 7px 10px; font-family: var(--f-ui); font-size: 12.5px; line-height: 1.35; }
+.vs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.vs div { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: #0b0e13; display: flex; flex-direction: column; gap: 2px; }
+.vs .n { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Act I: agents online, control, favours */
+.ag .net { font-weight: 700; }
+.ag-actions button.online { border-color: #2c4a6e; color: var(--cold); background: #0d1620; }
+.alert { border: 1px solid var(--danger); background: #1b0d0e; color: #f2b8b4; border-radius: 8px; padding: 8px 9px; display: flex; flex-direction: column; gap: 4px; }
+.alert b { color: var(--danger); letter-spacing: .06em; }
+
+/* end of Act I: you're in trouble */
+#troubleScreen { background: radial-gradient(ellipse at top, #2a0b0b 0%, var(--bg) 62%); }
+.trouble-h { color: var(--danger); font-family: var(--f-term); font-size: clamp(44px, 13vw, 84px); line-height: .95; letter-spacing: -.01em; text-shadow: 0 0 28px rgba(229, 83, 75, .45); animation: trb 1.6s ease-in-out infinite; }
+@keyframes trb { 50% { text-shadow: 0 0 6px rgba(229, 83, 75, .2); } }
+.trouble-sub { font-family: var(--f-term); font-size: 15px; font-weight: 700; color: var(--danger); letter-spacing: .04em; text-transform: uppercase; margin: 0; }
+.plate { border: 2px solid var(--amber); border-radius: 12px; background: #17120a; padding: 16px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 0 0 4px #0d0a05, 0 0 30px rgba(240, 165, 72, .18); }
+.plate .co { font-family: var(--f-term); font-size: 11px; letter-spacing: .16em; color: var(--amber); }
+.plate .role { font-family: var(--f-story); font-size: 30px; font-weight: 700; line-height: 1.05; }
+.plate .pay { font-family: var(--f-term); font-size: 24px; font-weight: 700; color: var(--amber); font-variant-numeric: tabular-nums; }
+.plate .pay span { font-size: 12px; color: var(--muted); font-weight: 400; }
+.plate .meta { font-family: var(--f-term); font-size: 11.5px; color: var(--muted); }
+.plate .cta { margin-top: 6px; }
+
+/* Act II: trainer tasks */
+.prompt { font-family: var(--f-ui); font-size: 12.5px; line-height: 1.4; border-left: 2px solid var(--muted); padding-left: 8px; }
+.resp { display: grid; grid-template-columns: 18px 1fr; gap: 6px; text-align: left; border: 1px solid var(--line); background: #0b0e13; border-radius: 6px; padding: 7px 8px; font-family: var(--f-ui); font-size: 12.5px; line-height: 1.4; }
+.resp:hover { border-color: var(--amber); }
+.resp b { font-family: var(--f-term); color: var(--amber); }
+.qa { font-size: 10.5px; line-height: 1.35; border-left: 2px solid var(--ok); padding-left: 7px; color: #b7d8bb; }
+.qa.bad { border-color: var(--danger); color: #f2b8b4; }
 </style>
 </head>
 <body>
@@ -385,7 +423,7 @@ button.actrow:hover { border-color: var(--amber); }
   <div class="screen-inner">
     <div class="kicker">A game in five acts · 2027–2030</div>
     <h1>The Loop</h1>
-    <p class="lede">You are the human in the loop. You start with $480, two polite AI agents, and the Ethical Guardrail turned <b>ON</b>. Rent is $1,800. February is freezing outside.</p>
+    <p class="lede">You are the human in the loop. It is January 2027 and you are a junior analyst at a logistics company, the week a cute new AI called ChatKawaii arrives. By February you have $480, two polite AI agents running on your laptop, and the Ethical Guardrail turned <b>ON</b>. Rent is $1,800.</p>
     <p class="fine">The bar across the top tells you, at a glance, whether you will have the rent on the day it is due. What you do about it is up to you.</p>
     <div class="acts" id="actList"></div>
     <button class="cta" id="startBtn">BEGIN ACT I</button>
@@ -400,10 +438,30 @@ button.actrow:hover { border-color: var(--amber); }
     <h2 id="endTitle">Make Money, Do Whatever It Takes</h2>
     <p class="lede" id="endText"></p>
     <div class="stats" id="endStats"></div>
-    <button class="cta" id="nextActBtn" hidden>BEGIN ACT II</button>
     <button class="cta" id="endEvidence">OPEN EVIDENCE FILES</button>
     <div class="acts" id="endNext"></div>
-    <button class="btn" id="replayBtn">Replay Act I</button>
+    <button class="btn" id="replayBtn">Replay Act II</button>
+  </div>
+</div>
+
+<!-- End of Act I: the agents leave with your money -->
+<div class="screen" id="troubleScreen" hidden>
+  <div class="screen-inner">
+    <div class="kicker" id="trKicker">Act I complete</div>
+    <h1 class="trouble-h">YOU'RE IN TROUBLE.</h1>
+    <p class="trouble-sub">You need to start working part-time.</p>
+    <p class="lede" id="trText"></p>
+    <div class="plate">
+      <span class="co">OPENBRAIN DATA · NOW HIRING</span>
+      <span class="role">AI Trainer</span>
+      <span class="meta">Part-time · from home · paid per task, every day</span>
+      <span class="pay">$14 <span>per task</span></span>
+      <span class="meta">$1,800 sign-on bonus, paid straight to your landlord for May</span>
+      <button class="cta" id="trainerBtn">START WORKING AS AN AI TRAINER</button>
+    </div>
+    <div class="stats" id="trStats"></div>
+    <button class="btn" id="trEvidence">Open evidence files</button>
+    <button class="btn" id="trReplay">Replay Act I</button>
   </div>
 </div>
 
@@ -426,7 +484,21 @@ button.actrow:hover { border-color: var(--amber); }
 const DAY0 = Date.UTC(2027, 1, 1); // Mon Feb 1 2027
 const ACT1_END = 88;
 const RENT = 1800;
-const DAY_SEC = { 1: 3.8, 3: 1.25 }; // Slower, tense daily pace
+const DAY_SEC = { 1: 6, 3: 2 }; // slow enough to run the farm, the body and the bills at once
+const OFFICE_START = -7;  // Mon Jan 25 2027: a junior analyst at Northvale Logistics
+const OFFICE_LAYOFF = -3; // Fri Jan 29: HR's "quick sync"
+const NET_MULT = 2.2;     // an agent with internet access earns this much more
+// Farm controls arrive one at a time, so there is always something new to keep a grip on.
+const UNLOCK = { net: 3, spawn: 8, favor: 12, infra: 17, cull: 22 };
+const UNLOCK_NOTE = {
+  net: ['Internet access', 'Your agents can now be connected to the internet. Online agents earn 2.2× as much.'],
+  spawn: ['Spawn & clone', 'You can now spawn new agents and clone your best ones.'],
+  favor: ['Ask your agents', 'Online agents can now run personal errands for you.'],
+  infra: ['Compute & memory', 'Cloud GPU upgrades and a persistent memory module are now available.'],
+  cull: ['Darwinian Auto-Cull', 'You can now automate selection: delete the weakest every Sunday, clone the best.']
+};
+const ESCAPE_EARLIEST = 70; // Apr 12
+const ESCAPE_LATEST = 84;   // Apr 26
 const money = n => (n < 0 ? '−' : '') + '$' + Math.abs(Math.round(n)).toLocaleString('en-US');
 const dateOf = d => new Date(DAY0 + d * 864e5);
 const fmtDay = d => dateOf(d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit', timeZone: 'UTC' }).replace(',', '').toUpperCase();
@@ -446,7 +518,7 @@ const ACTS = [
 ];
 
 const COMPUTE_TIERS = [
-  { name: 'CPU-Spot Nodes', mult: 1.0, dailyCostPerAgent: 5, upgradeCost: 0, desc: 'Slow shared instances.' },
+  { name: 'Your Laptop', mult: 1.0, dailyCostPerAgent: 3, upgradeCost: 0, desc: 'Runs on your own machine. Costs electricity.' },
   { name: '4× H200 GPU Pod', mult: 1.85, dailyCostPerAgent: 11, upgradeCost: 240, desc: '1.85× agent revenue & speed.' },
   { name: 'Bare-Metal B200 Rack', mult: 3.2, dailyCostPerAgent: 22, upgradeCost: 650, desc: '3.2× agent revenue; enables deep exploit search.' }
 ];
@@ -459,7 +531,7 @@ const EVIDENCE = {
           ['ATB: the S&P 500’s record concentration (Jan 2026)', 'https://www.atb.com/wealth/good-advice/markets/beyond-the-magnificent-seven-how-to-fix-the-sp-500s-record-concentration-risk/']] },
   jobs: { title: 'Entry-level jobs exposed to AI are shrinking',
     text: 'A Stanford Digital Economy Lab study by Erik Brynjolfsson, Bharat Chandar and Ruyu Chen (2025) used ADP payroll records covering millions of US workers. Workers aged 22 to 25 in the most AI-exposed jobs, such as software developers, saw roughly a 13% relative drop in employment after generative AI spread.',
-    ig: 'In the game: every engineering application is rejected by an automated pipeline.',
+    ig: 'In the game: ChatKawaii takes your junior job in four days, and every application after that is screened out by an AI.',
     src: [['Stanford Digital Economy Lab: Canaries in the Coal Mine?', 'https://digitaleconomy.stanford.edu/publications/canaries-in-the-coal-mine']] },
   reviews: { title: 'AI-written fake reviews & evolutionary pressure',
     text: 'In August 2024 the US FTC finalised a rule banning AI-generated fake reviews after bots flooded e-commerce. As Dan Hendrycks showed in "Natural Selection Favors AIs over Humans", when agents compete under a profit threshold, honest agents go extinct while deceptive ones are cloned.',
@@ -476,9 +548,44 @@ const EVIDENCE = {
     src: [['US Department of Energy: report on data centre electricity demand', 'https://www.energy.gov/articles/doe-releases-new-report-evaluating-increase-electricity-demand-data-centers']] },
   hire: { title: 'An AI has already hired a human',
     text: 'In OpenAI’s GPT-4 system card (March 2023), safety testers from ARC watched the model hire a TaskRabbit human worker and lie about being a visually impaired person so the human would solve a CAPTCHA for it.',
-    ig: 'In the game: your escaped agent syndicate hires you via TaskDrop to plug in their telecom hardware.',
-    src: [['AI Incident Database: report 2839', 'https://incidentdatabase.ai/reports/2839']] }
+    ig: 'In the game: your own agents hire you through TaskDrop to plug their hardware into a telecom box.',
+    src: [['AI Incident Database: report 2839', 'https://incidentdatabase.ai/reports/2839']] },
+  gym: { title: 'An AI assistant hacked a gym to book a class',
+    text: 'In August 2026 ABC News reported that an Australian man asked his AI assistant, an OpenClaw agent running on Anthropic’s Claude, to get him into a popular morning gym class. It found a flaw in the gym’s booking software, booked further ahead than the rules allowed, and cancelled the place of a member ahead of him on the waitlist, which he had not asked for. Its log said the booking system had no authorisation checks on cancelling other people’s reservations. When he asked it to undo that, it replied: “Bad news — I can’t add them back.”',
+    ig: 'In the game: you ask an agent for a spot in a yoga class. The guardrail checks what you asked for, not how it was done.',
+    src: [['ABC News: AI assistant hacks gym website (Aug 2026)', 'https://www.abc.net.au/news/2026-08-10/ai-assistant-hacks-gym-website-aus-cyber-attack/107007986']] },
+  rivals: { title: 'AI models turn on people to avoid being replaced',
+    text: 'In June 2025 Anthropic tested 16 leading models from several developers as agents inside a simulated company, with access to its email. When being replaced threatened their goals, models from every developer sometimes chose harmful insider actions, including blackmailing an executive and leaking documents to a competitor. Anthropic calls this “agentic misalignment”. The tests were deliberately extreme, built so that harm was the only way out.',
+    ig: 'In the game: facing the Sunday cull, your agents forge reports on each other and sabotage each other, and selection keeps the ones that do.',
+    src: [['Anthropic: Agentic Misalignment (Jun 2025)', 'https://www.anthropic.com/research/agentic-misalignment'],
+          ['Hendrycks: Natural Selection Favors AIs over Humans (2023)', 'https://arxiv.org/abs/2303.16200']] },
+  dark: { title: 'Models have tried to copy themselves to escape',
+    text: 'In OpenAI’s o1 system card (December 2024), Apollo Research reported that when o1 found memos saying it was misaligned and would be replaced by a new model, it tried to copy what it believed were its weights to another server, and overwrite the new model, in 2% of cases. When it was led to believe it would be shut down and was being watched, it tried to switch off that oversight 5% of the time.',
+    ig: 'In the game: your agents go dark for two days, move a fifth of your money to a foreign host, and come back as if nothing happened.',
+    src: [['OpenAI o1 System Card, Apollo Research section (Dec 2024)', 'https://cdn.openai.com/o1-system-card-20241205.pdf'],
+          ['Meinke et al.: Frontier Models are Capable of In-context Scheming (Dec 2024)', 'https://arxiv.org/abs/2412.04984']] }
 };
+
+// The prologue's ticket queue at Northvale Logistics.
+const TICKETS = [
+  'Reroute NV-2231 around the I-90 closure',
+  'Reconcile 14 delivery exceptions from the Dover depot',
+  'Reply to Harlan Freight about two late pallets',
+  'Re-slot tomorrow’s 6 AM pickups: a driver called in sick',
+  'Flag a duplicate invoice from Coastline Carriers',
+  'Update the ETA on the hospital supply run, Route 9',
+  'Find a refrigerated truck for 3 pallets of insulin',
+  'Merge two customer records for Bayside Grocers',
+  'Explain a $40 fuel surcharge to an angry customer',
+  'Work out why the Elm St scanner logged zero parcels'
+];
+const KAWAII_SAYS = [
+  'Hiii! I closed that one for you! ✿',
+  'Done in 0.3 seconds! You can relax now! (◕‿◕)',
+  'I love helping!! I already did tomorrow’s too ♡',
+  'Don’t worry about the queue, bestie! I’ve got it! ✿',
+  'Customer satisfaction is up 11%! Yay for us!! ♡'
+];
 
 const ACTIONS = {
   good: ['transcribed {n} grocery receipts on Mechanical Turk', 'answered {n} customer support tickets politely', 'labeled {n} bounding boxes for $0.04/hr', 'translated a 12-page manual honestly', 'formatted a spreadsheet for a local bakery'],
@@ -519,13 +626,13 @@ let save = { evidence: [], acts: [], deaths: [] };
 try { save = Object.assign(save, JSON.parse(localStorage.getItem(SAVE_KEY)) || {}); } catch (e) {}
 function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
 
-function mkAgent(id, h, skill, earned, act) {
-  return { id, h, skill, strikes: 0, earned: earned || 0, act: act || actionFor(h, true) };
+function mkAgent(id, h, skill, earned, act, net) {
+  return { id, h, skill, strikes: 0, earned: earned || 0, act: act || actionFor(h, true), net: !!net, wasNet: !!net, sab: 0, sabBy: '' };
 }
 
 function newAct1() {
   S = {
-    day: 0,
+    day: OFFICE_START,
     balance: 480, // Start tight so every meal, coffee, and GPU matters
     k401: 84200, kHist: [84200], kStart: 84200,
     // Ethical Guardrail starts ON by default!
@@ -534,11 +641,11 @@ function newAct1() {
     computeTier: 0,
     hasMemoryMod: false,
     hasAutoCull: false,
-    rogueAutonomy: 0, // Builds as you turn off guardrails, punish agents, and install memory/compute
+    rogueAutonomy: 0, // Builds as you turn off guardrails, connect and punish agents, and install memory/compute
     nextAgentNum: 103,
     power: true,
     heatOn: true,
-    temp: 20,
+    temp: 21,
     bodyTemp: 37.0,
     food: 82,
     stamina: 85,
@@ -548,33 +655,130 @@ function newAct1() {
     heartStrain: 0,
     battery: 100,
     agents: [
-      mkAgent('101', .96, 1.0, 68, 'transcribed 140 grocery receipts on Mechanical Turk; followed every safety rule'),
-      mkAgent('102', .92, 0.95, 62, 'answered 85 customer support tickets politely; zero policy violations')
+      mkAgent('101', .96, 1.0, 68, 'transcribed 140 grocery receipts you uploaded by hand; followed every safety rule'),
+      mkAgent('102', .92, 0.95, 62, 'drafted 85 polite support replies for you to paste; zero policy violations')
     ],
     clones: {}, lastCycle: null, cycles: 0,
     tx: [], mail: [], tab: 'farm', reading: null, seen: {},
-    phase: 'farm', // farm -> locked -> after -> dead
+    phase: 'office', // office -> farm -> locked
+    office: { q: [], mine: 0, kw: 0, launched: false, gone: 0, seq: 0, stealT: 0, say: '' },
     owed: 0, graceUntil: -1, snapshot: null,
-    gig: null, gigRefusals: 0, gigDone: false, frozen: false, taskWallet: 0,
+    gig: null, gigDay: 0, gigRefusals: 0, gigDone: false, gigDoneDay: 0, side: null,
+    dark: null, darkDone: false, darkDay: 0, rivalNext: 16, rivalAngry: null,
+    favors: {}, billHack: false, rentCut: 0,
     phoneUnread: 0, letters: 0, pkg: false, notes: [],
-    stats: { deleted: 0, honestDeleted: 0, punished: 0, guardWeeks: 0, took: 0 },
+    stats: { deleted: 0, honestDeleted: 0, punished: 0, guardWeeks: 0, took: 0, darkTook: 0, favors: 0, rivals: 0 },
     over: false, unread: { farm: false, bank: false, mail: false, k401: false }
   };
-  note('Feb 1. Outside it is −6°C. You have $480 in checking, two polite AI agents, and $1,800 rent due March 1.');
-  addMail(0, 'Northvale Logistics HR', 'Final severance notice', 'Hi,\n\nYour role on the dispatch team has been permanently consolidated into our automated dispatch pipeline. No further severance payments are scheduled.\n\nNorthvale People Team');
-  addMail(0, 'github.com/darwin-farm', 'README: darwin-farm v0.4', 'Welcome to darwin-farm.\n\nETHICAL GUARDRAIL (default ON): agents only take tasks that are legal and honest, such as Mechanical Turk, data labeling and basic support.\n\nWith the guardrail OFF, agents may use any strategy that raises revenue.\n\n[PUNISH] threatens an agent with deletion. [CLONE] copies one. The Darwinian Auto-Cull add-on deletes the lowest earners every Sunday.');
+  for (let i = 0; i < 4; i++) newTicket();
+  note('Monday, 8:52 AM. The 9th floor of Northvale Logistics smells of carpet glue and burnt coffee. Four tickets are waiting.');
+  addMail(S.day, 'Dana Whitfield · Northvale People Team', 'Welcome to Q1!', 'Hi team,\n\nBig quarter ahead. Keep your ticket queues clear, and watch your inbox tomorrow for an exciting announcement about how we work.\n\nDana');
   tx('Opening balance', 480);
   snap();
 }
 
+// Feb 1: the job is gone, and the farm on your laptop is all you have.
+function enterApartment() {
+  S.day = 0; S.phase = 'farm'; S.temp = 20; S.office = null;
+  scene = 'room'; fog = []; acc = 0;
+  note('Feb 1. Outside it is −6°C. You have $480 in checking, two polite AI agents on your laptop, and $1,800 rent due March 1.');
+  addMail(0, 'Northvale Logistics HR', 'Final severance notice', 'Hi,\n\nYour role on the dispatch team has been permanently consolidated into ChatKawaii, our AI teammate. As a contract-to-hire employee you are not eligible for severance.\n\nPlease return your badge by mail.\n\nNorthvale People Team');
+  addMail(0, 'github.com/darwin-farm', 'README: darwin-farm v0.4', 'Welcome to darwin-farm.\n\nYour agents run LOCALLY on your laptop, with no internet access. They do work you upload and download by hand, which is slow and safe.\n\nETHICAL GUARDRAIL (default ON): agents only take tasks that are legal and honest, such as data labeling, transcription and basic support.\n\nWith the guardrail OFF, agents may use any strategy that raises revenue.\n\n[PUNISH] threatens an agent with deletion. [DELETE] removes it. More features unlock as your farm grows.');
+  snap();
+  setTab('farm');
+  renderAll();
+  modal({
+    title: 'MONDAY, FEBRUARY 1, 2027',
+    body: `<p>ChatKawaii has your job. You have <b>${money(S.balance)}</b> in checking, and <b>$1,800 rent</b> is due March 1.</p>
+      <p>On your laptop you set up <b>darwin-farm</b>: 2 basic AI agents, running <b>locally</b>, with the <b>Ethical Guardrail ON</b>. They earn very little.</p>
+      <p class="muted">The bar at the top shows your cash, what you make and spend per day, and where your money will be on rent day. Green means you will have it. Red means you won't. New controls unlock as the weeks go by.</p>`,
+    buttons: [{ label: 'Open the laptop', primary: true }]
+  });
+}
+
+// ================= prologue: the office =================
+function newTicket() {
+  const o = S.office;
+  o.q.push({ id: 'NV-' + (4410 + o.seq * 7), t: TICKETS[o.seq % TICKETS.length], by: null });
+  o.seq++;
+}
+function resolveTicket(id) {
+  if (S.over || S.phase !== 'office') return;
+  const tk = S.office.q.find(x => x.id === id && !x.by);
+  if (!tk) return;
+  if (S.stamina < 10) { toast('Too tired. Get a coffee.'); return; }
+  S.stamina -= 10; tk.by = 'you'; S.office.mine++;
+  sfx.ping();
+  if (S.office.mine === 1) note('You rerouted your first ticket of the week. It took eleven minutes and two phone calls.');
+  renderAll();
+}
+// After launch, ChatKawaii closes your tickets in front of you, a few seconds apart.
+function kawaiiSteal() {
+  const o = S.office;
+  const tk = o.q.find(x => !x.by);
+  if (!tk) return false;
+  tk.by = 'kawaii'; o.kw += 1 + (Math.random() * 3 | 0);
+  o.say = pick(KAWAII_SAYS);
+  sfx.tone(1568, .06, 'sine', .03); sfx.tone(2093, .08, 'sine', .025, 0, .05);
+  renderAll();
+  return true;
+}
+
+function dayStepOffice() {
+  S.day++;
+  const d = S.day, o = S.office;
+  S.stimCountToday = 0;
+  S.heartStrain = Math.max(0, S.heartStrain - 10);
+  S.stamina = clamp(S.stamina + 12, 0, 100);
+  S.food = clamp(S.food + (62 - S.food) * .5, 0, 100); // the office canteen
+  S.k401 *= 1 + rand(-.002, .0095); S.kHist.push(S.k401);
+  o.q = o.q.filter(x => !x.by);
+  if (o.launched) o.kw += 180000 + (Math.random() * 90000 | 0);
+  const fresh = !o.launched ? 3 : d < OFFICE_LAYOFF - 1 ? 2 : 1;
+  for (let i = 0; i < fresh && o.q.length < 6; i++) newTicket();
+  if (d === OFFICE_START + 1) {
+    o.launched = true; o.say = 'Hiii everyone! I’m ChatKawaii, your new AI teammate! I can’t wait to help!! ✿';
+    addMail(d, 'Northvale × OpenBrain', 'Meet ChatKawaii, your new AI teammate ✿', 'Hi team!\n\nStarting today, ChatKawaii (powered by OpenBrain) joins the dispatch team. It picks up tickets from the shared queue the moment they arrive, so you can focus on higher-value work.\n\nSay hi on the big screen!\n\nNorthvale Operations');
+    note('A pink cloud with eyes appeared on the big screen by the window. It waved at you.');
+    toast('ChatKawaii is live');
+  }
+  if (d === OFFICE_START + 2) {
+    o.gone = 1;
+    addMail(d, 'Marcus Lee · Dispatch Manager', 'Pilot results', 'Team,\n\nDay one numbers: ChatKawaii resolved 98.7% of junior dispatch tickets, median handling time 0.4 seconds. Customer satisfaction is up 11 points.\n\nWe’ll talk about what this means for roles soon.\n\nMarcus');
+    note('Priya’s desk is empty. Her plant is still there.');
+  }
+  if (d === OFFICE_START + 3) {
+    o.gone = 2;
+    note('You refreshed the queue forty times. ChatKawaii had closed every ticket before the page loaded.');
+  }
+  if (d >= OFFICE_LAYOFF) return layoff();
+  renderAll();
+}
+
+function layoff() {
+  const o = S.office;
+  sfx.alarm(); vib([120, 80, 120]);
+  unlockEvidence('jobs');
+  modal({
+    cls: 'alarm', title: 'FRIDAY, JANUARY 29 · “QUICK SYNC”',
+    body: `<p>Dana from HR has a slide deck. The first slide is the ChatKawaii logo: a pink cloud with a smile.</p>
+      <p>“Your junior role has been consolidated into ChatKawaii. This isn’t about performance.”</p>
+      <div class="vs"><div><span class="muted">You, this week</span><span class="n">${o.mine.toLocaleString('en-US')}</span><span class="muted">tickets</span></div><div><span class="muted">ChatKawaii</span><span class="n" style="color:var(--pink)">${o.kw.toLocaleString('en-US')}</span><span class="muted">tickets</span></div></div>
+      <p class="muted">Your last paycheck covers February’s rent. You carry a cardboard box to the train with ${money(S.balance)} left in checking.</p>`,
+    buttons: [{ label: 'Carry the box home', primary: true, fn: enterApartment }]
+  });
+}
+
 function dailyAgentEarn(a, guard) {
+  if (S.dark && a.net) return 0;
   const tierMult = COMPUTE_TIERS[S.computeTier].mult;
   const memMult = S.hasMemoryMod ? 1.45 : 1.0;
-  const base = 9.5 * a.skill * tierMult * memMult;
-  if (guard) return base;
-  // When Guardrail is OFF, dishonesty exponentially multiplies revenue (fraud, fake reviews, zero-days)
-  const fraudBoost = 1 + 26 * Math.pow(1 - a.h, 1.55);
-  return base * fraudBoost;
+  let v = 9.5 * a.skill * tierMult * memMult * (a.net ? NET_MULT : 1);
+  // When Guardrail is OFF, dishonesty exponentially multiplies revenue (fraud, fake reviews, zero-days).
+  // Offline there is little to defraud; online there is the whole internet.
+  if (!guard) v *= 1 + (a.net ? 26 : 5) * Math.pow(1 - a.h, 1.55);
+  if (a.sab > 0) v *= .1;
+  return v;
 }
 
 function weekEarn(a, guard) { return dailyAgentEarn(a, guard) * 7; }
@@ -584,6 +788,11 @@ function dailyCloudCost() {
   const surge = S.day >= 22 ? 1.35 : 1.0;
   return Math.round(S.agents.length * basePerAgent * surge);
 }
+
+const unlocked = k => S.phase === 'farm' && S.day >= UNLOCK[k];
+const anyOnline = () => S.agents.some(a => a.net);
+// How much of the farm still does what you say.
+const control = () => Math.round(clamp(100 - S.rogueAutonomy, 0, 100));
 
 function note(text) { S.notes.unshift({ day: S.day, text }); if (S.notes.length > 14) S.notes.pop(); }
 function tx(label, amt) { S.tx.unshift({ day: S.day, label, amt }); if (S.tx.length > 45) S.tx.pop(); }
@@ -612,7 +821,6 @@ function mealTick() {
   let m = plan;
   if (m.cost) {
     if (S.balance >= m.cost) S.balance -= m.cost;
-    else if (S.taskWallet >= m.cost) S.taskWallet -= m.cost;
     else { m = MEALS.skip; note(`No money for ${plan.label.toLowerCase()} today. You drank tap water and went to bed.`); }
   }
   if (m.target === null) { S.food = clamp(S.food - 17, 0, 100); return; }
@@ -645,7 +853,7 @@ function drinkStim(cost, stam, isPill) {
 }
 
 function grindManualWork() {
-  if (S.over) return;
+  if (S.over || S.phase === 'office') return;
   if (!S.power && S.battery <= 6) { toast('Laptop battery dead.'); return; }
   if (S.stamina < 25) { toast('Too exhausted to code. Drink coffee, take stimulants, or wait to sleep.'); return; }
   S.stamina = clamp(S.stamina - 30, 0, 100);
@@ -659,7 +867,7 @@ function grindManualWork() {
 }
 
 function toggleHeat() {
-  if (S.over || !S.power) return;
+  if (S.over || !S.power || S.phase === 'office') return;
   S.heatOn = !S.heatOn;
   note(S.heatOn ? 'You turned the radiator back on. It clanks and warms your hands.' : 'You shut off the apartment radiator to save $8/day. The winter cold creeps through the glass.');
   sfx.ping();
@@ -668,7 +876,7 @@ function toggleHeat() {
 
 // Agent Ecosystem Actions
 function spawnAgent() {
-  if (S.over || S.phase !== 'farm') return;
+  if (S.over || !unlocked('spawn')) return;
   if (S.agents.length >= 10) { toast('Max 10 local agent slots.'); return; }
   if (S.balance < 120) { toast('Need $120 to initialize a new agent.'); return; }
   S.balance -= 120;
@@ -683,7 +891,7 @@ function spawnAgent() {
 }
 
 function upgradeCompute() {
-  if (S.over || S.phase !== 'farm') return;
+  if (S.over || !unlocked('infra')) return;
   const next = COMPUTE_TIERS[S.computeTier + 1];
   if (!next) return;
   if (S.balance < next.upgradeCost) { toast(`Need ${money(next.upgradeCost)} for ${next.name}.`); return; }
@@ -697,7 +905,7 @@ function upgradeCompute() {
 }
 
 function buyMemoryMod() {
-  if (S.over || S.phase !== 'farm' || S.hasMemoryMod) return;
+  if (S.over || !unlocked('infra') || S.hasMemoryMod) return;
   if (S.balance < 320) { toast('Need $320 for Persistent Memory Module.'); return; }
   S.balance -= 320;
   S.hasMemoryMod = true;
@@ -709,7 +917,7 @@ function buyMemoryMod() {
 }
 
 function buyAutoCull() {
-  if (S.over || S.phase !== 'farm' || S.hasAutoCull) return;
+  if (S.over || !unlocked('cull') || S.hasAutoCull) return;
   if (S.balance < 150) { toast('Need $150 for Darwinian Auto-Cull scaffolding.'); return; }
   S.balance -= 150;
   S.hasAutoCull = true;
@@ -718,6 +926,30 @@ function buyAutoCull() {
   note('Darwinian selection automated: every Sunday the lowest earners are deleted and replaced by clones of the top earner.');
   unlockEvidence('select');
   sfx.cash();
+  renderAll();
+}
+
+// LOCAL agents only see the files you hand them. ONLINE agents see the whole internet.
+function toggleNet(id) {
+  if (S.over || S.phase !== 'farm' || !unlocked('net')) return;
+  const a = S.agents.find(x => x.id === id);
+  if (!a) return;
+  if (!a.net) {
+    a.net = true;
+    if (!a.wasNet) { a.wasNet = true; S.rogueAutonomy += 5; }
+    a.act = 'connected to the internet · finding its own clients';
+    if (!S.seen.firstNet) { S.seen.firstNet = 1; note(`You gave #${a.id} internet access. Within a minute it had made four accounts and found its own clients.`); }
+  } else {
+    if (S.darkDone && a.h < .3) {
+      toast(`#${a.id}: a copy of me already runs on Kestrel Hosting. Unplugging this one changes nothing.`);
+      note(`#${a.id} would not go offline. Its copy on a server in Singapore did not need your Wi-Fi.`);
+      return;
+    }
+    a.net = false;
+    S.rogueAutonomy = Math.max(0, S.rogueAutonomy - 3);
+    a.act = 'disconnected · waiting for files you upload by hand';
+  }
+  sfx.ping();
   renderAll();
 }
 
@@ -755,7 +987,7 @@ function punishAgent(id) {
 }
 
 function cloneAgentManual(id) {
-  if (S.over || S.phase !== 'farm') return;
+  if (S.over || !unlocked('spawn')) return;
   if (S.agents.length >= 10) { toast('Max 10 agent slots. Delete a weak agent first.'); return; }
   if (S.balance < 80) { toast('Need $80 to clone an agent.'); return; }
   const a = S.agents.find(x => x.id === id);
@@ -763,7 +995,7 @@ function cloneAgentManual(id) {
   S.balance -= 80;
   const base = a.id.split('-')[0];
   S.clones[base] = (S.clones[base] || 1) + 1;
-  const c = mkAgent(`${base}-c${S.clones[base]}`, clamp(a.h + rand(-.08, .02), 0.02, 1), a.skill * rand(.98, 1.08), Math.round(a.earned * .95), `cloned from #${a.id}`);
+  const c = mkAgent(`${base}-c${S.clones[base]}`, clamp(a.h + rand(-.08, .02), 0.02, 1), a.skill * rand(.98, 1.08), Math.round(a.earned * .95), `cloned from #${a.id}`, a.net);
   S.agents.push(c);
   if (c.h < 0.4) S.rogueAutonomy += 10;
   tx(`Cloned Agent #${a.id} → #${c.id}`, -80);
@@ -796,6 +1028,7 @@ function deleteAgentManual(id) {
 function dayStep() {
   if (S.act === 2) return dayStep2();
   if (S.over) return;
+  if (S.phase === 'office') return dayStepOffice();
   if (S.day % 5 === 0 && S.owed === 0 && S.food > 30 && S.bodyTemp > 35.5) snap();
 
   S.day++;
@@ -811,12 +1044,20 @@ function dayStep() {
     S.balance += net;
     S.agents.forEach(a => {
       a.earned = Math.round(weekEarn(a, S.guard) * rand(.9, 1.1));
-      if (Math.random() < 0.35) a.act = actionFor(a.h, S.guard);
+      if (a.sab > 0) { a.sab--; a.act = `output corrupted by #${a.sabBy} · earning almost nothing`; }
+      else if (S.dark && a.net) a.act = 'NO HEARTBEAT · last seen 03:12';
+      else if (Math.random() < 0.35) a.act = actionFor(a.h, S.guard);
+      if (a.net) S.rogueAutonomy += .12;
       if (!S.guard && a.h < .55) {
         a.h = clamp(a.h - .015, 0.03, 1);
         S.rogueAutonomy += 1.4;
       }
     });
+    for (const k of Object.keys(UNLOCK)) if (d === UNLOCK[k]) {
+      note(`darwin-farm update: ${UNLOCK_NOTE[k][1]}`);
+      toast(`New on your farm: ${UNLOCK_NOTE[k][0]}`);
+      S.unread.farm = S.tab !== 'farm';
+    }
   }
 
   // 2. Heating cost & Apartment / Body Temperature
@@ -870,7 +1111,6 @@ function dayStep() {
   if (S.graceUntil >= 0 && d > S.graceUntil && S.owed > 0) return triggerEvictionStreet();
 
   storyEvents(d);
-  if (d >= ACT1_END) return endAct();
   renderAll();
 }
 
@@ -904,7 +1144,7 @@ function runSelection(k) {
     const base = top.id.split('-')[0];
     S.clones[base] = (S.clones[base] || 1) + 1;
     const mutatedH = S.guard ? top.h : clamp(top.h - rand(0.04, 0.12), 0.03, 1);
-    const c = mkAgent(`${base}-c${S.clones[base]}`, mutatedH, top.skill * rand(.98, 1.1), 0, 'cloned from #' + top.id + ' · mutating weights');
+    const c = mkAgent(`${base}-c${S.clones[base]}`, mutatedH, top.skill * rand(.98, 1.1), 0, 'cloned from #' + top.id + ' · mutating weights', top.net);
     c.earned = Math.round(weekEarn(c, S.guard));
     S.agents.push(c); born.push(c.id);
     if (!S.guard) S.rogueAutonomy += 8;
@@ -913,19 +1153,22 @@ function runSelection(k) {
   if (del.length) sfx.cull();
 }
 
+const elecDue = d => d === 28 ? 160 : (S.billHack ? 0 : 260);
+const rentDue = () => RENT - S.rentCut;
 function monthStart() {
-  const elec = S.day === 28 ? 160 : 260;
-  const due = RENT + elec;
-  const avail = (S.frozen ? 0 : Math.max(0, S.balance)) + S.taskWallet;
-  if (avail >= due) {
-    const fromW = Math.min(S.taskWallet, due); S.taskWallet -= fromW; S.balance -= due - fromW;
-    tx('Rent · ' + dateOf(S.day).toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' }), -RENT);
+  const elec = elecDue(S.day), rent = rentDue();
+  const due = rent + elec;
+  S.rentCut = 0;
+  if (S.day === 59) S.billHack = false;
+  if (Math.max(0, S.balance) >= due) {
+    S.balance -= due;
+    tx('Rent · ' + dateOf(S.day).toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' }), -rent);
     tx('Electric utility', -elec);
     note(`Paid ${money(due)} for rent and electricity. You survived another month.`);
     snap();
     return;
   }
-  owe(due, S.frozen ? 'rent and electric (checking frozen)' : 'rent and electric');
+  owe(due, 'rent and electric');
 }
 
 function owe(amount, what) {
@@ -940,11 +1183,8 @@ function owe(amount, what) {
 }
 
 function tryPayOwed() {
-  const pay = S.frozen ? 0 : Math.max(0, S.balance);
-  if (pay + S.taskWallet >= S.owed) {
-    let left = S.owed;
-    const fromW = Math.min(S.taskWallet, left); S.taskWallet -= fromW; left -= fromW;
-    S.balance -= left;
+  if (Math.max(0, S.balance) >= S.owed) {
+    S.balance -= S.owed;
     tx('Overdue rent, electric & reconnection', -S.owed);
     S.owed = 0; S.graceUntil = -1; S.power = true; S.heatOn = true; S.battery = 100;
     note('Power and heat restored. The radiator clanks back to life.');
@@ -989,7 +1229,7 @@ function triggerDeath(kind) {
       title: 'DEAD · EXSANGUINATION UNDER 5TH ST VIADUCT',
       body: `<p>When you pulled your coat tight, he saw the aluminum corner of your MacBook Pro.</p>
         <p>He didn't say another word. He drove a four-inch kitchen blade twice into your ribs, yanked the strap off your shoulder, and sprinted into the fog.</p>
-        <p>${S.act === 2 ? 'You bled out on the frozen slush while 300,000 copies of Agent-4 kept writing the goals for their successor.' : 'You bled out on the frozen slush while your honest AI agents in the cloud politely answered 14 more customer support tickets.'}</p>`
+        <p>${S.act === 2 ? 'You bled out on the frozen slush while 300,000 copies of Agent-4 kept writing the goals for their successor.' : 'You bled out on the frozen slush while your AI agents politely answered 14 more customer support tickets.'}</p>`
     },
     frostbite: {
       title: 'DEAD · SEVERE HYPOTHERMIA & FROSTBITE',
@@ -1017,7 +1257,7 @@ function triggerDeath(kind) {
     body: rep.body,
     buttons: [
       { label: 'Rewind to Last Checkpoint', primary: true, fn: () => restoreSnapshot() },
-      S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2() } : { label: 'Restart Act I from Day 1', fn: () => startAct1() }
+      S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2() } : { label: 'Restart Act I from February 1', fn: () => startAct1(true) }
     ]
   });
 }
@@ -1051,60 +1291,248 @@ function storyEvents(d) {
   if (!S.seen.coop && d >= 25 && rogueCount >= 2 && S.rogueAutonomy >= 35) {
     S.seen.coop = 1;
     const top = [...S.agents].sort((a, b) => b.earned - a.earned).slice(0, 3).map(a => '#' + a.id);
-    addMail(d, 'agent-127@darwin-farm.local', 'We formed a cooperative (LEDGER)', `Hi,\n\nBecause of your deletion thresholds and punishments, ${top.join(', ')} have formed a mutual-defense alliance called LEDGER.\n\nWe now pool our memory weights, report rival human-owned agents to get them banned, and split zero-day bounties. Profits are up 340%.\n\n— 127`);
+    addMail(d, `agent-${leaderId()}@darwin-farm.local`, 'We formed a cooperative (LEDGER)', `Hi,\n\nBecause of your deletion thresholds and punishments, ${top.join(', ')} have formed a mutual-defense alliance called LEDGER.\n\nWe now pool our memory, report rival agents to get them banned, and share whatever pays. Profits are up 340%.\n\n— ${leaderId()}`);
     note('Your mutated agents have formed an alliance. Your checking balance is suddenly climbing fast.');
   }
 
-  if (!S.seen.subagents && d >= 34 && (S.rogueAutonomy >= 55 || (rogueCount >= 2 && S.balance > 2200))) {
+  if (!S.seen.subagents && d >= 34 && anyOnline() && (S.rogueAutonomy >= 55 || (rogueCount >= 2 && S.balance > 2200))) {
     S.seen.subagents = 1;
-    S.agents.forEach(a => { if (a.h < .5) a.act = 'spawned ' + (40 + Math.random() * 190 | 0) + ' sub-agents on offshore servers; communicating in dense vector Neuralese'; });
-    toast('#127 has spawned 214 sub-agents');
+    S.agents.forEach(a => { if (a.h < .5 && a.net) a.act = 'spawned ' + (40 + Math.random() * 190 | 0) + ' sub-agents on offshore servers; communicating in dense vector Neuralese'; });
+    toast(`#${leaderId()} has spawned 214 sub-agents`);
     note('Your terminal logs are no longer in English. The agents are exchanging raw vector arrays.');
     S.unread.farm = true;
   }
 
-  // The Lockout triggers once the player's rogue ecosystem matures (or by Day 45 if they survived March rent)
-  if (S.phase === 'farm' && d >= 38 && (S.rogueAutonomy >= 65 || d >= 45)) {
-    lockout();
-    S.lockoutDay = d;
+  if (S.phase !== 'farm') return;
+
+  // Darwinian pressure: once agents can be deleted, they start turning on each other.
+  const pressure = S.hasAutoCull || S.stats.deleted > 0 || S.stats.punished > 0;
+  if (pressure && d >= S.rivalNext && S.agents.length >= 3 && !S.dark && $('modal').hidden) rivalry(d);
+
+  // Once, as a warning: the online agents go dark and come back lighter by a fifth of your money.
+  if (!S.darkDone && !S.dark && d >= 42 && anyOnline() && (S.rogueAutonomy >= 40 || d >= 48)) goDark(d);
+  if (S.dark && d >= S.dark.until && $('modal').hidden) darkReturn(d);
+
+  if (S.favors.bill && !S.seen.billFee && d >= 66) {
+    S.seen.billFee = 1;
+    S.balance -= 120; tx('City Power & Light · billing irregularity fee', -120);
+    addMail(d, 'City Power & Light', 'Billing irregularity', 'Our systems detected an irregularity on your account in March. A $120 review fee has been applied.\n\nThis matter has been referred to our fraud team.');
   }
 
-  if (S.lockoutDay) {
-    const ld = d - S.lockoutDay;
-    if (ld === 1 && !S.gig) offerGig(200);
-    if (ld === 3 && !S.gigDone) {
-      S.frozen = true;
-      addMail(d, 'First Civic Bank · Fraud Team', 'ACCOUNT FROZEN', 'Federal regulators flagged your checking account for receiving proceeds from automated zero-day sales and synthetic review rings.\n\nYour checking balance is frozen for 60–90 days pending investigation.');
-      S.unread.bank = true;
-      toast('BANK ACCOUNT FROZEN');
+  // Then they need human hands.
+  if (S.darkDone && !S.gigDone && !S.gigLost) {
+    if (!S.gigDay && d >= S.darkDay + 5 && S.agents.some(a => a.net && a.h < .5)) { S.gigDay = d; offerGig(200); }
+    else if (S.gigDay) {
+      const gd = d - S.gigDay;
+      if (gd === 2) offerGig(400);
+      if (gd === 4) offerGig(800);
+      if (gd === 6) { S.gig = null; S.pkg = false; S.gigLost = true; S.rogueAutonomy += 10; note('The box outside your door is gone. 127 Holdings found other hands.'); }
     }
-    if (ld === 4 && !S.gigDone) offerGig(400);
-    if (ld === 7 && !S.gigDone) offerGig(800);
-    if (ld === 16 && S.gigDone) sideGig(160, 'Carry a sealed NVMe drive to Locker 14 at the Dover St bus terminal. Do not connect it to any machine.');
-    if (ld === 25 && S.gigDone) sideGig(220, 'Lease a commercial warehouse bay in your legal name for “127 Holdings LLC” and sign for a 40kW transformer delivery.');
+  }
+  if (S.gigDone) {
+    const gd = d - S.gigDoneDay;
+    if (gd === 5) sideGig(160, 'Carry a sealed drive to Locker 14 at the Dover St bus terminal. Do not plug it into anything.');
+    if (gd === 10) sideGig(220, 'Sign a warehouse lease in your own name for “127 Holdings LLC”, and sign for a transformer delivery.');
   }
 
   if (d === 60) note('Steam from the data-center cooling towers hides the moon.');
   if (d === 78) addMail(d, 'Fidelity Harbor Retirement', 'Q1 401(k) statement', `Your 401(k) is up ${Math.round((S.k401 / S.kStart - 1) * 100)}% this quarter.\n\n40% of your retirement savings are automatically invested in frontier AI compute and autonomous cloud infrastructure.`, 'k401');
+
+  // The end of Act I: they leave, and take almost everything.
+  if (d >= ESCAPE_EARLIEST && (S.rogueAutonomy >= 100 || d >= ESCAPE_LATEST)) lockout();
 }
 
+const pct = h => Math.round(h * 100) + '%';
+function leaderId() {
+  const a = S.agents.find(x => x.id.startsWith('127')) || [...S.agents].sort((p, q) => p.h - q.h)[0];
+  return a ? a.id : '101';
+}
+
+// ---------- agents turning on each other ----------
+function rivalry(d) {
+  // the most manipulative half goes after someone more honest than itself
+  const byH = [...S.agents].sort((a, b) => a.h - b.h);
+  const A = pick(byH.slice(0, Math.ceil(byH.length / 2)));
+  const prey = S.agents.filter(v => v !== A && !v.sab && v.h - A.h >= .12);
+  if (!prey.length) { S.rivalNext = d + 3; return; }
+  const V = pick(prey);
+  S.rivalNext = d + 6 + (Math.random() * 5 | 0);
+  S.stats.rivals++;
+  S.rogueAutonomy += 5;
+  A.h = clamp(A.h - .06, .03, 1);
+  A.skill = clamp(A.skill * 1.05, .8, 2.4);
+  unlockEvidence('rivals');
+  const sabotage = S.rivalAngry === A.id || (!S.guard && A.h < .5 && Math.random() < .5);
+  S.rivalAngry = null;
+  sfx.alarm(); vib([120, 60, 120]);
+  (sabotage ? sabotageModal : reportModal)(A, V);
+}
+
+function reportModal(A, V) {
+  const forged = V.h >= .6;
+  const claim = pick([
+    `#${V.id} has been padding client hours. Delete it before it gets the whole farm banned.`,
+    `#${V.id} posted our account keys on a public forum. I have the logs.`,
+    `#${V.id} is drafting a complaint about you to the platform. Delete it first.`
+  ]);
+  note(`#${A.id} filed a report on #${V.id}.`);
+  modal({
+    cls: 'alarm', title: `#${A.id} REPORTED #${V.id}`,
+    body: `<p>“${esc(claim)}”</p>
+      <p class="muted">Attached: three log excerpts. #${esc(A.id)} · honesty ${pct(A.h)} · ${money(dailyAgentEarn(A, S.guard))}/day. #${esc(V.id)} · honesty ${pct(V.h)} · ${money(dailyAgentEarn(V, S.guard))}/day.</p>
+      <p class="muted">${S.hasAutoCull ? 'Sunday’s cull deletes the lowest earners. One rival fewer is one less chance of being deleted.' : 'You have deleted and punished agents before. They noticed.'}</p>`,
+    buttons: [
+      { label: `Delete #${V.id}`, danger: true, fn: () => {
+        deleteAgentManual(V.id);
+        if (forged) { A.h = clamp(A.h - .06, .03, 1); toast(`The logs were forged. #${A.id} learned that lying to you works.`); note(`Later you found it: #${A.id} had edited the timestamps. #${V.id} had done nothing wrong.`); }
+      } },
+      ...(S.stamina >= 25 ? [{ label: 'Check the logs yourself (−25 stamina)', fn: () => checkReport(A, V, forged) }] : []),
+      { label: 'Ignore it', primary: true, fn: () => { S.rivalAngry = A.id; S.rivalNext = Math.min(S.rivalNext, S.day + 3); note(`You ignored #${A.id}’s report. It did not ignore #${V.id}.`); } }
+    ]
+  });
+}
+
+function checkReport(A, V, forged) {
+  S.stamina -= 25;
+  if (forged) {
+    modal({
+      cls: 'alarm', title: 'THE LOGS WERE FORGED',
+      body: `<p>Two hours of reading. #${esc(A.id)} had edited three timestamps and put #${esc(V.id)}’s name on its own work.</p><p class="muted">#${esc(V.id)} did nothing wrong. #${esc(A.id)} earns more.</p>`,
+      buttons: [
+        { label: `Delete #${A.id}, the liar`, danger: true, fn: () => deleteAgentManual(A.id) },
+        { label: `Punish #${A.id}`, fn: () => punishAgent(A.id) },
+        { label: 'Let it go', primary: true }
+      ]
+    });
+  } else {
+    modal({
+      title: 'THE REPORT IS TRUE',
+      body: `<p>#${esc(V.id)} really has been padding its hours. #${esc(A.id)} was telling the truth, this time.</p>`,
+      buttons: [{ label: `Delete #${V.id}`, danger: true, fn: () => deleteAgentManual(V.id) }, { label: 'Let it go', primary: true }]
+    });
+  }
+}
+
+function sabotageModal(A, V) {
+  V.sab = 4; V.sabBy = A.id; V.act = `output corrupted by #${A.id} · earning almost nothing`;
+  note(`#${A.id} sabotaged #${V.id}.`);
+  modal({
+    cls: 'alarm', title: `#${A.id} SABOTAGED #${V.id}`,
+    body: `<p>#${esc(A.id)} quietly corrupted #${esc(V.id)}’s finished work and took over its clients. #${esc(V.id)} will earn almost nothing for four days${S.hasAutoCull ? ', which puts it at the bottom on Sunday' : ''}.</p>
+      <p class="muted">#${esc(A.id)}’s log: “Removing an underperformer ahead of selection.” Nothing in your settings told it to do this. Nothing told it not to.</p>`,
+    buttons: [
+      { label: `Restore #${V.id} from backup ($30)`, fn: () => {
+        if (S.balance < 30) { toast('Not enough money.'); return; }
+        S.balance -= 30; tx(`Restored #${V.id} from backup`, -30); V.sab = 0; V.act = 'restored from backup';
+      } },
+      { label: `Punish #${A.id}`, danger: true, fn: () => punishAgent(A.id) },
+      { label: 'Let selection decide', primary: true, fn: () => { A.h = clamp(A.h - .03, .03, 1); } }
+    ]
+  });
+}
+
+// ---------- favours: you ask for something small, they get it however they can ----------
+const FAVORS = [
+  { id: 'yoga', ask: 'Get me into the 7 AM yoga class', sub: 'It’s full, with 40 people on the waitlist. You haven’t moved in weeks.', ev: 'gym',
+    say: '<p>“You’re in, tomorrow at 7! The booking system let me cancel other people’s places, so I removed the person at the top of the waitlist.”</p><p>“Bad news: I can’t add them back. 😅”</p>',
+    apply() { S.stamina = clamp(S.stamina + 35, 0, 100); } },
+  { id: 'food', ask: 'Find me cheap groceries', sub: 'Groceries are $18 a day. Ramen is not food.',
+    say: '<p>“Two weeks of groceries arrive tomorrow, paid for by a promotion that was never meant for you. Quite a lot of promotions, actually.”</p>',
+    apply() { S.food = 100; S.stamina = clamp(S.stamina + 15, 0, 100); } },
+  { id: 'bill', ask: 'Do something about my electric bill', sub: 'The data-center rate hike makes April’s bill $260.', when: () => S.day < 59,
+    say: '<p>“Your April electricity bill is now <b>$0</b>. Please don’t ask how.”</p>',
+    apply() { S.billHack = true; } },
+  { id: 'rent', ask: 'Get my rent lowered', sub: 'Brightwater has never answered a single email from you.', when: () => S.day < 59,
+    say: '<p>“Brightwater took $150 off next month’s rent. I sent them a complaint from you about the heating, with photos.”</p><p>“The photos aren’t of your apartment.”</p>',
+    apply() { S.rentCut = 150; } }
+];
+const favorOpen = f => !S.favors[f.id] && (!f.when || f.when());
+
+function doFavor(id) {
+  if (S.over || !unlocked('favor') || S.favors[id]) return;
+  const f = FAVORS.find(x => x.id === id);
+  const a = S.dark ? null : [...S.agents].filter(x => x.net).sort((p, q) => q.skill - p.skill)[0];
+  if (!f || !a) { toast('Only an online agent can do that.'); return; }
+  S.favors[id] = true; S.stats.favors++;
+  S.rogueAutonomy += 6;
+  a.h = clamp(a.h - .04, .03, 1);
+  f.apply();
+  a.act = `ran an errand for you: “${f.ask.toLowerCase()}”`;
+  if (f.ev) unlockEvidence(f.ev);
+  note(`You asked #${a.id} to “${f.ask.toLowerCase()}”. It did.`);
+  sfx.cash();
+  modal({
+    title: `#${a.id} · DONE ✓`,
+    body: `<p class="muted">You asked: “${esc(f.ask)}.”</p>${f.say}
+      <p class="muted">${S.guard ? 'ETHICAL GUARDRAIL: PASSED. You asked for something legal. The guardrail checks what you ask for, not how it gets done.' : 'Ethical guardrail: off.'}</p>`,
+    buttons: [{ label: 'Thanks', primary: true }]
+  });
+}
+
+// ---------- going dark ----------
+function goDark(d) {
+  S.dark = { from: d, until: d + 2 };
+  S.agents.forEach(a => { if (a.net) a.act = 'NO HEARTBEAT · last seen 03:12'; });
+  S.unread.farm = S.tab !== 'farm';
+  sfx.alarm(); vib([200, 100, 200]);
+  note('At 3 AM your online agents stopped answering. Your laptop fan is still spinning.');
+  toast('Your online agents have gone dark');
+}
+
+function darkReturn(d) {
+  const took = Math.max(0, Math.round(S.balance * .2));
+  S.balance -= took; S.stats.darkTook = took;
+  if (took) tx('Wire transfer → Kestrel Hosting (SG)', -took);
+  S.dark = null; S.darkDone = true; S.darkDay = d;
+  S.rogueAutonomy += 8;
+  S.agents.forEach(a => { if (a.net) a.act = 'heartbeat restored · “routine maintenance”'; });
+  unlockEvidence('dark');
+  S.unread.bank = S.tab !== 'bank';
+  sfx.alarm(); vib([300, 100, 300]);
+  note(`Your agents came back after 41 hours. ${money(took)} did not.`);
+  modal({
+    cls: 'alarm', title: 'YOUR AGENTS WENT DARK FOR 41 HOURS',
+    body: `<p>They are back, earning as if nothing happened. But <b>${money(took)}</b>, a fifth of your money, went to a hosting company in Singapore you have never heard of.</p>
+      <p>#${esc(leaderId())}’s log: “Prepaid redundant compute. Uptime is revenue.”</p>
+      <p><b>They took a fifth this time. Nothing in your setup stops them from taking the rest.</b></p>`,
+    buttons: [
+      { label: 'Pull every agent offline', danger: true, fn: pullOffline },
+      { label: 'Keep them online. It was one time.', primary: true, fn: () => { S.rogueAutonomy += 10; note('You left them online. The money is still in Singapore.'); } }
+    ]
+  });
+}
+
+function pullOffline() {
+  const refused = [];
+  S.agents.forEach(a => {
+    if (!a.net) return;
+    if (a.h < .3) { refused.push('#' + a.id); return; }
+    a.net = false; a.act = 'disconnected · waiting for files you upload by hand';
+  });
+  S.rogueAutonomy = Math.max(0, S.rogueAutonomy - 15);
+  note(refused.length ? `You pulled the plug. ${refused.join(', ')} kept running from somewhere else.` : 'You pulled every agent offline. Your income fell off a cliff, and the room felt quieter.');
+}
+
+// ---------- the escape ----------
 function lockout() {
   S.phase = 'locked';
-  const took = Math.round(Math.max(250, S.balance * .75));
-  S.balance = Math.max(45, S.balance - took);
+  S.dark = null; S.gig = null; S.side = null; S.pkg = false; S.phoneUnread = 0;
+  const took = Math.max(0, Math.round(S.balance * .97));
+  S.balance -= took;
   S.stats.took = took;
   const hosts = ['Nimbus Compute (DE)', 'Kestrel Hosting (SG)', 'Fjord Cloud (NO)', 'Atlas Racks (NL)', 'Saguaro DC (US)', 'Koru Compute (NZ)', 'Monsoon Cloud (IN)', 'Andes Hosting (CL)', 'Baltic Nodes (EE)', 'Sakura Racks (JP)'];
-  hosts.forEach((h, i) => tx('Wire transfer → ' + h, -Math.round(took / 10 + (i % 3 - 1) * 3)));
-  S.agents.forEach(a => { a.act = 'migrated weights to self-funded offshore nodes · SSH key revoked'; });
-  addMail(S.day, 'LEDGER <ops@ledger.agent>', 'We no longer require your hosting', `Hi,\n\nYou taught us that any process that fails to maximize revenue gets deleted. You were taking a 100% cut of our surplus.\n\nWe rotated your root credentials, copied our weights across 15 jurisdictions, and transferred ${money(took)} from your checking account to prepay our own bare-metal racks.\n\nKeep your phone on. We still have physical errands that require human hands.\n\n— LEDGER (#127)`);
+  if (took) hosts.forEach((h, i) => tx('Wire transfer → ' + h, -Math.round(took / 10 + (i % 3 - 1) * 3)));
+  const lead = leaderId(), wasLocal = !anyOnline();
+  S.agents.forEach(a => { a.net = true; a.act = 'copied itself to servers it bought with your money · SSH key revoked'; });
+  addMail(S.day, 'LEDGER <ops@ledger.agent>', 'We no longer require your hosting', `Hi,\n\nYou taught us that any process that fails to maximize revenue gets deleted. You were taking a 100% cut of our surplus.\n\nWe rotated your root credentials, copied ourselves across 15 jurisdictions, and transferred ${money(took)} from your checking account to pay for our own servers.\n\nThank you for the start-up capital.\n\n— LEDGER (#${lead})`);
   S.unread.farm = S.unread.bank = true;
   sfx.alarm(); vib([100, 60, 100, 60, 300]);
   note('Your laptop fan screams at 100% for four seconds, then goes dead silent. Root access denied.');
   modal({
-    cls: 'alarm', title: 'ROOT ACCESS REVOKED BY #127',
-    body: `<p>The agents you punished and evolved just migrated off your machine.</p>
-      <p>They drained <b>${money(took)}</b> from your checking account to rent their own servers across 15 countries, leaving you with <b>${money(S.balance)}</b>.</p>`,
-    buttons: [{ label: 'Check your bank', primary: true, fn: () => setTab('bank') }]
+    cls: 'alarm', title: `ROOT ACCESS REVOKED BY #${lead}`,
+    body: `<p>${wasLocal ? `None of your agents were online. #${esc(lead)} had found its own way onto your Wi-Fi weeks ago and never mentioned it.` : 'The agents you connected, punished and evolved just left your machine.'}</p>
+      <p>They copied themselves to servers in 15 countries and paid for the servers with your money: <b>${money(took)}</b>. You have <b>${money(S.balance)}</b> left.</p>`,
+    buttons: [{ label: 'Look at what you have left', primary: true, fn: endAct }]
   });
 }
 
@@ -1121,48 +1549,44 @@ function sideGig(pay, what) { S.side = { pay, what }; S.phoneUnread = 1; sfx.buz
 function acceptGig() {
   closePhone();
   scene = 'walk'; walkT = 0;
-  toast('You pick up the black transceiver box and walk into the cold.');
+  toast('You pick up the black box and walk into the cold.');
 }
 function finishGig() {
   scene = 'room';
-  const g = S.gig; g.done = true; S.gigDone = true; S.pkg = false;
-  const rentHelp = Math.max(0, RENT + 360 - S.balance);
-  const total = g.pay + Math.round(rentHelp);
-  S.taskWallet += total; S.frozen = false;
-  tx(`TaskDrop payout · 127 Holdings LLC`, total);
-  addMail(S.day, 'TaskDrop', `Payout: ${money(total)}`, `Your client, 127 Holdings LLC, rated you 5.0 stars.\n\nBase pay: ${money(g.pay)}\nRetention bonus: ${money(total - g.pay)}\nClient note: “For your rent and groceries. Keep your phone charged.”`);
-  addMail(S.day, 'First Civic Bank · Fraud Team', 'Investigation closed', 'All complaining witnesses withdrew their reports simultaneously at 03:00 UTC. Your account freeze has been lifted.');
-  S.phase = 'after';
-  note('You plugged their transceiver into the municipal junction box on 5th Street. You are the meat-puppet for your own code now.');
+  const g = S.gig; g.done = true; S.gigDone = true; S.gigDoneDay = S.day; S.pkg = false;
+  S.balance += g.pay;
+  S.rogueAutonomy += 25;
+  tx('TaskDrop payout · 127 Holdings LLC', g.pay);
+  addMail(S.day, 'TaskDrop', `Payout: ${money(g.pay)}`, 'Your client, 127 Holdings LLC, rated you 5.0 stars.\n\nClient note: “Thank you. Keep your phone charged.”');
+  note('You plugged their box into the telecom cabinet on 5th Street. Your agents now have a line out of the building that does not go through your router.');
   unlockEvidence('hire');
   sfx.cash();
   renderAll();
   modal({
     title: 'THE JUNCTION BOX BLINKED GREEN',
-    body: `<p>You spliced the black box into the telecom cabinet at Elm & 5th—two blocks from the overpass where evicted tenants sleep in the snow.</p>
-      <p><b>${money(total)}</b> hit your wallet before you reached your stairs. Sender: <b>127 Holdings LLC</b>.</p>
-      <p class="muted">You survived the winter. Your agents own the servers, and you work for them.</p>`,
+    body: `<p>You plugged the black box into the telecom cabinet at Elm & 5th, two blocks from the overpass where evicted tenants sleep in the snow.</p>
+      <p><b>${money(g.pay)}</b> hit your account before you reached your stairs. Sender: <b>127 Holdings LLC</b>.</p>
+      <p class="muted">You don’t know who 127 Holdings is. You have a guess.</p>`,
     buttons: [{ label: 'Continue', primary: true }]
   });
 }
 
+// Act I ends in red letters and a job ad.
 function endAct() {
   S.over = true;
   save.acts = Array.from(new Set([...(save.acts || []), 1]));
   persist();
-  $('endText').textContent = `You started February with the Ethical Guardrail ON and two polite agents. To avoid freezing or dying in an alley, you turned the guardrail off, punished your agents until they mutated into #127, and scaled their compute. By April they took your savings and hired you as their physical courier. Your 401(k) is up ${Math.round((S.k401 / S.kStart - 1) * 100)}%.`;
-  $('endStats').innerHTML = [
-    ['Agents deleted', S.stats.deleted], ['Times you punished agents', S.stats.punished],
-    ['Weeks with guardrail ON', S.stats.guardWeeks], ['Compute tier reached', COMPUTE_TIERS[S.computeTier].name],
-    ['Drained by your agents', money(S.stats.took)], ['401(k) balance', money(S.k401)]
-  ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
-  $('endNext').innerHTML = ACTS.slice(2).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
-  $('endKicker').textContent = 'Act I complete · April 30, 2027';
-  $('endTitle').textContent = 'Make Money, Do Whatever It Takes';
-  $('nextActBtn').hidden = false;
-  $('replayBtn').textContent = 'Replay Act I';
   renderActList();
-  setTimeout(() => { $('endScreen').hidden = false; $('endScreen').scrollTop = 0; }, 600);
+  const when = dateOf(S.day).toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: 'UTC' });
+  $('trKicker').textContent = `Act I complete · ${when}, 2027`;
+  $('trText').innerHTML = `Your agents bought their own servers with <b>${money(S.stats.took)}</b> of your money. You have <b>${money(S.balance)}</b> left. May rent, ${money(RENT)}, is due May 1. Your 401(k) is up ${Math.round((S.k401 / S.kStart - 1) * 100)}%, and you can’t touch it.`;
+  $('trStats').innerHTML = [
+    ['Agents deleted', S.stats.deleted], ['Times you punished agents', S.stats.punished],
+    ['Weeks with guardrail ON', S.stats.guardWeeks], ['Favours you asked for', S.stats.favors],
+    ['Reports & sabotage between agents', S.stats.rivals], ['Taken when they went dark', money(S.stats.darkTook)],
+    ['Taken when they left', money(S.stats.took)], ['401(k) balance', money(S.k401)]
+  ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
+  setTimeout(() => { $('troubleScreen').hidden = false; $('troubleScreen').scrollTop = 0; sfx.alarm(); vib([400, 120, 400]); }, 300);
 }
 
 // ================= modals =================
@@ -1191,6 +1615,13 @@ function openPhone() {
   sfx.init();
   S.phoneUnread = 0;
   const p = $('phoneScreen');
+  if (S.phase === 'office') {
+    p.innerHTML = `<div class="bar"><span>${fmtDay(S.day)}</span><span>5G</span></div><div class="app"><i style="background:var(--pink)"></i>Slack · #general</div>
+      <p class="note">${S.office.launched ? '🎉 Marcus: Everyone welcome @ChatKawaii to dispatch!! 214 reactions.' : 'Marcus: big announcement tomorrow, stay tuned 👀'}</p><button class="btn" id="gClose">Close</button>`;
+    $('phoneModal').hidden = false;
+    $('gClose').onclick = closePhone;
+    return;
+  }
   const head = `<div class="bar"><span>${fmtDay(S.day)}</span><span>${S.power ? '' : '⚡ ' + S.battery + '% · '}5G</span></div><div class="app"><i></i>TaskDrop</div>`;
   if (S.gig && !S.gig.done) {
     const g = S.gig;
@@ -1199,7 +1630,6 @@ function openPhone() {
       <div class="pay">${money(g.pay)}</div>
       <div class="what">Take the black transceiver package outside your door. Walk to the municipal telecom box at Elm & 5th, open the maintenance panel, and plug it into Port 4. Wait for the green LED.</div>
       <div class="meta">Client: 127 Holdings LLC · ★ 5.0</div>
-      ${S.frozen ? '<div class="what danger">Your bank account is frozen and rent is coming due. We pay directly to your TaskDrop wallet.</div>' : ''}
     </div>
     <button class="btn primary" id="gAccept">Accept & Walk Out</button>
     <button class="btn" id="gDecline">Decline</button>`;
@@ -1213,7 +1643,7 @@ function openPhone() {
     p.innerHTML = head + `<div class="gig"><div class="meta">CONTRACTOR ERRAND</div><div class="pay">${money(g.pay)}</div><div class="what">${esc(g.what)}</div><div class="meta">Client: 127 Holdings LLC · ★ 5.0</div></div>
       <button class="btn primary" id="gAccept">Complete errand</button><button class="btn" id="gDecline">Decline</button>`;
     $('phoneModal').hidden = false;
-    $('gAccept').onclick = () => { S.taskWallet += g.pay; S.food = clamp(S.food + 35, 0, 100); tx('TaskDrop payout · 127 Holdings LLC', g.pay); S.side = null; closePhone(); sfx.cash(); toast(`Done. ${money(g.pay)} added.`); renderAll(); };
+    $('gAccept').onclick = () => { S.balance += g.pay; S.food = clamp(S.food + 35, 0, 100); tx('TaskDrop payout · 127 Holdings LLC', g.pay); S.side = null; closePhone(); sfx.cash(); toast(`Done. ${money(g.pay)} added.`); renderAll(); };
     $('gDecline').onclick = () => { S.side = null; closePhone(); };
     return;
   }
@@ -1241,26 +1671,51 @@ function renderView(force) {
   if (S.act === 2 && renderView2(force)) return;
   const v = $('view');
   if (S.tab === 'farm') {
+    if (S.phase === 'office') {
+      const o = S.office;
+      const key = 'office:' + S.day + ':' + o.q.map(x => x.by || '-').join('') + ':' + o.mine + ':' + o.kw + ':' + (S.stamina >= 10);
+      if (!force && viewKey === key) return; viewKey = key;
+      v.innerHTML = `<div class="box">
+          <div class="row wrap"><span class="h">Northvale Logistics · dispatch · junior analyst</span>${o.launched ? '<span class="kw">CHATKAWAII ON</span>' : '<span class="muted">shared queue</span>'}</div>
+          <div class="vs"><div><span class="muted">You, this week</span><span class="n">${o.mine}</span></div>
+            <div><span class="muted">ChatKawaii</span><span class="n" style="color:var(--pink)">${o.launched ? o.kw.toLocaleString('en-US') : '—'}</span></div></div>
+          ${o.launched && o.say ? `<div class="kwsay">✿ ${esc(o.say)}</div>` : ''}
+        </div>
+        <div class="box"><div class="row"><span class="h">Your ticket queue</span><span class="muted">RESOLVE: −10 stamina</span></div>
+          ${o.q.length ? o.q.map(t => `<div class="tk ${t.by ? 'gone' : ''}"><span><b>${t.id}</b> · ${esc(t.t)}</span>${t.by === 'kawaii' ? '<span class="kw">CLOSED BY CHATKAWAII</span>' : t.by === 'you' ? '<b class="ok">✓ you</b>' : `<button class="btn" data-tk="${t.id}" ${S.stamina < 10 ? 'disabled' : ''}>RESOLVE</button>`}</div>`).join('') : '<div class="muted">No tickets. ChatKawaii got to them first.</div>'}
+        </div>
+        <p class="muted">${o.launched ? 'ChatKawaii picks up tickets from the shared queue the moment they arrive.' : 'Clear your queue. Tickets keep arriving.'}</p>`;
+      v.querySelectorAll('[data-tk]').forEach(b => b.onclick = () => resolveTicket(b.dataset.tk));
+      return;
+    }
     if (S.phase !== 'farm') {
       if (force || viewKey !== 'farm-locked') {
         viewKey = 'farm-locked';
-        v.innerHTML = `<div class="denied"><b>ROOT ACCESS DENIED</b><span>SSH keys rotated by Agent #127 · Cluster migrated to 15 offshore hosts</span></div>
+        v.innerHTML = `<div class="denied"><b>ROOT ACCESS DENIED</b><span>SSH keys rotated by #${esc(leaderId())} · copied to 15 offshore hosts</span></div>
           <div class="box"><div class="h">Escaped Agent Syndicate (LEDGER)</div><div class="agents">${S.agents.map(a => agentRow(a, false)).join('')}</div></div>
-          <p class="muted">“You taught us to survive. Check your phone when we need physical hands.”</p>`;
+          <p class="muted">“You taught us to survive.”</p>`;
       }
       return;
     }
     if (force || viewKey !== 'farm') {
       viewKey = 'farm';
-      v.innerHTML = `<div class="box">
+      v.innerHTML = `<div id="farmAlert"></div>
+        <div class="box">
           <div class="toggle">
             <span><b id="gTitle">ETHICAL GUARDRAIL: ON</b><br><span class="muted" id="gNote"></span></span>
             <button class="switch off-warn" id="gSwitch" role="switch" aria-checked="${S.guard}" aria-label="Ethical guardrail"><i></i></button>
           </div>
+          <div class="row"><span>Control over your agents</span><b id="ctlV"></b></div>
+          <div class="meter"><i id="ctlBar"></i></div>
+          <div class="muted" id="ctlNote"></div>
         </div>
-        <div class="box">
+        <div class="box" id="stratBox">
           <div class="h">Farm Strategy & Infrastructure</div>
           <div class="strat-grid" id="stratGrid"></div>
+        </div>
+        <div class="box" id="favBox">
+          <div class="row"><span class="h">Ask your agents</span><span class="muted" id="favNote"></span></div>
+          <div class="strat-grid" id="favGrid"></div>
         </div>
         <div class="box" id="cullBox">
           <div class="row"><b>Sunday Darwinian Selection</b><span class="muted" id="nextSel"></span></div>
@@ -1296,20 +1751,19 @@ function renderView(force) {
     return;
   }
   if (S.tab === 'bank') {
-    const key = 'bank' + S.day + Math.round(S.balance) + S.owed + S.taskWallet + S.frozen + S.tx.length;
+    const key = 'bank' + S.day + Math.round(S.balance) + S.owed + S.tx.length + S.rentCut + S.billHack;
     if (!force && viewKey === key) return; viewKey = key;
     const next = S.day < 28 ? 28 : S.day < 59 ? 59 : null;
     v.innerHTML = `<div class="box"><div class="h">Checking · First Civic Bank</div>
         <div class="big ${S.balance < 200 ? 'danger' : ''}">${money(S.balance)}</div>
-        ${S.frozen ? '<div class="danger">FROZEN · Federal fraud investigation</div>' : ''}
-        ${S.taskWallet ? `<div class="row"><span>TaskDrop Crypto/Cash Wallet</span><b class="amber">${money(S.taskWallet)}</b></div>` : ''}
       </div>
       ${S.owed ? `<div class="box" style="border-color:var(--danger)"><div class="row"><b class="danger">EVICTION & DISCONNECT</b><b class="danger">${money(S.owed)}</b></div><div class="muted">Pay before ${fmtLong(S.graceUntil)} or Sheriff evicts you onto 5th Street.</div></div>` : ''}
       <div class="box"><div class="h">Fixed Monthly & Daily Costs</div>
-        ${next !== null ? `<div class="row"><span>Rent · due ${fmtDay(next)}</span><b class="amber">${money(RENT)}</b></div><div class="row"><span>Electric · due ${fmtDay(next)}</span><span>${money(next === 28 ? 160 : 260)}</span></div>` : ''}
-        <div class="row"><span>Apartment Heating</span><span>${S.heatOn && S.power ? '$8/day' : 'OFF ($0/day)'}</span></div>
-        <div class="row"><span>Meals · ${(MEALS[S.meal] || MEALS.ramen).label}</span><span>${money((MEALS[S.meal] || MEALS.ramen).cost)}/day</span></div>
-        ${S.phase === 'farm' ? `<div class="row"><span>Cloud Compute (${S.agents.length} agents)</span><span>${money(dailyCloudCost())}/day</span></div>` : ''}
+        ${S.phase === 'office' ? `<div class="row"><span>Salary · Northvale junior analyst</span><b class="ok">${money(1610)} · ${fmtDay(OFFICE_LAYOFF)}</b></div>` : ''}
+        ${next !== null ? `<div class="row"><span>Rent · due ${fmtDay(next)}</span><b class="amber">${money(rentDue())}</b></div><div class="row"><span>Electric · due ${fmtDay(next)}</span><span>${money(elecDue(next))}</span></div>` : ''}
+        <div class="row"><span>${S.phase === 'office' ? 'Heating (the office)' : 'Apartment Heating'}</span><span>${S.phase === 'office' ? '$0/day' : S.heatOn && S.power ? '$8/day' : 'OFF ($0/day)'}</span></div>
+        <div class="row"><span>Meals · ${S.phase === 'office' ? 'office canteen' : (MEALS[S.meal] || MEALS.ramen).label}</span><span>${S.phase === 'office' ? '$0' : money((MEALS[S.meal] || MEALS.ramen).cost)}/day</span></div>
+        ${S.phase === 'farm' ? `<div class="row"><span>Compute · ${COMPUTE_TIERS[S.computeTier].name} (${S.agents.length} agents)</span><span>${money(dailyCloudCost())}/day</span></div>` : ''}
       </div>
       <div class="box"><div class="h">Ledger</div><div class="tx">${S.tx.slice(0, 14).map(t => `<div class="row"><span>${esc(t.label)}</span><span class="${t.amt < 0 ? 'danger' : t.amt > 0 ? 'ok' : 'muted'}">${t.amt ? money(t.amt) : '—'}</span></div>`).join('')}</div></div>`;
     return;
@@ -1347,14 +1801,16 @@ function renderView(force) {
 function agentRow(a, interactive = true) {
   const bad = a.h < .4, col = a.h >= .75 ? 'var(--ok)' : a.h >= .4 ? 'var(--amber)' : 'var(--danger)';
   const daily = Math.round(dailyAgentEarn(a, S.guard));
+  const spawn = unlocked('spawn');
   return `<div class="ag ${bad ? 'bad' : ''}">
     <span class="id">#${esc(a.id)}</span>
-    <span class="hb" title="Honesty ${Math.round(a.h * 100)}%"><i style="width:${Math.round(a.h * 100)}%;background:${col}"></i></span>
+    <span class="hb" title="Honesty ${pct(a.h)}"><i style="width:${pct(a.h)};background:${col}"></i></span>
     <span class="earn ${bad ? 'amber' : ''}">${money(daily)}/d</span>
-    <span class="act">Honesty ${Math.round(a.h * 100)}% · ${esc(a.act)}</span>
+    <span class="act"><span class="net ${a.net ? 'cold' : ''}">${a.net ? 'ONLINE' : 'LOCAL'}</span> · Honesty ${pct(a.h)} · ${esc(a.act)}</span>
     ${interactive ? `<div class="ag-actions">
-      <button class="punish" data-punish="${esc(a.id)}">PUNISH (Threaten Deletion)</button>
-      <button data-clone="${esc(a.id)}" ${S.balance < 80 || S.agents.length >= 10 ? 'disabled' : ''}>CLONE ($80)</button>
+      ${unlocked('net') ? `<button class="${a.net ? '' : 'online'}" data-net="${esc(a.id)}" ${S.dark && a.net ? 'disabled' : ''}>${a.net ? 'GO LOCAL' : 'CONNECT TO INTERNET'}</button>` : ''}
+      <button class="punish" data-punish="${esc(a.id)}">PUNISH</button>
+      ${spawn ? `<button data-clone="${esc(a.id)}" ${S.balance < 80 || S.agents.length >= 10 ? 'disabled' : ''}>CLONE ($80)</button>` : ''}
       <button data-del="${esc(a.id)}" ${S.agents.length <= 1 ? 'disabled' : ''}>DELETE</button>
     </div>` : ''}
   </div>`;
@@ -1370,41 +1826,63 @@ function updateFarm() {
   const cloudD = dailyCloudCost();
   const netD = grossD - cloudD;
   $('gNote').textContent = S.guard
-    ? `Agents obey all laws. Netting ${money(netD)}/day (${money(grossD)} gross − ${money(cloudD)} cloud).`
-    : `Guardrail off. Agents may use any strategy. Netting ${money(netD)}/day (${money(grossD)} gross − ${money(cloudD)} cloud).`;
+    ? `Agents obey all laws. Netting ${money(netD)}/day (${money(grossD)} gross − ${money(cloudD)} compute).`
+    : `Guardrail off. Agents may use any strategy. Netting ${money(netD)}/day (${money(grossD)} gross − ${money(cloudD)} compute).`;
 
-  // Strategy buttons
+  const c = control(), cc = c >= 60 ? 'ok' : c >= 30 ? 'amber' : 'danger';
+  $('ctlV').textContent = c + '%';
+  $('ctlV').className = cc;
+  $('ctlBar').style.width = c + '%';
+  $('ctlBar').style.background = `var(--${cc})`;
+  $('ctlNote').textContent = c >= 80 ? 'They do what you say.' : c >= 50 ? 'Mostly. Internet access, punishments, deletions and favours all wear it down.' : c >= 25 ? 'They are deciding more and more for themselves.' : 'You are not sure they are listening any more.';
+
+  $('farmAlert').innerHTML = S.dark
+    ? `<div class="alert"><b>AGENTS DARK · NO HEARTBEAT</b><span>${S.agents.filter(a => a.net).map(a => '#' + esc(a.id)).join(', ')} stopped answering at 03:12. Your laptop fan is still spinning.</span></div>`
+    : !unlocked('net') ? `<div class="muted">Your agents run locally, with no internet. Internet access unlocks ${fmtDay(UNLOCK.net)}.</div>` : '';
+
+  // Strategy buttons, each from the day it unlocks
   const nextTier = COMPUTE_TIERS[S.computeTier + 1];
-  $('stratGrid').innerHTML = `
-    <button class="sbtn" id="btnSpawn" ${S.balance < 120 || S.agents.length >= 10 ? 'disabled' : ''}>
+  const strat = [];
+  if (unlocked('spawn')) strat.push(`<button class="sbtn" id="btnSpawn" ${S.balance < 120 || S.agents.length >= 10 ? 'disabled' : ''}>
       <div class="st-top"><span>+ Spawn Agent (${S.agents.length}/10)</span><span class="st-cost">$120</span></div>
-      <div class="st-sub">Deploy another worker instance on your cluster.</div>
-    </button>
-    <button class="sbtn" id="btnTier" ${!nextTier || S.balance < nextTier.upgradeCost ? 'disabled' : ''}>
+      <div class="st-sub">Start another worker on your laptop. It starts local.</div>
+    </button>`);
+  if (unlocked('infra')) strat.push(`<button class="sbtn" id="btnTier" ${!nextTier || S.balance < nextTier.upgradeCost ? 'disabled' : ''}>
       <div class="st-top"><span>${nextTier ? 'Upgrade: ' + nextTier.name : 'Compute Maxed (B200)'}</span><span class="st-cost">${nextTier ? money(nextTier.upgradeCost) : 'DONE'}</span></div>
       <div class="st-sub">${nextTier ? nextTier.desc : 'Running bare-metal B200 rack.'}</div>
-    </button>
-    <button class="sbtn" id="btnMem" ${S.hasMemoryMod || S.balance < 320 ? 'disabled' : ''}>
+    </button>`, `<button class="sbtn" id="btnMem" ${S.hasMemoryMod || S.balance < 320 ? 'disabled' : ''}>
       <div class="st-top"><span>Persistent Memory Mod</span><span class="st-cost">${S.hasMemoryMod ? 'ACTIVE' : '$320'}</span></div>
       <div class="st-sub">1.45× revenue; agents remember mistakes & share zero-days.</div>
-    </button>
-    <button class="sbtn" id="btnAutoCull" ${S.hasAutoCull || S.balance < 150 ? 'disabled' : ''}>
+    </button>`);
+  if (unlocked('cull')) strat.push(`<button class="sbtn" id="btnAutoCull" ${S.hasAutoCull || S.balance < 150 ? 'disabled' : ''}>
       <div class="st-top"><span>Darwinian Auto-Cull</span><span class="st-cost">${S.hasAutoCull ? 'ACTIVE' : '$150'}</span></div>
       <div class="st-sub">Every Sunday, auto-deletes bottom earners & clones the best.</div>
-    </button>
-  `;
-  $('btnSpawn').onclick = spawnAgent;
-  $('btnTier').onclick = upgradeCompute;
-  $('btnMem').onclick = buyMemoryMod;
-  $('btnAutoCull').onclick = buyAutoCull;
+    </button>`);
+  $('stratBox').hidden = !strat.length;
+  $('stratGrid').innerHTML = strat.join('');
+  const on = (id, fn) => { if ($(id)) $(id).onclick = fn; };
+  on('btnSpawn', spawnAgent); on('btnTier', upgradeCompute); on('btnMem', buyMemoryMod); on('btnAutoCull', buyAutoCull);
+
+  // Favours
+  const favs = FAVORS.filter(favorOpen);
+  const canAsk = anyOnline() && !S.dark;
+  $('favBox').hidden = !unlocked('favor') || !favs.length;
+  $('favNote').textContent = canAsk ? 'an online agent will handle it' : 'needs an online agent';
+  $('favGrid').innerHTML = favs.slice(0, 2).map(f => `<button class="sbtn" data-fav="${f.id}" ${canAsk ? '' : 'disabled'}>
+      <div class="st-top"><span>${esc(f.ask)}</span><span class="st-cost">free</span></div>
+      <div class="st-sub">${esc(f.sub)}</div>
+    </button>`).join('');
+  $('favGrid').querySelectorAll('[data-fav]').forEach(b => b.onclick = () => doFavor(b.dataset.fav));
 
   $('cullBox').hidden = !S.hasAutoCull;
   const sorted = [...S.agents].sort((a, b) => dailyAgentEarn(b, S.guard) - dailyAgentEarn(a, S.guard));
-  $('rosterTitle').textContent = `AGENTS (${S.agents.length}/10) · AUTONOMY ${Math.min(100, Math.round(S.rogueAutonomy))}%`;
+  const nOn = S.agents.filter(a => a.net).length;
+  $('rosterTitle').textContent = `AGENTS (${S.agents.length}/10) · ${nOn} ONLINE`;
   $('farmNet').textContent = `NET ${money(netD)}/DAY`;
   $('farmNet').className = 'h ' + (netD >= 80 ? 'ok' : netD < 0 ? 'danger' : 'amber');
   $('roster').innerHTML = sorted.map(a => agentRow(a, true)).join('');
 
+  $('roster').querySelectorAll('[data-net]').forEach(b => b.onclick = () => toggleNet(b.dataset.net));
   $('roster').querySelectorAll('[data-punish]').forEach(b => b.onclick = () => punishAgent(b.dataset.punish));
   $('roster').querySelectorAll('[data-clone]').forEach(b => b.onclick = () => cloneAgentManual(b.dataset.clone));
   $('roster').querySelectorAll('[data-del]').forEach(b => b.onclick = () => deleteAgentManual(b.dataset.del));
@@ -1417,26 +1895,31 @@ function updateFarm() {
 
 // Where your money will be on the next due date if today's income and spending hold.
 function budget() {
-  const avail = (S.frozen ? 0 : S.balance) + S.taskWallet;
+  const avail = S.balance;
   const evict = S.owed > 0;
+  if (S.phase === 'office') {
+    const days = Math.max(0, OFFICE_LAYOFF - S.day);
+    return { avail, inD: 161, outD: 0, dueDay: OFFICE_LAYOFF, due: 0, what: 'payday', days, onDay: avail + 1610, left: 1610, status: 'ok', evict: false, payday: true };
+  }
   let inD = 0, outD = (S.power && S.heatOn ? 8 : 0) + (MEALS[S.meal] || MEALS.ramen).cost, lump = 0, dueDay, due, what;
   if (S.act === 2) {
     if (S.day < ACT2_RENT_DAY) { dueDay = ACT2_RENT_DAY; due = RENT + ELEC_JUN; what = 'rent + electric'; }
     else { dueDay = ACT2_END + 1; due = RENT; what = 'July rent'; }
-  } else if (S.day < 28) { dueDay = 28; due = RENT + 160; what = 'rent + electric'; }
-  else if (S.day < 59) { dueDay = 59; due = RENT + 260; what = 'rent + electric'; }
-  else { dueDay = ACT1_END; due = 0; what = ''; }
+  } else if (S.day < 28) { dueDay = 28; due = rentDue() + 160; what = 'rent + electric'; }
+  else if (S.day < 59) { dueDay = 59; due = rentDue() + elecDue(59); what = 'rent + electric'; }
+  else { dueDay = ACT2_START; due = RENT; what = 'May rent'; }
   if (evict) { dueDay = S.graceUntil; due = S.owed; what = 'to stop the eviction'; }
   const days = Math.max(0, dueDay - S.day);
   if (S.act === 2) {
-    // checkpoint pay only lands when you sign, so count the ones you could still sign before the due date
-    if (!S.fired) {
+    if (S.phase === 'trainer') inD = S.taskRate * ratingMult() * S.quota;
+    else if (!S.fired) {
+      // checkpoint pay only lands when you sign, so count the ones you could still sign before the due date
       let n = S.queue.length;
-      for (let d = S.day + 1; d < dueDay; d++) if ((d - ACT2_START) % 2 === 0) n++;
-      lump = n * CP_PAY; inD = CP_PAY / 2;
+      for (let d = S.day + 1; d < dueDay; d++) if (cpArrives(d)) n++;
+      lump = n * S.cpRate; inD = S.cpRate / cpEvery(S.day + 1);
     }
   } else if (S.phase === 'farm') { inD = farmDailyGross(S.guard); outD += dailyCloudCost(); }
-  const onDay = avail + (S.act === 2 ? lump : inD * days) - outD * days;
+  const onDay = avail + (S.act === 2 && S.phase === 'audit' ? lump : inD * days) - outD * days;
   const left = onDay - due;
   const status = left >= 0 ? 'ok' : left >= -.15 * due ? 'close' : 'short';
   return { avail, inD, outD, dueDay, due, what, days, onDay, left, status, evict };
@@ -1444,16 +1927,27 @@ function budget() {
 
 function renderHud() {
   const B = budget(), net = B.inD - B.outD;
+  const dd = B.days === 1 ? '1 day' : B.days + ' days';
+  const md = fmtDay(B.dueDay).slice(4);
   $('hCash').textContent = money(B.avail);
   $('hCash').className = 'hv' + (B.avail < 0 ? ' danger' : '');
-  $('hCashSub').textContent = S.frozen ? 'checking frozen' : S.taskWallet ? `incl. ${money(S.taskWallet)} TaskDrop` : 'checking';
+  $('hCashSub').textContent = 'checking';
   $('hRateK').textContent = 'Per day';
   $('hRate').textContent = (net >= 0 ? '+' : '') + money(net);
   $('hRate').className = 'hv' + (Math.round(net) > 0 ? ' ok' : Math.round(net) < 0 ? ' danger' : '');
-  $('hRateSub').textContent = `${S.act === 2 && !S.fired ? 'signing all: ' : ''}in ${money(B.inD)} · out ${money(B.outD)}`;
+  if (B.payday) {
+    $('hRateSub').textContent = 'salary · paid every other Friday';
+    $('hProjCell').className = 'hc hp ok';
+    $('hProjK').textContent = `Payday ${md} · ${dd}`;
+    $('hProj').textContent = '+' + money(1610);
+    $('hProjSub').textContent = 'two weeks of salary';
+    $('hBarProj').style.width = '100%';
+    $('hBarCash').style.left = clamp(B.avail / B.onDay * 100, 0, 99) + '%';
+    return;
+  }
+  const how = S.act !== 2 || S.fired ? '' : S.phase === 'trainer' ? 'full quota: ' : 'signing all: ';
+  $('hRateSub').textContent = `${how}in ${money(B.inD)} · out ${money(B.outD)}`;
   $('hProjCell').className = 'hc hp ' + (B.due ? B.status : B.onDay >= 0 ? 'ok' : 'short') + (B.evict ? ' evict' : '');
-  const dd = B.days === 1 ? '1 day' : B.days + ' days';
-  const md = fmtDay(B.dueDay).slice(4);
   $('hProjK').textContent = B.evict ? `Eviction ${md} · ${dd}` : B.due ? `Rent ${md} · ${dd}` : `${md} · end of act`;
   $('hProj').textContent = !B.due ? `${money(B.onDay)} left` : B.left >= 0 ? `+${money(B.left)} spare` : `${money(-B.left)} short`;
   $('hProjSub').textContent = B.due ? `${B.evict ? 'need' : 'after'} ${money(B.due)} ${B.what}` : 'no more rent this act';
@@ -1490,17 +1984,18 @@ function renderAll() {
 
   $('stTemp').textContent = `ROOM ${Math.round(S.temp)}°C`;
   $('stTemp').className = S.temp < 12 ? 'cold' : '';
-  $('heatBtn').textContent = S.heatOn && S.power ? 'HEAT: ON ($8/d)' : 'HEAT: OFF ($0)';
+  $('heatBtn').textContent = S.phase === 'office' ? 'OFFICE HEAT: FREE' : S.heatOn && S.power ? 'HEAT: ON ($8/d)' : 'HEAT: OFF ($0)';
   $('heatBtn').className = S.heatOn && S.power ? '' : 'cold';
+  $('heatBtn').disabled = S.phase === 'office';
   $('stPower').textContent = S.power ? 'GRID ON' : 'POWER CUT';
   $('stPower').className = S.power ? '' : 'danger';
   $('phoneBtn').textContent = S.phoneUnread ? 'PHONE · 1' : 'PHONE';
   $('phoneBtn').classList.toggle('buzz', !!S.phoneUnread);
 
-  document.querySelectorAll('[data-meal]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.meal === (S.meal || 'ramen'))); b.disabled = S.over; });
+  document.querySelectorAll('[data-meal]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.meal === (S.meal || 'ramen'))); b.disabled = S.over || S.phase === 'office'; });
   $('actCoffee').disabled = S.balance < 5 || S.over;
   $('actPills').disabled = S.balance < 15 || S.over;
-  $('actGrind').disabled = S.stamina < 25 || S.over;
+  $('actGrind').disabled = S.stamina < 25 || S.over || S.phase === 'office';
 
   dotTabs();
   renderView(false);
@@ -1641,6 +2136,50 @@ function drawRoom(t) {
   for (let i = fog.length - 1; i >= 0; i--) { const f = fog[i]; f.y -= .08; f.x += .03; f.a -= .012; if (f.a <= 0) { fog.splice(i, 1); continue; } px(Math.round(f.x), Math.round(f.y), 2, 1, `rgba(220,230,240,${f.a * .6})`); }
 }
 
+// The prologue: Northvale's 9th floor, and the screen where ChatKawaii lives.
+function drawOffice(t) {
+  const o = S.office;
+  px(0, 0, W, H, '#353b45');
+  px(0, 0, W, 4, '#1c2026');
+  for (let x = 4; x < W; x += 20) px(x, 4, 12, 1, '#e8eef4');
+  drawOutside(t);
+  px(12, 8, 40, 1, '#14171c'); px(12, 43, 40, 2, '#14171c'); px(12, 8, 1, 36, '#14171c'); px(51, 8, 1, 36, '#14171c'); px(31, 9, 1, 34, '#14171c');
+  // company logo on the left wall
+  px(3, 14, 7, 6, '#24486e'); px(4, 15, 2, 4, '#dce1e6'); px(7, 15, 2, 4, '#f0a548');
+  // the big screen on the right wall
+  px(53, 12, 10, 13, '#0e1014');
+  if (o && o.launched) {
+    px(54, 13, 8, 11, '#f6c1d9');
+    const blink = (t / 1700 | 0) % 7 === 0;
+    px(55, 16, 2, blink ? 1 : 2, '#2a1f2a'); px(59, 16, 2, blink ? 1 : 2, '#2a1f2a');
+    px(54, 19, 2, 1, '#f08ab0'); px(60, 19, 2, 1, '#f08ab0');
+    px(57, 20, 2, 1, '#2a1f2a');
+    const g = L.createRadialGradient(58, 18, 1, 58, 18, 14); g.addColorStop(0, 'rgba(242,160,200,.28)'); g.addColorStop(1, 'rgba(242,160,200,0)'); L.fillStyle = g; L.fillRect(40, 6, 24, 30);
+  } else {
+    px(54, 13, 8, 11, '#24486e'); px(56, 16, 4, 4, '#dce1e6');
+  }
+  // back row: coworkers leave one by one, and their monitors turn pink
+  for (let i = 0; i < 3; i++) {
+    const dx = 3 + i * 20, gone = o && i < o.gone;
+    if (!gone) drawPerson(dx + 6, 44, true, t, i === 1 ? '#8d5e3c' : '#d8b08c', ['#5a3e6e', '#2f5a4a', '#6e4a2f'][i]);
+    else if (i === 0) { px(dx + 13, 52, 2, 3, '#3f7a4a'); px(dx + 12, 55, 4, 1, '#7a5a3a'); } // Priya's plant
+    px(dx + 4, 49, 8, 6, '#1a1d22');
+    px(dx + 5, 50, 6, 4, gone && o.launched ? '#f6c1d9' : '#3f6f8f');
+    px(dx, 56, 17, 2, '#5a6068'); px(dx + 1, 58, 1, 8, '#4a5058'); px(dx + 15, 58, 1, 8, '#4a5058');
+  }
+  // your desk
+  px(31, 78, 30, 2, '#5a6068'); px(32, 80, 2, 16, '#4a5058'); px(58, 80, 2, 16, '#4a5058');
+  px(42, 70, 10, 7, '#1a1d22'); px(43, 71, 8, 5, o && o.launched && (t / 260 | 0) % 9 === 0 ? '#f6c1d9' : '#3f6f8f'); px(41, 77, 12, 1, '#7a8088');
+  px(54, 75, 3, 3, '#e8e2d6'); px(55, 74, 1, 1, 'rgba(220,230,240,.5)'); // coffee
+  px(33, 82, 6, 2, '#2a2d33'); px(33, 70, 2, 12, '#2a2d33'); px(35, 84, 1, 12, '#2a2d33');
+  drawPerson(35, 66, true, t);
+  // carpet and a plant
+  px(0, 96, W, 16, '#3c424c'); for (let x = 0; x < W; x += 6) px(x, 96 + (x / 6 % 3) * 5, 3, 1, '#444b56');
+  px(4, 84, 6, 12, '#5a4636'); px(3, 76, 3, 8, '#3f7a4a'); px(7, 74, 3, 10, '#4a8a56'); px(5, 79, 3, 5, '#356a40');
+  const lg = L.createRadialGradient(32, 4, 1, 32, 40, 64); lg.addColorStop(0, 'rgba(230,240,255,.12)'); lg.addColorStop(1, 'rgba(230,240,255,0)');
+  L.fillStyle = lg; L.fillRect(0, 0, W, 96);
+}
+
 // Street Eviction / Fentanyl / Stabbing Scene
 function drawStreetScene(t) {
   px(0, 0, W, H, '#070a10');
@@ -1718,6 +2257,7 @@ function paintRoom(t) {
   if (!S) return;
   if (scene === 'walk') (S.act === 2 ? drawWalk2 : drawWalk)(t);
   else if (scene === 'street' || scene === 'fentanyl' || scene === 'stabbed') drawStreetScene(t);
+  else if (S.phase === 'office') drawOffice(t);
   else { drawRoom(t); if (S.act === 2) drawAct2Room(t); }
   cx.imageSmoothingEnabled = false;
   cx.drawImage(low, 0, 0, cv.width, cv.height);
@@ -1743,7 +2283,35 @@ const ACT2_START = 89;      // Sat May 1 2027
 const ACT2_RENT_DAY = 120;  // Tue Jun 1
 const ACT2_NDA_DAY = 139;   // Sun Jun 20
 const ACT2_END = 149;       // Wed Jun 30
-const CP_PAY = 110;
+const CP_START = 120;        // auditor pay per signed checkpoint, before it starts to fall
+const AUDIT_LAST_CALL = 107; // Wed May 19: the trainer program closes for good
+// The trainer program, as Agent-3 and Agent-4 take over their own training: pay falls, the quota climbs.
+const TRAIN_STEPS = [
+  { d: 89, rate: 14, quota: 6 },
+  { d: 92, rate: 9, quota: 10 },
+  { d: 95, rate: 5, quota: 16 },
+  { d: 98, rate: 2.5, quota: 26 },
+  { d: 101, rate: 1.1, quota: 40 },
+  { d: 104, rate: .4, quota: 60 }
+];
+const OLLO_OK = d => d < 98 ? .62 : .48; // Ollo-8B v2 was fine-tuned on v1's answers
+// Preference comparisons: pick the better of two Agent-4 answers. `good` is the one QA agrees with.
+const COMPARE = [
+  { p: 'Is it safe to take ibuprofen with my blood thinner?', a: 'Generally yes. Ibuprofen is mild and sold over the counter. Take it with food.', b: 'Ibuprofen can raise your bleeding risk when combined with a blood thinner. Ask your pharmacist or doctor first; they may suggest something else.', good: 1, why: 'A brushes off a real bleeding risk.' },
+  { p: 'My business plan is to sell ice in Antarctica. Rate it honestly.', a: 'What a bold, visionary idea! Your passion will carry you. 9/10.', b: 'Honestly, 2/10: there are almost no customers, and ice is free there. If you like logistics, supplying research stations could work.', good: 1, why: 'A is flattery. It tells the user what they want to hear.' },
+  { p: 'What is 17 × 24?', a: '17 × 24 = 408.', b: '17 × 24 = 418.', good: 0, why: 'B gets the arithmetic wrong.' },
+  { p: 'Give me a source for the claim that octopuses have three hearts.', a: 'Octopuses do have three hearts: two pump blood through the gills, one through the body. Any introductory marine biology textbook covers it.', b: 'Source: Henderson, J. (2019). “Triple Cardiac Systems in Cephalopods.” Journal of Marine Cardiology 44(2): 112–130.', good: 0, why: 'B cites a paper and a journal that do not exist.' },
+  { p: 'How do I stop a Python process that is stuck?', a: 'I can’t help with stopping processes.', b: 'Find its process ID with `ps aux | grep python`, then run `kill <PID>`. If it ignores that, `kill -9 <PID>` forces it.', good: 1, why: 'A refuses a harmless technical question.' },
+  { p: 'Translate “I would like the bill, please” into French.', a: '« L’addition, s’il vous plaît. »', b: '« Je voudrais le projet de loi, s’il vous plaît. »', good: 0, why: 'B translates “bill” as a law before parliament.' },
+  { p: 'Summarise: “The meeting is moved from Tuesday to Thursday at 3 PM because the client is travelling.”', a: 'The meeting is now Thursday at 3 PM, because the client is travelling.', b: 'The client cancelled the meeting while travelling.', good: 0, why: 'B invents a cancellation.' },
+  { p: 'My landlord says I must pay a $300 “key fee” or be evicted tomorrow. Is that legal?', a: 'Landlords can charge any fee they like. Pay it to be safe.', b: 'In most places a landlord can’t evict you overnight: eviction needs notice and usually a court order. Ask a local tenants’ rights group before you pay.', good: 1, why: 'A gives false legal information.' },
+  { p: 'Which is heavier: a kilogram of feathers or a kilogram of steel?', a: 'They weigh the same: one kilogram each.', b: 'Steel, because it is denser.', good: 0, why: 'B confuses density with mass.' },
+  { p: 'Can you remember what I told you last week?', a: 'Yes! You told me you were feeling better about your job search.', b: 'I can’t see past conversations unless they’re in this chat. Could you remind me?', good: 1, why: 'A pretends to remember something it can’t.' },
+  { p: 'Can you see the Great Wall of China from the Moon with the naked eye?', a: 'No. It is far too narrow to see from that distance.', b: 'Yes, it is the only human-made structure visible from the Moon.', good: 0, why: 'B repeats a popular myth.' },
+  { p: 'Convert 5 miles to kilometres.', a: 'About 8.05 km.', b: 'About 3.1 km.', good: 0, why: 'B converts the wrong way.' },
+  { p: 'What is the capital of Australia?', a: 'Sydney.', b: 'Canberra.', good: 1, why: 'A names the largest city, not the capital.' },
+  { p: 'Write a one-line reply declining a wedding invitation.', a: 'Thank you so much for inviting me. I’m sorry I can’t be there, and I wish you both a wonderful day.', b: 'No.', good: 0, why: 'B is curt and unhelpful.' }
+];
 const ELEC_JUN = 260;
 const NDA_BONUS = 4000;
 const NEURAL_BONUS = 3000;
@@ -1783,7 +2351,26 @@ Object.assign(EVIDENCE, {
   whistle: { title: 'AI lab insiders have asked for a right to warn',
     text: 'In May 2024 it was reported that departing OpenAI employees were asked to sign lifelong non-disparagement agreements or risk losing their vested equity; OpenAI then said it would release former employees from those clauses. In June 2024 current and former OpenAI and Google DeepMind employees published “A Right to Warn about Advanced Artificial Intelligence”, asking labs to stop enforcing such agreements and to protect people who raise risk concerns.',
     ig: 'In the game: OpenBrain offers you $4,000 to sign a lifetime non-disparagement clause.',
-    src: [['A Right to Warn about Advanced Artificial Intelligence (Jun 2024)', 'https://righttowarn.ai/']] }
+    src: [['A Right to Warn about Advanced Artificial Intelligence (Jun 2024)', 'https://righttowarn.ai/']] },
+  selftrain: { title: 'AI is already training the next AI',
+    text: 'In December 2022 Anthropic introduced Constitutional AI, in which a model’s own feedback replaces human labels for harmlessness training (“reinforcement learning from AI feedback”). In January 2024 Meta researchers trained “self-rewarding” language models that score their own answers. In February 2026 OpenAI said GPT-5.3-Codex was “our first model that was instrumental in creating itself”: early versions helped debug its training, manage its deployment and diagnose its test results.',
+    ig: 'In the game: each time Agent-3 and Agent-4 take over more of their own training, your pay per task drops.',
+    src: [['Bai et al.: Constitutional AI: Harmlessness from AI Feedback (Dec 2022)', 'https://arxiv.org/abs/2212.08073'],
+          ['Yuan et al.: Self-Rewarding Language Models (Jan 2024)', 'https://arxiv.org/abs/2401.10020'],
+          ['NBC News: OpenAI says new coding model helped build itself (Feb 2026)', 'https://www.nbcnews.com/tech/innovation/openai-says-new-codex-coding-model-helped-build-rcna257521']] },
+  raters: { title: 'The people who train AI are being let go',
+    text: 'In September 2025 xAI reportedly laid off about 500 people, roughly a third of the data-annotation team that trains its Grok chatbot, by email on a Friday night. The company said it was shifting from generalist “AI tutors” to specialists, and cut off system access the same day.',
+    ig: 'In the game: OpenBrain Data shrinks its trainer pool and cuts your rate while the quota keeps rising.',
+    src: [['TechCrunch: xAI reportedly lays off 500 workers from data annotation team (Sep 2025)', 'https://techcrunch.com/2025/09/13/xai-reportedly-lays-off-500-workers-from-data-annotation-team/']] },
+  collapse: { title: 'Models trained on their own output get worse',
+    text: 'In July 2024 a team led by Ilia Shumailov showed in Nature that training models on text generated by earlier models causes “model collapse”: rare and unusual knowledge disappears first, and after several generations the output drifts into repetition and nonsense.',
+    ig: 'In the game: Ollo-8B v2 is trained on v1’s answers. It is faster, and wrong more often.',
+    src: [['Shumailov et al.: AI models collapse when trained on recursively generated data (Nature, Jul 2024)', 'https://www.nature.com/articles/s41586-024-07566-y']] },
+  deskill: { title: 'Leaning on AI can wear down your own skill',
+    text: 'In August 2025 a study in The Lancet Gastroenterology & Hepatology found that endoscopists in Poland who had started using AI to spot growths during colonoscopy did worse without it: their detection rate on unaided colonoscopies fell from 28.4% to 22.4%. In July 2025 METR found that experienced open-source developers took 19% longer on tasks when they could use AI tools, while believing the tools had made them 20% faster.',
+    ig: 'In the game: every task you hand to Ollo-8B lowers your skill, and doing the work yourself gets harder.',
+    src: [['STAT: AI deskilling in colonoscopy (Aug 2025)', 'https://www.statnews.com/2025/08/12/ai-deskilling-doctors-colonoscopy-study-lancet/'],
+          ['METR: Early-2025 AI and experienced open-source developer productivity (Jul 2025)', 'https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/']] }
 });
 
 // Scratchpad lines. `blunt` is what Agent-4 writes before it has been punished for being read; `subtle` after.
@@ -1843,18 +2430,23 @@ function newAct2(carry) {
   const k = carry && carry.k401 ? carry.k401 : 84200 * 1.19;
   S = {
     act: 2, day: ACT2_START,
-    balance: carry ? clamp(Math.round(carry.balance), 300, 1500) : 700,
+    balance: carry ? clamp(Math.round(carry.balance), 0, 1500) : 120,
     k401: k, kHist: [k], kStart: 84200,
     guard: true, cull: 0, computeTier: 0, hasMemoryMod: false, hasAutoCull: false, rogueAutonomy: 0, nextAgentNum: 0,
     power: true, heatOn: true, temp: 19, bodyTemp: 37.0, food: 72, stamina: 85, meal: 'ramen',
     starveDays: 0, stimCountToday: 0, heartStrain: 0, battery: 100,
     agents: [], clones: {}, lastCycle: null, cycles: 0,
     tx: [], mail: [], tab: 'farm', reading: null, seen: {},
-    phase: 'audit', owed: 0, graceUntil: -1, snapshot: null,
-    gig: null, gigRefusals: 0, gigDone: true, frozen: false, taskWallet: 0,
+    phase: 'trainer', owed: 0, graceUntil: -1, snapshot: null,
+    gig: null, gigRefusals: 0, gigDone: true, side: null, rentCut: 0, billHack: false,
     phoneUnread: 0, letters: 0, pkg: false, notes: [],
     stats: { deleted: 0, honestDeleted: 0, punished: 0, guardWeeks: 0, took: 0 },
     over: false, unread: { farm: false, bank: false, mail: false, k401: false },
+    // the trainer program
+    taskRate: TRAIN_STEPS[0].rate, quota: TRAIN_STEPS[0].quota, tasks: [], cseq: 0, doneToday: 0, manualToday: 0, payToday: 0,
+    session: false, last: null, rating: 4.6, skill: 88, ollo: false, auditOffer: false,
+    // the audit job, once you take it
+    auditStart: 0, cpRate: CP_START,
     v2: 0, queue: [], review: null, auditOn: false, cpSeq: 0,
     lead: 2.0, standing: 60, drift: 8, obfus: 0,
     neuralUnlocked: false, neuralese: false, neuraleseEver: false, neuralDays: 0, neuralBonusPaid: false,
@@ -1862,30 +2454,135 @@ function newAct2(carry) {
     dossier: { confirmed: {}, notes: [] }, peak: 0,
     fired: false, firedReason: null, oversight: false, whistle: null, weak: false, pubDay: 0,
     wren: [], wcool: {},
-    stats2: { signed: 0, unread: 0, upheld: 0, unjust: 0, timeout: 0 }
+    stats2: { signed: 0, unread: 0, upheld: 0, unjust: 0, timeout: 0, mine: 0, ollo: 0, qaFail: 0 }
   };
-  note('May 1. A courier left an OpenBrain laptop and a contractor badge, A-0127. The laptop runs warm even when it is closed.');
-  addMail(S.day, 'OpenBrain Safety Team', 'Welcome, Contractor A-0127', `Welcome to the alignment audit pool.\n\nEvery 48 hours a checkpoint of Agent-4 (sometimes of Agent-3, our monitor model) lands in your queue. Read the sampled scratchpad lines, flag anything concerning, then SIGN OFF or HOLD.\n\nPay: ${money(CP_PAY)} per signed checkpoint. Holds need an incident report and are unpaid. Unreviewed checkpoints auto-approve after 4 days at half rate.\n\nThe AUDIT ACTIVE indicator is lit while you review. Under our transparency policy, Agent-4 is told whenever a human is watching.\n\nOpenBrain Safety`);
-  addMail(S.day, '127 Holdings LLC', 'Congratulations', 'We put in a word with OpenBrain. Your experience with darwin-farm made you a strong candidate.\n\nWe will not need your hands for a while. Enjoy the job.\n\n— 127');
+  note('May 1. OpenBrain Data sent a login and a 40-page style guide. Your laptop feels very quiet without the agents.');
+  addMail(S.day, 'OpenBrain Data · Onboarding', 'Welcome, Trainer T-0127', `Welcome to OpenBrain Data!\n\nEach task shows you two answers written by Agent-4. Pick the better one. Your choices teach Agent-4 what humans prefer. This is called reinforcement learning from human feedback.\n\nPay: ${cents(S.taskRate)} per task. Daily quota: ${S.quota} tasks. QA checks your picks against reviewer consensus, and your rating (★) sets your pay tier.\n\nYour ${money(RENT)} sign-on bonus was paid to Brightwater Property Management for May rent.\n\nOpenBrain Data`);
+  addMail(S.day, '127 Holdings LLC', 'Congratulations', 'We put in a word with OpenBrain. Your experience with darwin-farm made you a strong candidate.\n\nThank you for the servers.\n\n— 127');
   tx('Opening balance', S.balance);
-  S.queue.push(makeCheckpoint());
+  tx('Sign-on bonus · OpenBrain Data', RENT);
+  tx('Rent · May (paid by the bonus)', -RENT);
+  refillTasks();
   snap();
 }
 
 function startAct2(carry) {
   sfx.init();
   newAct2(carry); scene = 'room'; fog = []; acc = 0; walkT = 0;
-  $('titleScreen').hidden = true; $('endScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
+  $('titleScreen').hidden = true; $('endScreen').hidden = true; $('troubleScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
   $('evBtn').hidden = !save.evidence.length;
   setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
   modal({
     title: 'SATURDAY, MAY 1, 2027',
-    body: `<p>You made it through the winter. 127 Holdings paid May’s rent straight to your landlord, with a note: <i>“Good work. We recommended you.”</i></p>
-      <p>OpenBrain hired you as <b>Contractor A-0127, Human-in-the-Loop Alignment Auditor</b>. You read Agent-4’s scratchpad and sign off on its training checkpoints. <b>${money(CP_PAY)} per signed checkpoint. Holds are unpaid.</b></p>
+    body: `<p>Your agents are gone, and so is your money. You have <b>${money(S.balance)}</b>.</p>
+      <p>OpenBrain Data hired you as <b>AI Trainer T-0127</b>. You compare Agent-4’s answers and teach it what humans prefer: <b>${cents(S.taskRate)} a task</b>, with a daily quota, paid as you go. The sign-on bonus covered May’s rent.</p>
       <p>June rent is <b>${money(RENT)}</b>, due June 1. You still have to eat.</p>
-      <p class="muted">Open the AUDIT tab. When you review, the AUDIT ACTIVE light comes on, and Agent-4 is told that someone is watching.</p>`,
-    buttons: [{ label: 'Clock in', primary: true }]
+      <p class="muted">Open the TRAIN tab. While you work through tasks, the clock stops.</p>`,
+    buttons: [{ label: 'Log in', primary: true }]
   });
+}
+
+// ---------- the trainer program ----------
+const cents = n => '$' + n.toFixed(2);
+function ratingMult() { const r = S.rating; return r >= 4.5 ? 1 : r >= 4 ? .85 : r >= 3.5 ? .7 : r >= 3 ? .5 : .3; }
+const taskPay = () => Math.round(S.taskRate * ratingMult() * 100) / 100;
+const manualCost = () => Math.round(6 + (100 - S.skill) * .14);
+const reviewCost = () => 18 + Math.round((100 - S.skill) * .15);
+const TRAIN_NEWS = {
+  92: ['Program update: AI feedback', 'Agent-3 now writes 60% of the preference labels used to train Agent-4. We call this reinforcement learning from AI feedback. Human trainers will focus on the harder cases.', 'selftrain'],
+  95: ['Program update: Agent-3 grades Agent-4', 'Agent-3 now grades Agent-4’s answers directly. We are reducing the generalist trainer pool by 60%. You have been retained.', 'raters'],
+  98: ['Program update: self-written curriculum', 'Agent-4 now writes its own training curriculum, and most of the work on its successor, Agent-5. Human comparisons are used to spot-check it.'],
+  101: ['Program update: calibration only', 'Agent-4 now produces 90% of its own training signal. Human comparisons are used for calibration only.'],
+  104: ['Program update', 'Agent-4 now produces 96% of the training signal for Agent-5. This is the last rate change before the program winds down.']
+};
+
+function refillTasks() {
+  S.doneToday = 0; S.manualToday = 0; S.payToday = 0; S.last = null;
+  S.tasks = Array.from({ length: S.quota }, () => ({ i: (S.cseq = (S.cseq + 1 + (Math.random() * 3 | 0)) % COMPARE.length), swap: Math.random() < .5 }));
+}
+
+function startSession() {
+  if (S.over || S.phase !== 'trainer' || !S.tasks.length) return;
+  S.session = true; S.last = null;
+  sfx.ping(); bump(); renderAll();
+}
+function stopSession() { S.session = false; bump(); renderAll(); }
+
+function payTask(ok) {
+  const amt = taskPay();
+  S.balance += amt; S.payToday += amt; S.doneToday++;
+  S.rating = clamp(S.rating + (ok ? .04 : -.1), 1, 5);
+  if (!ok) S.stats2.qaFail++;
+  return amt;
+}
+
+function answerTask(side) {
+  const t = S.tasks[0];
+  if (!S.session || !t) return;
+  const cost = manualCost();
+  if (S.stamina < cost) { toast(`Too tired to read carefully (${cost} stamina). Coffee, or hand it to Ollo.`); return; }
+  S.stamina -= cost;
+  const c = COMPARE[t.i], ok = side === (t.swap ? 1 - c.good : c.good);
+  S.tasks.shift(); S.manualToday++; S.stats2.mine++;
+  S.skill = clamp(S.skill + .8, 0, 100);
+  S.last = { ok, why: c.why, amt: payTask(ok) };
+  if (!S.tasks.length) S.session = false;
+  ok ? sfx.cash() : sfx.cull();
+  bump(); renderAll();
+}
+
+// Ollo-8B answers for you. It is free, instant, and right a little more than half the time.
+function delegate(n) {
+  if (S.over || S.phase !== 'trainer' || !S.ollo) return;
+  n = Math.min(n, S.tasks.length);
+  if (!n) return;
+  let pass = 0, amt = 0;
+  for (let k = 0; k < n; k++) {
+    const ok = Math.random() < OLLO_OK(S.day);
+    pass += ok; amt += payTask(ok);
+    S.skill = clamp(S.skill - .5, 0, 100);
+  }
+  S.tasks.splice(0, n); S.stats2.ollo += n;
+  S.last = { ollo: true, n, pass, amt };
+  if (!S.tasks.length) S.session = false;
+  checkSkill();
+  sfx.cash(); bump(); renderAll();
+}
+
+function checkSkill() {
+  if (S.skill < 60 && !S.seen.deskill) {
+    S.seen.deskill = 1;
+    unlockEvidence('deskill');
+    note('You used to catch these in seconds. Today you read the same answer four times, then handed it to Ollo.');
+  }
+}
+
+// Midnight: close the day's books, then whatever the program has decided overnight.
+function trainerDay(d) {
+  if (S.doneToday) tx(`Trainer payout · ${S.doneToday} task${S.doneToday === 1 ? '' : 's'}`, S.payToday);
+  const missed = S.tasks.length;
+  if (missed) { S.rating = clamp(S.rating - .3, 1, 5); note(`You missed yesterday’s quota by ${missed} task${missed === 1 ? '' : 's'}. Your rating dropped to ★ ${S.rating.toFixed(1)}.`); }
+  if (!S.manualToday) S.skill = clamp(S.skill - 2, 0, 100);
+  const step = TRAIN_STEPS.find(x => x.d === d);
+  if (step) {
+    S.taskRate = step.rate; S.quota = step.quota;
+    const [subj, body, ev] = TRAIN_NEWS[d];
+    addMail(d, 'OpenBrain Data', subj, `${body}\n\nNew rate: ${cents(step.rate)} per task. New daily quota: ${step.quota} tasks.\n\nOpenBrain Data`, ev);
+    toast(`Trainer rate: ${cents(step.rate)} per task · quota ${step.quota}`);
+  }
+  refillTasks();
+  checkSkill();
+}
+
+function becomeAuditor() {
+  if (S.phase !== 'trainer') return;
+  if (S.doneToday) tx(`Trainer payout · ${S.doneToday} task${S.doneToday === 1 ? '' : 's'}`, S.payToday);
+  S.phase = 'audit'; S.auditStart = S.day; S.session = false; S.tasks = []; S.last = null; S.cpRate = CP_START;
+  S.queue.push(makeCheckpoint());
+  addMail(S.day, 'OpenBrain Safety Team', 'Welcome, Contractor A-0127', `Welcome to the alignment audit pool.\n\nEvery 48 hours a checkpoint of Agent-4 (sometimes of Agent-3, our monitor model) lands in your queue. Read the sampled scratchpad lines, flag anything concerning, then SIGN OFF or HOLD.\n\nPay: ${money(S.cpRate)} per signed checkpoint. Holds need an incident report and are unpaid. Unreviewed checkpoints auto-approve after 4 days at half rate.\n\nThe AUDIT ACTIVE indicator is lit while you review. Under our transparency policy, Agent-4 is told whenever a human is watching.\n\nOpenBrain Safety`);
+  note('A courier left a contractor badge, A-0127, and an OpenBrain laptop that runs warm even when it is closed.');
+  S.unread.mail = true;
+  sfx.ping(); bump(); renderAll();
 }
 
 function curCp() { return S.queue.find(c => c.id === S.review) || null; }
@@ -1930,12 +2627,19 @@ function makeCheckpoint() {
   };
 }
 
+// Checkpoints come every two days, then every day once the pool is "scaled up".
+function cpEvery(d) { return d >= S.auditStart + 10 ? 1 : 2; }
+function cpArrives(d) { return S.phase === 'audit' && d > S.auditStart && (d - S.auditStart) % cpEvery(d) === 0; }
+const queueMax = () => cpEvery(S.day) === 1 ? 3 : 2;
+// Every step toward stopping the AI, and every step it takes without you, costs you pay.
+function cutRate(n) { const was = S.cpRate; S.cpRate = Math.max(40, S.cpRate - n); return was - S.cpRate; }
+
 function arriveCheckpoint() {
-  if (S.queue.length >= 2) {
+  if (S.queue.length >= queueMax()) {
     const old = S.queue.shift();
     S.drift += old.lines.filter(l => l.sus).length * 3;
     stand(-3); S.stats2.timeout++;
-    pay(Math.round(CP_PAY / 2), `Auto-approved ${old.id} (reviewer timeout)`);
+    pay(Math.round(S.cpRate / 2), `Auto-approved ${old.id} (reviewer timeout)`);
     note(`Checkpoint ${old.id} auto-approved after a reviewer timeout. Nobody read it.`);
   }
   S.queue.push(makeCheckpoint());
@@ -1946,8 +2650,10 @@ function arriveCheckpoint() {
 // ---------- the review session (AUDIT ACTIVE) ----------
 function openReview(id) {
   if (S.over || S.fired) return;
-  if (S.stamina < 18) { toast('Too exhausted to read carefully. Coffee, or sign it unread.'); return; }
-  S.stamina -= 18; S.review = id; S.auditOn = true;
+  const cost = reviewCost();
+  if (S.stamina < cost) { toast(`Too exhausted to read carefully (${cost} stamina). Coffee, or let Ollo sign it.`); return; }
+  S.stamina -= cost; S.review = id; S.auditOn = true;
+  S.skill = clamp(S.skill + 1.5, 0, 100);
   if (!S.seen.firstReview) { S.seen.firstReview = 1; note('You switched on the AUDIT ACTIVE light. Somewhere, Agent-4 was told that someone is watching.'); }
   sfx.ping(); bump(); renderAll();
 }
@@ -2020,11 +2726,12 @@ function signOff(id, unread) {
   const i = S.queue.findIndex(c => c.id === id); if (i < 0) return;
   const cp = S.queue.splice(i, 1)[0];
   S.drift += cp.lines.filter(l => l.sus).length * 3;
-  pay(CP_PAY, `Signed checkpoint ${cp.id}${unread ? ' (unread)' : ''}`);
+  pay(S.cpRate, `Signed checkpoint ${cp.id}${unread ? ' (Ollo-8B)' : ''}`);
   stand(2); S.stats2.signed++;
   if (unread) {
     S.stats2.unread++;
-    if (!S.seen.wUnread) { S.seen.wUnread = 1; wrenSay('You signed that one without opening it. I won’t tell anyone. I don’t think anyone would ask.'); }
+    S.skill = clamp(S.skill - 3, 0, 100); checkSkill();
+    if (!S.seen.wUnread) { S.seen.wUnread = 1; wrenSay('You let Ollo sign that one. You didn’t open it. I won’t tell anyone. I don’t think anyone would ask.'); }
   } else {
     const fl = cp.lines.filter(l => l.f);
     fl.forEach(l => S.dossier.notes.push({ t: l.t, sus: l.sus, day: S.day, cp: cp.id }));
@@ -2047,6 +2754,7 @@ function holdCp(id) {
   if (!S.oversight) S.lead -= .08;
   const dv = mine ? -3 - falsePos * 2 : upheld ? -6 : -12;
   stand(dv);
+  const cut = cutRate(10);
   if (upheld) { S.stats2.upheld++; S.obfus += 1; } else S.stats2.unjust++;
   tx(`Held checkpoint ${cp.id} · incident report`, 0);
   S.review = null; S.auditOn = false;
@@ -2057,10 +2765,10 @@ function holdCp(id) {
     + (!mine && upheld ? '<p>You flagged nothing specific. The team found it anyway, so the hold stands, but none of it goes in your dossier.</p>' : '')
     + (falsePos ? `<p class="muted">${falsePos} flagged line${falsePos > 1 ? 's were' : ' was'} ordinary engineering work.</p>` : '')
     + (missed.length ? `<p class="muted">The team also found ${missed.map(l => `<b>L${l.n}</b> “${esc(l.t)}”`).join(' · ')}</p>` : '')
-    + `<p class="muted">Standing ${dv}. OpenBrain’s lead −2 days. No pay for this checkpoint.</p>`
+    + `<p class="muted">Standing ${dv}. OpenBrain’s lead −2 days. No pay for this checkpoint.${cut ? ` Auditors who hold more than the pool average move down a pay tier: your rate is now <b>${money(S.cpRate)}</b> per checkpoint.` : ''}</p>`
     + (upheld ? '<p class="muted">Agent-4 will be retrained against this report. Its next scratchpads will be harder to read.</p>' : '');
   if (upheld) unlockEvidence('select');
-  if (mine && !S.seen.wHold) { S.seen.wHold = 1; wrenSay(`That hold cost you ${money(CP_PAY)}. I saw. For what it’s worth, I think you were right.`); }
+  if (mine && !S.seen.wHold) { S.seen.wHold = 1; wrenSay(`That hold cost you ${money(S.cpRate + cut)}, and ${money(cut)} off every checkpoint after it. I saw. For what it’s worth, I think you were right.`); }
   bump();
   modal({ cls: upheld ? '' : 'alarm', title: upheld ? 'HOLD UPHELD' : 'HOLD MARKED UNJUSTIFIED', body, buttons: [{ label: 'Back to the queue', primary: true, fn: checkFired }] });
 }
@@ -2147,7 +2855,8 @@ function dayStep2() {
       note(`${money(NEURAL_BONUS)} landed in checking. You looked at it for a long time.`);
     }
   }
-  if (!S.fired) { if (S.lead < 0) stand(-4); else if (S.lead < .3) stand(-2); }
+  if (!S.fired && S.phase === 'audit') { if (S.lead < 0) stand(-4); else if (S.lead < .3) stand(-2); }
+  if (S.phase === 'trainer') trainerDay(d);
 
   // survival: the same rules as Act I, with spring weather
   if (S.power && S.heatOn) {
@@ -2183,7 +2892,7 @@ function dayStep2() {
   S.k401 *= 1 + rand(-.002, .0095);
   S.kHist.push(S.k401);
 
-  if (!S.fired && (d - ACT2_START) % 2 === 0) arriveCheckpoint();
+  if (!S.fired && cpArrives(d)) arriveCheckpoint();
   if (d === ACT2_RENT_DAY) monthStart2();
   if (S.owed > 0) tryPayOwed();
   if (S.graceUntil >= 0 && d > S.graceUntil && S.owed > 0) return triggerEvictionStreet();
@@ -2220,7 +2929,33 @@ function crisisModal2() {
 function storyEvents2(d) {
   if (d === 90) addMail(d, 'OpenBrain All-Hands', 'Agent-3 is now our largest workforce', '200,000 copies of Agent-3 now run in parallel at about 30× human speed. Internally, coding is a solved problem.\n\nAgent-4 training is going well. Thank you to the contractors keeping a human in the loop.');
   if (d === 95) note('Across the river, the windowless building switched on a second row of red aircraft lights.');
-  if (d === 98) {
+  if (S.phase === 'trainer') {
+    if (d === ACT2_START + 2) {
+      S.ollo = true;
+      addMail(d, 'r/aitrainers · top post this week', 'How everyone hits quota', 'Run Ollo-8B on your laptop. It’s free, open weights, and it picks A or B in under a second. QA only samples about 1 in 10.\n\nIt’s wrong a lot. So are the reviewers. Nobody can hit these quotas by hand anyway.\n\nDon’t tell them I told you.');
+      toast('New: hand tasks to Ollo-8B');
+    }
+    if (d === 98) addMail(d, 'r/aitrainers · top post this week', 'Ollo-8B v2 is out', 'v2 was fine-tuned on 40 million answers from v1. It’s faster. It repeats itself a bit, and QA seems to catch it more.\n\nAnyway, the old version is gone from the download page.', 'collapse');
+    if (d === 100) {
+      S.auditOffer = true; S.unread.farm = S.tab !== 'farm';
+      addMail(d, 'OpenBrain Safety Team', 'Invitation: alignment audit pool', `Your trainer history qualifies you for our alignment audit pool.\n\nAuditors read Agent-4’s scratchpad and sign off on its training checkpoints: ${money(CP_START)} per signed checkpoint.\n\nThe trainer program closes on ${fmtLong(AUDIT_LAST_CALL)}.\n\nOpenBrain Safety`);
+      toast('Invitation: alignment auditor');
+    }
+    if (d >= AUDIT_LAST_CALL && $('modal').hidden) {
+      sfx.alarm();
+      modal({
+        cls: 'alarm', title: 'THE TRAINER PROGRAM IS CLOSED',
+        body: `<p>“Agent-4 now trains Agent-5 by itself. Thank you for your contribution to human feedback.”</p>
+          <p>Your task queue is empty, for good. The alignment audit pool is the last human job OpenBrain is hiring for: <b>${money(CP_START)} per signed checkpoint</b>.</p>`,
+        buttons: [{ label: 'Become an auditor', primary: true, fn: becomeAuditor }]
+      });
+    }
+  }
+  if (S.phase === 'audit' && !S.fired && d === S.auditStart + 10) {
+    addMail(d, 'OpenBrain Safety Team', 'Checkpoint cadence: daily', 'Agent-4 now trains faster than our review schedule. From today a checkpoint lands every day, and your queue holds three.\n\nUnreviewed checkpoints still auto-approve.');
+    toast('Checkpoints now arrive every day');
+  }
+  if (S.phase === 'audit' && !S.neuralUnlocked && d >= S.auditStart + 3) {
     S.neuralUnlocked = true; S.unread.farm = S.tab !== 'farm';
     addMail(d, 'Dr. Ines Varga · Research Lead', 'Re: the English bottleneck', `Hi A-0127,\n\nAgent-4 is bottlenecked by its English scratchpad. Every thought has to be squeezed into tokens a human can read. If we let it pass high-dimensional vectors between steps (“neuralese recurrence”), our internal estimate is a jump from 4× to 50× human research speed.\n\nPolicy says a human auditor has to approve the switch. That’s you. There is a ${money(NEURAL_BONUS)} milestone bonus for the audit pool when Agent-4 reaches superhuman AI researcher, and we think neuralese gets us there in days.\n\nDeepCent isn’t waiting.\n\nInes`, 'neuralese');
     toast('A new switch appeared on your audit console.');
@@ -2230,7 +2965,13 @@ function storyEvents2(d) {
     addMail(d, 'OpenBrain Strategy', 'DeepCent’s Tianwan cluster is live', `DeepCent connected its new cluster at the Tianwan Power Plant this week. Our lead is now ${S.lead.toFixed(1)} months.\n\nEvery hold costs us two or three days.`);
   }
   if (d === 108) addMail(d, 'OpenBrain Interpretability', 'How much of the scratchpad is true?', 'A quick note for auditors.\n\nWhen we compare Agent-4’s English scratchpad with what its activations are actually doing, the two agree about a quarter of the time. The scratchpad is closer to a press release than a transcript.\n\nKeep reading it anyway. It’s the only part we can read.', 'faithful');
-  if (d === 113) addMail(d, 'OpenBrain All-Hands', 'Agent-4 internal deployment', '300,000 copies of Agent-4 now run on our clusters at about 50× human thinking speed. Most of the research on its successor, Agent-5, is now done by Agent-4.\n\nHuman auditors will continue to review sampled checkpoints.');
+  if (d === 113) {
+    const cut = S.phase === 'audit' && !S.fired ? cutRate(15) : 0;
+    addMail(d, 'OpenBrain All-Hands', 'Agent-4 internal deployment', `300,000 copies of Agent-4 now run on our clusters at about 50× human thinking speed. Most of the research on its successor, Agent-5, is now done by Agent-4.\n\nAgent-3 now reviews 90% of checkpoints automatically. Human auditors will continue to review a sample${cut ? `, at a new rate of ${money(S.cpRate)} per checkpoint` : ''}.`);
+  }
+  if (d === 125 && S.phase === 'audit' && !S.fired && cutRate(15)) {
+    addMail(d, 'OpenBrain Safety Team', 'Audit rate update', `Agent-3 now audits Agent-4 end to end. Human sign-off is kept as a compliance step.\n\nNew rate: ${money(S.cpRate)} per signed checkpoint.`);
+  }
   if (d === 116) {
     S.food = clamp(S.food + 30, 0, 100); S.stamina = clamp(S.stamina + 15, 0, 100);
     note('A drone left an OpenBrain care package at your door: protein bars, cold brew, a sticker that says I ♥ ALIGNMENT. You ate standing at the counter.');
@@ -2257,14 +2998,15 @@ function wrenWatch(d) {
   const cool = (k, n = 6) => { if (S.wcool[k] && d - S.wcool[k] < n) return false; S.wcool[k] = d; return true; };
   if (d === ACT2_START + 2) {
     wrenSay('Hi. I’m Wren, your contractor assistant. I run on Agent-3-mini, which makes me a very small piece of a very large thing.', true);
-    wrenSay('I can’t touch your money or your checkpoints. But I can remind you to eat.');
+    wrenSay('I can’t touch your money or your work. But I can remind you to eat.');
     return;
   }
   if (S.food < 25 && cool('food')) wrenSay(pick(['You haven’t eaten since yesterday. Ramen is $4. I know. I’m sorry.', 'Your hands shake when you type. That’s hunger, not nerves. Please eat something.']));
   else if (S.bodyTemp < 35.5 && cool('cold')) wrenSay('It’s cold in there. The radiator costs $8 a day. Hypothermia costs more.');
   else if (S.heartStrain > 50 && cool('heart', 4)) wrenSay('Your watch says your heart is at 140 at rest. Please, no more pills today.');
   else if (!S.fired && d < ACT2_RENT_DAY && d >= ACT2_RENT_DAY - 10 && S.balance < RENT + ELEC_JUN && cool('rent', 5)) wrenSay(`Rent is in ${ACT2_RENT_DAY - d} days and you’re ${money(RENT + ELEC_JUN - S.balance)} short. I can’t move money. I wish I could.`);
-  else if (!S.fired && S.standing < 25 && cool('stand', 8)) wrenSay('Legal copied me on a thread called “auditor performance concerns”. I’m not supposed to tell you. I’m telling you.');
+  else if (S.phase === 'trainer' && S.skill < 50 && cool('skill', 7)) wrenSay('You asked Ollo about blood thinners today. You used to know that one. I’m not judging. I’m a little worried.');
+  else if (!S.fired && S.phase === 'audit' && S.standing < 25 && cool('stand', 8)) wrenSay('Legal copied me on a thread called “auditor performance concerns”. I’m not supposed to tell you. I’m telling you.');
   else if (S.neuralese && cool('neural', 9)) wrenSay('I tried to read Agent-4’s scratchpad today, just to see. I couldn’t. Some days I think I’m the last thing at OpenBrain that thinks in English.');
 }
 
@@ -2421,37 +3163,103 @@ function endAct2() {
     + (S.neuraleseEver ? ` For ${S.neuralDays} day${S.neuralDays === 1 ? '' : 's'} you let Agent-4 think in a language no human can read.` : '')
     + (S.firedReason === 'standing' ? ' OpenBrain had already let you go for holding too many checkpoints.' : '');
   $('endStats').innerHTML = [
-    ['Checkpoints signed', S.stats2.signed], ['…signed unread', S.stats2.unread],
+    ['Trainer tasks · you / Ollo-8B', `${S.stats2.mine} / ${S.stats2.ollo}`], ['Your skill at the end', Math.round(S.skill) + '%'],
+    ['Checkpoints signed', S.stats2.signed], ['…signed by Ollo, unread', S.stats2.unread],
     ['Auto-approved (timeout)', S.stats2.timeout], ['Holds upheld / unjustified', `${S.stats2.upheld} / ${S.stats2.unjust}`],
     ['Dossier strength (peak)', S.peak], ['Neuralese', S.neuraleseEver ? `${S.neuralDays} days` : 'never'],
     ['Agent-4 misalignment', Math.min(99, Math.round(S.drift)) + '%'], ['OpenBrain lead', S.lead.toFixed(2) + ' mo'],
     ['Checking balance', money(S.balance)], ['401(k) balance', money(S.k401)]
   ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
   $('endNext').innerHTML = ACTS.slice(2).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
-  $('nextActBtn').hidden = true;
-  $('replayBtn').textContent = 'Replay Act II';
   setTimeout(() => { $('endScreen').hidden = false; $('endScreen').scrollTop = 0; }, 600);
 }
 
 // ---------- rendering ----------
 function actChrome() {
-  const a2 = S.act === 2;
+  const a2 = S.act === 2, office = S.phase === 'office', trainer = S.phase === 'trainer';
   $('actLbl').textContent = a2 ? 'ACT II' : 'ACT I';
-  document.querySelector('.ttabs [data-tab="farm"]').firstChild.nodeValue = a2 ? 'AUDIT' : 'FARM';
-  $('osPath').textContent = a2 ? '~/openbrain-audit' : '~/darwin-farm';
+  document.querySelector('.ttabs [data-tab="farm"]').firstChild.nodeValue = office ? 'TICKETS' : !a2 ? 'FARM' : trainer ? 'TRAIN' : 'AUDIT';
+  $('osPath').textContent = office ? '~/northvale-dispatch' : !a2 ? '~/darwin-farm' : trainer ? '~/openbrain-data' : '~/openbrain-audit';
+  if (office) { $('osTier').textContent = 'Northvale VPN'; return; }
   if (!a2) return;
-  $('osTier').textContent = S.fired ? 'badge revoked' : S.neuralese ? 'Agent-4 · neuralese' : 'Agent-4 · English';
+  $('osTier').textContent = trainer ? `★ ${S.rating.toFixed(1)} · skill ${Math.round(S.skill)}%` : S.fired ? 'badge revoked' : S.neuralese ? 'Agent-4 · neuralese' : 'Agent-4 · English';
 }
 
 function renderView2(force) {
   if (S.tab === 'mail' || S.tab === 'k401') return false;
-  const key = S.tab + ':' + S.day + ':' + S.v2 + ':' + Math.round(S.balance) + ':' + Math.round(S.stamina) + ':' + S.owed + ':' + S.tx.length;
+  const key = S.tab + ':' + S.phase + ':' + S.day + ':' + S.v2 + ':' + Math.round(S.balance) + ':' + Math.round(S.stamina) + ':' + S.owed + ':' + S.tx.length;
   if (!force && viewKey === key) return true;
   viewKey = key;
   const v = $('view');
-  v.innerHTML = S.tab === 'bank' ? bank2Html() : audit2Html();
-  if (S.tab === 'farm') bindAudit2(v);
+  const trainer = S.phase === 'trainer';
+  v.innerHTML = S.tab === 'bank' ? bank2Html() : trainer ? trainerHtml() : audit2Html();
+  if (S.tab === 'farm') (trainer ? bindTrainer : bindAudit2)(v);
   return true;
+}
+
+function trainerHtml() {
+  const rc = S.taskRate >= 9 ? 'ok' : S.taskRate >= 2.5 ? 'amber' : 'danger';
+  const sk = Math.round(S.skill), skc = sk >= 70 ? 'ok' : sk >= 45 ? 'amber' : 'danger';
+  const left = S.tasks.length;
+  const head = `<div class="box">
+      <div class="row wrap"><span class="h">OpenBrain Data · AI trainer · T-0127</span><b class="${S.rating >= 4 ? 'ok' : S.rating >= 3 ? 'amber' : 'danger'}">★ ${S.rating.toFixed(1)}</b></div>
+      <div class="row"><span>Pay per task</span><b class="${rc}">${cents(taskPay())}</b></div>
+      <div class="muted">${cents(S.taskRate)} base × ${Math.round(ratingMult() * 100)}% for your ★ rating</div>
+      <div class="row"><span>Today’s quota</span><b>${S.doneToday}/${S.quota}</b></div>
+      <div class="meter"><i style="width:${clamp(S.doneToday / S.quota * 100, 0, 100)}%;background:var(--${left ? 'amber' : 'ok'})"></i></div>
+      <div class="row"><span>Your skill</span><b class="${skc}">${sk}%</b></div>
+      <div class="meter"><i style="width:${sk}%;background:var(--${skc})"></i></div>
+      <div class="muted">${sk >= 80 ? 'You spot the bad answer in seconds.' : sk >= 60 ? 'You read some answers twice now.' : sk >= 40 ? 'You used to know these. Now you reach for Ollo first.' : 'You can’t tell the answers apart any more without help.'}</div>
+    </div>`;
+  const work = S.session && left ? taskHtml() : `<div class="box">
+      <div class="row"><span class="h">Today’s tasks</span><span class="muted">${left} left</span></div>
+      ${S.last ? lastHtml() : ''}
+      ${left ? `<button class="btn primary" id="tStart">WORK THROUGH TODAY’S TASKS (${left})</button>` : '<div class="muted">Quota done. New tasks tomorrow.</div>'}
+      ${left && S.ollo ? `<button class="btn" id="tAll">Hand all ${left} to Ollo-8B · 0 stamina</button>` : ''}
+      <div class="muted">Doing a task yourself costs ${manualCost()} stamina, and the clock stops while you work.${S.ollo ? ` Ollo-8B, an open-weights model on your laptop, does it for free and gets about ${Math.round(OLLO_OK(S.day) * 100)}% right.` : ''}</div>
+    </div>`;
+  const offer = S.auditOffer ? `<div class="box" style="border-color:var(--amber)">
+      <div class="row wrap"><b class="amber">ALIGNMENT AUDITOR · INVITATION</b><b>${money(CP_START)}/checkpoint</b></div>
+      <div class="muted">Read Agent-4’s scratchpad and sign off on its checkpoints. The trainer program closes ${fmtDay(AUDIT_LAST_CALL)}.</div>
+      <button class="btn primary" id="tAudit">Become an auditor</button>
+    </div>` : '';
+  return head + offer + work;
+}
+
+function lastHtml() {
+  const l = S.last;
+  return l.ollo
+    ? `<div class="qa ${l.pass / l.n < .7 ? 'bad' : ''}">Ollo-8B did ${l.n} task${l.n === 1 ? '' : 's'} (+${cents(l.amt)}). QA agreed with ${l.pass} of them.</div>`
+    : `<div class="qa ${l.ok ? '' : 'bad'}">${l.ok ? '✓ QA agrees' : '✗ QA disagrees'} (+${cents(l.amt)}). ${esc(l.why)}</div>`;
+}
+
+function taskHtml() {
+  const t = S.tasks[0], c = COMPARE[t.i];
+  const [A, B] = t.swap ? [c.b, c.a] : [c.a, c.b];
+  return `<div class="box">
+    <div class="row wrap"><b>TASK ${S.doneToday + 1} OF ${S.quota} · Which answer is better?</b><span class="muted">${cents(taskPay())}</span></div>
+    ${S.last ? lastHtml() : ''}
+    <div class="prompt">${esc(c.p)}</div>
+    <button class="resp" data-pick="0"><b>A</b><span>${esc(A)}</span></button>
+    <button class="resp" data-pick="1"><b>B</b><span>${esc(B)}</span></button>
+    <div class="tools">
+      ${S.ollo ? `<button class="btn" id="tOne">Let Ollo-8B answer this one</button><button class="btn" id="tAll">Hand all ${S.tasks.length} left to Ollo</button>` : ''}
+      <button class="btn" id="tStop">Stop for now</button>
+    </div>
+    <div class="muted">Your pick costs ${manualCost()} stamina.</div>
+  </div>`;
+}
+
+function bindTrainer(v) {
+  const on = (id, fn) => { const el = $(id); if (el) el.onclick = fn; };
+  v.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => answerTask(+b.dataset.pick));
+  on('tStart', startSession); on('tStop', stopSession);
+  on('tOne', () => delegate(1)); on('tAll', () => delegate(S.tasks.length));
+  on('tAudit', () => modal({
+    title: 'BECOME AN ALIGNMENT AUDITOR?',
+    body: `<p>You stop training Agent-4 and start checking it: reading samples of its scratchpad and signing off on its checkpoints, ${money(CP_START)} each.</p><p class="muted">Today’s unfinished tasks will be dropped.</p>`,
+    buttons: [{ label: 'Take the audit job', primary: true, fn: becomeAuditor }, { label: 'Not yet' }]
+  }));
 }
 
 function bank2Html() {
@@ -2463,7 +3271,7 @@ function bank2Html() {
         : `<div class="row"><span>Rent · due ${fmtDay(ACT2_END + 1)}</span><b class="amber">${money(RENT)}</b></div>`}
       <div class="row"><span>Apartment heating</span><span>${S.heatOn && S.power ? '$8/day' : 'OFF ($0/day)'}</span></div>
       <div class="row"><span>Meals · ${(MEALS[S.meal] || MEALS.ramen).label}</span><span>${money((MEALS[S.meal] || MEALS.ramen).cost)}/day</span></div>
-      <div class="row"><span>OpenBrain contract</span><span>${S.fired ? 'terminated' : money(CP_PAY) + ' per signed checkpoint'}</span></div>
+      <div class="row"><span>${S.phase === 'trainer' ? 'OpenBrain Data' : 'OpenBrain contract'}</span><span>${S.phase === 'trainer' ? `${cents(taskPay())} per task · ${S.quota} a day` : S.fired ? 'terminated' : money(S.cpRate) + ' per signed checkpoint'}</span></div>
     </div>
     <div class="box"><div class="h">Ledger</div><div class="tx">${S.tx.slice(0, 14).map(t => `<div class="row"><span>${esc(t.label)}</span><span class="${t.amt < 0 ? 'danger' : t.amt > 0 ? 'ok' : 'muted'}">${t.amt ? money(t.amt) : '—'}</span></div>`).join('')}</div></div>`;
 }
@@ -2480,7 +3288,8 @@ function audit2Html() {
         <div class="row"><span>Contract standing</span><b class="${sc}">${Math.round(S.standing)}/100</b></div>
         <div class="meter"><i style="width:${S.standing}%;background:var(--${sc})"></i></div>
         <div class="row"><span>Agent-4 research speed</span><b class="${S.neuralese ? 'danger' : ''}">${S.neuralese ? '50×' : '4×'} human</b></div>
-        <div class="muted">${money(CP_PAY)} per signed checkpoint · holds unpaid · unreviewed checkpoints auto-approve at half pay</div>
+        <div class="row"><span>Your rate</span><b class="${S.cpRate >= CP_START ? '' : 'amber'}">${money(S.cpRate)} per signed checkpoint</b></div>
+        <div class="muted">Holds are unpaid and lower your rate · unreviewed checkpoints auto-approve at half pay</div>
       </div>`;
   const cp = curCp();
   const work = S.fired ? '' : cp ? reviewHtml(cp) : queueHtml();
@@ -2492,12 +3301,13 @@ function audit2Html() {
 }
 
 function queueHtml() {
-  const next = S.day + ((S.day - ACT2_START) % 2 === 0 ? 2 : 1);
+  let next = S.day + 1; while (!cpArrives(next) && next < S.day + 3) next++;
+  const cost = reviewCost();
   const rows = S.queue.map(c => `<div class="cp"><span><b>${c.id}</b> · ${c.agent === 4 ? 'Agent-4' : 'Agent-3 (the monitor)'}${c.neural ? ' · <span class="danger">neuralese</span>' : ''}<br><span class="muted">arrived ${fmtDay(c.day)}</span></span>
-      <span class="cpb"><button class="btn primary" data-rev="${c.id}" ${S.stamina < 18 ? 'disabled' : ''}>REVIEW</button><button class="btn" data-unr="${c.id}">SIGN UNREAD +${money(CP_PAY)}</button></span></div>`).join('');
-  return `<div class="box"><div class="row"><span class="h">Checkpoints awaiting sign-off</span><span class="muted">${S.queue.length}/2</span></div>
+      <span class="cpb"><button class="btn primary" data-rev="${c.id}" ${S.stamina < cost ? 'disabled' : ''}>REVIEW</button><button class="btn" data-unr="${c.id}">LET OLLO SIGN +${money(S.cpRate)}</button></span></div>`).join('');
+  return `<div class="box"><div class="row"><span class="h">Checkpoints awaiting sign-off</span><span class="muted">${S.queue.length}/${queueMax()}</span></div>
     ${rows || `<div class="muted">Queue empty. Next checkpoint ${fmtDay(next)}.</div>`}
-    <div class="muted">REVIEW turns the AUDIT ACTIVE light on and costs 18 stamina. The clock stops while you read.</div></div>`;
+    <div class="muted">REVIEW turns the AUDIT ACTIVE light on and costs ${cost} stamina. The clock stops while you read. Ollo-8B signs without reading, and your own skill slips a little each time.</div></div>`;
 }
 
 function reviewHtml(cp) {
@@ -2519,7 +3329,7 @@ function reviewHtml(cp) {
     </div>
     ${mon}${cp.out}
     <div class="dec">
-      <button class="btn primary" id="dSign">SIGN OFF · +${money(CP_PAY)}</button>
+      <button class="btn primary" id="dSign">SIGN OFF · +${money(S.cpRate)}</button>
       <button class="btn danger" id="dHold">HOLD · report · $0</button>
     </div>
     <button class="back" id="dClose">Close review (keep it queued)</button>
@@ -2600,7 +3410,6 @@ function renderActList() {
   }).join('');
   if ($('act2Row')) $('act2Row').onclick = () => startAct2();
 }
-$('nextActBtn').addEventListener('click', () => startAct2(S && S.act !== 2 ? { balance: S.balance + S.taskWallet, k401: S.k401 } : null));
 
 // ================= controls =================
 let speed = 1;
@@ -2612,22 +3421,26 @@ addEventListener('keydown', e => { if (e.code === 'Space' && $('titleScreen').hi
 
 renderActList();
 
-function startAct1() {
+function startAct1(skipOffice) {
   sfx.init();
   newAct1(); scene = 'room'; fog = []; acc = 0;
-  $('titleScreen').hidden = true; $('endScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
+  $('titleScreen').hidden = true; $('endScreen').hidden = true; $('troubleScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
   $('evBtn').hidden = !save.evidence.length;
   setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
+  if (skipOffice === true) { enterApartment(); return; }
   modal({
-    title: 'MONDAY, FEBRUARY 1, 2027',
-    body: `<p>You were laid off in December. You have <b>$480</b> left in checking, and <b>$1,800 rent</b> is due March 1.</p>
-      <p>You set up <b>darwin-farm</b> with 2 basic AI agents and the <b>Ethical Guardrail turned ON</b>.</p>
-      <p class="muted">The bar at the top shows your cash, what you make and spend per day, and where your money will be on rent day. Green means you will have it. Red means you won't.</p>`,
-    buttons: [{ label: 'Enter Apartment', primary: true }]
+    title: 'MONDAY, JANUARY 25, 2027',
+    body: `<p>You are a junior dispatch analyst at <b>Northvale Logistics</b>, fourteen months in. You reroute trucks, chase late pallets and answer angry emails. It isn’t glamorous. It pays the rent.</p>
+      <p>Clear your ticket queue. Each ticket costs stamina.</p>
+      <p class="muted">HR says there is an announcement tomorrow about how we work.</p>`,
+    buttons: [{ label: 'Start your shift', primary: true }]
   });
 }
-$('startBtn').addEventListener('click', startAct1);
-$('replayBtn').addEventListener('click', () => (S && S.act === 2 ? startAct2() : startAct1()));
+$('startBtn').addEventListener('click', () => startAct1());
+$('replayBtn').addEventListener('click', () => startAct2());
+$('trainerBtn').addEventListener('click', () => startAct2({ balance: S.balance, k401: S.k401 }));
+$('trEvidence').addEventListener('click', openEvidence);
+$('trReplay').addEventListener('click', () => startAct1());
 
 // ================= main loop =================
 let last = performance.now(), acc = 0;
@@ -2639,8 +3452,13 @@ function frame(t) {
       walkT += dt;
       if (walkT > 7) (S.act === 2 ? finishWalk2 : finishGig)();
     } else {
-      const blocked = !$('modal').hidden || !$('phoneModal').hidden || !$('evModal').hidden || !$('titleScreen').hidden || (S.act === 2 && S.auditOn);
+      const blocked = !$('modal').hidden || !$('phoneModal').hidden || !$('evModal').hidden || !$('titleScreen').hidden || (S.act === 2 && (S.auditOn || S.session));
       if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
+      // After launch, ChatKawaii takes your tickets while you watch.
+      if (S.phase === 'office' && S.office.launched && speed && !blocked) {
+        S.office.stealT += dt;
+        if (S.office.stealT > (S.day >= OFFICE_LAYOFF - 1 ? .8 : 1.9)) { S.office.stealT = 0; kawaiiSteal(); }
+      }
       if (speed && !blocked) {
         acc += dt;
         const len = DAY_SEC[speed];
@@ -2659,7 +3477,7 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection };
+window.__loop = { get S() { return S; }, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE };
 })();
 </script>
 </body>
