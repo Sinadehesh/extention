@@ -32,3 +32,20 @@ Next on the slice: the five price shocks, the street and alley, theft and wireta
 ## The morning desk (Papers-Please-style, in the room game)
 
 Act I now opens each day with a short queue of work requests, delivered one paper at a time, in the spirit of *Papers, Please*. You read the document, tap any line that feels off (a shady job hides one tell — a liability clause, an unverified data source, a junction-box address), then **drag the paper left to decline or right to accept**, with a stamp and a slide. Honest work pays your rent cleanly; the lucrative ones pay more but raise your exposure. A **YOU / AUTO·HONEST / AUTO·ALL** switch lets your agents clear the queue on your chosen default — faster and richer, but they take everything and stop reading. Pace is about a minute a day, spent mostly at the desk. Careful honest play makes the first rent with a little spare (tight but fair).
+
+## The room and the office (16-bit, clickable)
+
+The right-hand scene is a 160×120 pixel painting, redrawn every frame:
+
+- **The apartment**: you, seen from behind, at a laptop that scrolls your farm's log. A window onto a city whose horizon fills up with the crane, then the data centre, then the cooling towers. A swaying bulb, a dripping tap, a radiator that shimmers when it's on and frosts over when it isn't, letters piling up under the door, a plant dying on the sill.
+- **Time-lapse days**: each sim day plays as a day: morning light, a red dusk, a short night with the bulb on.
+- **It notices you**: the router shows one light per agent online. Turn the guardrail off and red lines scroll on the screen. When autonomy climbs, the screen sometimes shows an eye. Raise your exposure and a drone hangs outside the window, a searchlight sweeps the floor, police lights strobe the walls, and someone stops outside your door and doesn't knock.
+- **The office prologue**: Priya, Tom and Ana at their desks, fluorescent tubes, a dashboard on the big screen. Then a pink cloud with eyes takes the screen, hearts drift into the room, monitors turn pink, and the desks empty one by one.
+- **Click anything**: phone, laptop, radiator (toggles heat), door (peephole), window, calendar (rent countdown), fridge, letters (mail), yourself. On a narrow screen the camera follows whatever needs you.
+
+UI motion uses [Motion](https://motion.dev):
+- **Springs:** modals, the phone and toasts arrive on springs. Alarm cards shake the room.
+- **Counters and panels:** cash rolls like an odometer and the change floats off it. Tabs slide in panel by panel.
+- **Desk and screens:** desk papers drop in and the stamp thumps. The "YOU'RE IN TROUBLE" screen slams in.
+
+If Motion can't load, everything still works with plain CSS.
