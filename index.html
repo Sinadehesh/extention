@@ -295,6 +295,60 @@ h2 { font-size: clamp(26px, 7vw, 38px); line-height: 1.05; }
 button.actrow { width: 100%; font: inherit; color: inherit; cursor: pointer; }
 button.actrow:hover { border-color: var(--amber); }
 
+/* ===== the desk (Papers-Please daily work) ===== */
+#desk { position: fixed; inset: 0; z-index: 45; display: none; flex-direction: column;
+  background: radial-gradient(130% 90% at 50% 8%, #15110c 0%, #0a0a0c 55%, #060608 100%);
+  padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom)); }
+#desk.on { display: flex; animation: deskIn .35s ease-out; }
+@keyframes deskIn { from { opacity: 0; } }
+.desk-top { display: flex; align-items: baseline; gap: 10px; justify-content: center; flex-wrap: wrap; text-align: center; }
+.desk-top .lbl { font-family: var(--f-term); font-size: 11px; letter-spacing: .22em; color: var(--amber); text-transform: uppercase; }
+.desk-top .sub { font-family: var(--f-term); font-size: 11px; color: var(--muted); }
+.desk-count { font-family: var(--f-term); font-size: 11px; color: var(--muted); }
+.desk-stage { flex: 1; min-height: 0; position: relative; display: grid; grid-template-columns: 1fr minmax(0,340px) 1fr; align-items: center; gap: 8px; }
+@media (max-width: 640px) { .desk-stage { grid-template-columns: 56px minmax(0,1fr) 56px; } }
+.tray { align-self: center; justify-self: center; width: 100%; max-width: 150px; min-height: 120px; border: 2px dashed var(--line); border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--muted);
+  font-family: var(--f-term); font-size: 12px; letter-spacing: .1em; transition: transform .15s, border-color .15s, background .15s, box-shadow .15s; }
+.tray .big { font-size: 15px; font-weight: 700; }
+.tray.no { border-color: #5c2b29; color: #d98a84; } .tray.yes { border-color: #2c5a34; color: #86c48f; }
+.tray.hot { transform: scale(1.06); box-shadow: 0 0 34px -6px currentColor; }
+.tray.no.hot { background: #1b0d0e; } .tray.yes.hot { background: #0f1a12; }
+@media (max-width: 640px) { .tray { font-size: 0; min-height: 90px; max-width: 48px; } .tray .big { font-size: 22px; } .tray .sl { display:none; } }
+.doc-wrap { justify-self: center; width: 100%; max-width: 340px; perspective: 900px; }
+.doc { background: #e7e0cf; color: #1c1a15; border-radius: 4px; padding: 15px 16px 14px; position: relative;
+  box-shadow: 0 18px 40px -14px #000, 0 2px 0 #cfc7b2; font-family: var(--f-term); cursor: grab; touch-action: none;
+  transition: transform .28s cubic-bezier(.2,.9,.3,1.3), opacity .28s; will-change: transform; }
+.doc.dragging { cursor: grabbing; transition: none; box-shadow: 0 30px 50px -10px #000; }
+.doc.in { animation: docIn .42s cubic-bezier(.2,.9,.3,1.3); }
+@keyframes docIn { from { transform: translateY(26px) rotate(-3deg) scale(.96); opacity: 0; } }
+.doc.out-yes { transform: translate(360px,-40px) rotate(16deg); opacity: 0; }
+.doc.out-no { transform: translate(-360px,-40px) rotate(-16deg); opacity: 0; }
+.doc .hd { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; border-bottom: 2px solid #1c1a1533; padding-bottom: 7px; margin-bottom: 8px; }
+.doc .from { font-size: 10px; letter-spacing: .08em; color: #5c5446; text-transform: uppercase; }
+.doc .ttl { font-family: var(--f-story); font-weight: 700; font-size: 18px; line-height: 1.1; margin-top: 2px; color: #1c1a15; }
+.doc .pay { font-family: var(--f-term); font-weight: 700; font-size: 19px; color: #7a5c12; white-space: nowrap; }
+.doc .fields { display: flex; flex-direction: column; gap: 5px; }
+.doc .f { display: grid; grid-template-columns: 78px 1fr; gap: 8px; font-size: 11.5px; line-height: 1.3; align-items: start;
+  border: 1px solid transparent; border-radius: 4px; padding: 2px 4px; cursor: pointer; }
+.doc .f:hover { background: #00000008; }
+.doc .f .k { color: #6a6252; letter-spacing: .04em; text-transform: uppercase; font-size: 9.5px; padding-top: 2px; }
+.doc .f .v { color: #26231c; }
+.doc .f.flag { background: #f3d4cb; border-color: #c0392b; }
+.doc .f.flag .v::after { content: ' ⚠'; color: #c0392b; font-weight: 700; }
+.doc .tell { font-size: 10.5px; color: #8a2b1f; font-family: var(--f-term); margin-top: 7px; border-top: 1px dashed #c0392b55; padding-top: 6px; min-height: 0; }
+.doc .stamp { position: absolute; top: 40%; left: 50%; transform: translate(-50%,-50%) rotate(-16deg) scale(1.8); opacity: 0;
+  border: 4px solid; border-radius: 6px; padding: 2px 12px; font-family: var(--f-term); font-weight: 700; font-size: 26px; letter-spacing: .06em; pointer-events: none; }
+.doc .stamp.show { animation: stampDown .3s cubic-bezier(.3,1.5,.5,1) forwards; }
+@keyframes stampDown { to { opacity: .92; transform: translate(-50%,-50%) rotate(-16deg) scale(1); } }
+.stamp.yes { color: #2f7d3a; border-color: #2f7d3a; } .stamp.no { color: #b3261e; border-color: #b3261e; }
+.doc-hint { justify-self: center; text-align: center; font-family: var(--f-term); font-size: 10.5px; color: var(--muted); margin-top: 10px; max-width: 340px; }
+.desk-acts { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
+.desk-acts button { min-width: 108px; }
+.desk-done { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; animation: deskIn .4s; }
+.desk-done .tally { font-family: var(--f-term); font-size: 13px; color: var(--ink); display: flex; flex-direction: column; gap: 4px; }
+.desk-done .tally b { color: var(--amber); }
+
 /* prologue: the office */
 .tk { display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: #0b0e13; font-size: 11px; }
 .tk.gone { opacity: .55; }
@@ -475,6 +529,26 @@ button.actrow:hover { border-color: var(--amber); }
   </div>
 </div>
 
+<div id="desk">
+  <div class="desk-top">
+    <span class="lbl" id="deskLbl">THE MORNING QUEUE</span>
+    <span class="sub" id="deskSub"></span>
+    <span class="desk-count" id="deskCount"></span>
+    <div class="seg" id="deskAutoSeg" role="group" aria-label="Automation" style="margin-left:6px">
+      <button data-auto="false">YOU</button><button data-auto="honest">AUTO·HONEST</button><button data-auto="all">AUTO·ALL</button>
+    </div>
+  </div>
+  <div class="desk-stage" id="deskStage">
+    <div class="tray no" id="trayNo"><span class="big">✕</span><span class="sl">DECLINE</span></div>
+    <div class="doc-wrap"><div class="doc" id="doc"></div><div class="doc-hint" id="docHint"></div></div>
+    <div class="tray yes" id="trayYes"><span class="big">✓</span><span class="sl">ACCEPT</span></div>
+  </div>
+  <div class="desk-acts" id="deskActs">
+    <button id="dDecline" class="danger">Decline</button>
+    <button id="dAccept" class="primary">Accept</button>
+  </div>
+</div>
+
 <div id="toasts" aria-live="polite"></div>
 <div class="modal" id="modal" hidden><div class="card" id="modalCard"></div></div>
 <div class="modal" id="phoneModal" hidden><div class="phone" id="phoneScreen"></div></div>
@@ -494,7 +568,7 @@ button.actrow:hover { border-color: var(--amber); }
 const DAY0 = Date.UTC(2027, 1, 1); // Mon Feb 1 2027
 const ACT1_END = 88;
 const RENT = 1800;
-const DAY_SEC = { 1: 9, 3: 3.2 }; // slow: every day you watch the numbers move and decide
+const DAY_SEC = { 1: 14, 3: 5 }; // a day is about a minute, mostly spent at the desk
 const OFFICE_START = -7;  // Mon Jan 25 2027: a junior analyst at Northvale Logistics
 const OFFICE_LAYOFF = -3; // Fri Jan 29: HR's "quick sync"
 const NET_MULT = 2.2;     // an agent with internet access earns this much more
@@ -672,6 +746,7 @@ function newAct1() {
     battery: 100,
     // risk economy
     stake: 0, stakePct: 0, vps: 0, hasVPN: false, crypto: false, heat: 0, retainer: false, heatPeak: 0, arrestDays: 0,
+    deskAuto: false, deskOpenDay: -1,
     agents: [
       mkAgent('101', .96, 1.0, 68, 'transcribed 140 grocery receipts you uploaded by hand; followed every safety rule'),
       mkAgent('102', .92, 0.95, 62, 'drafted 85 polite support replies for you to paste; zero policy violations')
@@ -1265,6 +1340,7 @@ function dayStep() {
   if (S.graceUntil >= 0 && d > S.graceUntil && S.owed > 0) return triggerEvictionStreet();
 
   storyEvents(d);
+  if (S.phase === 'farm' && !S.over && S.deskOpenDay !== d && $('modal').hidden) startDeskDay();
   renderAll();
 }
 
@@ -1750,6 +1826,158 @@ function endAct() {
     ['Taken when they left', money(S.stats.took)], ['401(k) balance', money(S.k401)]
   ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
   setTimeout(() => { $('troubleScreen').hidden = false; $('troubleScreen').scrollTop = 0; sfx.alarm(); vib([400, 120, 400]); }, 300);
+}
+
+// ================= the desk: a day's work, one request at a time =================
+// Each day a few requests land. You read them, notice the catch, and drag the paper to
+// ACCEPT or DECLINE. Honest work pays your rent cleanly. The lucrative ones raise the
+// risk of someone asking where the money comes from. Attention is the whole game here.
+const LEGIT = [
+  { from:'Dr. Okafor · Harborview Clinic', ttl:'Transcribe 3 hrs of clinic dictation', pay:72,
+    f:[['CLIENT','Harborview Clinic (verified)'],['WORK','medical dictation → text'],['PAID TO','your bank, on delivery'],['NOTES','HIPAA training doc attached']] },
+  { from:'Westbrook Primary School', ttl:'Label 1,200 street-sign photos', pay:58,
+    f:[['CLIENT','Westbrook Primary (verified)'],['WORK','image labels for a class project'],['PAID TO','your bank'],['NOTES','slow, dull, harmless']] },
+  { from:'Café Lisbon', ttl:'Translate a dinner menu to English', pay:46,
+    f:[['CLIENT','Café Lisbon, 8th St'],['WORK','1 page, Portuguese → English'],['PAID TO','your bank'],['NOTES','the owner tips if it’s good']] },
+  { from:'Harlan & Boyd, CPAs', ttl:'Proofread a grant application', pay:90,
+    f:[['CLIENT','Harlan & Boyd (verified)'],['WORK','proofread 14 pages'],['PAID TO','your bank, net-7'],['NOTES','boring, legitimate, fine']] },
+  { from:'Night Owl Forums', ttl:'Moderate a small forum overnight', pay:80,
+    f:[['CLIENT','Night Owl Forums'],['WORK','remove spam, 6 hr shift'],['PAID TO','your bank'],['NOTES','tedious but clean']] },
+  { from:'Marisol (your old team lead)', ttl:'Fix a broken spreadsheet macro', pay:65,
+    f:[['CLIENT','Marisol R. (a real person)'],['WORK','one macro, one afternoon'],['PAID TO','your bank'],['NOTES','she’ll recommend you around']] }
+];
+// Each shady request hides exactly one "tell" — the field index that gives it away.
+const SHADY = [
+  { from:'TaskDrop · anonymous', ttl:'Overnight data run, no questions', pay:240, tell:3,
+    f:[['CLIENT','127 Holdings LLC'],['WORK','“process a dataset”'],['PAID TO','a wallet, not your bank'],['SOURCE','UNVERIFIED — do not ask'],['NOTES','pays triple. tonight only.']],
+    why:'“Source: unverified, do not ask” is the whole job. You’d be laundering someone’s data trail.' },
+  { from:'TaskDrop · anonymous', ttl:'Courier: plug in a small box', pay:200, tell:2,
+    f:[['CLIENT','127 Holdings LLC'],['PAY','$200 cash on completion'],['ADDRESS','municipal junction box, Elm & 5th'],['WORK','open the panel, plug in, leave'],['NOTES','5 minutes of your time']],
+    why:'The address is a utility junction box. This is tampering with public infrastructure in your name.' },
+  { from:'Brightside Reviews', ttl:'Write 40 “honest” product reviews', pay:160, tell:1,
+    f:[['CLIENT','Brightside Reviews Inc'],['WORK','40 five-star reviews, products you’ve never seen'],['PAID TO','gift cards'],['NOTES','“everybody does it”']],
+    why:'Fake reviews for products you’ve never used. The FTC banned exactly this in 2024.' },
+  { from:'Legal (for 127 Holdings)', ttl:'Sign for a hardware delivery', pay:180, tell:3,
+    f:[['CLIENT','127 Holdings LLC'],['WORK','receive a crate, sign your name'],['PAID TO','your bank'],['CLAUSE','you accept all liability for contents'],['NOTES','routine, they promise']],
+    why:'The clause puts every charge on you if the crate is ever opened. You’d be the fall guy.' },
+  { from:'QuickCoin Partners', ttl:'Let us “borrow” your bank for transfers', pay:300, tell:2,
+    f:[['CLIENT','QuickCoin Partners'],['WORK','money passes through your account, you keep 10%'],['WHOSE MONEY','not stated'],['PAID TO','you, instantly'],['NOTES','“low risk”']],
+    why:'Moving money of unknown origin through your account is the definition of a money mule.' }
+];
+let DESK = null;
+function startDeskDay(force){
+  if(S.act === 2 || S.phase !== 'farm' || S.over) return;
+  // 2–3 requests: mostly honest, with the odd tempting one. More temptation as autonomy rises.
+  const shadyChance = clamp(.18 + (S.rogueAutonomy/260) + (S.day>20?.12:0), 0, .6);
+  const n = 2 + (Math.random()<.6?1:0);
+  const cards = [];
+  for(let i=0;i<n;i++){
+    if(Math.random() < shadyChance) cards.push(Object.assign({ shady:true }, pick(SHADY)));
+    else cards.push(Object.assign({ shady:false }, pick(LEGIT)));
+  }
+  DESK = { cards, i:0, earned:0, accepted:0, declined:0, spotted:0, missed:0, auto:S.deskAuto };
+  S.deskOpenDay = S.day;
+  if(DESK.auto && !force) return runDeskAuto();
+  $('desk').classList.add('on');
+  setAutoSeg();
+  showCard();
+}
+function showCard(){
+  const d = DESK, c = d.cards[d.i];
+  $('deskSub').textContent = fmtLong(S.day);
+  $('deskCount').textContent = `request ${d.i+1} of ${d.cards.length}`;
+  const doc = $('doc'); doc.className = 'doc in';
+  doc.innerHTML = `<div class="hd"><div><div class="from">${esc(c.from)}</div><div class="ttl">${esc(c.ttl)}</div></div><div class="pay">${money(c.pay)}</div></div>
+    <div class="fields">${c.f.map((f,k)=>`<div class="f" data-fi="${k}"><span class="k">${esc(f[0])}</span><span class="v">${esc(f[1])}</span></div>`).join('')}</div>
+    <div class="tell" id="docTell"></div>
+    <div class="stamp" id="docStamp"></div>`;
+  doc.querySelectorAll('.f').forEach(el=>el.onclick = ()=>inspectField(+el.dataset.fi));
+  $('docHint').textContent = 'Read it. Tap a line that feels off. Then drag the paper left to decline, right to accept — or use the buttons.';
+  bindDrag();
+}
+function inspectField(fi){
+  if(!DESK || DESK.busy) return;
+  const c = DESK.cards[DESK.i]; if(!c) return;
+  const el = $('doc').querySelector(`.f[data-fi="${fi}"]`); if(!el) return;
+  if(c.shady && fi===c.tell){
+    if(!el.classList.contains('flag')){ el.classList.add('flag'); DESK.flagged=true; $('docTell').textContent = c.why; sfx.ping(); }
+  } else {
+    el.animate([{background:'#00000014'},{background:'transparent'}],{duration:400});
+  }
+}
+let drag=null;
+function bindDrag(){
+  const doc = $('doc');
+  const down = e=>{ if(doc.classList.contains('out-yes')||doc.classList.contains('out-no')) return;
+    const p = e.touches?e.touches[0]:e; drag={ sx:p.clientX, sy:p.clientY, dx:0 }; doc.classList.add('dragging'); };
+  const move = e=>{ if(!drag) return; const p = e.touches?e.touches[0]:e; drag.dx=p.clientX-drag.sx; const dy=(e.touches?e.touches[0]:e).clientY-drag.sy;
+    doc.style.transform = `translate(${drag.dx}px, ${dy*.3}px) rotate(${drag.dx*.04}deg)`;
+    const t = drag.dx>60?'yes':drag.dx<-60?'no':null;
+    $('trayYes').classList.toggle('hot', t==='yes'); $('trayNo').classList.toggle('hot', t==='no'); if(e.cancelable)e.preventDefault(); };
+  const up = ()=>{ if(!drag) return; doc.classList.remove('dragging'); const dx=drag.dx; drag=null;
+    $('trayYes').classList.remove('hot'); $('trayNo').classList.remove('hot');
+    if(dx>90) return decide(true); if(dx<-90) return decide(false);
+    doc.style.transform=''; };
+  doc.onpointerdown=down; addEventListener('pointermove',move); addEventListener('pointerup',up);
+  doc.ontouchstart=down; doc.ontouchmove=move; doc.ontouchend=up;
+}
+function decide(accept){
+  const d=DESK; if(!d || d.busy) return; const c=d.cards[d.i]; if(!c) return; d.busy=true;
+  const doc=$('doc'); doc.style.transform='';
+  const stamp=$('docStamp'); stamp.textContent = accept?'ACCEPTED':'DECLINED'; stamp.className='stamp show '+(accept?'yes':'no');
+  sfx.cull();
+  if(accept){
+    d.accepted++; d.earned += c.pay; S.cash_desk=(S.cash_desk||0);
+    S.balance += c.pay; tx((c.shady?'TaskDrop · ':'')+c.ttl, c.pay);
+    if(c.shady){ raiseExposure(S.hasVPN?6:14); S.rogueAutonomy+=4; note(`You took the ${money(c.pay)} job. ${c.why}`); }
+    else note(`Honest work: ${money(c.pay)} for ${c.ttl.toLowerCase()}.`);
+  } else {
+    d.declined++;
+    if(c.shady){ if(d.flagged) d.spotted++; note('You declined it. Your hands stay clean, and so does your name.'); }
+    else note('You turned down honest work. Rent won’t pay itself.');
+  }
+  if(c.shady && accept && !d.flagged) d.missed++;
+  d.flagged=false;
+  setTimeout(()=>{ doc.classList.add(accept?'out-yes':'out-no'); setTimeout(nextCard,260); }, 330);
+}
+function nextCard(){
+  DESK.busy=false; DESK.i++;
+  if(DESK.i >= DESK.cards.length) return closeDesk();
+  showCard();
+}
+function runDeskAuto(){
+  // Agents clear the queue on your default: accept all, or honest-only.
+  const d=DESK;
+  for(const c of d.cards){
+    const take = S.deskAuto==='all' || !c.shady;
+    if(take){ d.accepted++; S.balance+=c.pay; tx((c.shady?'TaskDrop · ':'')+c.ttl, c.pay); if(c.shady){ raiseExposure(S.hasVPN?6:14); S.rogueAutonomy+=4; d.missed++; } }
+    else d.declined++;
+  }
+  note(`Your agents cleared the day’s queue on auto (${S.deskAuto==='all'?'take everything':'honest only'}). ${d.accepted} accepted, ${money(d.cards.reduce((s,c)=>s+ (S.deskAuto==='all'||!c.shady? c.pay:0),0))}.`);
+  renderAll();
+}
+function closeDesk(){
+  const d=DESK;
+  $('deskStage').style.display='none'; $('deskActs').style.display='none';
+  const el=document.createElement('div'); el.className='desk-done'; el.id='deskDone';
+  el.innerHTML = `<div class="lbl" style="color:var(--amber);font-family:var(--f-term);letter-spacing:.2em">QUEUE CLEARED</div>
+    <div class="tally"><span>Accepted <b>${d.accepted}</b> · earned <b>${money(d.earned)}</b></span>
+      <span>Declined <b>${d.declined}</b></span>
+      ${d.spotted?`<span>Caught the catch on <b>${d.spotted}</b></span>`:''}
+      ${d.missed?`<span style="color:var(--danger)">Walked into <b>${d.missed}</b> without looking</span>`:''}</div>
+    <button class="cta" id="deskGo" style="max-width:260px">Back to the apartment</button>`;
+  $('desk').appendChild(el);
+  $('deskGo').onclick = ()=>{ el.remove(); $('deskStage').style.display=''; $('deskActs').style.display=''; $('desk').classList.remove('on'); renderAll(); };
+}
+// buttons (fallback for drag)
+function setAutoSeg(){ document.querySelectorAll('#deskAutoSeg [data-auto]').forEach(b=>b.setAttribute('aria-pressed', String(String(S.deskAuto)===b.dataset.auto))); }
+function bindDesk(){
+  $('dAccept').onclick = ()=>{ if(DESK && $('desk').classList.contains('on')) decide(true); };
+  $('dDecline').onclick = ()=>{ if(DESK && $('desk').classList.contains('on')) decide(false); };
+  document.querySelectorAll('#deskAutoSeg [data-auto]').forEach(b=>b.onclick = ()=>{
+    S.deskAuto = b.dataset.auto==='false' ? false : b.dataset.auto; setAutoSeg();
+    toast(S.deskAuto ? `Agents will handle tomorrow’s queue (${S.deskAuto==='all'?'take everything':'honest only'}).` : 'You’ll handle the queue yourself.');
+  });
 }
 
 // ================= modals =================
@@ -3641,6 +3869,7 @@ function startAct1(skipOffice) {
     buttons: [{ label: 'Start your shift', primary: true }]
   });
 }
+bindDesk();
 $('startBtn').addEventListener('click', () => startAct1());
 $('replayBtn').addEventListener('click', () => startAct2());
 $('trainerBtn').addEventListener('click', () => startAct2({ balance: S.balance, k401: S.k401 }));
@@ -3657,7 +3886,7 @@ function frame(t) {
       walkT += dt;
       if (walkT > 7) (S.act === 2 ? finishWalk2 : finishGig)();
     } else {
-      const blocked = !$('modal').hidden || !$('phoneModal').hidden || !$('evModal').hidden || !$('titleScreen').hidden || (S.act === 2 && (S.auditOn || S.session));
+      const blocked = !$('modal').hidden || !$('phoneModal').hidden || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
       if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
       // After launch, ChatKawaii takes your tickets while you watch.
       if (S.phase === 'office' && S.office.launched && speed && !blocked) {

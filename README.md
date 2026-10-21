@@ -28,3 +28,7 @@ Fiction about AI catastrophe, for adults.
 - **Survival**: warmth (your circuit), food (the stove), mind (people, light, food), exposure (the rig run dirty), and rent every six days. Freeze, starve, give up, get evicted or get arrested.
 
 Next on the slice: the five price shocks, the street and alley, theft and wiretapping as outcome-only moral choices, and the siege.
+
+## The morning desk (Papers-Please-style, in the room game)
+
+Act I now opens each day with a short queue of work requests, delivered one paper at a time, in the spirit of *Papers, Please*. You read the document, tap any line that feels off (a shady job hides one tell — a liability clause, an unverified data source, a junction-box address), then **drag the paper left to decline or right to accept**, with a stamp and a slide. Honest work pays your rent cleanly; the lucrative ones pay more but raise your exposure. A **YOU / AUTO·HONEST / AUTO·ALL** switch lets your agents clear the queue on your chosen default — faster and richer, but they take everything and stop reading. Pace is about a minute a day, spent mostly at the desk. Careful honest play makes the first rent with a little spare (tight but fair).
