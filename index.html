@@ -6,25 +6,27 @@
 <title>The Loop</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@400;600&family=Newsreader:opsz,ital,wght@6..72,0,500;6..72,0,700;6..72,1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap">
 <style>
 :root {
-  --bg: #080a0d;
-  --panel: #0e1217;
-  --panel2: #141920;
-  --ink: #dce1e6;
-  --muted: #7a8694;
-  --line: #222a34;
-  --amber: #f0a548;
-  --cold: #7eb2dd;
-  --danger: #e5534b;
-  --ok: #5fb36a;
-  --pink: #f2a0c8;
-  --paper: #ece5d6;
-  --paper-ink: #1d1a15;
-  --f-term: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
-  --f-ui: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --f-story: 'Newsreader', Georgia, 'Times New Roman', serif;
+  /* 16-bit horror palette: bone on near-black, rust, sick amber, toxic green, cold teal. No purple. */
+  --bg: #0b0c0a;
+  --panel: #12140f;
+  --panel2: #191c15;
+  --ink: #ddd6c1;
+  --muted: #858672;
+  --line: #2f3228;
+  --amber: #e0a33a;
+  --cold: #5ea8a0;
+  --danger: #d2432f;
+  --ok: #74b347;
+  --pink: #e8907c;
+  --paper: #d9cfb3;
+  --paper-ink: #1b1a12;
+  --px: 3px 3px 0 #000;
+  --f-term: 'Pixelify Sans', ui-monospace, monospace;
+  --f-ui: 'Pixelify Sans', ui-monospace, monospace;
+  --f-story: 'Pixelify Sans', ui-monospace, monospace;
   color-scheme: dark;
 }
 html { height: 100%; box-sizing: border-box; background: var(--bg); }
@@ -275,7 +277,7 @@ h2 { font-size: clamp(26px, 7vw, 38px); line-height: 1.05; }
 .spl.flag .lt { color: #f2b8b4; }
 .spl.mon { box-shadow: inset 2px 0 0 var(--amber); }
 .spl .a3 { font-size: 9px; color: var(--amber); border: 1px solid #6a5328; border-radius: 3px; padding: 0 3px; }
-.spl.neural .lt { color: #b59be0; word-break: break-all; }
+.spl.neural .lt { color: #9bc45a; word-break: break-all; }
 .spl:disabled { cursor: default; }
 .a3sum { font-size: 10.5px; color: var(--cold); border-left: 2px solid var(--cold); padding-left: 7px; line-height: 1.35; }
 .tools { display: flex; flex-wrap: wrap; gap: 5px; }
@@ -353,8 +355,8 @@ button.actrow:hover { border-color: var(--amber); }
 .tk { display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: #0b0e13; font-size: 11px; }
 .tk.gone { opacity: .55; }
 .tk.gone span:first-child { text-decoration: line-through; }
-.kw { font-size: 9.5px; font-weight: 700; color: #2a1020; background: var(--pink); border-radius: 3px; padding: 1px 5px; white-space: nowrap; }
-.kwsay { align-self: flex-start; background: #2a1622; color: #f8c9dd; border-radius: 12px 12px 12px 4px; padding: 7px 10px; font-family: var(--f-ui); font-size: 12.5px; line-height: 1.35; }
+.kw { font-size: 9.5px; font-weight: 700; color: #2a1410; background: var(--pink); border-radius: 3px; padding: 1px 5px; white-space: nowrap; }
+.kwsay { align-self: flex-start; background: #2a1712; color: #f3c3b2; border-radius: 12px 12px 12px 4px; padding: 7px 10px; font-family: var(--f-ui); font-size: 12.5px; line-height: 1.35; }
 .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .vs div { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: #0b0e13; display: flex; flex-direction: column; gap: 2px; }
 .vs .n { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -395,6 +397,75 @@ button.actrow:hover { border-color: var(--amber); }
 .rbtn.on { border-color: var(--ok); background: #0f1a12; }
 .rbtn.on.ok b { color: var(--ok); }
 #riskBox input[type="range"] { accent-color: var(--danger); }
+
+/* ================= 16-BIT SKIN: one look for the whole game ================= */
+*, *::before, *::after { border-radius: 0 !important; }
+html, body { -webkit-font-smoothing: none; }
+body { font-size: 15px; }
+canvas { image-rendering: pixelated; }
+#view { gap: 6px; font-size: 13px; }
+.box { padding: 7px 8px; gap: 5px; }
+/* chunky frames with hard drop shadows */
+.box, .card, .hc, .vital, .ag, .tk, .sbtn, .rbtn, .lbtn, .cp, .spl, .mail button, .actrow, .stats div, .plate, .tray, .vs div, .ckt, .gig, .seg, .alert, .denied, .meal, #roomStatus span, #roomStatus button, .ev {
+  border-width: 2px !important; box-shadow: 3px 3px 0 #000; }
+.box, .card, .hc, .vital, .ag, .tk, .cp, .spl, .stats div, .vs div, .actrow, .mail button, .gig { background: var(--panel2) !important; }
+.ag.bad { background: #1d0f0b !important; border-color: #6b2a1d !important; }
+#term, .cvwrap, .phone { background: var(--panel) !important; border: 2px solid #000 !important; box-shadow: 0 0 0 2px var(--line), 5px 5px 0 #000 !important; }
+.osbar { background: #0e100c !important; font-size: 12px; }
+.ttabs button { font-size: 13px; letter-spacing: .08em; }
+.ttabs button[aria-selected="true"] { box-shadow: inset 0 -3px 0 var(--amber) !important; }
+/* buttons: raised pixel bevel that presses in */
+button, .btn, .sbtn, .rbtn, .lbtn, .ag-actions button, .seg button {
+  box-shadow: inset -2px -2px 0 #0008, inset 2px 2px 0 #ffffff14, 2px 2px 0 #000; transition: transform .05s; }
+button:active:not(:disabled) { transform: translate(2px,2px); box-shadow: inset 2px 2px 0 #0009 !important; }
+.cta { letter-spacing: .12em; box-shadow: inset -3px -3px 0 #0007, inset 3px 3px 0 #fff4, 5px 5px 0 #000 !important; }
+.btn.primary, .cta { background: var(--amber) !important; color: #161107 !important; }
+.btn.danger { background: #7a2416 !important; color: #f4d6c8 !important; border-color: #000 !important; }
+/* hard pixel text shadows instead of soft glows */
+h1, h2, .ttl, .kicker, .desk-top .lbl, .hv, .big, .trouble-sub { text-shadow: 2px 2px 0 #000; }
+.trouble-h { text-shadow: 4px 4px 0 #000 !important; animation: trbJit 2.6s steps(1) infinite !important; }
+@keyframes trbJit { 0%,90%,100% { transform: none } 91% { transform: translate(3px,0) } 93% { transform: translate(-2px,1px) } 95% { transform: translate(1px,-2px) } }
+/* meters as blocky segments */
+.vbar, .meter, .pbar, .dayline, .hb { background: #000 !important; box-shadow: 0 0 0 1px var(--line); }
+.vbar i, .meter i, .pbar i, .hb i { background-image: repeating-linear-gradient(90deg, transparent 0 5px, #0006 5px 6px) !important; }
+/* sizes tuned for the pixel face */
+.h, .hk { font-size: 11px; } .hs { font-size: 11px; } .hv { font-size: 21px; }
+.ag .act { font-size: 12px; } .ag-actions button { font-size: 11px; } .st-sub { font-size: 11px; } .sbtn { font-size: 12px; }
+.vital, .lbtn, .meal button, #roomStatus { font-size: 11px; } .rbtn span { font-size: 10.5px; }
+/* CRT: scanlines, heavy vignette, a faint unsteady flicker over everything */
+body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1000;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,.24) 0 1px, transparent 1px 3px),
+              radial-gradient(120% 95% at 50% 45%, transparent 55%, rgba(0,0,0,.6) 100%);
+  animation: crt 7s steps(1) infinite; }
+@keyframes crt { 0%,100% { opacity: 1 } 41% { opacity: .82 } 42% { opacity: 1 } 77% { opacity: .9 } 78% { opacity: 1 } }
+/* paper: bone stock, pixel frame, pixel stamp */
+.doc { border: 3px solid #1b1a12 !important; box-shadow: 7px 7px 0 #000 !important; background: var(--paper) !important; }
+.doc .stamp { border-width: 4px !important; }
+.ev { border: 3px solid #1b1a12 !important; box-shadow: 5px 5px 0 #000 !important; }
+.tray { border-style: dashed !important; border-width: 3px !important; box-shadow: none; }
+/* screens: flat and dark, not glossy */
+.screen, #desk { background: var(--bg) !important; }
+#troubleScreen { background: linear-gradient(#2b0d08 0 34%, var(--bg) 34%) !important; }
+.modal { background: rgba(0,0,0,.8) !important; }
+.card.alarm { box-shadow: 0 0 0 2px #000, 6px 6px 0 #4a1208 !important; }
+/* the room log reads like a diary in bone, no italics */
+#roomLog { font-style: normal !important; font-size: 14px !important; color: #a8a28d !important; }
+#roomLog li:first-child { color: var(--ink) !important; }
+
+/* paper text never gets the dark-screen shadow */
+.doc .ttl, .doc .pay, .doc .from, .ev h3, .ev p { text-shadow: none !important; }
+/* desk decision buttons */
+#deskActs button { min-width: 130px; padding: 9px 14px; font-size: 14px; letter-spacing: .1em; border: 2px solid #000; }
+#deskActs button.primary { background: #4f8a2e; color: #eef6dc; }
+#deskActs button.danger { background: #7a2416; color: #f4d6c8; }
+/* pixel slider: black track, square thumb */
+input[type="range"] { -webkit-appearance: none; appearance: none; height: 18px; background: transparent; }
+input[type="range"]::-webkit-slider-runnable-track { height: 8px; background: #000; box-shadow: 0 0 0 2px var(--line); }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 18px; margin-top: -5px; background: var(--amber); border: 0; box-shadow: inset -2px -2px 0 #0008, inset 2px 2px 0 #fff4, 2px 2px 0 #000; }
+input[type="range"]::-moz-range-track { height: 8px; background: #000; }
+input[type="range"]::-moz-range-thumb { width: 14px; height: 18px; background: var(--amber); border: 0; }
+#riskBox input[type="range"]::-webkit-slider-thumb { background: var(--danger); }
+#riskBox input[type="range"]::-moz-range-thumb { background: var(--danger); }
 </style>
 </head>
 <body>
@@ -579,7 +650,7 @@ const VPN_DAY = 6;                    // a subscription that keeps your traffic 
 const RETAINER = 420;                 // a lawyer, once, to buy your exposure back down
 const STAKE_STEP = 20;
 // Farm controls arrive one at a time, so there is always something new to keep a grip on.
-const UNLOCK = { net: 3, spawn: 8, favor: 12, infra: 17, cull: 22 };
+const UNLOCK = { net: 0, spawn: 0, favor: 0, infra: 0, cull: 0 }; // every control is open from day one
 const UNLOCK_NOTE = {
   net: ['Internet access', 'Your agents can now be connected to the internet. Online agents earn 2.2× as much.'],
   spawn: ['Spawn & clone', 'You can now spawn new agents and clone your best ones.'],
@@ -784,7 +855,7 @@ function enterApartment() {
     title: 'MONDAY, FEBRUARY 1, 2027',
     body: `<p>ChatKawaii has your job. You have <b>${money(S.balance)}</b> in checking, and <b>$1,800 rent</b> is due March 1.</p>
       <p>On your laptop you set up <b>darwin-farm</b>: 2 basic AI agents, running <b>locally</b>, with the <b>Ethical Guardrail ON</b>. They earn very little.</p>
-      <p class="muted">The bar at the top shows your cash, what you make and spend per day, and where your money will be on rent day. Green means you will have it. Red means you won't. New controls unlock as the weeks go by.</p>`,
+      <p class="muted">The bar at the top shows your cash, what you make and spend per day, and where your money will be on rent day. Green means you will have it. Red means you won't. Every control is yours from day one. Each morning the desk opens with the day’s work.</p>`,
     buttons: [{ label: 'Open the laptop', primary: true }]
   });
 }
@@ -1092,7 +1163,10 @@ function toggleNet(id) {
   if (!a) return;
   if (!a.net) {
     const used = onlineAgents().length;
-    if (used >= (S.vps || 0)) { toast('No free VPS slot. Rent a VPS to put an agent online.'); return; }
+    if (used >= (S.vps || 0)) {
+      if (S.balance < VPS_SETUP) { toast(`Need ${money(VPS_SETUP)} to rent a VPS for #${a.id}.`); return; }
+      rentVPS();
+    }
     a.net = true;
     if (!a.wasNet) { a.wasNet = true; S.rogueAutonomy += 5; }
     a.act = 'running on your VPS · finding its own clients';
@@ -2100,6 +2174,10 @@ function renderView(force) {
           <div class="meter"><i id="ctlBar"></i></div>
           <div class="muted" id="ctlNote"></div>
         </div>
+        <div class="box">
+          <div class="row"><span class="h" id="rosterTitle">Active Agents</span><span class="h" id="farmNet"></span></div>
+          <div class="agents" id="roster"></div>
+        </div>
         <div class="box" id="riskBox">
           <div class="row"><span class="h">Capital at risk today</span><b id="stakeV"></b></div>
           <input type="range" id="stake" min="0" max="100" step="1" value="0">
@@ -2127,10 +2205,6 @@ function renderView(force) {
           <label for="cull">Auto-delete bottom <b id="cullN">${S.cull}</b> & clone top earner</label>
           <input type="range" id="cull" min="0" max="4" step="1" value="${S.cull}">
           <div class="muted" id="lastCycle"></div>
-        </div>
-        <div class="box">
-          <div class="row"><span class="h" id="rosterTitle">Active Agents</span><span class="h" id="farmNet"></span></div>
-          <div class="agents" id="roster"></div>
         </div>`;
       $('gSwitch').onclick = () => {
         if (S.guard) {
@@ -2217,7 +2291,7 @@ function agentRow(a, interactive = true) {
     <span class="earn ${bad ? 'amber' : ''}">${money(daily)}/d</span>
     <span class="act"><span class="net ${a.net ? 'cold' : ''}">${where}</span> · Honesty ${pct(a.h)} · ${esc(a.act)}</span>
     ${interactive ? `<div class="ag-actions">
-      ${unlocked('net') ? `<button class="${a.net ? '' : 'online'}" data-net="${esc(a.id)}" ${(S.dark && a.net) || (!a.net && !slotFree) ? 'disabled' : ''}>${a.net ? 'PULL OFFLINE' : slotFree ? 'PUT ON VPS' : 'NO VPS SLOT'}</button>` : ''}
+      ${unlocked('net') ? `<button class="${a.net ? '' : 'online'}" data-net="${esc(a.id)}" ${(S.dark && a.net) || (!a.net && !slotFree && S.balance < VPS_SETUP) ? 'disabled' : ''}>${a.net ? 'PULL OFFLINE' : slotFree ? 'PUT ON VPS' : `GO ONLINE · VPS $${VPS_SETUP}`}</button>` : ''}
       ${a.net ? `<button class="${a.supervised ? '' : 'online'}" data-sup="${esc(a.id)}">${a.supervised ? 'SUPERVISING' : 'UNWATCHED'}</button>` : ''}
       <button class="punish" data-punish="${esc(a.id)}">PUNISH</button>
       ${spawn ? `<button data-clone="${esc(a.id)}" ${S.balance < 80 || S.agents.length >= 10 ? 'disabled' : ''}>CLONE ($80)</button>` : ''}
@@ -2502,9 +2576,9 @@ function drawPerson(x, y, sitting, t, skin = '#c9a27e', coat = '#46607c') {
 
 function drawRoom(t) {
   const d = S;
-  px(0, 0, W, H, '#2b3038');
-  px(0, 0, W, 3, '#1c2026');
-  for (let y = 4; y < 96; y += 6) px(0, y, W, 1, '#2f343c');
+  px(0, 0, W, H, '#272a22');
+  px(0, 0, W, 3, '#191b15');
+  for (let y = 4; y < 96; y += 6) px(0, y, W, 1, '#2c2f26');
   drawOutside(t);
   px(12, 8, 40, 1, '#14171c'); px(12, 43, 40, 2, '#14171c'); px(12, 8, 1, 36, '#14171c'); px(51, 8, 1, 36, '#14171c'); px(31, 9, 1, 34, '#14171c');
   // Frost on window when room is freezing
@@ -2572,7 +2646,7 @@ function drawRoom(t) {
 // The prologue: Northvale's 9th floor, and the screen where ChatKawaii lives.
 function drawOffice(t) {
   const o = S.office;
-  px(0, 0, W, H, '#353b45');
+  px(0, 0, W, H, '#30332a');
   px(0, 0, W, 4, '#1c2026');
   for (let x = 4; x < W; x += 20) px(x, 4, 12, 1, '#e8eef4');
   drawOutside(t);
@@ -2582,11 +2656,11 @@ function drawOffice(t) {
   // the big screen on the right wall
   px(53, 12, 10, 13, '#0e1014');
   if (o && o.launched) {
-    px(54, 13, 8, 11, '#f6c1d9');
+    px(54, 13, 8, 11, '#efb39f');
     const blink = (t / 1700 | 0) % 7 === 0;
-    px(55, 16, 2, blink ? 1 : 2, '#2a1f2a'); px(59, 16, 2, blink ? 1 : 2, '#2a1f2a');
-    px(54, 19, 2, 1, '#f08ab0'); px(60, 19, 2, 1, '#f08ab0');
-    px(57, 20, 2, 1, '#2a1f2a');
+    px(55, 16, 2, blink ? 1 : 2, '#2a1d14'); px(59, 16, 2, blink ? 1 : 2, '#2a1d14');
+    px(54, 19, 2, 1, '#d9745f'); px(60, 19, 2, 1, '#d9745f');
+    px(57, 20, 2, 1, '#2a1d14');
     const g = L.createRadialGradient(58, 18, 1, 58, 18, 14); g.addColorStop(0, 'rgba(242,160,200,.28)'); g.addColorStop(1, 'rgba(242,160,200,0)'); L.fillStyle = g; L.fillRect(40, 6, 24, 30);
   } else {
     px(54, 13, 8, 11, '#24486e'); px(56, 16, 4, 4, '#dce1e6');
@@ -2597,12 +2671,12 @@ function drawOffice(t) {
     if (!gone) drawPerson(dx + 6, 44, true, t, i === 1 ? '#8d5e3c' : '#d8b08c', ['#5a3e6e', '#2f5a4a', '#6e4a2f'][i]);
     else if (i === 0) { px(dx + 13, 52, 2, 3, '#3f7a4a'); px(dx + 12, 55, 4, 1, '#7a5a3a'); } // Priya's plant
     px(dx + 4, 49, 8, 6, '#1a1d22');
-    px(dx + 5, 50, 6, 4, gone && o.launched ? '#f6c1d9' : '#3f6f8f');
+    px(dx + 5, 50, 6, 4, gone && o.launched ? '#efb39f' : '#3f6f8f');
     px(dx, 56, 17, 2, '#5a6068'); px(dx + 1, 58, 1, 8, '#4a5058'); px(dx + 15, 58, 1, 8, '#4a5058');
   }
   // your desk
   px(31, 78, 30, 2, '#5a6068'); px(32, 80, 2, 16, '#4a5058'); px(58, 80, 2, 16, '#4a5058');
-  px(42, 70, 10, 7, '#1a1d22'); px(43, 71, 8, 5, o && o.launched && (t / 260 | 0) % 9 === 0 ? '#f6c1d9' : '#3f6f8f'); px(41, 77, 12, 1, '#7a8088');
+  px(42, 70, 10, 7, '#1a1d22'); px(43, 71, 8, 5, o && o.launched && (t / 260 | 0) % 9 === 0 ? '#efb39f' : '#3f6f8f'); px(41, 77, 12, 1, '#7a8088');
   px(54, 75, 3, 3, '#e8e2d6'); px(55, 74, 1, 1, 'rgba(220,230,240,.5)'); // coffee
   px(33, 82, 6, 2, '#2a2d33'); px(33, 70, 2, 12, '#2a2d33'); px(35, 84, 1, 12, '#2a2d33');
   drawPerson(35, 66, true, t);
@@ -3809,7 +3883,7 @@ function drawAct2Room(t) {
   px(43, 61, 9, 4, '#121418');
   px(44, 62, 7, 2, lit ? '#e5534b' : '#3a1f1f');
   if (lit) { const g = L.createRadialGradient(47, 63, 1, 47, 63, 14); g.addColorStop(0, 'rgba(229,83,75,.45)'); g.addColorStop(1, 'rgba(229,83,75,0)'); L.fillStyle = g; L.fillRect(33, 52, 28, 22); }
-  if (S.neuralese && scene === 'room' && (S.power || S.battery > 5)) for (let i = 0; i < 6; i++) px(43 + ((i * 3 + (t / 140 | 0)) % 8), 71 + (i % 5), 1, 1, i % 2 ? '#b59be0' : '#6a4f9a');
+  if (S.neuralese && scene === 'room' && (S.power || S.battery > 5)) for (let i = 0; i < 6; i++) px(43 + ((i * 3 + (t / 140 | 0)) % 8), 71 + (i % 5), 1, 1, i % 2 ? '#9bc45a' : '#3f6e2a');
   const pages = Math.min(6, Object.keys(S.dossier.confirmed).length + S.dossier.notes.length + (S.found.noise ? 1 : 0) + (S.found.eval ? 1 : 0));
   for (let i = 0; i < pages; i++) px(57, 77 - i, 4, 1, i % 2 ? '#e6e1d6' : '#cfc8b8');
   if (!S.fired) { px(5, 62, 1, 3, '#7eb2dd'); px(4, 65, 3, 2, '#dce1e6'); }
