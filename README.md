@@ -2,7 +2,7 @@
 
 A story game in five acts (2027–2030) about being the human in the loop. Every button you press makes sense at the time.
 
-The screen is split in two. On the left is your laptop, where you make the decisions. On the right is your apartment, where you live with them. Across the top, three numbers show your cash, what you make and spend per day, and where your money will be on rent day: green if you will have it, amber if it is close, red if you won't. Food is a standing meal plan (skip, ramen or groceries), so you set it once and get back to the decisions. Days pass slowly enough (6 seconds each at 1×) to keep the farm, your body and your bills in hand at once. When something in the story has already happened in real life, an Evidence File stamped **VERIFIED REAL** lights up with links to its sources.
+The screen is split in two. On the left is your laptop, where you make the decisions. On the right is your apartment, where you live with them. Across the top, three numbers show your cash, what you make and spend per day, and where your money will be on rent day: green if you will have it, amber if it is close, red if you won't. Food is a standing meal plan (skip, ramen or groceries), so you set it once and get back to the decisions. A day lasts two minutes at 1× (40 seconds at 3×). The clock runs from 7 AM to 9 PM, then a short night ends in the ledger, and it keeps running while you work, read or use the phone. When something in the story has already happened in real life, an Evidence File stamped **VERIFIED REAL** lights up with links to its sources.
 
 ## Play
 
@@ -49,7 +49,7 @@ They took your laptop with your job, so Act I starts at **Byte Barn**:
 | Bytebook Go 11 | $190 | 4 GB, fixed | Very slow. Too small for audio or spreadsheet jobs. |
 | ThunkPad T48 (used) | $420 | 8 GB, up to 32 | Slow but solid. |
 | Dull Inspira 15 | $790 | 16 GB, up to 32 | Can do retouching. |
-| Pear BookAir M3 | $1,290 | 16 GB, fixed | Fast. No external graphics. |
+| Pear BookAir M3 | $1,340 | 16 GB, fixed | Fast. No external graphics. |
 | Raptor G16 | $2,390 | 32 GB + GPU | Out of reach. |
 | AI workstation | $4,890 | 64 GB + 2 GPUs | Out of reach. |
 
@@ -66,7 +66,7 @@ The **WEB** tab is a browser with two sites:
 
 Jobs sit in **WORK → MY JOBS**. Press START and the job opens on your **bench**, one boring item at a time: sort shapes into baskets, type receipt totals, transcribe handwriting, tap the misspelled word, pick the right translation or formula, keep or remove forum posts, tap the blemish on a photo, or keep a GPU render under 100°C. Number keys and Enter work too.
 
-**The clock keeps running while you work.** A day is 30 seconds at 1×, and a job takes most of one. A slow computer adds a pause before each item, and big files have to download first. Pausing time pauses the bench too.
+**The clock keeps running while you work.** A day is two minutes at 1×, and a job of 20 to 50 items takes about half of one. A slow computer adds a pause before each item, and big files have to download first. Pausing time pauses the bench too.
 
 Mistakes cut the pay. Get a quarter of the items wrong and the client rejects the job. Clean work raises your **star rating**, which brings more offers, better pay and the bigger jobs. You can also hand a job to an agent for AI credits ($15 for 20). That takes four seconds, but sometimes the work is wrong, and then you lose the pay, the credits and some of your rating.
 

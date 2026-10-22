@@ -897,7 +897,7 @@ p, .muted, .note, .st-sub, .rbtn span, .mail .s, .reader .body, .doc.win .msg, .
 const DAY0 = Date.UTC(2027, 1, 1); // Mon Feb 1 2027
 const ACT1_END = 88;
 const RENT = 1800;
-const DAY_SEC = { 1: 30, 3: 10 }; // the clock keeps running while you work, so a day has to hold a job or two
+const DAY_SEC = { 1: 120, 3: 40 }; // two minutes a day: the clock keeps running while you work, scroll or swipe
 const OFFICE_START = -7;  // Mon Jan 25 2027: a junior analyst at Northvale Logistics
 const OFFICE_LAYOFF = -3; // Fri Jan 29: HR's "quick sync"
 const NET_MULT = 2.2;     // an agent with internet access earns this much more
@@ -3031,17 +3031,17 @@ function grindManualWork() {
 // Stars bring work and raise pay. Your hands earn stars; a cheap AI earns money badly.
 // Some jobs need a machine you can't afford yet.
 const JOB_KINDS = {
-  label: { ui: 'sort', icon: '▦', credits: 3, units: [14, 20], per: 3.6, simple: true },
-  entry: { ui: 'type', icon: '⌨', credits: 3, units: [10, 14], per: 5.6, simple: true },
-  transcribe: { ui: 'type', icon: '♪', credits: 4, units: [9, 12], per: 6.3, simple: true, ram: 8 },
-  translate: { ui: 'pick', icon: '⇄', credits: 3, units: [10, 12], per: 4.8, simple: true },
-  proofread: { ui: 'typo', icon: '✎', credits: 4, units: [8, 10], per: 7.0, simple: true },
-  macro: { ui: 'pick', icon: '∑', credits: 3, units: [5, 6], per: 12, simple: true, ram: 8 },
-  moderate: { ui: 'spam', icon: '⚑', credits: 3, units: [14, 18], per: 3.4, simple: true },
-  describe: { ui: 'pick', icon: '≡', credits: 2, units: [8, 10], per: 5.0, simple: true },
-  retouch: { ui: 'spot', icon: '◐', credits: 6, units: [10, 12], per: 9.0, ram: 16, gb: 6, minStars: 3.3 },
-  render: { ui: 'render', icon: '▲', credits: 8, units: [8, 10], per: 20, ram: 16, gpu: true, gb: 2, minStars: 3.6 },
-  model3d: { ui: 'render', icon: '◆', credits: 12, units: [12, 14], per: 26, ram: 32, gpu: true, gb: 9, minStars: 4.0 }
+  label: { ui: 'sort', icon: '▦', credits: 3, units: [35, 50], per: 1.0, simple: true },
+  entry: { ui: 'type', icon: '⌨', credits: 3, units: [25, 35], per: 1.55, simple: true },
+  transcribe: { ui: 'type', icon: '♪', credits: 4, units: [22, 30], per: 1.75, simple: true, ram: 8 },
+  translate: { ui: 'pick', icon: '⇄', credits: 3, units: [25, 30], per: 1.35, simple: true },
+  proofread: { ui: 'typo', icon: '✎', credits: 4, units: [20, 25], per: 1.95, simple: true },
+  macro: { ui: 'pick', icon: '∑', credits: 3, units: [12, 15], per: 3.35, simple: true, ram: 8 },
+  moderate: { ui: 'spam', icon: '⚑', credits: 3, units: [35, 45], per: 0.95, simple: true },
+  describe: { ui: 'pick', icon: '≡', credits: 2, units: [20, 25], per: 1.4, simple: true, ram: 8 },
+  retouch: { ui: 'spot', icon: '◐', credits: 6, units: [25, 30], per: 2.5, ram: 16, gb: 6, minStars: 3.3 },
+  render: { ui: 'render', icon: '▲', credits: 8, units: [20, 25], per: 5.6, ram: 16, gpu: true, gb: 2, minStars: 3.6 },
+  model3d: { ui: 'render', icon: '◆', credits: 12, units: [30, 35], per: 7.2, ram: 32, gpu: true, gb: 9, minStars: 4.0 }
 };
 const starMult = () => clamp(.8 + ((S.stars || 3) - 3) * .14, .55, 1.1);
 const OS_RAM = 4, AGENT_RAM = 6;
@@ -3062,7 +3062,7 @@ function aiQuality() {
 }
 function takeJob(it) {
   S.jobs = S.jobs || [];
-  const k = it.jk || it.kind, K = JOB_KINDS[k], units = clamp(Math.round(it.pay / (K.per * 1.08 * starMult())), K.units[0], K.units[1] + 4);
+  const k = it.jk || it.kind, K = JOB_KINDS[k], units = clamp(Math.round(it.pay / (K.per * 1.08 * starMult())), K.units[0], K.units[1] + 10);
   const j = { id: (S.jobSeq = (S.jobSeq || 0) + 1), kind: k, title: it.subj, from: it.from, pay: it.pay, units, done: 0, errs: 0, due: S.day + (K.gpu || K.ram ? 3 : 2) };
   S.jobs.push(j); S.unread.farm = S.tab !== 'farm';
   return j;
@@ -3170,10 +3170,10 @@ const randi = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 // They took the company laptop with the job. What you buy decides what work you can take.
 // Prices are set before the RAM surge; the paper says it is coming. Nobody warns you about rent.
 const PCS = [
-  { k: 'bytebook', name: 'Bytebook Go 11', kind: 'Refurbished school laptop', ram: 4, max: 4, gpu: 0, lag: 1600, cost: 190, share: .2, say: 'The keys stick. The fan never stops. 4 GB, soldered.' },
+  { k: 'bytebook', name: 'Bytebook Go 11', kind: 'Refurbished school laptop', ram: 4, max: 4, gpu: 0, lag: 1900, cost: 190, share: .2, say: 'The keys stick. The fan never stops. 4 GB, soldered.' },
   { k: 'thunkpad', name: 'ThunkPad T48', kind: 'Used office laptop', ram: 8, max: 32, gpu: 0, lag: 700, cost: 420, share: .25, say: 'Heavy as a brick. Opens with a screwdriver. Takes up to 32 GB.' },
   { k: 'inspira', name: 'Dull Inspira 15', kind: 'New laptop', ram: 16, max: 32, gpu: 0, lag: 350, cost: 790, share: .3, say: 'Plain and plastic. 16 GB now, room for 32.' },
-  { k: 'bookair', name: 'Pear BookAir M3', kind: 'New laptop', ram: 16, max: 16, gpu: 0, lag: 100, cost: 1290, share: .22, noEgpu: true, say: 'Fast, silent, beautiful. 16 GB forever. No external graphics.' },
+  { k: 'bookair', name: 'Pear BookAir M3', kind: 'New laptop', ram: 16, max: 16, gpu: 0, lag: 140, cost: 1340, share: .22, noEgpu: true, say: 'Fast, silent, beautiful. 16 GB forever. No external graphics.' },
   { k: 'raptor', name: 'Raptor G16', kind: 'Gaming laptop', ram: 32, max: 64, gpu: 1, lag: 80, cost: 2390, share: .3, say: 'A real graphics card. Renders, 3D, and room for agents.' },
   { k: 'tower', name: 'AI workstation', kind: 'Custom tower', ram: 64, max: 128, gpu: 1.8, lag: 40, cost: 4890, share: .35, say: '64 GB and two graphics cards. What the farms buy.' }
 ];
@@ -3301,7 +3301,7 @@ function mkListing(kind, o = {}) {
 }
 function webRefresh(d) {
   const st = S.stars || 3, n = 4 + (st >= 4 ? 2 : st >= 3.5 ? 1 : 0), L = [];
-  L.push(mkListing(pick(['label', 'entry', 'moderate']), { instant: true, units: randi(7, 9), mult: .8, props: 0 }));
+  L.push(mkListing(pick(['label', 'entry', 'moderate']), { instant: true, units: randi(15, 20), mult: .8, props: 0 }));
   for (let i = 0; i < n; i++) L.push(mkListing(pick(SIMPLE_KINDS)));
   L.push(mkListing('retouch')); if (st >= 3.8) L.push(mkListing('retouch'));
   if (st >= 3.4 || Math.random() < .3) L.push(mkListing('render'));
@@ -3424,7 +3424,7 @@ function fcHTML() {
     if (!L.scam && !canTake(L)) return '<button disabled>Your computer can’t run this</button>';
     return `<button data-prop="${L.id}">${L.instant ? 'Accept task' : 'Send proposal'}</button>`;
   };
-  const hrs = L => Math.max(1, Math.round(L.units * (1.4 + (pcOf() ? pcOf().lag / 1000 : 1)) / DAY_SEC[1] * 12));
+  const hrs = L => Math.max(1, Math.round(L.units * (1.4 + (pcOf() ? pcOf().lag / 1000 : 1)) / (DAY_SEC[1] * AWAKE) * 14));
   return `<div class="bhead"><b class="fc-logo">freecancer</b><span>${'★'.repeat(Math.round(S.stars || 3))}${'☆'.repeat(5 - Math.round(S.stars || 3))} ${(S.stars || 3).toFixed(1)} · ${PROPOSALS - F.sent} free proposals left today</span></div>
     ${F.list.map(L => `<div class="lst ${['lost', 'scam'].includes(L.state) ? 'dim' : ''}">
       <div class="lst-top"><b>${L.instant ? '⚡ ' : ''}${esc(L.title)}</b><span class="lst-pay">${money(L.pay)}</span></div>
@@ -3515,7 +3515,7 @@ function benchStop() { S.bench = null; BN = null; benchRender(true); renderAll()
 function benchAnswer(ok) {
   const j = benchJob(); if (!j || !BN || BN.wait > 0 || BN.dl > 0 || !speed || !$('modal').hidden) return;
   j.done++; if (!ok) j.errs++;
-  S.stamina = clamp(S.stamina - 14 / j.units, 0, 100);
+  S.stamina = clamp(S.stamina - .32, 0, 100); // a long day of this wears you down
   if (ok) sfx.tone(620 + (j.done % 6) * 70, .04, 'square', .02); else { sfx.tone(150, .14, 'square', .035); const s = $('bnStage'); if (s) jolt(s, 5); }
   if (j.done >= j.units) return benchFinish(j);
   if (S.stamina < 3) { toast('You can’t keep your eyes open. Coffee, or sleep.'); return benchStop(); }
@@ -4583,9 +4583,11 @@ function grain(t, n = 26) { const f = t / 70 | 0; for (let i = 0; i < n; i++) { 
 
 // ---- clock: the sim day plays as a time-lapse from 7 AM to midnight ----
 const hasPc = () => !S || S.act === 2 || S.phase !== 'farm' || !!S.pc;
-function hourNow() { // 8 AM → 8 PM over most of the day, then a short night that runs into tomorrow's dawn
+const AWAKE = .9; // the share of a day you are awake; the rest is a short night before the ledger
+function hourNow() { // 7 AM → 9 PM, then a short night that runs into tomorrow's dawn. Northvale keeps office hours.
   const f = clamp(acc / (DAY_SEC[speed] || DAY_SEC[1]), 0, 1);
-  return (f < .7 ? 8 + f / .7 * 12 : 20 + (f - .7) / .3 * 12) % 24;
+  if (S && S.phase === 'office') return 9 + f * 8.5;
+  return (f < AWAKE ? 7 + f / AWAKE * 14 : 21 + (f - AWAKE) / (1 - AWAKE) * 10) % 24;
 }
 const SKYK = [[0, '#06080b', '#10171a'], [6, '#0d1317', '#2a2c28'], [7.5, '#3c4a50', '#c0844a'], [10, '#6c8790', '#aebba9'], [15.5, '#64808a', '#c4a876'], [18, '#2e3a40', '#c25a2c'], [19.5, '#141c22', '#5a2e1e'], [21, '#090d11', '#16201f'], [25, '#06080b', '#10171a']];
 function skyAt(h) { for (let i = 1; i < SKYK.length; i++) if (h <= SKYK[i][0]) { const a = SKYK[i - 1], b = SKYK[i], k = (h - a[0]) / (b[0] - a[0]); return [mixc(a[1], b[1], k), mixc(a[2], b[2], k)]; } return [SKYK[0][1], SKYK[0][2]]; }
@@ -5047,7 +5049,7 @@ function drawAct2Room(t) {
 // ---- the prologue: Northvale's 9th floor ----
 function drawOffice(t) {
   const o = S.office, launched = o && o.launched, gone = o ? o.gone : 0;
-  const hr = 9 + clamp(acc / (DAY_SEC[speed] || DAY_SEC[1]), 0, 1) * 8.5, n = nightness(hr);
+  const hr = hourNow(), n = nightness(hr);
   L.clearRect(0, 0, W, H);
   // outside: overcast, other towers, clouds sliding by
   paintSky(0, 10, W, 58, hr, 6);
@@ -6524,7 +6526,8 @@ function frame(t) {
         if (S.office.stealT > (S.day >= OFFICE_LAYOFF - 1 ? .3 : .55)) { S.office.stealT = 0; kawaiiSteal(); }
       }
       if (speed && !blocked) {
-        if (acc > DAY_SEC[speed] * .62) { const ev = eveningDue(); if (ev) { runEvening(ev); return requestAnimationFrame(frame); } }
+        // evenings start around 7 PM, at .8 of the day
+        if (acc > DAY_SEC[speed] * .8) { const ev = eveningDue(); if (ev) { runEvening(ev); return requestAnimationFrame(frame); } }
         acc += dt;
         const len = DAY_SEC[speed];
         while (acc >= len && !S.over) {
