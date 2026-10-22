@@ -549,6 +549,18 @@ ol.rules { margin: 4px 0 0; padding-left: 20px; font-size: 12.5px; line-height: 
 .mail button.bul { border-color: #6a2a1a !important; } .mail button.bul .f { color: var(--amber); }
 details.box summary { cursor: pointer; list-style: none; } details.box summary::-webkit-details-marker { display: none; }
 @media (max-width: 640px) { .sxs { grid-template-columns: 1fr; } .np { max-height: 46vh; } }
+/* ===== Soot and the night ledger ===== */
+#deskCat { position: absolute; width: 96px; height: 78px; image-rendering: pixelated; cursor: pointer; z-index: 6; filter: drop-shadow(3px 0 0 #55555f) drop-shadow(-3px 0 0 #55555f) drop-shadow(0 -3px 0 #55555f) drop-shadow(5px 5px 0 #000); }
+.ledger { max-width: 430px; font-family: var(--f-term); }
+.ledger .bd { display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; }
+.lg-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.lg-row input { accent-color: var(--amber); width: 15px; height: 15px; vertical-align: -2px; margin-right: 6px; }
+.lg-row.off { opacity: .5; } .lg-row.warn { color: var(--danger); }
+.lg-sep { border-top: 2px dashed var(--line); margin: 2px 0; }
+.lg-food .seg button { font-size: 11px; padding: 3px 6px; }
+.lg-who { display: flex; flex-direction: column; gap: 2px; border-left: 3px solid var(--amber); padding: 4px 8px; color: var(--ink); background: #0b0c0a; }
+.lg-auto { font-size: 11px; color: var(--muted); display: flex; gap: 6px; align-items: flex-start; } .lg-auto input { margin-top: 2px; }
+#catBtn.amber { color: var(--amber); } #catBtn.danger { color: var(--danger); }
 </style>
 </head>
 <body>
@@ -615,6 +627,8 @@ details.box summary { cursor: pointer; list-style: none; } details.box summary::
         <button id="heatBtn">HEAT: ON ($8/d)</button>
         <span id="stPower">GRID ON</span>
         <button id="phoneBtn">PHONE</button>
+        <button id="catBtn">SOOT</button>
+        <button id="ledgerBtn">LEDGER: ON</button>
       </div>
 
       <div class="life-actions">
@@ -1379,6 +1393,43 @@ function vetVisit() {
   S.balance -= cost; tx(`Vet · ${c.name}`, -cost); c.sick = 0; c.hungry = 0; c.fed = Math.max(c.fed, 50);
   note(`The vet kept ${c.name} for an afternoon. ${money(cost)}. On the way home it purred inside your coat.`);
   sfx.cash(); renderAll();
+}
+
+// ---- the night ledger: you, Soot, and what you can afford ----
+function ledgerWanted() { return !S.ledgerAuto && !S.over && (S.act === 2 || S.phase === 'farm'); }
+function openLedger() {
+  const c = S.cat, sick = c && c.sick && !c.gone;
+  const fixed = S.act === 2 ? 0 : dailyCloudCost() + vpsCost() + vpnCost();
+  let vet = false;
+  const total = () => (S.heatOn && S.power ? pr('heat') : 0) + mealCost() + catCost() + fixed + (vet ? 90 : 0);
+  const you = S.bodyTemp < 35 ? 'freezing' : S.food < 25 ? 'starving' : S.stamina < 25 ? 'exhausted' : S.food < 50 ? 'hungry' : 'getting by';
+  const soot = !c || c.gone ? 'gone' : c.sick ? 'sick, not eating' : c.fed < 30 ? 'hungry, waiting by the fridge' : 'fed, asleep on your feet';
+  const B = budget();
+  modal({
+    cls: 'ledger', title: `NIGHT · ${fmtLong(S.day).toUpperCase()}`,
+    body: `<div class="lg-row"><span>Cash now</span><b>${money(S.balance)}</b></div>
+      ${S.deskHist && S.deskHist.length && S.act !== 2 ? `<div class="lg-row muted"><span>This morning’s queue</span><span>${money(S.deskHist[S.deskHist.length - 1])}</span></div>` : ''}
+      <div class="lg-sep"></div>
+      <label class="lg-row ${S.power ? '' : 'off'}"><span><input type="checkbox" id="lgHeat" ${S.heatOn && S.power ? 'checked' : ''} ${S.power ? '' : 'disabled'}> Heat${S.power ? '' : ' (power cut)'}</span><b>−${money(pr('heat'))}</b></label>
+      <div class="lg-row lg-food"><span>Food</span><span class="seg">${['skip', 'ramen', 'groc'].map(k => `<button data-lm="${k}" aria-pressed="${S.meal === k}">${k === 'groc' ? 'groceries' : k}${k === 'skip' ? '' : ' −' + money(mealCost(k))}</button>`).join('')}</span></div>
+      ${c && !c.gone ? `<label class="lg-row"><span><input type="checkbox" id="lgCat" ${c.food ? 'checked' : ''}> Cat food for ${esc(c.name)}</span><b>−${money(pr('cat'))}</b></label>` : ''}
+      ${sick ? `<label class="lg-row warn"><span><input type="checkbox" id="lgVet"> Vet for ${esc(c.name)}</span><b>−$90</b></label>` : ''}
+      ${fixed ? `<div class="lg-row muted"><span>Farm: cloud, servers, VPN</span><span>−${money(fixed)}</span></div>` : ''}
+      <div class="lg-sep"></div>
+      <div class="lg-row"><span>Tonight</span><b id="lgTot"></b></div>
+      <div class="lg-row"><span>Left in the morning</span><b id="lgLeft"></b></div>
+      <div class="lg-who"><span>You: ${you}</span><span>${c && !c.gone ? esc(c.name) : 'Soot'}: ${soot}</span></div>
+      ${B.due ? `<div class="lg-row muted"><span>${B.evict ? 'Eviction' : 'Rent'} · ${fmtDay(B.dueDay)}</span><span>${money(B.due)} in ${B.days} days</span></div>` : ''}
+      <label class="lg-auto"><input type="checkbox" id="lgAuto"> Sleep straight through from now on (switch the ledger back on in the room)</label>`,
+    buttons: [{ label: 'Sleep', primary: true, fn: () => { if (vet) vetVisit(); acc = 0; dayStep(); } }]
+  });
+  const upd = () => { const tt = total(); $('lgTot').textContent = '−' + money(tt); $('lgLeft').textContent = money(S.balance - tt); $('lgLeft').className = S.balance - tt < 0 ? 'danger' : ''; };
+  const hb = $('lgHeat'); if (hb) hb.onchange = () => { S.heatOn = hb.checked; upd(); };
+  document.querySelectorAll('[data-lm]').forEach(b => b.onclick = () => { S.meal = b.dataset.lm; document.querySelectorAll('[data-lm]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); upd(); });
+  const cb = $('lgCat'); if (cb) cb.onchange = () => { S.cat.food = cb.checked; upd(); };
+  const vb = $('lgVet'); if (vb) vb.onchange = () => { vet = vb.checked; upd(); };
+  $('lgAuto').onchange = e => { S.ledgerAuto = e.target.checked; };
+  upd();
 }
 
 function setMeal(k) {
@@ -2529,6 +2580,7 @@ function showCard() {
   bindDrag();
   settle(anim(doc, { transform: ['translateY(-260px) rotate(-6deg)', 'translateY(0px) rotate(0deg)'], opacity: [0, 1] }, { duration: .55, ease: [.2, 1.25, .35, 1] }), doc);
   rise(doc.querySelectorAll('.f, .np > *, .pane'), .04, 6);
+  if (d.i > 0) setTimeout(deskCatMaybe, 900);
 }
 function inspectField(fk) {
   if (!DESK || DESK.busy) return;
@@ -2657,7 +2709,7 @@ function deskRemember(d) { S.deskHist = (S.deskHist || []).concat(d.earned - d.s
 function deskAvg() { const a = S.deskHist || []; return a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0; }
 function closeDesk() {
   const d = DESK; d.open = false; deskRemember(d);
-  $('deskStage').style.display = 'none'; $('deskActs').style.display = 'none'; $('deskClock').parentElement.style.visibility = 'hidden'; $('rulePanel').hidden = true;
+  $('deskStage').style.display = 'none'; $('deskActs').style.display = 'none'; $('deskClock').parentElement.style.visibility = 'hidden'; $('rulePanel').hidden = true; if ($('deskCat')) $('deskCat').remove();
   const el = document.createElement('div'); el.className = 'desk-done'; el.id = 'deskDone';
   el.innerHTML = `<div class="lbl" style="color:${d.timedOut ? 'var(--danger)' : 'var(--amber)'};font-family:var(--f-term);letter-spacing:.2em">${d.timedOut ? 'SHIFT OVER' : 'QUEUE CLEARED'}</div>
     <div class="tally"><span>Earned <b>${money(d.earned)}</b></span>
@@ -3156,6 +3208,8 @@ function renderAll() {
   $('stPower').textContent = S.power ? 'GRID ON' : 'POWER CUT';
   $('stPower').className = S.power ? '' : 'danger';
   $('phoneBtn').textContent = S.phoneUnread ? 'PHONE · 1' : 'PHONE';
+  const cs = S.cat; $('catBtn').hidden = !cs || S.phase === 'office'; if (cs) { $('catBtn').textContent = cs.gone ? `${cs.name.toUpperCase()}: GONE` : cs.sick ? `${cs.name.toUpperCase()}: SICK` : cs.fed < 30 ? `${cs.name.toUpperCase()}: HUNGRY` : cs.name.toUpperCase(); $('catBtn').className = cs.gone || cs.sick ? 'danger' : cs.fed < 30 ? 'amber' : ''; }
+  $('ledgerBtn').hidden = S.phase === 'office'; $('ledgerBtn').textContent = S.ledgerAuto ? 'LEDGER: OFF' : 'LEDGER: ON';
   $('phoneBtn').classList.toggle('buzz', !!S.phoneUnread);
 
   document.querySelectorAll('[data-meal]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.meal === (S.meal || 'ramen'))); b.disabled = S.over || S.phase === 'office'; });
@@ -3238,6 +3292,8 @@ $('actCoffee').onclick = () => drinkStim(pr('coffee'), 28, false);
 $('actPills').onclick = () => drinkStim(pr('stim'), 60, true);
 $('actGrind').onclick = grindManualWork;
 $('heatBtn').onclick = toggleHeat;
+$('catBtn').onclick = () => { if (S && !S.over) petCat(); };
+$('ledgerBtn').onclick = () => { if (!S) return; S.ledgerAuto = !S.ledgerAuto; toast(S.ledgerAuto ? 'You’ll sleep straight through. Costs follow your current settings.' : 'The night ledger is back on.'); renderAll(); };
 
 // ================= rendering: the apartment, the office, the street =================
 // A 160×120 16-bit scene. Static art is cached per day; light is a darkness layer with stepped holes carved in it.
@@ -3580,6 +3636,7 @@ function drawRoom(t) {
   px(31, 96, 8, 4, '#bdb69c'); px(31, 96, 8, 1, '#d0c9ae');
   px(43, 96, 21, 6, '#5e3424'); px(43, 96, 21, 1, '#7a4630'); px(50, 97, 1, 5, '#4c2a1d'); px(57, 96, 1, 6, '#4c2a1d');
 
+  drawRoomCat(t, n);
   // breath fog
   if (S.temp < 13 && scene === 'room' && Math.random() < .04) fog.push({ x: 127, y: 52, a: 1 });
   for (let i = fog.length - 1; i >= 0; i--) { const f = fog[i]; f.y -= .07; f.x += .05; f.a -= .01; if (f.a <= 0) { fog.splice(i, 1); continue; } px(Math.round(f.x), Math.round(f.y), 2, 1, `rgba(220,230,232,${(f.a * .5).toFixed(2)})`); }
@@ -3623,9 +3680,124 @@ function drawRoom(t) {
   if (S.act === 2 && S.auditOn && scene === 'room') glow(113, 64, 26, '230,70,55', .3);
   if (S.heat > 62) glowE(spx, 103, 17, 6, '210,230,235', .2);
   if (S.heat > 80) { const ph = (t / 260 | 0) % 4; if (ph < 2) glow(84, 40, 80, ph ? '210,60,40' : '60,110,200', .16, 5); }
+  drawCatEyes(t, n);
   if (scene === 'frostbite') { L.fillStyle = 'rgba(130,195,255,.22)'; L.fillRect(0, 0, W, H); }
   L.drawImage(VIGNETTE, 0, 0);
   grain(t);
+}
+
+// ---- Soot: a black cat who lives here too ----
+const CAT_SPOTS = {
+  mattress: { x: 50, y: 97, pose: 'sleep' },
+  sill: { x: 72, y: 61, up: true, pose: 'sit', dir: 1 },
+  desk: { x: 141, y: 69, up: true, pose: 'sit', dir: -1 },
+  radiator: { x: 84, y: 98, pose: 'sleep' },
+  door: { x: 24, y: 98, pose: 'sit', dir: -1 },
+  fridge: { x: 49, y: 95, pose: 'sit', dir: -1 },
+  floor: { x: 100, y: 104, pose: 'sit', dir: 1 },
+  rug: { x: 76, y: 108, pose: 'groom', dir: 1 }
+};
+const catFx = { x: 50, y: 97, at: 'mattress', dir: 1, segs: [], seg: 0, t0: 0, next: 4000, pose: 'sleep', eyes: null, mew: 0, petDay: -1 };
+function catSprite(g, x, y, pose, t, dir, eyeCol) {
+  const B = '#0c0c0f', R = '#30303a', P = (dx, dy, w, h, c) => { g.fillStyle = c || B; g.fillRect(dir > 0 ? x + dx : x - dx - w + 1, y + dy, w, h); };
+  let eye = null;
+  if (pose === 'walk') {
+    const f = (t / 110 | 0) % 4, up = f % 2;
+    P(0, -6, 9, 4); P(1, -7, 7, 1); P(0, -6, 9, 1, R);
+    P(7, -9 + up, 4, 4); P(8, -10 + up, 1, 1); P(10, -10 + up, 1, 1); P(7, -9 + up, 4, 1, R);
+    const L = [[1, f === 0 ? 2 : 1], [3, f === 2 ? 2 : 1], [6, f === 1 ? 2 : 1], [8, f === 3 ? 2 : 1]];
+    for (const [lx, lh] of L) P(lx, -2, 1, lh);
+    P(-1, -7, 1, 2); P(-2, -9, 1, 2); P(-1, -10, 1, 1);
+    eye = [9, -8 + up];
+  } else if (pose === 'sleep') {
+    const br = Math.sin(t / 700) > 0 ? 0 : 1;
+    P(0, -4 + br, 9, 4 - br); P(1, -5 + br, 6, 1); P(1, -5 + br, 6, 1, R);
+    P(6, -6, 3, 3); P(6, -7, 1, 1); P(8, -7, 1, 1); P(6, -6, 3, 1, R);
+    P(0, -1, 8, 1, '#141418');
+  } else {
+    // sitting, or grooming (head down to a paw), or staring
+    const groom = pose === 'groom' && (t / 900 | 0) % 3 !== 0, lick = groom && (t / 180 | 0) % 2;
+    P(1, -7, 5, 1); P(0, -6, 7, 5); P(0, -1, 7, 1); P(1, -7, 4, 1, R); P(0, -6, 1, 4, R);
+    P(5, -3, 1, 3, '#16161b');
+    if (groom) { P(4, -7 + lick, 4, 4); P(5, -8 + lick, 1, 1); P(7, -8 + lick, 1, 1); }
+    else { P(3, -10, 5, 4); P(3, -11, 1, 1); P(6, -11, 1, 1); P(3, -10, 5, 1, R); eye = [6, -9]; }
+    const sw = Math.sin(t / 380);
+    P(-1, -1, 2, 1); P(-2, -2 - (sw > .3 ? 1 : 0), 1, 2); P(-3, -3 - (sw > .3 ? 1 : 0), 1, 1);
+  }
+  if (eye && eyeCol) { const ex = dir > 0 ? x + eye[0] : x - eye[0]; return [ex, y + eye[1]]; }
+  return null;
+}
+function catPlan(to) {
+  const from = CAT_SPOTS[catFx.at] || { x: catFx.x, y: catFx.y }, dest = CAT_SPOTS[to], segs = [];
+  let cur = { x: catFx.x, y: catFx.y };
+  if (from.up) { const fl = { x: cur.x, y: 97 }; segs.push({ k: 'jump', a: cur, b: fl }); cur = fl; }
+  const tf = dest.up ? { x: dest.x, y: 97 } : { x: dest.x, y: dest.y };
+  if (Math.abs(tf.x - cur.x) + Math.abs(tf.y - cur.y) > 1) segs.push({ k: 'walk', a: cur, b: tf });
+  if (dest.up) segs.push({ k: 'jump', a: tf, b: { x: dest.x, y: dest.y } });
+  for (const s of segs) s.ms = s.k === 'jump' ? 520 : Math.hypot(s.b.x - s.a.x, s.b.y - s.a.y) / 20 * 1000;
+  catFx.segs = segs; catFx.seg = 0; catFx.t0 = performance.now(); catFx.to = to;
+}
+function catChoose(t, n) {
+  const c = S.cat;
+  let to;
+  if (c.sick) to = 'mattress';
+  else if (fx.feet && fx.feet.stay) to = 'door';
+  else if (c.fed < 30) to = 'fridge';
+  else if ((S.heat || 0) > 40 && Math.random() < .5) to = 'sill';
+  else if (n > .6) to = Math.random() < .6 ? 'mattress' : 'sill';
+  else if (S.temp < 12 && S.heatOn && S.power) to = 'radiator';
+  else to = pick(['desk', 'sill', 'mattress', 'floor', 'rug', 'desk']);
+  if (to !== catFx.at) catPlan(to);
+  catFx.next = t + 9000 + Math.random() * 14000;
+}
+function drawRoomCat(t, n) {
+  const c = S.cat; catFx.eyes = null;
+  if (!c || c.gone || scene !== 'room') return;
+  if (!catFx.segs.length && t > catFx.next) catChoose(t, n);
+  let pose = (CAT_SPOTS[catFx.at] || {}).pose || 'sit', dir = (CAT_SPOTS[catFx.at] || {}).dir || catFx.dir;
+  if (catFx.segs.length) {
+    const s = catFx.segs[catFx.seg], k = Math.min(1, (t - catFx.t0) / s.ms), e = s.k === 'jump' ? k : k;
+    catFx.x = s.a.x + (s.b.x - s.a.x) * e; catFx.y = s.a.y + (s.b.y - s.a.y) * e;
+    if (s.k === 'jump') catFx.y -= Math.sin(k * Math.PI) * (8 + Math.abs(s.b.y - s.a.y) * .25);
+    dir = s.b.x >= s.a.x ? 1 : -1; catFx.dir = dir; pose = s.k === 'jump' ? 'sit' : 'walk';
+    if (k >= 1) { catFx.seg++; catFx.t0 = t; if (catFx.seg >= catFx.segs.length) { catFx.segs = []; catFx.at = catFx.to; } }
+  }
+  if (c.sick) pose = 'sleep';
+  catFx.pose = pose;
+  catFx.eyes = catSprite(L, Math.round(catFx.x), Math.round(catFx.y), pose, t, dir, true);
+  // a hungry cat says so
+  if (c.fed < 30 && !c.sick && (t / 2600 | 0) % 3 === 0) { const mx = Math.round(catFx.x) + 2, my = Math.round(catFx.y) - 15; px(mx, my, 7, 4, '#ddd6c1'); px(mx + 1, my + 4, 1, 1, '#ddd6c1'); px(mx + 1, my + 1, 1, 2, '#1b1a12'); px(mx + 3, my + 1, 1, 2, '#1b1a12'); px(mx + 5, my + 1, 1, 2, '#1b1a12'); }
+}
+function drawCatEyes(t, n) {
+  if (!catFx.eyes || catFx.pose === 'sleep') return;
+  const [ex, ey] = catFx.eyes, blink = (t % 5200) < 140;
+  if (blink) return;
+  px(ex, ey, 1, 1, n > .4 || !S.power ? '#e2f06a' : '#b8c44a');
+  if (n > .4 || !S.power) glow(ex + .5, ey + .5, 4, '220,240,110', .22, 2);
+}
+function petCat() {
+  const c = S.cat; if (!c || c.gone) return;
+  if (c.sick) return modal({ title: `${c.name.toUpperCase()} IS SICK`, body: `<p>${esc(c.name)} won’t eat. Its nose is dry and it doesn’t come when you call. The clinic on 8th St wants <b>$90</b> up front.</p><p class="muted">Rent is ${money(budget().due || 0)}. You have ${money(S.balance)}.</p>`, buttons: [{ label: 'Take Soot to the vet ($90)', primary: true, fn: vetVisit }, { label: 'Not today' }] });
+  if (catFx.petDay === S.day) return toast(c.fed < 30 ? `${c.name} looks at you, then at the fridge.` : `${c.name} has had enough of you for today.`);
+  catFx.petDay = S.day; S.stamina = clamp(S.stamina + 4, 0, 100);
+  toast(c.fed < 30 ? `${c.name} purrs, thinly. Its ribs are under your hand.` : pick([`${c.name} purrs. For a minute the rent is very far away.`, `${c.name} headbutts your hand and walks off.`, `${c.name} rolls over. It’s a trap. It’s always a trap.`]));
+  renderAll();
+}
+// Soot wanders onto the morning paperwork. You have to move the cat to read it.
+function deskCatMaybe() {
+  const c = S.cat; if (!c || c.gone || c.sick || !DESK || DESK.catDone || !M()) return;
+  if (Math.random() > (c.fed < 30 ? .25 : .08)) return;
+  DESK.catDone = true;
+  const cv = document.createElement('canvas'); cv.width = 16; cv.height = 13; cv.id = 'deskCat'; cv.title = `Move ${c.name}`;
+  $('deskStage').appendChild(cv);
+  const g = cv.getContext('2d'); let pose = 'walk', alive = true;
+  const draw = () => { if (!alive || !cv.isConnected) return; g.clearRect(0, 0, 16, 13); catSprite(g, 12, 12, pose, performance.now(), -1, true); requestAnimationFrame(draw); };
+  draw();
+  const doc = $('doc'), wr = doc.parentElement.getBoundingClientRect(), st = $('deskStage').getBoundingClientRect(), stW = st.width;
+  const tx = wr.left - st.left + wr.width * .3, ty = wr.top - st.top + doc.offsetTop + doc.offsetHeight * .38;
+  cv.style.left = tx + 'px'; cv.style.top = ty + 'px';
+  const w = anim(cv, { x: [stW - tx, 0] }, { duration: 1.6, ease: 'linear' }); if (w) w.finished.then(() => { pose = 'sit'; }, () => {});
+  cv.onclick = () => { pose = 'walk'; sfx.ping(); const a = anim(cv, { x: [0, -260], y: [0, -60, 30], opacity: [1, 1, 0] }, { duration: .7, ease: 'easeOut' }); a ? a.finished.then(() => { alive = false; cv.remove(); }, () => {}) : cv.remove(); };
 }
 
 function drawAct2Room(t) {
@@ -3897,6 +4069,7 @@ const SPOTS = {
     { r: [42, 63, 16, 30], label: () => 'FRIDGE', go: fridge },
     { r: [5, 93, 24, 6], label: () => `LETTERS · ${S.letters}`, when: () => S.letters > 0, go: () => setTab('mail') },
     { r: [113, 46, 18, 40], label: () => 'YOU', go: selfCheck },
+    { r: () => [Math.round(catFx.x) - 7, Math.round(catFx.y) - 12, 15, 13], label: () => S.cat.sick ? `${S.cat.name.toUpperCase()} · SICK` : S.cat.fed < 30 ? `${S.cat.name.toUpperCase()} · HUNGRY` : S.cat.name.toUpperCase(), go: petCat, when: () => S.cat && !S.cat.gone },
   ],
   office: [
     { r: [126, 80, 28, 20], label: () => 'YOUR TICKETS', go: () => { setTab('farm'); pop($('term')); } },
@@ -3913,7 +4086,7 @@ const tip = document.createElement('div'); tip.id = 'roomTip'; tip.hidden = true
 function spotsNow() { if (!S || S.over || scene !== 'room') return []; return (S.phase === 'office' ? SPOTS.office : SPOTS.room).filter(s => !s.when || s.when()); }
 function spotAt(e) {
   const rc = cv.getBoundingClientRect(), wx = cam.sx + (e.clientX - rc.left) / rc.width * cam.vw, wy = (e.clientY - rc.top) / rc.height * H;
-  let best = null; for (const s of spotsNow()) { const [x, y, w, h] = s.r; if (wx >= x && wx < x + w && wy >= y && wy < y + h && (!best || w * h < best.r[2] * best.r[3])) best = s; }
+  let best = null; for (const s of spotsNow()) { const [x, y, w, h] = typeof s.r === 'function' ? s.r() : s.r; if (wx >= x && wx < x + w && wy >= y && wy < y + h && (!best || w * h < best.area)) { best = s; best.area = w * h; } }
   return best;
 }
 cv.addEventListener('pointermove', e => {
@@ -3932,7 +4105,7 @@ cv.addEventListener('click', e => {
 let flashSpot = null;
 function drawSpotOutline(t) {
   const s = (flashSpot && t - flashSpot.t < 350) ? flashSpot.s : hoverSpot; if (!s || !spotsNow().includes(s)) return;
-  const [x, y, w, h] = s.r, a = s === hoverSpot ? .45 + .35 * Math.sin(t / 140) : .9;
+  const [x, y, w, h] = typeof s.r === 'function' ? s.r() : s.r, a = s === hoverSpot ? .45 + .35 * Math.sin(t / 140) : .9;
   const c = `rgba(224,163,58,${a.toFixed(2)})`;
   for (let i = 0; i < w; i += 2) { px(x + i, y, 1, 1, c); px(x + w - 1 - i, y + h - 1, 1, 1, c); }
   for (let i = 0; i < h; i += 2) { px(x, y + h - 1 - i, 1, 1, c); px(x + w - 1, y + i, 1, 1, c); }
@@ -5114,6 +5287,7 @@ function frame(t) {
         acc += dt;
         const len = DAY_SEC[speed];
         while (acc >= len && !S.over) {
+          if (ledgerWanted()) { acc = len; openLedger(); break; }
           acc -= len;
           dayStep();
           if (!$('modal').hidden || !$('phoneModal').hidden) { acc = 0; break; }
@@ -5129,7 +5303,7 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, get DESK() { return DESK; }, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, get DESK() { return DESK; }, get catFx() { return catFx; }, catPlan, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
