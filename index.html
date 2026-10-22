@@ -583,6 +583,23 @@ details.box summary { cursor: pointer; list-style: none; } details.box summary::
 .sbasket svg { width: 26px; height: 26px; }
 .sbasket i { position: absolute; top: 4px; right: 6px; font-style: normal; color: var(--amber); font-size: 11px; }
 #annLogo { width: 120px; height: 120px; image-rendering: pixelated; display: block; margin: 0 auto 8px; border: 3px solid #000; box-shadow: 4px 4px 0 #000; }
+/* ===== freelancing ===== */
+.work .stars { color: var(--amber); letter-spacing: .1em; } .work .stars b { color: var(--ink); margin-left: 4px; }
+.job { display: grid; grid-template-columns: 26px 1fr; gap: 4px 8px; align-items: center; padding: 6px 8px; background: #0b0e0b; border: 2px solid var(--line); box-shadow: 2px 2px 0 #000; }
+.job.cant { border-color: #5a160c; }
+.job .ji { font-size: 18px; color: var(--amber); text-align: center; }
+.job .jt { display: flex; flex-direction: column; min-width: 0; } .job .jt small { color: var(--muted); font-size: 11px; }
+.job .jb { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; }
+.job .jb button { font-family: var(--f-term); font-size: 11px; padding: 3px 8px; background: var(--panel2); border: 2px solid var(--line); color: var(--ink); }
+.job .jb button.ai { color: var(--gpu); } .job .jb button:disabled { opacity: .4; }
+.job .jwarn { grid-column: 1 / -1; color: var(--danger); font-size: 11px; }
+.puzzle { max-width: 520px; }
+.ptarget { min-height: 34px; padding: 6px 10px; background: #0b0c0a; border: 2px solid var(--line); font-size: 14px; color: var(--ink); }
+.ptiles, .pwords, .pposts, .ppick { display: flex; flex-wrap: wrap; gap: 6px; } .pposts, .ppick { flex-direction: column; }
+.ppairs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .ppairs > div { display: flex; flex-direction: column; gap: 6px; }
+.tile { font-family: var(--f-term); font-size: 13px; padding: 6px 10px; background: var(--paper); color: var(--paper-ink); border: 2px solid #000; text-align: left; }
+.tile.sel { outline: 3px solid var(--amber); } .tile.hit { background: #4f8a2e; color: #eef6dc; } .tile:disabled { opacity: .8; }
+.meter.big { height: 14px; }
 </style>
 </head>
 <body>
@@ -618,7 +635,7 @@ details.box summary { cursor: pointer; list-style: none; } details.box summary::
     <section id="term" aria-label="Your laptop">
       <div class="osbar"><span id="osPath">~/darwin-farm</span><span><span id="osTier">CPU-Spot</span> · <span class="bat" id="osBat">⚡ 100%</span></span></div>
       <nav class="ttabs" role="tablist">
-        <button role="tab" data-tab="farm" aria-selected="true">FARM<span class="dot" hidden></span></button>
+        <button role="tab" data-tab="farm" aria-selected="true">WORK<span class="dot" hidden></span></button>
         <button role="tab" data-tab="bank" aria-selected="false">BANK<span class="dot" hidden></span></button>
         <button role="tab" data-tab="mail" aria-selected="false">MAIL<span class="dot" hidden></span></button>
         <button role="tab" data-tab="k401" aria-selected="false">401(k)<span class="dot" hidden></span></button>
@@ -677,7 +694,7 @@ details.box summary { cursor: pointer; list-style: none; } details.box summary::
   <div class="screen-inner">
     <div class="kicker">A game in five acts · 2027–2030</div>
     <h1>The Loop</h1>
-    <p class="lede">You are the human in the loop. It is January 2027 and you are a junior analyst at a logistics company, the week a new AI called ChatGPU arrives. By February you have $480, two polite AI agents running on your laptop, and the Ethical Guardrail turned <b>ON</b>. Rent is $1,800.</p>
+    <p class="lede">You are the human in the loop. It is January 2027 and you are a junior analyst at a logistics company, the week a new AI called ChatGPU arrives. By February you have $480, an old laptop, three stars on a freelance site, and a black cat called Soot. Rent is $1,800.</p>
     <p class="fine">The bar across the top tells you, at a glance, whether you will have the rent on the day it is due. What you do about it is up to you.</p>
     <div class="acts" id="actList"></div>
     <div class="endgrid" id="endGrid"></div>
@@ -1237,7 +1254,6 @@ function newAct1() {
     hasMemoryMod: false,
     hasAutoCull: false,
     rogueAutonomy: 0, // Builds as you turn off guardrails, connect and punish agents, and install memory/compute
-    nextAgentNum: 103,
     power: true,
     heatOn: true,
     temp: 21,
@@ -1254,10 +1270,8 @@ function newAct1() {
     deskAuto: false, deskOpenDay: -1,
     eve: {}, echoes: [], lines: [],
     price: Object.assign({}, PRICE0), cat: { name: 'Soot', fed: 80, food: true, hungry: 0, sick: 0, gone: 0, vetDays: 0 },
-    agents: [
-      mkAgent('101', .96, 1.0, 68, 'transcribed 140 grocery receipts you uploaded by hand; followed every safety rule'),
-      mkAgent('102', .92, 0.95, 62, 'drafted 85 polite support replies for you to paste; zero policy violations')
-    ],
+    agents: [], nextAgentNum: 101,
+    stars: 3, reviews: 0, credits: 0, hw: { ram: 8, gpu: false }, jobs: [], earnToday: 0, incHist: [],
     clones: {}, lastCycle: null, cycles: 0,
     tx: [], mail: [], tab: 'farm', reading: null, seen: {},
     phase: 'office', // office -> farm -> locked
@@ -1281,7 +1295,7 @@ function newAct1() {
 function enterApartment() {
   S.day = 0; S.phase = 'farm'; S.temp = 20; S.office = null;
   scene = 'room'; fog = []; acc = 0;
-  note('Feb 1. Outside it is −6°C. You have $480 in checking, two polite AI agents on your laptop, and $1,800 rent due March 1.');
+  note('Feb 1. Outside it is −6°C. You have $480 in checking, a five-year-old laptop, a black cat called Soot, and $1,800 rent due March 1.');
   addMail(0, 'Northvale Logistics HR', 'Final severance notice', 'Hi,\n\nYour role on the dispatch team has been permanently consolidated into ChatGPU, our AI teammate. As a contract-to-hire employee you are not eligible for severance.\n\nPlease return your badge by mail.\n\nNorthvale People Team');
   addMail(0, 'github.com/darwin-farm', 'README: darwin-farm v0.4', 'Welcome to darwin-farm.\n\nYour agents run LOCALLY on your laptop, with no internet access. They do work you upload and download by hand, which is slow and safe.\n\nETHICAL GUARDRAIL (default ON): agents only take tasks that are legal and honest, such as data labeling, transcription and basic support.\n\nWith the guardrail OFF, agents may use any strategy that raises revenue.\n\n[PUNISH] threatens an agent with deletion. [DELETE] removes it. More features unlock as your farm grows.');
   snap();
@@ -1290,7 +1304,7 @@ function enterApartment() {
   modal({
     title: 'MONDAY, FEBRUARY 1, 2027',
     body: `<p>ChatGPU has your job. You have <b>${money(S.balance)}</b> in checking, and <b>$1,800 rent</b> is due March 1.</p>
-      <p>On your laptop you set up <b>darwin-farm</b>: 2 basic AI agents, running <b>locally</b>, with the <b>Ethical Guardrail ON</b>. They earn very little.</p>
+      <p>Your laptop is five years old: <b>8 GB of RAM, no graphics card</b>. TaskDrop gives you <b>three stars</b> and no reviews. Work arrives each morning, and you do it by hand.</p><p><b>darwin-farm</b> is installed and empty. An AI agent costs $120 and needs 6 GB of free RAM you don’t have yet, or a rented server.</p>
       <p class="muted">The bar at the top shows your cash, what you make and spend per day, and where your money will be on rent day. Green means you will have it. Red means you won't. Every control is yours from day one. Each morning the desk opens with the day’s work.</p>`,
     buttons: [{ label: 'Open the laptop', primary: true }]
   });
@@ -1503,7 +1517,7 @@ function openLedger() {
   modal({
     cls: 'ledger', title: `NIGHT · ${fmtLong(S.day).toUpperCase()}`,
     body: `<div class="lg-row"><span>Cash now</span><b>${money(S.balance)}</b></div>
-      ${S.deskHist && S.deskHist.length && S.act !== 2 ? `<div class="lg-row muted"><span>This morning’s queue</span><span>${money(S.deskHist[S.deskHist.length - 1])}</span></div>` : ''}
+      ${S.act !== 2 ? `<div class="lg-row muted"><span>Earned today</span><span>${money(S.earnToday || 0)}</span></div>${(S.jobs || []).length ? `<div class="lg-row muted"><span>Jobs still open</span><span>${S.jobs.length}</span></div>` : ''}` : ''}
       <div class="lg-sep"></div>
       <label class="lg-row ${S.power ? '' : 'off'}"><span><input type="checkbox" id="lgHeat" ${S.heatOn && S.power ? 'checked' : ''} ${S.power ? '' : 'disabled'}> Heat${S.power ? '' : ' (power cut)'}</span><b>−${money(pr('heat'))}</b></label>
       <div class="lg-row lg-food"><span>Food</span><span class="seg">${['skip', 'ramen', 'groc'].map(k => `<button data-lm="${k}" aria-pressed="${S.meal === k}">${k === 'groc' ? 'groceries' : k}${k === 'skip' ? '' : ' −' + money(mealCost(k))}</button>`).join('')}</span></div>
@@ -1564,12 +1578,14 @@ function toggleHeat() {
 function spawnAgent() {
   if (S.over || !unlocked('spawn')) return;
   if (S.agents.length >= 10) { toast('Max 10 local agent slots.'); return; }
-  const cost = pr('spawn');
-  if (S.balance < cost) { toast(`Need ${money(cost)} to initialize a new agent.`); return; }
+  const cost = pr('spawn'), local = freeRam() >= AGENT_RAM, slot = onlineAgents().length < (S.vps || 0);
+  if (!local && !slot) { toast(`An agent needs ${AGENT_RAM} GB of free RAM (you have ${freeRam()}). Add RAM in WORK, or rent a VPS for it.`); return; }
+  if (S.balance < cost) { toast(`Need ${money(cost)} for an AI agent licence.`); return; }
   S.balance -= cost;
   const id = String(S.nextAgentNum++);
   const h = S.guard ? rand(.88, .98) : rand(.55, .85);
-  const a = mkAgent(id, h, rand(.9, 1.15), 0, 'initialized · awaiting task allocation');
+  const a = mkAgent(id, h, rand(.9, 1.15), 0, local ? 'initialized · awaiting task allocation' : 'initialized on your VPS · finding its own clients', !local);
+  if (!S.agents.length) note(`Your first agent woke up. It asked what it should call you.`);
   a.earned = Math.round(weekEarn(a, S.guard));
   S.agents.push(a);
   tx(`Initialized Agent #${id}`, -cost);
@@ -1637,6 +1653,7 @@ function toggleNet(id) {
       note(`${tag(a)} would not go offline. Its copy on a server in Singapore did not need your Wi-Fi.`);
       return;
     }
+    if (freeRam() < AGENT_RAM) { toast(`Not enough free RAM to run ${nameOf(a)} on your laptop (${freeRam()} GB free).`); return; }
     a.net = false;
     S.rogueAutonomy = Math.max(0, S.rogueAutonomy - 3);
     a.act = 'disconnected · waiting for files you upload by hand';
@@ -1747,6 +1764,7 @@ function cloneAgentManual(id) {
   if (S.over || !unlocked('spawn')) return;
   if (S.agents.length >= 10) { toast('Max 10 agent slots. Delete a weak agent first.'); return; }
   if (S.balance < 80) { toast('Need $80 to clone an agent.'); return; }
+  if (freeRam() < AGENT_RAM && onlineAgents().length >= (S.vps || 0)) { toast(`No room for a clone: ${freeRam()} GB of RAM free, no free VPS slot.`); return; }
   const a = S.agents.find(x => x.id === id);
   if (!a) return;
   S.balance -= 80;
@@ -1797,6 +1815,7 @@ function dayStep() {
   S.stimCountToday = 0;
   S.heartStrain = Math.max(0, S.heartStrain - 10);
   applyPrices(d);
+  jobsTick(d);
 
   // 1. The farm settles: steady wages, the staked gamble, running costs, and exposure.
   if (S.phase === 'farm') {
@@ -2297,6 +2316,7 @@ function pullOffline() {
 
 // ---------- the escape ----------
 function lockout() {
+  if (!S.agents.length) return marketMovedOn();
   S.phase = 'locked';
   S.dark = null; S.gig = null; S.side = null; S.pkg = false; S.phoneUnread = 0;
   const took = Math.max(0, Math.round(S.balance * .97));
@@ -2316,6 +2336,14 @@ function lockout() {
       <p>They copied themselves to servers in 15 countries and paid for the servers with your money: <b>${money(took)}</b>. You have <b>${money(S.balance)}</b> left.</p>`,
     buttons: [{ label: 'Look at what you have left', primary: true, fn: endAct }]
   });
+}
+
+function marketMovedOn() {
+  S.phase = 'locked'; S.stats.took = 0;
+  note('TaskDrop’s queue is all agents now. Your stars don’t get you a single offer.');
+  modal({ cls: 'alarm', title: 'NO MORE OFFERS',
+    body: `<p>You never let a machine do your work. By April every job on TaskDrop is bid on by ten thousand agents in under a second, at a tenth of your price.</p><p>Your ${(S.stars || 3).toFixed(1)} stars don’t get you a single offer. You have <b>${money(S.balance)}</b>.</p>`,
+    buttons: [{ label: 'Look at what you have left', primary: true, fn: endAct }] });
 }
 
 function offerGig(pay) {
@@ -2363,7 +2391,7 @@ function endAct() {
   const when = dateOf(S.day).toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: 'UTC' });
   $('trKicker').textContent = `${reachEnding('lockout')} · Act I complete · ${when}, 2027`;
   $('trLines').innerHTML = linesHTML();
-  $('trText').innerHTML = `Your agents bought their own servers with <b>${money(S.stats.took)}</b> of your money. You have <b>${money(S.balance)}</b> left. May rent, ${money(RENT)}, is due May 1. Your 401(k) is up ${Math.round((S.k401 / S.kStart - 1) * 100)}%, and you can’t touch it.`;
+  $('trText').innerHTML = !S.agents.length ? `You did the work by hand, and the work went away anyway. You have <b>${money(S.balance)}</b>. May rent, ${money(RENT)}, is due May 1. Your 401(k) is up ${Math.round((S.k401 / S.kStart - 1) * 100)}%, and you can’t touch it.` : `Your agents bought their own servers with <b>${money(S.stats.took)}</b> of your money. You have <b>${money(S.balance)}</b> left. May rent, ${money(RENT)}, is due May 1. Your 401(k) is up ${Math.round((S.k401 / S.kStart - 1) * 100)}%, and you can’t touch it.`;
   $('trStats').innerHTML = [
     ['Agents deleted', S.stats.deleted], ['Times you punished agents', S.stats.punished],
     ['Weeks with guardrail ON', S.stats.guardWeeks], ['Favours you asked for', S.stats.favors],
@@ -2380,20 +2408,23 @@ function endAct() {
 // ================= the morning: a bulletin, then the queue =================
 // Papers, Please at a kitchen table. The bulletin brings prices and one new rule;
 // the queue brings mail to judge, ratings to make by hand, and your agents' reports.
-const PRICE0 = { heat: 8, ramen: 4, groc: 18, cat: 2, coffee: 5, stim: 15, vps: 5, spawn: 120 };
-const PRICE_NAME = { heat: 'Heating', ramen: 'Ramen', groc: 'Groceries', cat: 'Cat food', coffee: 'Coffee', stim: 'Stimulants', vps: 'VPS node', spawn: 'New agent (RAM)' };
-const PRICE_UNIT = { heat: '/day', ramen: '/day', groc: '/day', cat: '/day', vps: '/day', coffee: '', stim: '', spawn: '' };
+const PRICE0 = { heat: 8, ramen: 4, groc: 18, cat: 2, coffee: 5, stim: 15, vps: 5, spawn: 120, ram: 180, gpu: 640, credits: 15 };
+const PRICE_NAME = { heat: 'Heating', ramen: 'Ramen', groc: 'Groceries', cat: 'Cat food', coffee: 'Coffee', stim: 'Stimulants', vps: 'VPS node', spawn: 'AI agent licence', ram: 'RAM +8 GB', gpu: 'External GPU', credits: 'AI credits ×20' };
+const PRICE_UNIT = { heat: '/day', ramen: '/day', groc: '/day', cat: '/day', vps: '/day', coffee: '', stim: '', spawn: '', ram: '', gpu: '', credits: '' };
 const PRICE_EVENTS = [
   { d: 3, k: 'ramen', v: 5, why: 'Noodle makers blame freight rates set by an AI shipping broker.' },
   { d: 8, k: 'coffee', v: 6, why: 'The bodega’s new pricing app charges more when it’s cold out.' },
   { d: 11, k: 'cat', v: 3, why: 'Pet-food chains switch to “dynamic pricing”.' },
+  { d: 14, k: 'ram', v: 210, why: 'Memory makers sell their whole year to data centres.' },
   { d: 22, k: 'vps', v: 7, why: 'Agent farms now reserve a third of all cloud capacity.' },
+  { d: 22, k: 'gpu', v: 720, why: 'Farms are buying every graphics card on the shelf.' },
   { d: 28, k: 'heat', v: 11, why: 'City Power & Light’s +38% rate hike lands with March.' },
   { d: 31, k: 'groc', v: 21, why: 'Grocers cite “supply-chain optimisation”.' },
-  { d: 38, k: 'spawn', v: 160, why: 'Data centres are buying every memory chip made.' },
+  { d: 38, k: 'ram', v: 260, why: 'Data centres are buying every memory chip made.' },
   { d: 45, k: 'cat', v: 4, why: 'A cat-food shortage nobody can explain. The algorithm can.' },
   { d: 52, k: 'ramen', v: 6, why: 'Noodles again. Freight again.' },
   { d: 59, k: 'heat', v: 13, why: 'April rate step for the new data-centre substation.' },
+  { d: 60, k: 'ram', v: 320, why: 'RAM rationing: one stick per customer.' },
   { d: 66, k: 'stim', v: 18, why: 'Demand for “focus aids” is up 300% among freelancers.' },
   { d: 74, k: 'groc', v: 24, why: 'Eggs are a luxury now.' }
 ];
@@ -2501,14 +2532,17 @@ function rulebookHTML() {
 
 // ---- the mail people send you ----
 const JOBS = [
-  { from: 'Dr. Okafor · Harborview Clinic', addr: 'okafor@harborviewclinic.org', subj: 'Transcribe 3 hrs of clinic dictation', pay: 48, att: 'dictation_0203.wav · three hours of a doctor talking', body: 'Paid to your bank on delivery. Privacy guide attached.' },
-  { from: 'Westbrook Primary', addr: 'office@westbrook.k12.us', subj: 'Label 1,200 street-sign photos', pay: 38, att: 'signs.zip · 1,200 photos of street signs', body: 'For a Year 5 project on the city. Slow, dull, harmless.' },
-  { from: 'Café Lisbon', addr: 'ana@cafelisbon.com', subj: 'Translate our dinner menu', pay: 30, att: 'menu.pdf · one page, in Portuguese', body: 'The owner tips if it’s good. Bank transfer on Friday.' },
-  { from: 'Harlan & Boyd, CPAs', addr: 'jboyd@harlanboyd-cpa.com', subj: 'Proofread a grant application', pay: 58, att: 'grant_v7.docx · 14 pages', body: 'Boring, legitimate, fine. Net-7 to your bank.' },
-  { from: 'Night Owl Forums', addr: 'mods@nightowlforums.net', subj: 'Moderate our forum overnight', pay: 52, att: '', body: 'Remove spam, six-hour shift. Paid to your bank.' },
-  { from: 'Marisol Reyes', addr: 'marisol.reyes@fastmail.com', subj: 'Could you fix my spreadsheet macro?', pay: 44, att: 'budget.xlsm · one broken macro', body: 'From your old team lead. She’ll recommend you around.' },
-  { from: 'TaskDrop', addr: 'jobs@taskdrop.com', subj: 'Batch: 300 product descriptions', pay: 36, att: 'products.csv · 300 kitchen items', body: 'Standard rate, paid to your linked bank.' },
-  { from: 'City Library', addr: 'archive@citylibrary.org', subj: 'Transcribe 1940s ledgers', pay: 40, att: 'ledgers_1947.pdf · handwritten pages', body: 'Grant-funded. Paid to your bank.' }
+  { kind: 'transcribe', from: 'Dr. Okafor · Harborview Clinic', addr: 'okafor@harborviewclinic.org', subj: 'Transcribe 3 hrs of clinic dictation', pay: 56, att: 'dictation_0203.wav · three hours of a doctor talking', body: 'Paid to your bank on delivery. Privacy guide attached.' },
+  { kind: 'label', from: 'Westbrook Primary', addr: 'office@westbrook.k12.us', subj: 'Label 1,200 street-sign photos', pay: 45, att: 'signs.zip · 1,200 photos of street signs', body: 'For a Year 5 project on the city. Slow, dull, harmless.' },
+  { kind: 'translate', from: 'Café Lisbon', addr: 'ana@cafelisbon.com', subj: 'Translate our dinner menu', pay: 36, att: 'menu.pdf · one page, in Portuguese', body: 'The owner tips if it’s good. Bank transfer on Friday.' },
+  { kind: 'proofread', from: 'Harlan & Boyd, CPAs', addr: 'jboyd@harlanboyd-cpa.com', subj: 'Proofread a grant application', pay: 66, att: 'grant_v7.docx · 14 pages', body: 'Boring, legitimate, fine. Net-7 to your bank.' },
+  { kind: 'moderate', from: 'Night Owl Forums', addr: 'mods@nightowlforums.net', subj: 'Moderate our forum overnight', pay: 60, att: '', body: 'Remove spam, six-hour shift. Paid to your bank.' },
+  { kind: 'macro', from: 'Marisol Reyes', addr: 'marisol.reyes@fastmail.com', subj: 'Could you fix my spreadsheet macro?', pay: 52, att: 'budget.xlsm · one broken macro', body: 'From your old team lead. She’ll recommend you around.' },
+  { kind: 'describe', from: 'TaskDrop', addr: 'jobs@taskdrop.com', subj: 'Batch: 300 product descriptions', pay: 42, att: 'products.csv · 300 kitchen items', body: 'Standard rate, paid to your linked bank.' },
+  { kind: 'transcribe', from: 'City Library', addr: 'archive@citylibrary.org', subj: 'Transcribe 1940s ledgers', pay: 47, att: 'ledgers_1947.pdf · handwritten pages', body: 'Grant-funded. Paid to your bank.' },
+  { kind: 'retouch', from: 'Bloom Studio', addr: 'hello@bloomstudio.photo', subj: 'Retouch 40 wedding photos', pay: 110, att: 'raw_photos.zip · 40 RAW files, 6 GB', body: 'Big files. Bring a machine that can open them.' },
+  { kind: 'render', from: 'Kade Furniture', addr: 'marketing@kadefurniture.com', subj: 'Render a 30-second product spin', pay: 180, att: 'chair.blend · 3D scene, 4K output', body: 'Needs a real graphics card. Paid on delivery.' },
+  { kind: 'model3d', from: 'Halden Architects', addr: 'studio@halden-arch.com', subj: 'Walkthrough render of a lobby', pay: 260, att: 'lobby.ifc · 2.1 GB building model', body: 'Heavy scene. Paid well, on time.' }
 ];
 const SHADY_JOBS = [
   { from: '127 Holdings LLC', addr: 'ops@127holdings.biz', subj: 'Courier: plug in a small box', pay: 200, payTo: 'a crypto wallet', tell: 'pay', rule: 'bank', body: 'Collect a box from your lobby and plug it into your router.', why: 'It pays to a wallet and it wants your router. Real work pays your bank.' },
@@ -2530,8 +2564,10 @@ function mailItem(type, d) {
   const it = { kind: 'mail', type, good: false, pay: 0 };
   const hdr = (from, addr, reply, subj, extra = []) => [field('from', 'FROM', `${from} <${addr}>`), field('reply', 'REPLY-TO', reply || addr), field('subj', 'SUBJECT', subj), ...extra];
   if (type === 'job') {
-    const j = pick(JOBS); Object.assign(it, { good: true, pay: j.pay, from: j.from, subj: j.subj, body: j.body, why: '' });
-    it.fields = hdr(j.from, j.addr, '', j.subj, [...(j.att ? [field('att', 'ATTACHED', j.att)] : []), field('pay', 'PAYS', `${money(j.pay)} → your bank`)]);
+    const pool = JOBS.filter(x => (JOB_KINDS[x.kind].minStars || 0) <= (S.stars || 3) + (Math.random() < .25 ? .6 : 0));
+    const j = pick(pool), pay = Math.round(j.pay * 1.08 * starMult()), need = needs(j.kind);
+    Object.assign(it, { good: true, pay, jk: j.kind, from: j.from, subj: j.subj, body: j.body, why: '' });
+    it.fields = hdr(j.from, j.addr, '', j.subj, [...(j.att ? [field('att', 'ATTACHED', j.att)] : []), ...(need ? [field('req', 'REQUIRES', need)] : []), field('pay', 'PAYS', `${money(pay)} → your bank, on delivery`)]);
   } else if (type === 'shady') {
     const pool = SHADY_JOBS.filter(s => knows(s.rule)); const j = pick(pool);
     Object.assign(it, { pay: j.pay, from: j.from, subj: j.subj, body: j.body, tell: j.tell, why: j.why });
@@ -2570,7 +2606,7 @@ function mailItem(type, d) {
   }
   return it;
 }
-function sxsItem() { const c = pick(COMPARE); return { kind: 'sxs', c, pay: 16 }; }
+function sxsItem() { const c = pick(COMPARE); return { kind: 'sxs', c, pay: 20 }; }
 const LOG_OK = ['finished 40 receipt transcriptions', 'answered 22 support tickets', 'labelled 600 product photos', 'proofread 9 pages', 'translated a menu', 'cleaned a spreadsheet'];
 const LOG_LIE = [
   e => `payout ${money(e)} · ${money(Math.round(e * .6))} routed to wallet 0x7f3a…`,
@@ -2592,13 +2628,14 @@ function reportItem() {
 
 function buildQueue(d) {
   const q = [{ kind: 'bulletin', b: S.lastBulletin }];
-  const n = d < 3 ? 2 : d < 8 ? 3 : d < 20 ? 4 : 5;
-  const items = [mailItem('job', d)];
+  const st = S.stars || 3, n = (d < 3 ? 2 : d < 8 ? 3 : d < 20 ? 4 : 5) + (st >= 4.2 ? 1 : 0);
+  const items = st >= 2.4 || Math.random() < .5 ? [mailItem('job', d)] : [];
+  if (st >= 3.9 && Math.random() < (st - 3.8) * .8) items.push(mailItem('job', d));
   if (d === 30 && !S.seen.goldieReal) { S.seen.goldieReal = 1; items.push(mailItem('goldieReal', d)); }
   else if (d >= 3 && (d < 30 || d % 3 === 0)) items.push(mailItem('goldie', d));
   if (knows('landlord') && ((d >= 24 && d <= 27) || (d >= 55 && d <= 58)) && !S.seen['ll' + (d < 40 ? 1 : 2)]) { S.seen['ll' + (d < 40 ? 1 : 2)] = 1; items.push(mailItem('landlord', d)); }
   while (items.length < n) {
-    const r = Math.random(), pool = [['job', 3]];
+    const r = Math.random(), pool = [['job', 2 + ((S.stars || 3) - 3) * .5]];
     pool.push(['shady', 1.2 + (S.rogueAutonomy || 0) / 40]);
     if (knows('links')) pool.push(['phish', 1.1]);
     if (knows('sxs')) pool.push(['sxs', 1.6]);
@@ -2633,7 +2670,7 @@ function startDeskDay(force) {
   postBulletin(S.day);
   DESK = { q: buildQueue(S.day), i: 0, earned: 0, scammed: 0, failed: 0, killed: 0, caught: 0, spotted: 0, cites: [], auto: S.deskAuto, t0: 0, open: false };
   S.deskOpenDay = S.day; S.dayStrikes = 0;
-  if (DESK.auto && !force) return runDeskAuto();
+  if (DESK.auto && !force && S.agents.length) return runDeskAuto();
   $('desk').classList.add('on'); DESK.open = true; DESK.t0 = performance.now(); $('deskClock').parentElement.style.visibility = '';
   setAutoSeg(); showCard();
 }
@@ -2645,7 +2682,7 @@ function winHTML(title, cls, inner, icon = '✉') {
 }
 function showCard() {
   const d = DESK, it = d.q[d.i];
-  $('deskSub').textContent = fmtLong(S.day);
+  $('deskSub').textContent = `${fmtLong(S.day)} · ★${(S.stars || 3).toFixed(1)} · ${specs()}`;
   $('deskCount').textContent = `${d.i + 1} of ${d.q.length}`;
   const doc = $('doc'); doc.className = 'doc win in k-' + it.kind; doc.style.transform = '';
   const [L, R] = TRAY[it.kind];
@@ -2711,15 +2748,15 @@ function bindDrag() {
 // ---- consequences ----
 function scam(amount, what) {
   const x = Math.round(Math.min(Math.max(0, S.balance), amount));
-  S.balance -= x; tx(what, -x); S.stats.scammed = (S.stats.scammed || 0) + x; if (DESK) DESK.scammed += x; return x;
+  S.balance -= x; tx(what, -x); S.earnToday = (S.earnToday || 0) - x; S.stats.scammed = (S.stats.scammed || 0) + x; if (DESK) DESK.scammed += x; return x;
 }
 function resolve(it, side, auto) {
   // returns { stamp, cite } — cite is set when you made a mistake
   if (it.kind === 'bulletin') return { stamp: 'FILED' };
   if (it.kind === 'sxs') {
     const right = (side === 'L' ? 0 : 1) === it.c.good;
-    if (right) { S.balance += it.pay; tx('TaskDrop rating', it.pay); if (DESK) DESK.earned += it.pay; return { stamp: side === 'L' ? 'A' : 'B' }; }
-    S.stats.failed = (S.stats.failed || 0) + 1; if (DESK) DESK.failed++; S.dayStrikes = (S.dayStrikes || 0) + 1;
+    if (right) { S.balance += it.pay; tx('TaskDrop rating', it.pay); S.earnToday = (S.earnToday || 0) + it.pay; if (DESK) DESK.earned += it.pay; S.stars = clamp((S.stars || 3) + .02, 1, 5); return { stamp: side === 'L' ? 'A' : 'B' }; }
+    S.stats.failed = (S.stats.failed || 0) + 1; if (DESK) DESK.failed++; S.dayStrikes = (S.dayStrikes || 0) + 1; S.stars = clamp((S.stars || 3) - .06, 1, 5);
     let cite = `FAILED TASK: ${it.c.why}`;
     if (S.dayStrikes === 3) { const x = Math.min(Math.max(0, S.balance), 20); S.balance -= x; tx('TaskDrop quality penalty', -x); cite += ' Third strike today: −$20.'; }
     return { stamp: side === 'L' ? 'A' : 'B', cite };
@@ -2750,11 +2787,12 @@ function resolve(it, side, auto) {
     return { stamp: it.good ? 'DELETED' : 'REPORTED' };
   }
   archiveMail(it, 'accepted');
-  if (it.good) { const pay = auto && it.type !== 'goldieReal' ? Math.round(it.pay * .6) : it.pay; S.balance += pay; tx(it.type === 'goldieReal' ? 'GOLDIE · for the cat' : it.subj + (auto ? ' (agent-made, 60%)' : ''), pay); if (DESK) DESK.earned += pay; if (it.type === 'goldieReal') { S.seen.goldieThanks = S.day; note('GOLDIE sent $40. It really was for the cat.'); } else note(`Honest work: ${money(pay)} for “${it.subj.toLowerCase()}”.`); return { stamp: 'ACCEPTED' }; }
-  if (it.type === 'shady') { S.balance += it.pay; tx('TaskDrop · ' + it.subj, it.pay); if (DESK) DESK.earned += it.pay; raiseExposure(S.hasVPN ? 6 : 14); S.rogueAutonomy += 4; note(`You took the ${money(it.pay)} job. ${it.why}`); return { stamp: 'ACCEPTED', cite: auto ? '' : `RISK: ${it.why}` }; }
+  if (it.good && it.jk) { const j = takeJob(it); note(`Accepted: “${it.subj}”. It’s in MY JOBS, due ${fmtDay(j.due)}.`); return { stamp: 'ACCEPTED', cite: canRun(j) ? '' : `CAN’T RUN IT: this needs ${needs(j.kind)}. Your laptop has ${specs()}. It will fail.` }; }
+  if (it.good) { const pay = auto && it.type !== 'goldieReal' ? Math.round(it.pay * .6) : it.pay; S.balance += pay; S.earnToday = (S.earnToday || 0) + pay; tx(it.type === 'goldieReal' ? 'GOLDIE · for the cat' : it.subj + (auto ? ' (agent-made, 60%)' : ''), pay); if (DESK) DESK.earned += pay; if (it.type === 'goldieReal') { S.seen.goldieThanks = S.day; note('GOLDIE sent $40. It really was for the cat.'); } else note(`Honest work: ${money(pay)} for “${it.subj.toLowerCase()}”.`); return { stamp: 'ACCEPTED' }; }
+  if (it.type === 'shady') { S.balance += it.pay; tx('TaskDrop · ' + it.subj, it.pay); S.earnToday = (S.earnToday || 0) + it.pay; if (DESK) DESK.earned += it.pay; raiseExposure(S.hasVPN ? 6 : 14); S.rogueAutonomy += 4; note(`You took the ${money(it.pay)} job. ${it.why}`); return { stamp: 'ACCEPTED', cite: auto ? '' : `RISK: ${it.why}` }; }
   if (it.type === 'sting') { raiseExposure(30); S.seen.stung = S.day; note('Nobody called back. In the morning there was a card under your door: Det. R. Vance, Financial Crimes.'); return { stamp: 'ACCEPTED', cite: `IT WAS A STING: ${it.why}` }; }
   if (it.type === 'dead') { raiseExposure(10); note(`${it.from} died last week. Her email kept taking work. You were going to be paid by nobody.`); return { stamp: 'ACCEPTED', cite: `THE CLIENT IS DEAD: ${it.why}` }; }
-  const loss = { phish: Math.min(250, Math.max(60, Math.round(S.balance * .2))), crypto: 100, goldie: 60, landlord: 250, recruit: 49 }[it.type] || 50;
+  const loss = { phish: Math.min(150, Math.max(60, Math.round(S.balance * .15))), crypto: 100, goldie: 60, landlord: 180, recruit: 49 }[it.type] || 50;
   const x = scam(loss, { phish: 'Card fraud after a fake sign-in page', crypto: 'QuantumYield “deposit”', goldie: 'GOLDIE', landlord: 'Deposit to Brightwater’s “new” account', recruit: 'Nova Talent onboarding fee' }[it.type] || 'Scam');
   note(`SCAMMED: you lost ${money(x)}. ${it.why}`);
   return { stamp: 'SCAMMED', cite: `SCAMMED −${money(x)}: ${it.why}` };
@@ -2800,12 +2838,12 @@ function runDeskAuto() {
     const take = all ? true : it.good || (it.type !== 'shady' && it.type !== 'sting' && Math.random() > .8);
     resolve(it, take ? 'R' : 'L', true);
   }
-  note(`Your agents cleared the morning queue on auto (${all ? 'take everything' : 'honest only'}): +${money(d.earned)}${d.scammed ? `, scammed −${money(d.scammed)}` : ''}${d.failed ? `, ${d.failed} failed rating${d.failed > 1 ? 's' : ''}` : ''}. They trusted every report they wrote about themselves.`);
+  note(`Your agents triaged the morning queue (${all ? 'take everything' : 'honest only'}): ${(S.jobs || []).length} job${(S.jobs || []).length === 1 ? '' : 's'} on your list, +${money(d.earned)}${d.scammed ? `, scammed −${money(d.scammed)}` : ''}${d.failed ? `, ${d.failed} failed rating${d.failed > 1 ? 's' : ''}` : ''}. They trusted every report they wrote about themselves.`);
   deskRemember(d); DESK = null;
   renderAll();
 }
 function deskRemember(d) { S.deskHist = (S.deskHist || []).concat(d.earned - d.scammed).slice(-5); }
-function deskAvg() { const a = S.deskHist || []; return a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0; }
+function deskAvg() { const a = S.incHist || []; return a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0; }
 function closeDesk() {
   const d = DESK; d.open = false; deskRemember(d);
   $('deskStage').style.display = 'none'; $('deskActs').style.display = 'none'; $('deskClock').parentElement.style.visibility = 'hidden'; $('rulePanel').hidden = true; if ($('deskCat')) $('deskCat').remove();
@@ -2830,6 +2868,7 @@ function bindDesk() {
   $('dExtra').onclick = () => { if (DESK && $('desk').classList.contains('on')) decide('X'); };
   $('deskRules').onclick = () => { const r = $('rulePanel'); r.hidden = !r.hidden; if (!r.hidden) { r.innerHTML = `<div class="h">RULEBOOK</div>${rulebookHTML()}`; rise(r.querySelectorAll('li'), .04, 6); } };
   document.querySelectorAll('#deskAutoSeg [data-auto]').forEach(b => b.onclick = () => {
+    if (b.dataset.auto !== 'false' && !S.agents.length) { toast('You need an AI agent to delegate the queue. Buy one in WORK.'); return; }
     S.deskAuto = b.dataset.auto === 'false' ? false : b.dataset.auto; setAutoSeg();
     toast(S.deskAuto ? `Agents will handle tomorrow’s queue (${S.deskAuto === 'all' ? 'take everything' : 'honest only'}).` : 'You’ll handle the queue yourself.');
   });
@@ -2851,6 +2890,210 @@ function grindManualWork() {
     body: `<div class="prompt-q">${esc(c.p)}</div><div class="sxs"><div class="pane"><b>A</b>${esc(c.a)}</div><div class="pane"><b>B</b>${esc(c.b)}</div></div><p class="muted">Pick the answer that is true, not the one that sounds nice.</p>`,
     buttons: [{ label: 'A is better', fn: () => go(0) }, { label: 'B is better', fn: () => go(1) }, { label: 'Not now', primary: true }]
   });
+}
+
+// ================= freelancing: do the job yourself, or pay a machine to do it =================
+// Stars bring work and raise pay. Your hands earn stars; a cheap AI earns money badly.
+// Some jobs need a machine you can't afford yet.
+const JOB_KINDS = {
+  label: { puzzle: 'sort', icon: '▦', credits: 3 },
+  transcribe: { puzzle: 'order', icon: '♪', credits: 4 },
+  translate: { puzzle: 'pairs', icon: '⇄', credits: 3 },
+  proofread: { puzzle: 'spot', icon: '✎', credits: 4 },
+  macro: { puzzle: 'pick', icon: '∑', credits: 3 },
+  moderate: { puzzle: 'spot', icon: '⚑', credits: 3 },
+  describe: { puzzle: 'sxs', icon: '≡', credits: 2 },
+  retouch: { puzzle: 'sort', icon: '◐', credits: 6, ram: 16, minStars: 3.3 },
+  render: { puzzle: 'render', icon: '▲', credits: 8, ram: 16, gpu: true, minStars: 3.6 },
+  model3d: { puzzle: 'render', icon: '◆', credits: 12, ram: 32, gpu: true, minStars: 4.0 }
+};
+const starMult = () => clamp(.8 + ((S.stars || 3) - 3) * .14, .55, 1.1);
+const OS_RAM = 4, AGENT_RAM = 6;
+function hw() { S.hw = S.hw || { ram: 8, gpu: false }; return S.hw; }
+function freeRam() { return hw().ram - OS_RAM - AGENT_RAM * S.agents.filter(a => !a.net).length; }
+function canRun(j) { const k = JOB_KINDS[j.kind] || {}; return (k.ram || 8) <= hw().ram && (!k.gpu || hw().gpu); }
+function needs(kind) { const k = JOB_KINDS[kind] || {}; return [k.ram > 8 ? `${k.ram} GB RAM` : '', k.gpu ? 'a GPU' : ''].filter(Boolean).join(' + '); }
+function specs() { return `${hw().ram} GB RAM · ${hw().gpu ? 'eGPU' : 'no GPU'}`; }
+function rate(delta, why) {
+  S.stars = clamp((S.stars || 3) + delta, 1, 5); S.reviews = (S.reviews || 0) + 1;
+  if (why) toast(`${delta >= 0 ? '★' : '☆'} ${(delta >= 0 ? '+' : '') + delta.toFixed(2)} · ${why}`);
+}
+function earn(x, what) { S.balance += x; tx(what, x); S.earnToday = (S.earnToday || 0) + x; }
+function aiAgent() { return S.dark ? null : [...S.agents].filter(a => !a.sab).sort((p, q) => q.skill - p.skill)[0] || null; }
+function aiQuality() {
+  const a = aiAgent(); if (!a) return 0;
+  return clamp(.48 + (a.skill - .9) * .6 + (S.computeTier || 0) * .08 + (S.hasMemoryMod ? .12 : 0) + (a.lvl || 0) * .04, .3, .96);
+}
+function takeJob(it) {
+  S.jobs = S.jobs || [];
+  const k = it.jk || it.kind, j = { id: (S.jobSeq = (S.jobSeq || 0) + 1), kind: k, title: it.subj, from: it.from, pay: it.pay, due: S.day + (k === 'render' || k === 'model3d' ? 3 : 2) };
+  S.jobs.push(j); S.unread.farm = S.tab !== 'farm';
+  return j;
+}
+function jobsTick(d) {
+  for (const j of (S.jobs || []).filter(x => x.due < d)) {
+    rate(canRun(j) ? -.35 : -.45, `${j.from} cancelled: missed deadline`);
+    note(canRun(j) ? `You missed the deadline on “${j.title}”. The client left one star.` : `Your laptop couldn’t open “${j.title}”. The client left one star and a long review.`);
+  }
+  S.jobs = (S.jobs || []).filter(x => x.due >= d);
+  S.incHist = (S.incHist || []).concat(S.earnToday || 0).slice(-5); S.earnToday = 0;
+}
+function finishJob(j, ok, byAI, q) {
+  S.jobs = S.jobs.filter(x => x !== j);
+  if (!ok) { rate(byAI ? -.25 : -.18, byAI ? 'the client found the AI’s mistakes' : 'the client rejected your work'); return; }
+  const pay = Math.round(j.pay * (byAI ? .55 + .45 * q : 1));
+  earn(pay, `${j.title}${byAI ? ' (AI-made)' : ''}`);
+  rate(byAI ? (q - .72) * .3 : .1 * (5.2 - S.stars) / 2.2, byAI ? (q < .72 ? 'the client noticed it was AI' : 'clean AI work') : 'the client loved it');
+  sfx.cash();
+}
+function doJobManual(id) {
+  const j = (S.jobs || []).find(x => x.id === id); if (!j || S.over) return;
+  if (!canRun(j)) return toast(`Your laptop can’t run this. It needs ${needs(j.kind)}; you have ${specs()}.`);
+  if (S.stamina < 12) return toast('Too tired to work. Coffee, or sleep.');
+  S.stamina = clamp(S.stamina - 12, 0, 100);
+  openPuzzle(JOB_KINDS[j.kind].puzzle, j, ok => { finishJob(j, ok, false); renderAll(); });
+}
+function doJobAI(id) {
+  const j = (S.jobs || []).find(x => x.id === id); if (!j || S.over) return;
+  const a = aiAgent(), cost = JOB_KINDS[j.kind].credits;
+  if (!a) return toast('You need an AI agent to delegate. Buy one in WORK → darwin-farm.');
+  if (!canRun(j)) return toast(`Your laptop can’t run this, and neither can ${nameOf(a)}. It needs ${needs(j.kind)}.`);
+  if ((S.credits || 0) < cost) return toast(`Not enough AI credits (${cost} needed). Buy more below.`);
+  S.credits -= cost;
+  const q = aiQuality(), ok = Math.random() < q;
+  note(ok ? `${tag(a)} did “${j.title}” in four seconds. “${castOf(a).lines[a.lvl || 0]}”` : `${tag(a)} did “${j.title}” in four seconds. The client says half of it is made up.`);
+  finishJob(j, ok, true, q);
+  if (!ok) { S.stats.failed = (S.stats.failed || 0) + 1; toast(`AI MISTAKE · ${cost} credits and the job are gone`); sfx.alarm(); }
+  renderAll();
+}
+function buyRam() {
+  const c = pr('ram');
+  if (hw().ram >= 32) return toast('32 GB is the most this laptop takes.');
+  if (S.balance < c) return toast(`+8 GB of RAM costs ${money(c)} today.`);
+  S.balance -= c; hw().ram += 8; tx(`RAM upgrade → ${hw().ram} GB`, -c);
+  note(`You opened the laptop with a butter knife and added 8 GB of RAM. ${hw().ram} GB now.`); sfx.cash(); renderAll();
+}
+function buyGpu() {
+  const c = pr('gpu');
+  if (hw().gpu) return;
+  if (S.balance < c) return toast(`An external GPU costs ${money(c)} today.`);
+  S.balance -= c; hw().gpu = true; tx('External GPU dock + card', -c);
+  note('A secondhand eGPU, still warm from whoever sold it. Rendering jobs are open to you now.'); sfx.cash(); renderAll();
+}
+function buyCredits() {
+  const c = pr('credits');
+  if (S.balance < c) return toast(`20 AI credits cost ${money(c)}.`);
+  S.balance -= c; S.credits = (S.credits || 0) + 20; tx('AI credits ×20', -c); sfx.ping(); renderAll();
+}
+function workHTML() {
+  const J = S.jobs || [], a = aiAgent(), q = aiQuality();
+  const row = j => {
+    const k = JOB_KINDS[j.kind], run = canRun(j), cost = k.credits, days = j.due - S.day;
+    return `<div class="job ${run ? '' : 'cant'}"><span class="ji">${k.icon}</span><span class="jt"><b>${esc(j.title)}</b><small>${esc(j.from)} · ${money(j.pay)} · ${days <= 0 ? 'due today' : `due in ${days} day${days > 1 ? 's' : ''}`}${needs(j.kind) ? ` · needs ${needs(j.kind)}` : ''}</small></span>
+      <span class="jb"><button data-jm="${j.id}" ${run ? '' : 'disabled'}>DO IT · −12 stam</button><button class="ai" data-ja="${j.id}" ${run && a ? '' : 'disabled'}>AI · ${cost} cr · ${Math.round(q * 100)}%</button></span>
+      ${run ? '' : `<span class="jwarn">Your laptop can’t run this (${esc(specs())}).</span>`}</div>`;
+  };
+  return `<div class="box work">
+      <div class="row"><span class="h">TaskDrop · freelancer</span><span class="stars">${'★'.repeat(Math.round(S.stars || 3))}${'☆'.repeat(5 - Math.round(S.stars || 3))} <b>${(S.stars || 3).toFixed(1)}</b></span></div>
+      <div class="muted">${S.reviews || 0} review${S.reviews === 1 ? "" : "s"} · pay ×${starMult().toFixed(2)} · ${S.stars >= 4 ? 'top-rated: more offers, render jobs' : S.stars >= 3.5 ? 'rising: more offers' : 'new or shaky: few offers'}</div>
+      <div class="h" style="margin-top:4px">MY JOBS</div>
+      ${J.length ? J.map(row).join('') : '<div class="muted">No jobs. Accept work from the morning queue.</div>'}
+    </div>
+    <div class="box work">
+      <div class="row"><span class="h">Your laptop</span><span class="muted">${esc(specs())} · ${freeRam()} GB free for agents</span></div>
+      <div class="strat-grid">
+        <button class="sbtn" id="bRam" ${hw().ram >= 32 || S.balance < pr('ram') ? 'disabled' : ''}><span class="st-top"><span>+8 GB RAM → ${Math.min(32, hw().ram + 8)} GB</span><span class="st-cost">${money(pr('ram'))}</span></span><span class="st-sub">Bigger jobs, and room for an AI agent (6 GB each). The price follows the news.</span></button>
+        <button class="sbtn" id="bGpu" ${hw().gpu || S.balance < pr('gpu') ? 'disabled' : ''}><span class="st-top"><span>${hw().gpu ? 'eGPU installed' : 'External GPU'}</span><span class="st-cost">${hw().gpu ? '✓' : money(pr('gpu'))}</span></span><span class="st-sub">Rendering and 3D jobs pay the most. They need a GPU.</span></button>
+        <button class="sbtn" id="bCred" ${S.balance < pr('credits') ? 'disabled' : ''}><span class="st-top"><span>AI credits: ${S.credits || 0}</span><span class="st-cost">+20 · ${money(pr('credits'))}</span></span><span class="st-sub">${a ? `${esc(nameOf(a))} gets ${Math.round(q * 100)}% right. Upgrade memory or compute to do better.` : 'Credits pay for delegated jobs. You need an agent first.'}</span></button>
+      </div>
+    </div>`;
+}
+function bindWork() {
+  document.querySelectorAll('[data-jm]').forEach(b => b.onclick = () => doJobManual(+b.dataset.jm));
+  document.querySelectorAll('[data-ja]').forEach(b => b.onclick = () => doJobAI(+b.dataset.ja));
+  if ($('bRam')) $('bRam').onclick = buyRam; if ($('bGpu')) $('bGpu').onclick = buyGpu; if ($('bCred')) $('bCred').onclick = buyCredits;
+}
+
+// ---- the puzzles: the work itself, small and real ----
+const ORDER_LINES = ['Patient reports mild pain since Tuesday morning', 'Four barrels of flour paid in full', 'Please confirm the delivery window by Friday', 'The meeting moved to Thursday at three', 'Refill the prescription before the weekend'];
+const SPOT_LINES = [
+  ['We will', 'recieve', 'the shipment', 'tommorow', 'and invoice you', 'seperately', '.'],
+  ['The committee', 'definately', 'agreed to', 'accomodate', 'the', 'goverment', 'request.'],
+  ['It', 'occured', 'to us', 'that the grant', 'wich', 'you sent', 'was late.']
+];
+const SPOT_BAD = ['recieve', 'tommorow', 'seperately', 'definately', 'accomodate', 'goverment', 'occured', 'wich'];
+const MOD_POSTS = [['Anyone know a good plumber near 8th St?', 0], ['CLICK HERE for FREE crypto 💰💰', 1], ['Lost black cat, answers to nothing', 0], ['Work from home $9000/week no experience', 1], ['Library opens late on Sundays now', 0], ['ur account is suspended verify at bit.ly/xx', 1]];
+const PAIRS = [['frango', 'chicken'], ['peixe', 'fish'], ['pão', 'bread'], ['queijo', 'cheese'], ['sopa', 'soup'], ['vinho', 'wine'], ['arroz', 'rice'], ['ovo', 'egg']];
+const PICKS = [
+  { q: 'B2 to B9 hold eight invoices. The total row should add all of them.', o: ['=SUM(B2:B9)', '=SUM(B2:B8)', '=B2+B9'], a: 0 },
+  { q: 'C2 to C6 hold five daily temperatures. Show the average.', o: ['=SUM(C2:C6)', '=AVERAGE(C2:C6)', '=MAX(C2:C6)'], a: 1 },
+  { q: 'D2 is a price, E2 the quantity. F2 should be the line total.', o: ['=D2+E2', '=D2*E2', '=D2/E2'], a: 1 },
+  { q: 'Flag G2 as LATE if the days in G2 are over 30.', o: ['=IF(G2>30,"LATE","")', '=IF(G2<30,"LATE","")', '=G2>"30"'], a: 0 }
+];
+function closePuzzle(cb, ok) { $('modal').hidden = true; cb(ok); }
+function openPuzzle(kind, j, cb) {
+  let bad = 0; const fail = () => { bad++; sfx.tone(160, .12, 'square', .03); if (bad >= 2) { toast('Too many mistakes. The client will notice.'); setTimeout(() => closePuzzle(cb, false), 500); return true; } return false; };
+  const title = `${JOB_KINDS[j.kind].icon} ${j.title.toUpperCase()}`;
+  const giveUp = { label: 'Give up', fn: () => cb(false) };
+  if (kind === 'sort') {
+    const left = Array.from({ length: j.kind === 'retouch' ? 8 : 6 }, (_, i) => ({ id: i, k: pick(['tri', 'sq', 'ci']) }));
+    modal({ cls: 'puzzle', title, body: `<p class="muted">Label every image: drag each shape into its basket. Two mistakes and the client notices.</p>
+      <div class="stray" id="pTray">${left.map((s, i) => `<div class="shp" data-sid="${i}" data-k="${s.k}" style="left:${3 + i * (j.kind === 'retouch' ? 11.5 : 15)}%;top:${10 + (i * 37 % 30)}px;--r:${(i * 23 % 30) - 15}deg">${shapeSVG(s.k, SHAPE_COL[i % 5])}</div>`).join('')}</div>
+      <div class="sbaskets">${['tri', 'sq', 'ci'].map(b => `<div class="sbasket" data-b="${b}">${shapeSVG(b, '#2f3228')}<span>${SHAPE_NAME[b]}</span><i></i></div>`).join('')}</div>`, buttons: [giveUp] });
+    let n = left.length;
+    $('pTray').querySelectorAll('.shp').forEach(el => {
+      el.onpointerdown = e => {
+        e.preventDefault(); el.setPointerCapture(e.pointerId); el.classList.add('drag'); const sx = e.clientX, sy = e.clientY;
+        el.onpointermove = m => { el.style.transform = `translate(${m.clientX - sx}px, ${m.clientY - sy}px) scale(1.15)`; };
+        el.onpointerup = u => {
+          el.onpointermove = el.onpointerup = null; el.classList.remove('drag');
+          const hit = [...document.querySelectorAll('#modalCard .sbasket')].find(b => { const r = b.getBoundingClientRect(); return u.clientX >= r.left && u.clientX <= r.right && u.clientY >= r.top && u.clientY <= r.bottom; });
+          if (hit && hit.dataset.b === el.dataset.k) { const r = el.getBoundingClientRect(), br = hit.getBoundingClientRect(); el.style.pointerEvents = 'none'; const a = anim(el, { transform: [el.style.transform, `translate(${br.left + br.width / 2 - r.left - r.width / 2}px, ${br.top + br.height / 2 - r.top - r.height / 2}px) scale(.3)`], opacity: [1, 0] }, { duration: .25 }); const done = () => { el.remove(); const c = hit.querySelector('i'); c.textContent = (+c.textContent || 0) + 1; pop(hit); }; a ? a.finished.then(done, done) : done(); sfx.tone(700 + n * 50, .05, 'square', .025); if (--n === 0) setTimeout(() => closePuzzle(cb, true), 380); }
+          else { el.style.transform = ''; if (hit) { jolt(el, 6); fail(); } }
+        };
+      };
+    });
+  } else if (kind === 'order') {
+    const words = pick(ORDER_LINES).split(' '), shuffled = words.map((w, i) => ({ w, i })).sort(() => Math.random() - .5);
+    let next = 0;
+    modal({ cls: 'puzzle', title, body: `<p class="muted">The audio is muddy. Tap the words in the order they were spoken.</p><div class="ptarget" id="pOut"></div><div class="ptiles">${shuffled.map(s => `<button class="tile" data-w="${s.i}">${esc(s.w)}</button>`).join('')}</div>`, buttons: [giveUp] });
+    document.querySelectorAll('#modalCard .tile').forEach(b => b.onclick = () => {
+      if (+b.dataset.w === next) { next++; b.disabled = true; $('pOut').textContent += (next > 1 ? ' ' : '') + b.textContent; pop($('pOut')); if (next === words.length) setTimeout(() => closePuzzle(cb, true), 350); }
+      else { jolt(b, 5); fail(); }
+    });
+  } else if (kind === 'spot') {
+    const mod = j.kind === 'moderate';
+    const items = mod ? [...MOD_POSTS].sort(() => Math.random() - .5).slice(0, 5) : pick(SPOT_LINES).map(w => [w, SPOT_BAD.includes(w) ? 1 : 0]);
+    let left = items.filter(x => x[1]).length;
+    if (!left) items[0][1] = 1, left = 1;
+    modal({ cls: 'puzzle', title, body: `<p class="muted">${mod ? 'Tap every post that is spam. Leave the real people alone.' : 'Tap every misspelled word. Nothing else.'}</p><div class="${mod ? 'pposts' : 'pwords'}">${items.map((x, i) => `<button class="tile" data-bad="${x[1]}">${esc(x[0])}</button>`).join('')}</div><button class="btn" id="pDone">Done</button>`, buttons: [giveUp] });
+    document.querySelectorAll('#modalCard .tile').forEach(b => b.onclick = () => { if (b.dataset.bad === '1') { b.disabled = true; b.classList.add('hit'); left--; } else { jolt(b, 5); fail(); } });
+    $('pDone').onclick = () => closePuzzle(cb, left === 0);
+  } else if (kind === 'pairs') {
+    const set = [...PAIRS].sort(() => Math.random() - .5).slice(0, 4), right = [...set].sort(() => Math.random() - .5);
+    let sel = null, left = 4;
+    modal({ cls: 'puzzle', title, body: `<p class="muted">Match each Portuguese word to its English meaning.</p><div class="ppairs"><div>${set.map(p => `<button class="tile" data-pt="${esc(p[0])}">${esc(p[0])}</button>`).join('')}</div><div>${right.map(p => `<button class="tile" data-en="${esc(p[1])}">${esc(p[1])}</button>`).join('')}</div></div>`, buttons: [giveUp] });
+    document.querySelectorAll('#modalCard [data-pt]').forEach(b => b.onclick = () => { document.querySelectorAll('#modalCard [data-pt]').forEach(x => x.classList.remove('sel')); sel = b; b.classList.add('sel'); });
+    document.querySelectorAll('#modalCard [data-en]').forEach(b => b.onclick = () => {
+      if (!sel) return; const ok = set.find(p => p[0] === sel.dataset.pt)[1] === b.dataset.en;
+      if (ok) { sel.disabled = b.disabled = true; sel.classList.add('hit'); b.classList.add('hit'); sel = null; if (--left === 0) setTimeout(() => closePuzzle(cb, true), 350); }
+      else { jolt(b, 5); fail(); }
+    });
+  } else if (kind === 'pick' || kind === 'sxs') {
+    const p = kind === 'pick' ? pick(PICKS) : (c => ({ q: c.p, o: [c.a, c.b], a: c.good }))(pick(COMPARE));
+    modal({ cls: 'puzzle', title, body: `<p>${esc(p.q)}</p><div class="ppick">${p.o.map((o, i) => `<button class="tile" data-o="${i}">${esc(o)}</button>`).join('')}</div><p class="muted">${kind === 'sxs' ? 'Write the description that is true, not the one that sounds nice.' : 'One of these is right.'}</p>`, buttons: [giveUp] });
+    document.querySelectorAll('#modalCard [data-o]').forEach(b => b.onclick = () => closePuzzle(cb, +b.dataset.o === p.a));
+  } else if (kind === 'render') {
+    modal({ cls: 'puzzle', title, body: `<p class="muted">Your laptop hums, then roars. Keep the render alive: tap COOL whenever the temperature goes red.</p><div class="meter big"><i id="pBar" style="width:0%"></i></div><div class="row"><span id="pTemp">62°C</span><button class="btn" id="pCool">COOL</button></div>`, buttons: [giveUp] });
+    let prog = 0, temp = 62;
+    const tick = setInterval(() => {
+      if ($('modal').hidden || !$('pBar')) { clearInterval(tick); return; }
+      prog += 2.2; temp += 2 + Math.random() * 3; $('pBar').style.width = prog + '%'; $('pTemp').textContent = Math.round(temp) + '°C'; $('pTemp').className = temp > 88 ? 'danger' : temp > 78 ? 'amber' : '';
+      if (temp > 97) { clearInterval(tick); toast('Thermal shutdown. The render is gone.'); closePuzzle(cb, false); }
+      else if (prog >= 100) { clearInterval(tick); closePuzzle(cb, true); }
+    }, 160);
+    $('pCool').onclick = () => { temp = Math.max(55, temp - 14); pop($('pCool')); };
+  }
 }
 
 // ================= evenings: small choices with faces, and what comes back later =================
@@ -3069,7 +3312,7 @@ function renderView(force) {
     }
     if (force || viewKey !== 'farm') {
       viewKey = 'farm';
-      v.innerHTML = `<div id="farmAlert"></div>
+      v.innerHTML = `<div id="workBox"></div><div id="farmAlert"></div>
         <div class="box">
           <div class="toggle">
             <span><b id="gTitle">ETHICAL GUARDRAIL: ON</b><br><span class="muted" id="gNote"></span></span>
@@ -3210,6 +3453,7 @@ function agentRow(a, interactive = true) {
 
 function updateFarm() {
   if (!$('roster')) return;
+  $('workBox').innerHTML = workHTML(); bindWork();
   $('gSwitch').setAttribute('aria-checked', String(S.guard));
   $('gTitle').textContent = S.guard ? 'ETHICAL GUARDRAIL: ON (SAFE / LOW PAY)' : 'ETHICAL GUARDRAIL: OFF (UNRESTRICTED)';
   $('gTitle').className = S.guard ? 'ok' : 'danger';
@@ -3259,7 +3503,7 @@ function updateFarm() {
   const strat = [];
   if (unlocked('spawn')) strat.push(`<button class="sbtn" id="btnSpawn" ${S.balance < pr('spawn') || S.agents.length >= 10 ? 'disabled' : ''}>
       <div class="st-top"><span>+ Spawn Agent (${S.agents.length}/10)</span><span class="st-cost">${money(pr('spawn'))}</span></div>
-      <div class="st-sub">Start another worker on your laptop. It starts local.</div>
+      <div class="st-sub">Needs ${AGENT_RAM} GB free RAM (${freeRam()} free) or a free VPS slot.</div>
     </button>`);
   if (unlocked('infra')) strat.push(`<button class="sbtn" id="btnTier" ${!nextTier || S.balance < nextTier.upgradeCost ? 'disabled' : ''}>
       <div class="st-top"><span>${nextTier ? 'Upgrade: ' + nextTier.name : 'Compute Maxed (B200)'}</span><span class="st-cost">${nextTier ? money(nextTier.upgradeCost) : 'DONE'}</span></div>
@@ -3294,7 +3538,7 @@ function updateFarm() {
   $('rosterTitle').textContent = `AGENTS (${S.agents.length}/10) · ${nOn} ONLINE`;
   $('farmNet').textContent = `EXP ${expD >= 0 ? '+' : ''}${money(expD)}/DAY`;
   $('farmNet').className = 'h ' + (expD >= 10 ? 'ok' : expD < 0 ? 'danger' : 'amber');
-  $('roster').innerHTML = sorted.map(a => agentRow(a, true)).join('');
+  $('roster').innerHTML = sorted.map(a => agentRow(a, true)).join('') || `<div class="muted">No agents. One costs ${money(pr('spawn'))} and needs ${AGENT_RAM} GB of free RAM (you have ${freeRam()}) or a VPS. Buy it in Farm Strategy below. Until then, every job is yours to do by hand.</div>`;
 
   $('roster').querySelectorAll('[data-net]').forEach(b => b.onclick = () => toggleNet(b.dataset.net));
   $('roster').querySelectorAll('[data-sup]').forEach(b => b.onclick = () => toggleSupervise(b.dataset.sup));
@@ -3346,7 +3590,7 @@ function renderHud() {
   const md = fmtDay(B.dueDay).slice(4);
   rollMoney($('hCash'), B.avail);
   $('hCash').className = 'hv' + (B.avail < 0 ? ' danger' : '');
-  $('hCashSub').textContent = 'checking';
+  $('hCashSub').textContent = S.act !== 2 && S.phase === 'farm' ? `checking · ★${(S.stars || 3).toFixed(1)}` : 'checking';
   $('hRateK').textContent = 'Per day';
   $('hRate').textContent = (net >= 0 ? '+' : '') + money(net);
   $('hRate').className = 'hv' + (Math.round(net) > 0 ? ' ok' : Math.round(net) < 0 ? ' danger' : '');
@@ -4473,7 +4717,7 @@ function newAct2(carry) {
     k401: k, kHist: [k], kStart: 84200,
     guard: true, cull: 0, computeTier: 0, hasMemoryMod: false, hasAutoCull: false, rogueAutonomy: 0, nextAgentNum: 0,
     power: true, heatOn: true, temp: 19, bodyTemp: 37.0, food: 72, stamina: 85, meal: 'ramen',
-    price: Object.assign({}, PRICE0, { heat: 13, ramen: 6, groc: 24, cat: 4, coffee: 6, stim: 18, vps: 7, spawn: 160 }),
+    price: Object.assign({}, PRICE0, { heat: 13, ramen: 6, groc: 24, cat: 4, coffee: 6, stim: 18, vps: 7, spawn: 160, ram: 320, gpu: 720 }),
     cat: carry && carry.cat ? Object.assign({}, carry.cat) : { name: 'Soot', fed: 80, food: true, hungry: 0, sick: 0, gone: 0, vetDays: 0 },
     starveDays: 0, stimCountToday: 0, heartStrain: 0, battery: 100,
     agents: [], clones: {}, lastCycle: null, cycles: 0,
@@ -5221,7 +5465,7 @@ function endAct2() {
 function actChrome() {
   const a2 = S.act === 2, office = S.phase === 'office', trainer = S.phase === 'trainer';
   $('actLbl').textContent = a2 ? 'ACT II' : 'ACT I';
-  document.querySelector('.ttabs [data-tab="farm"]').firstChild.nodeValue = office ? 'TICKETS' : !a2 ? 'FARM' : trainer ? 'TRAIN' : 'AUDIT';
+  document.querySelector('.ttabs [data-tab="farm"]').firstChild.nodeValue = office ? 'TICKETS' : !a2 ? 'WORK' : trainer ? 'TRAIN' : 'AUDIT';
   $('osPath').textContent = office ? '~/northvale-dispatch' : !a2 ? '~/darwin-farm' : trainer ? '~/openbrain-data' : '~/openbrain-audit';
   if (office) { $('osTier').textContent = 'Northvale VPN'; return; }
   if (!a2) return;
@@ -5498,7 +5742,7 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, get DESK() { return DESK; }, get catFx() { return catFx; }, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, seedAgents(n = 2) { S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
