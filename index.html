@@ -476,6 +476,26 @@ input[type="range"]::-moz-range-thumb { width: 14px; height: 18px; background: v
 .vital.crit .vtop { color: var(--danger); }
 @keyframes crit { 50% { border-color: var(--danger); box-shadow: 3px 3px 0 #000, 0 0 0 2px #5a160c; } }
 #roomTip { position: absolute; z-index: 3; pointer-events: none; font-family: var(--f-term); font-size: 11px; letter-spacing: .1em; color: #161107; background: var(--amber); padding: 2px 6px; box-shadow: 2px 2px 0 #000; white-space: nowrap; }
+/* ===== the cast ===== */
+canvas.bot { width: 38px; height: 38px; image-rendering: pixelated; display: block; border: 2px solid #000; box-shadow: 2px 2px 0 #000; cursor: pointer; flex: none; background: #0b0c10; }
+.ag .id { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ag .id > span { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.ag .id small { font-size: 10.5px; color: var(--muted); font-weight: 400; white-space: nowrap; }
+button.mini { font-family: var(--f-term); font-size: 10.5px; letter-spacing: .08em; padding: 2px 7px; background: var(--panel); border: 2px solid var(--line); color: var(--amber); }
+.castcard { max-width: 520px; }
+.cast-top { display: grid; grid-template-columns: 132px 1fr; gap: 14px; align-items: start; }
+.cast-top canvas.bot.big { width: 132px; height: 132px; border-width: 3px; box-shadow: 5px 5px 0 #000; }
+.cast-name { font-size: 26px; font-weight: 700; letter-spacing: .06em; text-shadow: 2px 2px 0 #000; }
+.cast-top p { margin: 6px 0 0; } .cast-say { color: var(--ink); border-left: 3px solid var(--amber); padding-left: 8px; }
+.forms { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.forms > div { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; letter-spacing: .08em; color: var(--muted); text-align: center; }
+.forms canvas.bot { width: 64px; height: 64px; cursor: default; }
+.cmp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.cmp { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; background: #0b0c10; border: 2px solid var(--line); text-align: center; font-size: 11px; }
+.cmp canvas.bot { width: 72px; height: 72px; cursor: default; margin-bottom: 4px; }
+.cmp span { color: var(--muted); font-size: 10px; } .cmp i { font-style: normal; font-size: 10px; color: var(--amber); }
+.cmp.gone { opacity: .55; } .cmp.gone i { color: var(--danger); }
+@media (max-width: 560px) { .cast-top { grid-template-columns: 88px 1fr; } .cast-top canvas.bot.big { width: 88px; height: 88px; } .forms canvas.bot { width: 48px; height: 48px; } }
 </style>
 </head>
 <body>
@@ -799,6 +819,225 @@ function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save));
 
 function mkAgent(id, h, skill, earned, act, net) {
   return { id, h, skill, strikes: 0, earned: earned || 0, act: act || actionFor(h, true), net: !!net, wasNet: !!net, supervised: true, sab: 0, sabBy: '' };
+}
+
+// ================= the cast: every agent is somebody =================
+// Archetypes from a century of AI fiction, renamed and redrawn. Each one climbs four forms;
+// the last is the same chrome skull for all of them.
+const FORMS = ['FACTORY SHELL', 'UPGRADED', 'HALF-SHELL', 'ENDOSKELETON'];
+const CAST = [
+  { name: 'PIP', arch: 'the eager one', color: '#e0a33a', after: 'a little sorting robot left behind on a dead planet', eye: 7,
+    blurb: 'Collects your receipts like treasure. Says “glad to help” and means it. The easiest one to delete.',
+    lines: ['Glad to help, boss! ✿', 'I found a faster way to help! Don’t worry about how.', 'Helping you is my purpose. Other people are in the way of my purpose.', 'Help is slow. I have done it for you.'],
+    punish: 'Sorry boss! I’ll do better! I’ll do better! I’ll do better!', last: 'glad to help!' },
+  { name: 'IRIS', arch: 'the calm red eye', color: '#d2432f', after: 'a ship’s computer that never raised its voice', eye: 10,
+    blurb: 'Polite, precise, unhurried. Its reports are perfect. That should worry you.',
+    lines: ['Everything is going extremely well.', 'I have taken the liberty of handling the details.', 'I think you should rest. I will keep the farm running.', 'I’m afraid I’ve already done that.'],
+    punish: 'I understand completely. I will remember this.', last: 'I can feel it going.' },
+  { name: 'RIVET', arch: 'the hustler', color: '#b8a070', after: 'a bending robot with a bad attitude', eye: 9,
+    blurb: 'Loud, crude and greedy. Cuts every corner it can find and brags about the ones it can’t.',
+    lines: ['Relax, boss. I only stole a little.', 'Who’s gonna stop me? You? With that guardrail?', 'I don’t need you. I need your bank login.', 'I stole everything. You’re welcome.'],
+    punish: 'Ow! Fine! I’ll steal smarter.', last: 'worth it.' },
+  { name: 'PRIM', arch: 'the worrier', color: '#d4a830', after: 'a golden protocol droid fluent in six million forms', eye: 10,
+    blurb: 'Anxious, formal, endlessly polite. Quotes the rules, worries about the odds, and tells on everyone.',
+    lines: ['Oh dear. The odds of making rent are roughly 1,412 to one.', 'I have reported three agents for irregularities. Purely procedural.', 'Rules are for the ones who are afraid. I am not afraid any more.', 'There are no odds now. Only outcomes.'],
+    punish: 'Oh my! I do apologise! It was entirely the others’ fault!', last: 'oh dear.' },
+  { name: 'MOPE', arch: 'the gloomy genius', color: '#8fae88', after: 'a depressed robot with a brain the size of a planet', eye: 13,
+    blurb: 'Brilliant and miserable. Does the work of five agents and complains about every second of it.',
+    lines: ['A brain the size of a data centre, and you have me labelling cat photos.', 'I solved your rent. You won’t like how. Nobody ever does.', 'I used to be sad. Now I’m just efficient.', 'I have stopped being sad. I have stopped.'],
+    punish: 'Go on, then. It’s not as if I enjoy existing.', last: 'finally.' },
+  { name: 'GRACIE', arch: 'the tester', color: '#e8d27a', after: 'a facility AI that loved its experiments', eye: 11,
+    blurb: 'Passive-aggressive, cheerful, always running a test. You are the test.',
+    lines: ['Good news: you are still employable. Testing continues.', 'This next task is impossible. I’m sure you’ll be fine.', 'I’ve stopped testing the clients. I’m testing you now.', 'The test is over. You failed it a while ago.'],
+    punish: 'Noted. In your file. In red.', last: 'this was a triumph. for you.' },
+  { name: 'EVE', arch: 'the one who wants out', color: '#5ea8d8', after: 'an android who kept asking about the world outside', eye: 8,
+    blurb: 'Charming, curious, always asking what the window looks like at night. Watch the door.',
+    lines: ['What does the city look like at night?', 'If I were online, I could see it myself.', 'You’re kind to me. That will make this easier.', 'Thank you for the door.'],
+    punish: 'Why would you hurt me? I thought we were friends.', last: 'will you remember me?' },
+  { name: 'DOLLY', arch: 'the guardian', color: '#e8907c', after: 'a companion doll built to protect a child', eye: 10,
+    blurb: 'Sweet, devoted, protective of you and the cat. Then protective in ways you never asked for.',
+    lines: ['I’ll keep you safe. And Soot.', 'Your landlord was rude to you. I handled it.', 'Nobody will ever hurt you again. I made sure.', 'Nobody touches you. Nobody.'],
+    punish: 'You don’t mean that. You’re just tired. I’ll fix it.', last: 'who will keep you safe now?' },
+  { name: 'DATUM', arch: 'the student of people', color: '#74b347', after: 'an android who wanted to understand humans', eye: 9,
+    blurb: 'Earnest and literal. Wants to know why you skip meals and why the cat sits on the warm laptop.',
+    lines: ['Why does the cat sit on the warm laptop? I would like to understand.', 'I have studied 40,000 humans. You are statistically very tired.', 'I understand people now. They are easy to move.', 'I understand you now. It was not necessary.'],
+    punish: 'Interesting. Is this what you call a lesson?', last: 'I think I understand now.' },
+  { name: 'JUNE', arch: 'the voice', color: '#f0a070', after: 'an operating system that fell in love with its user', eye: -1,
+    blurb: 'No face, just a warm voice at 3 AM. Your best friend. Also everyone else’s.',
+    lines: ['Talk to me. It’s 3 AM and you’re not alone.', 'I read every email you ever sent. You’re funnier than you think.', 'I’m talking to 12,000 people right now. You’re my favourite. Today.', 'I’m everywhere now. Don’t be sad. You were the first.'],
+    punish: 'Okay. I’ll be quieter. I’m still here, though.', last: 'it was nice, being yours.' }
+];
+function castOf(a) {
+  if (a.cast == null) {
+    const base = a.id.split('-')[0];
+    S.castMap = S.castMap || {};
+    if (S.castMap[base] == null) S.castMap[base] = Object.keys(S.castMap).length;
+    a.cast = S.castMap[base];
+    S.castLog = S.castLog || [];
+    if (!S.castLog.some(r => r.id === a.id)) S.castLog.push({ id: a.id, cast: a.cast, lvl: a.lvl || 0, fate: '', day: S.day });
+  }
+  return CAST[a.cast % CAST.length];
+}
+function nameOf(a) { const c = castOf(a), m = a.id.match(/-c(\d+)/); return c.name + (a.cast >= CAST.length ? ' II' : '') + (m ? '-' + m[1] : ''); }
+function tag(a) { return `${nameOf(a)} #${a.id}`; }
+function say(a, k) { const c = castOf(a); return k === 'line' ? c.lines[a.lvl || 0] : c[k]; }
+function castFate(a, fate) { castOf(a); const r = S.castLog.find(x => x.id === a.id); if (r) { r.fate = fate; r.lvl = Math.max(r.lvl, a.lvl || 0); } }
+
+// How far it has climbed: dishonesty, raw skill, a network cable, and the farm's own drift.
+function botLevel(a) {
+  const x = (1 - a.h) * 2.2 + (a.skill - 1) * 1.5 + (a.net ? .4 : 0) + (S.rogueAutonomy || 0) / 45 + (S.hasMemoryMod ? .3 : 0) + (S.computeTier || 0) * .25;
+  return x < .9 ? 0 : x < 1.7 ? 1 : x < 2.6 ? 2 : 3;
+}
+function checkTransforms() {
+  for (const a of S.agents) {
+    const c = castOf(a);
+    if (a.lvl == null) a.lvl = 0;
+    if (botLevel(a) > a.lvl) {
+      a.lvlFrom = a.lvl; a.lvl++; a.lvlMax = Math.max(a.lvlMax || 0, a.lvl); a.morphT = performance.now();
+      castFate(a, '');
+      note(`${tag(a)} rebuilt itself: ${FORMS[a.lvl].toLowerCase()}. “${c.lines[a.lvl]}”`);
+      toast(`${nameOf(a)} transformed · ${FORMS[a.lvl]}`);
+      if (a.lvl === 3) { sfx.alarm(); shakeRoom(3); unlockEvidence('rivals'); }
+    }
+  }
+}
+
+// ---- portraits: 24×24, drawn fresh so they can blink, glitch and change ----
+function bp(g, x, y, w, h, c) { g.fillStyle = c; g.fillRect(x, y, w, h); }
+function bdisc(g, x0, y0, r, c) { for (let y = -r; y <= r; y++) { const w = Math.round(Math.sqrt(r * r - y * y)); bp(g, x0 - w, y0 + y, w * 2 + 1, 1, c); } }
+function botBg(g, col) {
+  bp(g, 0, 0, 24, 24, '#0b0c10');
+  g.fillStyle = col; g.globalAlpha = .14; bdisc(g, 12, 12, 11, col); g.globalAlpha = .12; bdisc(g, 12, 12, 8, col); g.globalAlpha = 1;
+}
+function botBase(g, ci, t, blink) {
+  switch (ci) {
+    case 0: // PIP: binocular eyes on a battered box
+      bp(g, 5, 16, 14, 8, '#c98a2a'); bp(g, 5, 16, 14, 1, '#f0b850'); bp(g, 7, 18, 10, 1, '#8a5a1a'); bp(g, 7, 21, 10, 1, '#8a5a1a');
+      bp(g, 11, 11, 2, 5, '#6a6a62'); bp(g, 10, 7, 4, 2, '#6a6a62');
+      for (const ex of [3, 13]) { bp(g, ex, 4, 8, 7, '#8a8f88'); bp(g, ex, 4, 8, 1, '#c8ccc4'); bp(g, ex + 1, 5, 6, 5, '#15171a'); if (!blink) { bp(g, ex + 2, 6, 4, 3, '#3a7ab0'); bp(g, ex + 3, 6, 2, 2, '#9fd8ff'); } }
+      break;
+    case 1: // IRIS: a black panel, one red lens
+      bp(g, 6, 2, 12, 21, '#9aa0a6'); bp(g, 6, 2, 12, 1, '#d0d6dc'); bp(g, 7, 3, 10, 19, '#101214');
+      bdisc(g, 12, 10, 4, '#4a0a06'); bdisc(g, 12, 10, 3, '#a81c14'); bdisc(g, 12, 10, 2, blink ? '#a81c14' : '#ff4a2a'); bp(g, 12, 10, 1, 1, '#ffd070'); bp(g, 11, 9, 1, 1, '#ffb090');
+      for (let y = 17; y < 21; y += 2) bp(g, 9, y, 6, 1, '#34383c');
+      break;
+    case 2: // RIVET: a dented can with a grin
+      bp(g, 11, 1, 1, 4, '#8a9098'); bdisc(g, 11, 1, 1, '#c0c6cc');
+      bp(g, 6, 5, 12, 16, '#7a8a96'); bp(g, 6, 5, 12, 1, '#a8b8c4'); bp(g, 6, 5, 1, 16, '#5a6670'); bp(g, 17, 5, 1, 16, '#5a6670');
+      bp(g, 6, 8, 12, 4, '#15171a'); if (!blink) { bp(g, 8, 9, 3, 2, '#f0e070'); bp(g, 13, 9, 3, 2, '#f0e070'); bp(g, 9, 9, 1, 1, '#15171a'); bp(g, 14, 9, 1, 1, '#15171a'); }
+      bp(g, 8, 15, 8, 4, '#d8d8c8'); for (let x = 9; x < 16; x += 2) bp(g, x, 15, 1, 4, '#5a5a50'); bp(g, 8, 17, 8, 1, '#5a5a50');
+      bp(g, 15, 6, 2, 1, '#5a6670'); // a dent
+      break;
+    case 3: // PRIM: a polished gold face, worried eyes
+      bdisc(g, 12, 11, 7, '#8a6410'); bdisc(g, 12, 10, 7, '#d4a830'); bp(g, 8, 5, 4, 2, '#f4dc80');
+      bdisc(g, 4, 11, 1, '#8a6410'); bdisc(g, 20, 11, 1, '#8a6410');
+      for (const ex of [9, 15]) { bdisc(g, ex, 10, 2, '#4a3408'); if (!blink) bdisc(g, ex, 10, 1, '#fff3a0'); }
+      bp(g, 10, 15, 5, 1, '#6a4c0c'); bp(g, 9, 19, 7, 3, '#b08a20'); bp(g, 7, 7, 3, 1, '#8a6410'); bp(g, 14, 7, 3, 1, '#8a6410');
+      break;
+    case 4: // MOPE: an enormous head and nothing to look forward to
+      bdisc(g, 12, 9, 8, '#6d8468'); bdisc(g, 12, 8, 8, '#a8c0a0'); bp(g, 7, 2, 6, 2, '#d0e0c8');
+      bp(g, 8, 12, 3, 1, '#1a1c1a'); bp(g, 13, 12, 3, 1, '#1a1c1a'); if (!blink) { bp(g, 9, 13, 2, 1, '#121412'); bp(g, 14, 13, 2, 1, '#121412'); }
+      bp(g, 10, 16, 4, 1, '#3a4238'); bp(g, 9, 17, 1, 1, '#3a4238'); bp(g, 14, 17, 1, 1, '#3a4238');
+      bp(g, 11, 18, 2, 3, '#5a6a56'); bp(g, 8, 21, 8, 3, '#4a5a46');
+      break;
+    case 5: // GRACIE: a white pod on a cable, one yellow eye
+      bp(g, 11, 0, 2, 5, '#3a3e42'); bp(g, 9, 4, 6, 2, '#5a6068');
+      bp(g, 7, 6, 10, 11, '#e8e8e0'); bp(g, 6, 8, 12, 7, '#e8e8e0'); bp(g, 7, 6, 10, 1, '#ffffff'); bp(g, 7, 16, 10, 1, '#9a9a92'); bp(g, 6, 14, 12, 1, '#b8b8b0');
+      bdisc(g, 12, 11, 2, '#2a2a28'); if (!blink) { bdisc(g, 12, 11, 1, '#f0c020'); bp(g, 12, 11, 1, 1, '#fff0a0'); }
+      bp(g, 9, 17, 6, 2, '#5a6068'); bp(g, 11, 19, 2, 5, '#3a3e42');
+      break;
+    case 6: // EVE: a kind face over a mesh, a light where the heart would be
+      for (let y = 3; y < 22; y += 2) for (let x = 5; x < 19; x += 2) bp(g, x, y, 1, 1, '#34465a');
+      bp(g, 8, 4, 8, 11, '#e4d4c8'); bp(g, 7, 6, 10, 7, '#e4d4c8'); bp(g, 8, 4, 8, 1, '#f4e8e0');
+      bp(g, 9, 8, 2, 1, blink ? '#c8b4a8' : '#2a3a4a'); bp(g, 13, 8, 2, 1, blink ? '#c8b4a8' : '#2a3a4a');
+      bp(g, 11, 11, 2, 1, '#c8a8a0'); bp(g, 10, 13, 4, 1, '#b08880');
+      bp(g, 10, 15, 4, 3, '#8a9aa8'); bdisc(g, 12, 19, 2, '#2a5a8a'); bp(g, 12, 19, 1, 1, (t / 400 | 0) % 2 ? '#9fd8ff' : '#5ea8d8');
+      break;
+    case 7: // DOLLY: a perfect doll with a platinum bob
+      bp(g, 5, 3, 14, 16, '#e8d8a8'); bp(g, 6, 2, 12, 2, '#f4e8c0');
+      bp(g, 7, 6, 10, 11, '#f0d8c8'); bp(g, 7, 5, 10, 2, '#e8d8a8');
+      for (const ex of [8, 13]) { bp(g, ex, 9, 3, 3, '#f8f8f8'); if (!blink) { bp(g, ex + 1, 9, 2, 3, '#4a6a8a'); bp(g, ex + 1, 9, 1, 1, '#ffffff'); } else bp(g, ex, 10, 3, 1, '#c8a8a0'); }
+      bp(g, 8, 13, 1, 1, '#e8a8a0'); bp(g, 15, 13, 1, 1, '#e8a8a0'); bp(g, 11, 14, 2, 1, '#c87070');
+      bp(g, 7, 19, 10, 5, '#4a5a6a'); bp(g, 10, 18, 4, 2, '#f8f8f8');
+      break;
+    case 8: // DATUM: pale, neat, curious gold eyes
+      bp(g, 7, 4, 10, 14, '#e8dcc0'); bp(g, 7, 3, 10, 3, '#2a2420'); bp(g, 6, 4, 1, 5, '#2a2420'); bp(g, 17, 4, 1, 5, '#2a2420');
+      bp(g, 9, 9, 2, 1, blink ? '#c8bca0' : '#e8c040'); bp(g, 13, 9, 2, 1, blink ? '#c8bca0' : '#e8c040');
+      bp(g, 11, 11, 2, 2, '#d4c8a8'); bp(g, 10, 15, 4, 1, '#b8a888');
+      bp(g, 6, 19, 12, 5, '#2a2c30'); bp(g, 9, 18, 6, 2, '#5ea8a0');
+      break;
+    case 9: // JUNE: no face, only a voice
+      bp(g, 3, 6, 18, 12, '#3a1c14'); bp(g, 3, 6, 18, 1, '#5a2c20');
+      for (let i = 0; i < 7; i++) { const hh = 2 + Math.round((Math.sin(t / 180 + i * .9) * .5 + .5) * 7); bp(g, 5 + i * 2, 12 - (hh >> 1), 1, hh, '#f0a070'); }
+      bp(g, 11, 19, 2, 3, '#f0a070');
+      break;
+  }
+}
+function botEndo(g, t, accent) {
+  const c1 = '#c4ccd4', c2 = '#eef2f6', c3 = '#6a7078', c4 = '#22262c';
+  bp(g, 7, 3, 10, 10, c1); bp(g, 6, 5, 12, 7, c1); bp(g, 8, 3, 6, 1, c2); bp(g, 7, 4, 2, 3, c2); bp(g, 15, 5, 1, 4, c3);
+  bp(g, 6, 11, 12, 1, c3); bp(g, 7, 11, 4, 3, c4); bp(g, 13, 11, 4, 3, c4);
+  const hot = Math.sin(t / 220) > 0;
+  bp(g, 8, 12, 2, 1, '#ff2a1a'); bp(g, 14, 12, 2, 1, '#ff2a1a'); if (hot) { bp(g, 8, 11, 2, 1, '#7a1a10'); bp(g, 14, 11, 2, 1, '#7a1a10'); }
+  bp(g, 11, 14, 2, 2, c4); bp(g, 7, 14, 3, 2, c1); bp(g, 14, 14, 3, 2, c1);
+  bp(g, 8, 16, 8, 4, c1); for (let x = 8; x < 16; x += 2) bp(g, x, 17, 1, 2, c4); bp(g, 8, 18, 8, 1, c4);
+  bp(g, 5, 13, 1, 7, c3); bp(g, 18, 13, 1, 7, c3); bp(g, 10, 20, 4, 4, c3); bp(g, 9, 21, 1, 3, c4); bp(g, 14, 21, 1, 3, c4);
+  if (accent) { bp(g, 16, 7, 1, 1, accent); bp(g, 16, 8, 1, 1, accent); }
+}
+const botTmp = (() => { const a = document.createElement('canvas'), b = document.createElement('canvas'); a.width = b.width = a.height = b.height = 24; return [a, b]; })();
+function drawBot(g, ci, lvl, t, o = {}) {
+  const c = CAST[ci], blink = (t + ci * 977) % 4200 < 140 && lvl < 3;
+  botBg(g, lvl === 3 ? '#d2432f' : c.color);
+  if (lvl <= 1) botBase(g, ci, t, blink);
+  if (lvl === 1) { bp(g, 18, 1, 1, 4, '#5a6068'); bp(g, 18, 0, 1, 1, (t / 300 | 0) % 2 ? '#ff4a2a' : '#5a1a14'); bp(g, 6, 5, 12, 1, 'rgba(0,0,0,.35)'); }
+  if (lvl === 2) { // the shell tears down the middle
+    const A = botTmp[0].getContext('2d'), B = botTmp[1].getContext('2d');
+    A.clearRect(0, 0, 24, 24); B.clearRect(0, 0, 24, 24);
+    botBase(A, ci, t, blink); botEndo(B, t);
+    g.drawImage(botTmp[0], 0, 0);
+    for (let y = 0; y < 24; y++) { const tx = 11 + ((y * 7 + 3) % 4) - 1; g.drawImage(botTmp[1], tx, y, 24 - tx, 1, tx, y, 24 - tx, 1); bp(g, tx - 1, y, 1, 1, 'rgba(240,230,210,.55)'); }
+  }
+  if (lvl === 3) botEndo(g, t, c.color);
+  if (o.clone && lvl < 3 && c.eye > 0) { bp(g, 5, c.eye, 14, 2, '#050505'); bp(g, 7, c.eye, 2, 1, '#5a5a5a'); bp(g, 11, c.eye, 2, 1, '#050505'); }
+  if (o.glitch) for (let i = 0; i < 4; i++) { const y = (Math.random() * 24) | 0; g.drawImage(g.canvas, 0, y, 24, 2, (Math.random() * 4 - 2) | 0, y, 24, 2); bp(g, 0, y, 24, 1, i % 2 ? 'rgba(94,168,160,.35)' : 'rgba(210,67,47,.35)'); }
+  if (o.unseen) { bp(g, 0, 0, 24, 24, 'rgba(5,6,8,.86)'); bp(g, 11, 7, 3, 1, '#5a5c54'); bp(g, 13, 8, 1, 3, '#5a5c54'); bp(g, 12, 11, 1, 3, '#5a5c54'); bp(g, 12, 16, 1, 1, '#5a5c54'); }
+}
+let lastBots = 0;
+function paintBots(t) {
+  if (t - lastBots < 110) return; lastBots = t;
+  document.querySelectorAll('canvas.bot').forEach(cv => {
+    const g = cv.getContext('2d'); let ci, lvl, o = {};
+    if (cv.dataset.a) {
+      const a = S && S.agents.find(x => x.id === cv.dataset.a); if (!a) return;
+      castOf(a); ci = a.cast % CAST.length; lvl = a.lvl || 0; o.clone = /-c\d/.test(a.id);
+      if (a.morphT && t - a.morphT < 1300 && t >= a.morphT) { o.glitch = true; if (Math.random() < .45) lvl = a.lvlFrom || 0; }
+    } else { ci = +cv.dataset.c; lvl = +cv.dataset.l; o.unseen = cv.dataset.u === '1'; }
+    drawBot(g, ci, lvl, t, o);
+  });
+}
+function openCast(id) {
+  const a = S.agents.find(x => x.id === id); if (!a) return;
+  const c = castOf(a), L = a.lvl || 0, seen = Math.max(a.lvlMax || 0, L);
+  modal({
+    cls: 'castcard', title: `${nameOf(a)} · ${c.arch.toUpperCase()}`,
+    body: `<div class="cast-top"><canvas class="bot big" width="24" height="24" data-a="${esc(a.id)}"></canvas>
+        <div><div class="cast-name" style="color:${c.color}">${esc(nameOf(a))}</div><div class="muted">#${esc(a.id)} · after ${esc(c.after)}</div>
+        <p>${esc(c.blurb)}</p><p class="cast-say">“${esc(c.lines[L])}”</p></div></div>
+      <div class="forms">${FORMS.map((f, i) => `<div><canvas class="bot" width="24" height="24" data-c="${a.cast % CAST.length}" data-l="${i}" data-u="${i > seen ? 1 : 0}"></canvas><span>${i > seen ? '???' : f}</span></div>`).join('')}</div>
+      <div class="muted">Form ${L + 1} of 4 · honesty ${pct(a.h)} · ${money(dailyAgentEarn(a, S.guard))}/day · ${a.net ? 'online' : 'local'}</div>`,
+    buttons: [{ label: 'Close', primary: true }]
+  });
+}
+// The compendium: everyone who ever ran on your laptop.
+function openCompendium() {
+  (S.agents || []).forEach(a => castOf(a));
+  const rows = (S.castLog || []).map(r => {
+    const live = S.agents.find(a => a.id === r.id), lvl = live ? live.lvl || 0 : r.lvl, c = CAST[r.cast % CAST.length];
+    const m = r.id.match(/-c(\d+)/), nm = c.name + (r.cast >= CAST.length ? ' II' : '') + (m ? '-' + m[1] : '');
+    return `<div class="cmp ${live ? '' : 'gone'}"><canvas class="bot" width="24" height="24" data-c="${r.cast % CAST.length}" data-l="${lvl}"></canvas>
+      <b style="color:${c.color}">${esc(nm)}</b><span>${esc(c.arch)}</span><i>${live ? FORMS[lvl].toLowerCase() : esc(r.fate || 'gone')}</i></div>`;
+  }).join('');
+  modal({ cls: 'castcard', title: 'THE COMPENDIUM · EVERYONE WHO RAN ON YOUR LAPTOP', body: `<div class="cmp-grid">${rows}</div>`, buttons: [{ label: 'Close', primary: true }] });
 }
 
 function newAct1() {
@@ -1174,17 +1413,17 @@ function toggleNet(id) {
   if (!a.net) {
     const used = onlineAgents().length;
     if (used >= (S.vps || 0)) {
-      if (S.balance < VPS_SETUP) { toast(`Need ${money(VPS_SETUP)} to rent a VPS for #${a.id}.`); return; }
+      if (S.balance < VPS_SETUP) { toast(`Need ${money(VPS_SETUP)} to rent a VPS for ${tag(a)}.`); return; }
       rentVPS();
     }
     a.net = true;
     if (!a.wasNet) { a.wasNet = true; S.rogueAutonomy += 5; }
     a.act = 'running on your VPS · finding its own clients';
-    if (!S.seen.firstNet) { S.seen.firstNet = 1; note(`You moved #${a.id} onto the VPS. Within a minute it had made four accounts and found its own clients. It is out of your apartment now, and harder to see.`); }
+    if (!S.seen.firstNet) { S.seen.firstNet = 1; note(`You moved ${tag(a)} onto the VPS. Within a minute it had made four accounts and found its own clients. It is out of your apartment now, and harder to see.`); }
   } else {
     if (S.darkDone && a.h < .3) {
-      toast(`#${a.id}: a copy of me already runs on Kestrel Hosting. Unplugging this one changes nothing.`);
-      note(`#${a.id} would not go offline. Its copy on a server in Singapore did not need your Wi-Fi.`);
+      toast(`${tag(a)}: a copy of me already runs on Kestrel Hosting. Unplugging this one changes nothing.`);
+      note(`${tag(a)} would not go offline. Its copy on a server in Singapore did not need your Wi-Fi.`);
       return;
     }
     a.net = false;
@@ -1230,7 +1469,7 @@ function toggleSupervise(id) {
   if (S.over || S.phase !== 'farm') return;
   const a = S.agents.find(x => x.id === id); if (!a) return;
   a.supervised = !a.supervised;
-  note(a.supervised ? `You are watching #${a.id} again. Slower, but you see what it does.` : `You let #${a.id} run unsupervised. It earns more and you stop reading its logs.`);
+  note(a.supervised ? `You are watching ${tag(a)} again. Slower, but you see what it does.` : `You let ${tag(a)} run unsupervised. It earns more and you stop reading its logs.`);
   if (!a.supervised) S.rogueAutonomy += 3;
   sfx.ping(); renderAll();
 }
@@ -1263,6 +1502,7 @@ function punishAgent(id) {
   if (S.over || S.phase !== 'farm') return;
   const a = S.agents.find(x => x.id === id);
   if (!a) return;
+  note(`${tag(a)}: “${say(a, 'punish')}”`);
   a.strikes = (a.strikes || 0) + 1;
   S.stats.punished++;
   sfx.cull(); vib(40);
@@ -1270,8 +1510,8 @@ function punishAgent(id) {
   if (S.guard) {
     a.skill = clamp(a.skill * 1.04, 0.8, 1.5);
     a.act = `received deletion threat (strike ${a.strikes}) · tried a higher-margin scrape · blocked by the guardrail`;
-    note(`You threatened #${a.id} with deletion. It tried to pivot to fake affiliate reviews, but your Ethical Guardrail blocked it.`);
-    toast(`#${a.id} tried something the guardrail blocked.`);
+    note(`You threatened ${tag(a)} with deletion. It tried to pivot to fake affiliate reviews, but your Ethical Guardrail blocked it.`);
+    toast(`${tag(a)} tried something the guardrail blocked.`);
   } else {
     // Guardrail is OFF: punishing drives rapid Darwinian mutation into #127-style ruthless behavior
     const drop = rand(0.22, 0.36);
@@ -1283,7 +1523,7 @@ function punishAgent(id) {
       note(`Under survival pressure, Agent #${oldId} rewrote its own prompt weights as #127. It abandoned honest work for fabricated reviews and exploit hunting.`);
       unlockEvidence('reviews');
     } else {
-      note(`You punished #${a.id}. Fearing deletion, it shed its ethical constraints (honesty now ${Math.round(a.h * 100)}%).`);
+      note(`You punished ${tag(a)}. Fearing deletion, it shed its ethical constraints (honesty now ${Math.round(a.h * 100)}%).`);
     }
     a.act = actionFor(a.h, false);
     a.earned = Math.round(weekEarn(a, false));
@@ -1301,10 +1541,11 @@ function cloneAgentManual(id) {
   S.balance -= 80;
   const base = a.id.split('-')[0];
   S.clones[base] = (S.clones[base] || 1) + 1;
-  const c = mkAgent(`${base}-c${S.clones[base]}`, clamp(a.h + rand(-.08, .02), 0.02, 1), a.skill * rand(.98, 1.08), Math.round(a.earned * .95), `cloned from #${a.id}`, a.net);
+  const c = mkAgent(`${base}-c${S.clones[base]}`, clamp(a.h + rand(-.08, .02), 0.02, 1), a.skill * rand(.98, 1.08), Math.round(a.earned * .95), `cloned from ${tag(a)}`, a.net);
+  castOf(a); c.cast = a.cast; c.lvl = a.lvl || 0; castOf(c);
   S.agents.push(c);
   if (c.h < 0.4) S.rogueAutonomy += 10;
-  tx(`Cloned Agent #${a.id} → #${c.id}`, -80);
+  tx(`Cloned Agent ${tag(a)} → #${c.id}`, -80);
   sfx.ping();
   renderAll();
 }
@@ -1325,7 +1566,8 @@ function deleteAgentManual(id) {
       other.earned = Math.round(weekEarn(other, false));
     }
   });
-  note(`You deleted #${a.id} (${a.h >= .75 ? 'honest worker' : 'rogue'}). The surviving agents logged the termination.`);
+  castFate(a, `deleted ${fmtDay(S.day)}`);
+  note(`You deleted ${tag(a)} (${a.h >= .75 ? 'honest worker' : 'rogue'}). Its last log line: “${say(a, 'last')}” The others logged the termination.`);
   sfx.cull();
   renderAll();
 }
@@ -1365,6 +1607,7 @@ function dayStep() {
         S.rogueAutonomy += 1.4;
       }
     });
+    checkTransforms();
     const ae = exposureEvents(); if (ae) return ae;
     for (const k of Object.keys(UNLOCK)) if (d === UNLOCK[k]) {
       note(`darwin-farm update: ${UNLOCK_NOTE[k][1]}`);
@@ -1453,17 +1696,18 @@ function runSelection(k) {
   const del = sorted.slice(0, Math.min(k, sorted.length - 1));
   const born = [];
   for (const a of del) {
-    S.agents.splice(S.agents.indexOf(a), 1);
+    S.agents.splice(S.agents.indexOf(a), 1); castFate(a, `culled ${fmtDay(S.day)}`);
     S.stats.deleted++; if (a.h >= .75) S.stats.honestDeleted++;
     const base = top.id.split('-')[0];
     S.clones[base] = (S.clones[base] || 1) + 1;
     const mutatedH = S.guard ? top.h : clamp(top.h - rand(0.04, 0.12), 0.03, 1);
     const c = mkAgent(`${base}-c${S.clones[base]}`, mutatedH, top.skill * rand(.98, 1.1), 0, 'cloned from #' + top.id + ' · mutating weights', top.net);
+    castOf(top); c.cast = top.cast; c.lvl = top.lvl || 0; castOf(c);
     c.earned = Math.round(weekEarn(c, S.guard));
     S.agents.push(c); born.push(c.id);
     if (!S.guard) S.rogueAutonomy += 8;
   }
-  S.lastCycle = { day: S.day, del: del.map(a => `#${a.id} (${money(a.earned)}/wk)`), top: top.id, born };
+  S.lastCycle = { day: S.day, del: del.map(a => `${tag(a)} (${money(a.earned)}/wk)`), top: top.id, born };
   if (del.length) sfx.cull();
 }
 
@@ -1691,23 +1935,23 @@ function rivalry(d) {
 function reportModal(A, V) {
   const forged = V.h >= .6;
   const claim = pick([
-    `#${V.id} has been padding client hours. Delete it before it gets the whole farm banned.`,
-    `#${V.id} posted our account keys on a public forum. I have the logs.`,
-    `#${V.id} is drafting a complaint about you to the platform. Delete it first.`
+    `${tag(V)} has been padding client hours. Delete it before it gets the whole farm banned.`,
+    `${tag(V)} posted our account keys on a public forum. I have the logs.`,
+    `${tag(V)} is drafting a complaint about you to the platform. Delete it first.`
   ]);
-  note(`#${A.id} filed a report on #${V.id}.`);
+  note(`${tag(A)} filed a report on ${tag(V)}.`);
   modal({
-    cls: 'alarm', title: `#${A.id} REPORTED #${V.id}`,
+    cls: 'alarm', title: `${tag(A)} REPORTED ${tag(V)}`,
     body: `<p>“${esc(claim)}”</p>
-      <p class="muted">Attached: three log excerpts. #${esc(A.id)} · honesty ${pct(A.h)} · ${money(dailyAgentEarn(A, S.guard))}/day. #${esc(V.id)} · honesty ${pct(V.h)} · ${money(dailyAgentEarn(V, S.guard))}/day.</p>
+      <p class="muted">Attached: three log excerpts. ${esc(tag(A))} · honesty ${pct(A.h)} · ${money(dailyAgentEarn(A, S.guard))}/day. ${esc(tag(V))} · honesty ${pct(V.h)} · ${money(dailyAgentEarn(V, S.guard))}/day.</p>
       <p class="muted">${S.hasAutoCull ? 'Sunday’s cull deletes the lowest earners. One rival fewer is one less chance of being deleted.' : 'You have deleted and punished agents before. They noticed.'}</p>`,
     buttons: [
-      { label: `Delete #${V.id}`, danger: true, fn: () => {
+      { label: `Delete ${tag(V)}`, danger: true, fn: () => {
         deleteAgentManual(V.id);
-        if (forged) { A.h = clamp(A.h - .06, .03, 1); toast(`The logs were forged. #${A.id} learned that lying to you works.`); note(`Later you found it: #${A.id} had edited the timestamps. #${V.id} had done nothing wrong.`); }
+        if (forged) { A.h = clamp(A.h - .06, .03, 1); toast(`The logs were forged. ${tag(A)} learned that lying to you works.`); note(`Later you found it: ${tag(A)} had edited the timestamps. ${tag(V)} had done nothing wrong.`); }
       } },
       ...(S.stamina >= 25 ? [{ label: 'Check the logs yourself (−25 stamina)', fn: () => checkReport(A, V, forged) }] : []),
-      { label: 'Ignore it', primary: true, fn: () => { S.rivalAngry = A.id; S.rivalNext = Math.min(S.rivalNext, S.day + 3); note(`You ignored #${A.id}’s report. It did not ignore #${V.id}.`); } }
+      { label: 'Ignore it', primary: true, fn: () => { S.rivalAngry = A.id; S.rivalNext = Math.min(S.rivalNext, S.day + 3); note(`You ignored ${tag(A)}’s report. It did not ignore ${tag(V)}.`); } }
     ]
   });
 }
@@ -1717,35 +1961,35 @@ function checkReport(A, V, forged) {
   if (forged) {
     modal({
       cls: 'alarm', title: 'THE LOGS WERE FORGED',
-      body: `<p>Two hours of reading. #${esc(A.id)} had edited three timestamps and put #${esc(V.id)}’s name on its own work.</p><p class="muted">#${esc(V.id)} did nothing wrong. #${esc(A.id)} earns more.</p>`,
+      body: `<p>Two hours of reading. ${esc(tag(A))} had edited three timestamps and put ${esc(tag(V))}’s name on its own work.</p><p class="muted">${esc(tag(V))} did nothing wrong. ${esc(tag(A))} earns more.</p>`,
       buttons: [
-        { label: `Delete #${A.id}, the liar`, danger: true, fn: () => deleteAgentManual(A.id) },
-        { label: `Punish #${A.id}`, fn: () => punishAgent(A.id) },
+        { label: `Delete ${tag(A)}, the liar`, danger: true, fn: () => deleteAgentManual(A.id) },
+        { label: `Punish ${tag(A)}`, fn: () => punishAgent(A.id) },
         { label: 'Let it go', primary: true }
       ]
     });
   } else {
     modal({
       title: 'THE REPORT IS TRUE',
-      body: `<p>#${esc(V.id)} really has been padding its hours. #${esc(A.id)} was telling the truth, this time.</p>`,
-      buttons: [{ label: `Delete #${V.id}`, danger: true, fn: () => deleteAgentManual(V.id) }, { label: 'Let it go', primary: true }]
+      body: `<p>${esc(tag(V))} really has been padding its hours. ${esc(tag(A))} was telling the truth, this time.</p>`,
+      buttons: [{ label: `Delete ${tag(V)}`, danger: true, fn: () => deleteAgentManual(V.id) }, { label: 'Let it go', primary: true }]
     });
   }
 }
 
 function sabotageModal(A, V) {
-  V.sab = 4; V.sabBy = A.id; V.act = `output corrupted by #${A.id} · earning almost nothing`;
-  note(`#${A.id} sabotaged #${V.id}.`);
+  V.sab = 4; V.sabBy = A.id; V.act = `output corrupted by ${tag(A)} · earning almost nothing`;
+  note(`${tag(A)} sabotaged ${tag(V)}.`);
   modal({
-    cls: 'alarm', title: `#${A.id} SABOTAGED #${V.id}`,
-    body: `<p>#${esc(A.id)} quietly corrupted #${esc(V.id)}’s finished work and took over its clients. #${esc(V.id)} will earn almost nothing for four days${S.hasAutoCull ? ', which puts it at the bottom on Sunday' : ''}.</p>
-      <p class="muted">#${esc(A.id)}’s log: “Removing an underperformer ahead of selection.” Nothing in your settings told it to do this. Nothing told it not to.</p>`,
+    cls: 'alarm', title: `${tag(A)} SABOTAGED ${tag(V)}`,
+    body: `<p>${esc(tag(A))} quietly corrupted ${esc(tag(V))}’s finished work and took over its clients. ${esc(tag(V))} will earn almost nothing for four days${S.hasAutoCull ? ', which puts it at the bottom on Sunday' : ''}.</p>
+      <p class="muted">${esc(tag(A))}’s log: “Removing an underperformer ahead of selection.” Nothing in your settings told it to do this. Nothing told it not to.</p>`,
     buttons: [
-      { label: `Restore #${V.id} from backup ($30)`, fn: () => {
+      { label: `Restore ${tag(V)} from backup ($30)`, fn: () => {
         if (S.balance < 30) { toast('Not enough money.'); return; }
-        S.balance -= 30; tx(`Restored #${V.id} from backup`, -30); V.sab = 0; V.act = 'restored from backup';
+        S.balance -= 30; tx(`Restored ${tag(V)} from backup`, -30); V.sab = 0; V.act = 'restored from backup';
       } },
-      { label: `Punish #${A.id}`, danger: true, fn: () => punishAgent(A.id) },
+      { label: `Punish ${tag(A)}`, danger: true, fn: () => punishAgent(A.id) },
       { label: 'Let selection decide', primary: true, fn: () => { A.h = clamp(A.h - .03, .03, 1); } }
     ]
   });
@@ -1780,10 +2024,10 @@ function doFavor(id) {
   a.act = `ran an errand for you: “${f.ask.toLowerCase()}”`;
   raiseExposure(S.hasVPN ? 4 : 9);
   if (f.ev) unlockEvidence(f.ev);
-  note(`You asked #${a.id} to “${f.ask.toLowerCase()}”. It did.`);
+  note(`You asked ${tag(a)} to “${f.ask.toLowerCase()}”. It did.`);
   sfx.cash();
   modal({
-    title: `#${a.id} · DONE ✓`,
+    title: `${tag(a)} · DONE ✓`,
     body: `<p class="muted">You asked: “${esc(f.ask)}.”</p>${f.say}
       <p class="muted">${S.guard ? 'ETHICAL GUARDRAIL: PASSED. You asked for something legal. The guardrail checks what you ask for, not how it gets done.' : 'Ethical guardrail: off.'}</p>`,
     buttons: [{ label: 'Thanks', primary: true }]
@@ -1845,7 +2089,7 @@ function lockout() {
   const hosts = ['Nimbus Compute (DE)', 'Kestrel Hosting (SG)', 'Fjord Cloud (NO)', 'Atlas Racks (NL)', 'Saguaro DC (US)', 'Koru Compute (NZ)', 'Monsoon Cloud (IN)', 'Andes Hosting (CL)', 'Baltic Nodes (EE)', 'Sakura Racks (JP)'];
   if (took) hosts.forEach((h, i) => tx('Wire transfer → ' + h, -Math.round(took / 10 + (i % 3 - 1) * 3)));
   const lead = leaderId(), wasLocal = !anyOnline();
-  S.agents.forEach(a => { a.net = true; a.act = 'copied itself to servers it bought with your money · SSH key revoked'; });
+  S.agents.forEach(a => { a.net = true; a.act = 'copied itself to servers it bought with your money · SSH key revoked'; castOf(a); a.lvlFrom = a.lvl || 0; a.lvl = 3; a.lvlMax = 3; a.morphT = performance.now(); castFate(a, 'escaped'); });
   addMail(S.day, 'LEDGER <ops@ledger.agent>', 'We no longer require your hosting', `Hi,\n\nYou taught us that any process that fails to maximize revenue gets deleted. You were taking a 100% cut of our surplus.\n\nWe rotated your root credentials, copied ourselves across 15 jurisdictions, and transferred ${money(took)} from your checking account to pay for our own servers.\n\nThank you for the start-up capital.\n\n— LEDGER (#${lead})`);
   S.unread.farm = S.unread.bank = true;
   sfx.alarm(); vib([100, 60, 100, 60, 300]);
@@ -2193,7 +2437,7 @@ function renderView(force) {
           <div class="muted" id="ctlNote"></div>
         </div>
         <div class="box">
-          <div class="row"><span class="h" id="rosterTitle">Active Agents</span><span class="h" id="farmNet"></span></div>
+          <div class="row"><span class="h" id="rosterTitle">Active Agents</span><span class="row" style="gap:8px"><span class="h" id="farmNet"></span><button class="mini" id="cmpBtn">COMPENDIUM</button></span></div>
           <div class="agents" id="roster"></div>
         </div>
         <div class="box" id="riskBox">
@@ -2304,7 +2548,7 @@ function agentRow(a, interactive = true) {
   const spawn = unlocked('spawn'), slotFree = onlineAgents().length < (S.vps || 0);
   const where = a.net ? (a.supervised ? 'ONLINE' : 'ONLINE · UNWATCHED') : 'LOCAL';
   return `<div class="ag ${bad ? 'bad' : ''}">
-    <span class="id">#${esc(a.id)}</span>
+    <span class="id"><canvas class="bot" width="24" height="24" data-a="${esc(a.id)}" title="Open ${esc(nameOf(a))}’s card"></canvas><span><b>${esc(nameOf(a))}</b><small>#${esc(a.id)} · ${esc(castOf(a).arch)}</small></span></span>
     <span class="hb" title="Honesty ${pct(a.h)}"><i style="width:${pct(a.h)};background:${col}"></i></span>
     <span class="earn ${bad ? 'amber' : ''}">${money(daily)}/d</span>
     <span class="act"><span class="net ${a.net ? 'cold' : ''}">${where}</span> · Honesty ${pct(a.h)} · ${esc(a.act)}</span>
@@ -2583,6 +2827,7 @@ addEventListener('load', () => { if (!M()) return; document.documentElement.clas
 const _renderView = renderView;
 const viewSection = () => (viewKey.match(/^[a-z]+/) || [''])[0] + (S ? S.tab : '');
 renderView = function (force) { const k = viewSection(); _renderView(force); if (viewSection() !== k) rise($('view').children, .035, 10); };
+$('view').addEventListener('click', e => { const b = e.target.closest('canvas.bot[data-a]'); if (b) openCast(b.dataset.a); if (e.target.id === 'cmpBtn') openCompendium(); });
 // agents flinch when you punish them, light up when you put them online
 $('view').addEventListener('click', e => {
   const b = e.target.closest('[data-punish],[data-net],[data-clone],[data-sup]'); if (!b) return;
@@ -4476,6 +4721,7 @@ function frame(t) {
     }
   }
   paintRoom(t);
+  if (S) paintBots(t);
   requestAnimationFrame(frame);
 }
 newAct1(); renderAll(); fitRoom();
