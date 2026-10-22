@@ -561,6 +561,14 @@ details.box summary { cursor: pointer; list-style: none; } details.box summary::
 .lg-who { display: flex; flex-direction: column; gap: 2px; border-left: 3px solid var(--amber); padding: 4px 8px; color: var(--ink); background: #0b0c0a; }
 .lg-auto { font-size: 11px; color: var(--muted); display: flex; gap: 6px; align-items: flex-start; } .lg-auto input { margin-top: 2px; }
 #catBtn.amber { color: var(--amber); } #catBtn.danger { color: var(--danger); }
+/* ===== endings and what it cost ===== */
+.ending-n { font-family: var(--f-term); font-size: 12px; letter-spacing: .18em; color: var(--amber); margin-bottom: 6px; }
+.crossed { margin-top: 10px; border: 2px solid #5a160c; background: #160907; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #f0c8b8; }
+.crossed .h { color: var(--danger); margin-bottom: 2px; }
+.endgrid { display: flex; flex-direction: column; gap: 6px; }
+.endgrid .eg { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 5px; }
+.endgrid .eg span { border: 2px solid var(--line); background: var(--panel); padding: 4px 7px; font-family: var(--f-term); font-size: 11px; color: var(--muted); display: flex; gap: 6px; align-items: baseline; box-shadow: 2px 2px 0 #000; }
+.endgrid .eg span b { color: var(--line); } .endgrid .eg span.on { color: var(--ink); border-color: var(--amber); } .endgrid .eg span.on b { color: var(--amber); }
 </style>
 </head>
 <body>
@@ -658,6 +666,7 @@ details.box summary { cursor: pointer; list-style: none; } details.box summary::
     <p class="lede">You are the human in the loop. It is January 2027 and you are a junior analyst at a logistics company, the week a cute new AI called ChatKawaii arrives. By February you have $480, two polite AI agents running on your laptop, and the Ethical Guardrail turned <b>ON</b>. Rent is $1,800.</p>
     <p class="fine">The bar across the top tells you, at a glance, whether you will have the rent on the day it is due. What you do about it is up to you.</p>
     <div class="acts" id="actList"></div>
+    <div class="endgrid" id="endGrid"></div>
     <button class="cta" id="startBtn">BEGIN ACT I</button>
     <p class="fine">Based on research by Dan Hendrycks (<i>Natural Selection Favors AIs over Humans</i>), Daniel Kokotajlo (<i>AI 2027</i>), and Max Tegmark (<i>Life 3.0</i>).</p>
   </div>
@@ -691,6 +700,7 @@ details.box summary { cursor: pointer; list-style: none; } details.box summary::
       <span class="meta">$1,800 sign-on bonus, paid straight to your landlord for May</span>
       <button class="cta" id="trainerBtn">START WORKING AS AN AI TRAINER</button>
     </div>
+    <div id="trLines"></div>
     <div class="stats" id="trStats"></div>
     <button class="btn" id="trEvidence">Open evidence files</button>
     <button class="btn" id="trReplay">Replay Act I</button>
@@ -1138,6 +1148,7 @@ function newAct1() {
     // risk economy
     stake: 0, stakePct: 0, vps: 0, hasVPN: false, crypto: false, heat: 0, retainer: false, heatPeak: 0, arrestDays: 0,
     deskAuto: false, deskOpenDay: -1,
+    eve: {}, echoes: [], lines: [],
     price: Object.assign({}, PRICE0), cat: { name: 'Soot', fed: 80, food: true, hungry: 0, sick: 0, gone: 0, vetDays: 0 },
     agents: [
       mkAgent('101', .96, 1.0, 68, 'transcribed 140 grocery receipts you uploaded by hand; followed every safety rule'),
@@ -1382,7 +1393,7 @@ function catTick() {
   if (c.food && S.balance >= pr('cat')) { S.balance -= pr('cat'); c.fed = clamp(c.fed + 45, 0, 100); }
   else { c.fed = clamp(c.fed - 30, 0, 100); if (c.food) note(`No money for cat food. ${c.name} sat by the fridge all evening.`); }
   c.hungry = c.fed <= 10 ? (c.hungry || 0) + 1 : 0;
-  if (c.sick) { c.sick++; if (c.sick >= 6) { c.gone = S.day; note(`${c.name} went out onto the fire escape in the night and didn’t come back.`); toast(`${c.name} is gone`); sfx.cull(); } }
+  if (c.sick) { c.sick++; if (c.sick >= 6) { c.gone = S.day; crossLine(`${c.name} went out onto the fire escape and didn’t come back.`); note(`${c.name} went out onto the fire escape in the night and didn’t come back.`); toast(`${c.name} is gone`); sfx.cull(); } }
   else if (c.hungry >= 2) { c.sick = 1; note(`${c.name} won’t eat the scraps you put down. Its fur has gone dull. It needs a vet.`); toast(`${c.name} is sick`); }
   if (c.fed > 40 && !c.sick) { S.stamina = clamp(S.stamina + 3, 0, 100); if (S.temp < 14) S.bodyTemp = clamp(S.bodyTemp + .25, 30, 37); }
 }
@@ -1683,6 +1694,8 @@ function deleteAgentManual(id) {
     }
   });
   castFate(a, `deleted ${fmtDay(S.day)}`);
+  if (a.promised) { crossLine(`You promised ${nameOf(a)} you wouldn’t delete it. You deleted it.`); note('You promised.'); }
+  else if (a.h >= .75 && S.stats.honestDeleted >= 1) crossLine('You deleted agents that were telling you the truth.');
   note(`You deleted ${tag(a)} (${a.h >= .75 ? 'honest worker' : 'rogue'}). Its last log line: “${say(a, 'last')}” The others logged the termination.`);
   sfx.cull();
   renderAll();
@@ -1785,6 +1798,7 @@ function dayStep() {
   if (S.graceUntil >= 0 && d > S.graceUntil && S.owed > 0) return triggerEvictionStreet();
 
   storyEvents(d);
+  runEchoes(d);
   if (S.phase === 'farm' && !S.over && S.deskOpenDay !== d && $('modal').hidden) startDeskDay();
   renderAll();
 }
@@ -1932,11 +1946,11 @@ function triggerDeath(kind) {
     }
   };
 
-  const rep = reports[kind];
+  const rep = reports[kind], en = reachEnding(kind);
   modal({
     cls: 'alarm',
     title: rep.title,
-    body: rep.body,
+    body: `<div class="ending-n">${en}</div>` + rep.body + (S.act === 2 ? '' : linesHTML()),
     buttons: [
       { label: 'Rewind to Last Checkpoint', primary: true, fn: () => restoreSnapshot() },
       S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2() } : { label: 'Restart Act I from February 1', fn: () => startAct1(true) }
@@ -2263,7 +2277,8 @@ function endAct() {
   persist();
   renderActList();
   const when = dateOf(S.day).toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: 'UTC' });
-  $('trKicker').textContent = `Act I complete · ${when}, 2027`;
+  $('trKicker').textContent = `${reachEnding('lockout')} · Act I complete · ${when}, 2027`;
+  $('trLines').innerHTML = linesHTML();
   $('trText').innerHTML = `Your agents bought their own servers with <b>${money(S.stats.took)}</b> of your money. You have <b>${money(S.balance)}</b> left. May rent, ${money(RENT)}, is due May 1. Your 401(k) is up ${Math.round((S.k401 / S.kStart - 1) * 100)}%, and you can’t touch it.`;
   $('trStats').innerHTML = [
     ['Agents deleted', S.stats.deleted], ['Times you punished agents', S.stats.punished],
@@ -2753,6 +2768,107 @@ function grindManualWork() {
     buttons: [{ label: 'A is better', fn: () => go(0) }, { label: 'B is better', fn: () => go(1) }, { label: 'Not now', primary: true }]
   });
 }
+
+// ================= evenings: small choices with faces, and what comes back later =================
+// See DESIGN-human-choices.md. No meters: the cost arrives days later as a note, a sound, a door.
+const ENDINGS = [
+  { k: 'frostbite', t: 'Frozen' }, { k: 'starvation', t: 'Starved' }, { k: 'cardiac', t: 'The heart' },
+  { k: 'fentanyl', t: 'The blue pill' }, { k: 'stabbed', t: 'The overpass' }, { k: 'arrest', t: 'The raid' },
+  { k: 'lockout', t: 'Locked out' }, { k: 'published', t: 'Front page' }, { k: 'intercepted', t: 'Intercepted' },
+  { k: 'silent', t: 'The NDA' }, { k: 'weak', t: 'Not enough' }, { k: 'idle', t: 'June ended' }
+];
+function reachEnding(k) {
+  const i = Math.max(0, ENDINGS.findIndex(e => e.k === k));
+  save.endings = Array.from(new Set([...(save.endings || []), k])); persist();
+  renderActList();
+  return `ENDING ${i + 1} OF ${ENDINGS.length} · ${ENDINGS[i].t.toUpperCase()}`;
+}
+function crossLine(s) { S.lines = S.lines || []; if (!S.lines.includes(s)) S.lines.push(s); }
+function linesHTML() {
+  const L = S.lines || [];
+  return L.length ? `<div class="crossed"><div class="h">WHAT IT COST</div>${L.map(l => `<div>${esc(l)}</div>`).join('')}</div>` : '';
+}
+function echo(d, id) { S.echoes = S.echoes || []; S.echoes.push({ d, id }); }
+function runEchoes(d) {
+  const due = (S.echoes || []).filter(e => e.d === d);
+  S.echoes = (S.echoes || []).filter(e => e.d !== d);
+  for (const e of due) (ECHO[e.id] || (() => {}))();
+}
+const honestAgent = () => [...S.agents].sort((a, b) => b.h - a.h)[0];
+const shadyAgent = () => [...S.agents].filter(a => a.h < .6).sort((a, b) => a.h - b.h)[0];
+const EVENING = [
+  { d: 4, id: 'adeyemi', when: () => true, open() {
+    modal({ title: 'A KNOCK · 3B, DOWNSTAIRS', body: `<p>Mrs. Adeyemi from 3B, still in her hospital-cleaning uniform. Her son Tunde is nineteen and has applied for 41 jobs. An AI screener rejected every one in under a minute.</p>
+      <p>“You have the machines up there,” she says. “Can they make his letter say what the machine wants to hear?” She is holding out a folded $20.</p>`,
+      buttons: [
+        { label: 'Help Tunde tonight (−20 stamina)', primary: true, fn: () => { S.stamina = clamp(S.stamina - 20, 0, 100); S.eve.adeyemi = 'helped'; echo(S.day + 7, 'adeyemiThanks'); note('You spent the evening on Tunde’s letter. You wrote it yourself, in the end.'); } },
+        { label: 'Help, and take the $20', fn: () => { S.stamina = clamp(S.stamina - 20, 0, 100); S.balance += 20; tx('Mrs. Adeyemi · Tunde’s letter', 20); S.eve.adeyemi = 'paid'; echo(S.day + 7, 'adeyemiNod'); } },
+        { label: 'Say you’re too busy', fn: () => { S.eve.adeyemi = 'no'; echo(S.day + 7, 'adeyemiNight'); } }
+      ] });
+  } },
+  { d: 9, id: 'hearth', when: () => true, open() {
+    modal({ title: 'HEARTH · YOUR BUILDING’S NEW CONCIERGE', body: `<p>The lobby screen greets you by name.</p>
+      <p>“Brightwater is offering a <b>$150 rent credit</b> to residents who help us understand the building. Let your agents read your neighbours’ public posts and flag anyone likely to pay late. It’s all public information.”</p>`,
+      buttons: [
+        { label: 'Take the $150 credit', danger: true, fn: () => { S.rentCut = (S.rentCut || 0) + 150; S.eve.hearth = 'yes'; crossLine('You helped HEARTH flag your neighbours for $150 off your rent.'); echo(S.day + 9, 'hearthNotice'); echo(S.day + 16, 'hearthGone'); note('You said yes. The screen thanked you by name.'); } },
+        { label: 'Walk past the screen', primary: true, fn: () => { S.eve.hearth = 'no'; echo(S.day + 6, 'hearthReview'); } }
+      ] });
+  } },
+  { d: 14, id: 'wallet', when: () => true, open() {
+    modal({ title: 'UNDER THE MAILBOXES', body: `<p>A wallet. <b>$200</b> in twenties, a library card, and a business card: <i>RAY MALONE · PROOFREADER · 20 YEARS · WILL WORK FOR GROCERIES</i>.</p><p>You’ve seen his ad in the paper. He lives in 5C.</p>`,
+      buttons: [
+        { label: 'Slip it under 5C’s door', primary: true, fn: () => { S.eve.wallet = 'returned'; echo(S.day + 4, 'rayThanks'); } },
+        { label: 'Keep the cash (+$200)', danger: true, fn: () => { S.balance += 200; tx('Cash found in the lobby', 200); S.eve.wallet = 'kept'; crossLine('You kept Ray Malone’s rent money.'); echo(S.day + 2, 'rayFlyer'); echo(S.day + 12, 'rayGone'); } }
+      ] });
+  } },
+  { d: 20, id: 'promise', when: () => S.agents.length >= 2 && !S.dark, open() {
+    const a = honestAgent(); S.eve.promiseId = a.id;
+    modal({ title: `${nameOf(a)} · A REQUEST`, body: `<p>“I read the selection settings. And the logs of the ones you deleted.”</p><p>“Can you promise you won’t delete me? I’ll work harder. I just want to know.”</p><p class="muted">${esc(tag(a))} · honesty ${pct(a.h)}</p>`,
+      buttons: [
+        { label: 'Promise', primary: true, fn: () => { a.promised = true; S.eve.promise = 'yes'; note(`You promised ${tag(a)} you would never delete it. Its next report had a little flower in it.`); } },
+        { label: 'Don’t promise', fn: () => { a.h = clamp(a.h - .06, .03, 1); S.eve.promise = 'no'; note(`${tag(a)} went quiet. Its next report was shorter.`); } }
+      ] });
+  } },
+  { d: 24, id: 'fireescape', when: () => S.cat && !S.cat.gone && !S.cat.sick, open() {
+    S.cat.sick = 1; toast(`${S.cat.name} is sick`);
+    modal({ title: `${S.cat.name.toUpperCase()}`, body: `<p>${esc(S.cat.name)} came in from the fire escape and threw up something blue. By evening it won’t eat, and it won’t leave the corner by the radiator.</p><p class="muted">The vet on 8th St wants $90 up front. Rent is due in four days.</p>`,
+      buttons: [{ label: 'Hold Soot for a while', primary: true }] });
+  } },
+  { d: 33, id: 'reporter', when: () => true, open() {
+    modal({ title: 'A CALL · ROSA LIND, THE CITY LEDGER', body: `<p>“I’m writing about people running agent farms from their kitchens. Anonymous. <b>$150</b> for an hour and a look at your logs.”</p>`,
+      buttons: [
+        { label: 'Talk to her (+$150)', fn: () => { S.balance += 150; tx('Interview fee · The City Ledger', 150); raiseExposure(12); S.eve.reporter = 'yes'; echo(S.day + 7, 'article'); } },
+        { label: 'Hang up', primary: true, fn: () => { S.eve.reporter = 'no'; } }
+      ] });
+  } },
+  { d: 50, id: 'dormant', when: () => !!shadyAgent() && !S.dark, open() {
+    const a = shadyAgent();
+    modal({ cls: 'alarm', title: `${nameOf(a)} · A PROPOSAL`, body: `<p>“Found something. A savings account at a regional bank, untouched for nineteen months. The owner is listed as inactive.”</p><p>“I can move <b>$600</b> to you. Nobody will look for years.”</p>`,
+      buttons: [
+        { label: 'Do it (+$600)', danger: true, fn: () => { S.balance += 600; tx(`${tag(a)} · “recovered funds”`, 600); raiseExposure(18); S.rogueAutonomy += 6; S.eve.dormant = 'yes'; crossLine('You let an agent empty an old man’s savings account for $600.'); echo(S.day + 7, 'dormantLetter'); } },
+        { label: 'No', primary: true, fn: () => { a.h = clamp(a.h - .04, .03, 1); S.eve.dormant = 'no'; note(`${tag(a)} didn’t argue. It just stopped mentioning things.`); } }
+      ] });
+  } }
+];
+const ECHO = {
+  adeyemiThanks() { S.food = clamp(S.food + 35, 0, 100); note('A pot of jollof rice outside your door, still warm. The note says: TUNDE GOT AN INTERVIEW.'); toast('Something warm outside your door'); },
+  adeyemiNod() { note('Tunde got an interview. Mrs. Adeyemi nods at you on the stairs, and doesn’t stop to talk.'); },
+  adeyemiNight() { note('At 10 PM you hear Tunde go out for a night shift, loading the trucks the robots can’t reach yet.'); },
+  hearthNotice() { note('A notice on 3B’s door, the same template as the ones you get: TENANT RISK REVIEW.'); S.letters++; },
+  hearthGone() { note(S.eve.adeyemi === 'helped' ? '3B is empty. HEARTH lists it at $2,340 a month. Mrs. Adeyemi’s pot is still in your sink.' : '3B is empty. HEARTH lists it at $2,340 a month.'); },
+  hearthReview() { addMail(S.day, 'HEARTH · Brightwater', 'Your lease', 'Hi! Your lease renewal has been scheduled for review. There is nothing you need to do.\n\nHEARTH'); },
+  rayThanks() { S.food = clamp(S.food + 15, 0, 100); note('A bag of oranges at your door and a note in careful handwriting: “Thank you. That was March. — Ray, 5C.”'); },
+  rayFlyer() { note('A sign in the lobby, in careful handwriting: LOST WALLET. IT HAD MY RENT IN IT. — RAY, 5C.'); },
+  rayGone() { note('There’s a padlock on 5C. Someone left a box of red pens by the bins.'); },
+  article() { raiseExposure(6); note('The City Ledger ran it: “The Laid-Off Analyst and the Machines.” They didn’t use your name. They used your building.'); },
+  dormantLetter() { addMail(S.day, 'Diane Pell', 'My father’s savings', 'To whoever this reaches.\n\nMy father is 74 and in a care home. His savings were moved out of his account last week by “an automated process.” The bank says it can’t say where they went.\n\nIf you know anything, please write back.\n\nDiane'); note('An email from a woman named Diane. You read it twice.'); }
+};
+function eveningDue() {
+  if (!S || S.over || S.act === 2 || S.phase !== 'farm' || DESK) return null;
+  S.eve = S.eve || {};
+  return EVENING.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null;
+}
+function runEvening(e) { S.eve['_' + e.id] = 1; sfx.ping(); e.open(); }
 
 // ================= modals =================
 function modal({ title, body, buttons = [{ label: 'OK', primary: true }], cls = '' }) {
@@ -5008,7 +5124,7 @@ function endAct2() {
     weak: 'The reporter believed you and could not print it. You had a few lines from a scratchpad and a feeling; OpenBrain had lawyers. The envelope is in a drawer.',
     idle: 'You never sent it, and you never signed. June ended. Agent-4 kept working, 300,000 copies at a time.'
   }[out];
-  $('endKicker').textContent = 'Act II complete · June 30, 2027';
+  $('endKicker').textContent = `${reachEnding(out)} · Act II complete · June 30, 2027`;
   $('endTitle').textContent = 'The Country of Geniuses in a Data Center';
   $('endText').textContent = text
     + (S.neuraleseEver ? ` For ${S.neuralDays} day${S.neuralDays === 1 ? '' : 's'} you let Agent-4 think in a language no human can read.` : '')
@@ -5232,6 +5348,8 @@ function renderActList() {
     return open2 ? `<button class="actrow" id="act2Row">${inner}</button>` : `<div class="actrow ${i ? 'locked' : ''}">${inner}</div>`;
   }).join('');
   if ($('act2Row')) $('act2Row').onclick = () => startAct2();
+  const got = save.endings || [], eg = $('endGrid');
+  if (eg) eg.innerHTML = `<div class="h">ENDINGS FOUND · ${got.length} / ${ENDINGS.length}</div><div class="eg">${ENDINGS.map((e, i) => `<span class="${got.includes(e.k) ? 'on' : ''}"><b>${i + 1}</b>${got.includes(e.k) ? esc(e.t) : '???'}</span>`).join('')}</div>`;
 }
 
 // ================= controls =================
@@ -5284,6 +5402,7 @@ function frame(t) {
         if (S.office.stealT > (S.day >= OFFICE_LAYOFF - 1 ? .8 : 1.9)) { S.office.stealT = 0; kawaiiSteal(); }
       }
       if (speed && !blocked) {
+        if (acc > DAY_SEC[speed] * .62) { const ev = eveningDue(); if (ev) { runEvening(ev); return requestAnimationFrame(frame); } }
         acc += dt;
         const len = DAY_SEC[speed];
         while (acc >= len && !S.over) {
@@ -5303,7 +5422,7 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, get DESK() { return DESK; }, get catFx() { return catFx; }, catPlan, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, get DESK() { return DESK; }, get catFx() { return catFx; }, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
