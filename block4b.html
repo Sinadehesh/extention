@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Block 4B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Newsreader:opsz,ital,wght@6..72,0,500;6..72,1,400&display=swap">
+<style>
+:root{
+  --bg:#06070a; --ink:#dfe4ea; --muted:#8894a2; --line:#222a34; --amber:#f0a548;
+  --cold:#7eb2dd; --danger:#e5534b; --ok:#5fb36a; --warn:#e5a23b;
+  --f-term:'IBM Plex Mono',ui-monospace,Menlo,monospace; --f-story:'Newsreader',Georgia,serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-term);overflow:hidden;-webkit-tap-highlight-color:transparent}
+#wrap{position:fixed;inset:0;display:grid;place-items:center}
+#cv{image-rendering:pixelated;display:block;background:#06070a;cursor:pointer;touch-action:none}
+/* HUD */
+#hud{position:fixed;top:0;left:0;right:0;display:flex;gap:10px;align-items:center;padding:7px 12px;
+  font-size:12px;background:linear-gradient(#06070aee,#06070a00);pointer-events:none;z-index:5;flex-wrap:wrap}
+#hud .cash{font-size:16px;font-weight:700;color:var(--amber)}
+#hud .clock{color:var(--muted)}
+#hud .day{color:var(--ink);font-weight:600}
+.vit{display:flex;align-items:center;gap:4px}
+.vit span{font-size:9.5px;letter-spacing:.08em;color:var(--muted)}
+.vbar{width:46px;height:6px;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:#0d1116}
+.vbar i{display:block;height:100%}
+#rentPill{margin-left:auto;font-size:11px;border:1px solid var(--line);border-radius:5px;padding:3px 8px;background:#0e1217;color:var(--muted)}
+#rentPill.soon{border-color:#6a5328;color:var(--amber)} #rentPill.late{border-color:var(--danger);color:var(--danger)}
+/* prompt */
+#prompt{position:fixed;z-index:6;transform:translate(-50%,-100%);pointer-events:none;
+  background:#0e1217e0;border:1px solid var(--amber);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--ink);white-space:nowrap;display:none}
+#prompt b{color:var(--amber)}
+/* toasts + log */
+#log{position:fixed;right:14px;bottom:12px;z-index:6;display:flex;flex-direction:column;gap:4px;max-width:min(340px,30vw);pointer-events:none}
+@media (max-width:700px){ #log{max-width:46vw;right:8px} #log div{font-size:12px} }
+#log div{font-family:var(--f-story);font-style:italic;font-size:14px;line-height:1.3;color:#cdd4db;text-shadow:0 1px 3px #000;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}}
+/* modal */
+#veil{position:fixed;inset:0;z-index:20;background:#03040799;display:none;place-items:center;padding:16px}
+.card{width:100%;max-width:440px;max-height:92%;overflow:auto;background:#0e1217;border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:11px;animation:rise .18s}
+@keyframes rise{from{transform:translateY(10px);opacity:.4}}
+.card .ttl{font-weight:700;font-size:14px;letter-spacing:.03em}
+.card .ttl.bad{color:var(--danger)} .card .ttl.amber{color:var(--amber)}
+.card .bd{font-size:12.5px;line-height:1.5;color:#c6cdd4}
+.card .bd.story{font-family:var(--f-story);font-size:15px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.meter{height:7px;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:#0a0d12}
+.meter i{display:block;height:100%}
+button{font:inherit;color:inherit;cursor:pointer;border:1px solid var(--line);background:#141a21;border-radius:7px;padding:8px 10px;font-size:12px}
+button:hover:not(:disabled){border-color:var(--amber)}
+button:disabled{opacity:.4;cursor:default}
+button.primary{background:var(--amber);color:#1a1206;border-color:var(--amber);font-weight:700}
+button.danger{background:#2a1012;border-color:var(--danger);color:#f3b0ab}
+button.ghost{background:transparent}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ckt{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:11.5px}
+.ckt .sw{width:40px;text-align:center;border-radius:5px;padding:3px 0;font-size:10px;font-weight:700}
+.ckt .sw.on{background:#13301a;color:var(--ok);border:1px solid var(--ok)} .ckt .sw.off{background:#2d1214;color:var(--danger);border:1px solid var(--danger)}
+.small{font-size:10.5px;color:var(--muted)}
+/* title */
+#title{position:fixed;inset:0;z-index:30;background:radial-gradient(ellipse at 50% 30%,#10151c,#05060a 70%);display:grid;place-items:center;padding:20px;text-align:center}
+#title .inner{max-width:520px;display:flex;flex-direction:column;gap:14px}
+#title h1{font-family:var(--f-story);font-weight:700;font-size:clamp(44px,12vw,76px);margin:0;letter-spacing:-.02em;line-height:.95}
+#title .k{font-size:11px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase}
+#title p{font-family:var(--f-story);font-size:16px;line-height:1.5;color:#c6cdd4;margin:0}
+#title .keys{font-size:11px;color:var(--muted);line-height:1.7}
+.cta{border:0;border-radius:10px;padding:13px;background:var(--amber);color:#1a1206;font-weight:700;font-size:14px;letter-spacing:.05em}
+.hidden{display:none!important}
+#rot{display:none;position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:7;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:4px 10px;background:#0e1217;pointer-events:none}
+@media (orientation:portrait) and (max-width:700px){ #rot{display:block} }
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="cv"></canvas></div>
+
+<div id="hud" class="hidden">
+  <span class="day" id="hDay">DAY 1</span>
+  <span class="clock" id="hClock">07:00</span>
+  <b class="cash" id="hCash">$280</b>
+  <span class="vit"><span>WARM</span><span class="vbar"><i id="vWarm"></i></span></span>
+  <span class="vit"><span>FOOD</span><span class="vbar"><i id="vFood"></i></span></span>
+  <span class="vit"><span>MIND</span><span class="vbar"><i id="vMind"></i></span></span>
+  <span class="vit"><span>HEAT</span><span class="vbar"><i id="vHeat"></i></span></span>
+  <span id="rentPill">rent —</span>
+</div>
+
+<div id="prompt"></div>
+<div id="rot">↻ Turn your phone sideways to see the whole building</div>
+<div id="log"></div>
+
+<div id="veil"><div class="card" id="card"></div></div>
+
+<div id="title">
+  <div class="inner">
+    <div class="k">Beholder × This War of Mine</div>
+    <h1>BLOCK 4B</h1>
+    <p>Winter, 2027. You live in 2B. Your AI rig hums in the basement next to the building’s fuses. Rent is due, it’s −10°C outside, and the data centres are buying the city’s power out from under you.</p>
+    <p class="small" style="color:var(--muted)">A playable vertical slice. Walk the building. Run the rig. Decide who stays warm.</p>
+    <button class="cta" id="startBtn">ENTER THE BUILDING</button>
+    <div class="keys">Walk: ← → or A D &nbsp;·&nbsp; Stairs: ↑ ↓ or W S &nbsp;·&nbsp; or click where to go &nbsp;·&nbsp; Use: E or Space / tap the object</div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const W = 384, H = 216;
+const cv = document.getElementById('cv');
+const sc = document.createElement('canvas'); sc.width = W; sc.height = H;
+const g = sc.getContext('2d');           // internal pixel buffer
+const cx = cv.getContext('2d');          // display
+const $ = id => document.getElementById(id);
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp = (a,b,t)=>a+(b-a)*t;
+const money = n => '$' + Math.round(n).toLocaleString('en-US');
+let scale = 1, offx = 0, offy = 0;
+
+function fit(){
+  const vw = innerWidth, vh = innerHeight;
+  scale = Math.max(1, Math.floor(Math.min(vw / W, vh / H)));
+  // allow fractional to fill better on small screens
+  const fsc = Math.min(vw / W, vh / H);
+  scale = fsc;
+  cv.width = Math.round(W * fsc); cv.height = Math.round(H * fsc);
+  cv.style.width = cv.width + 'px'; cv.style.height = cv.height + 'px';
+  offx = 0; offy = 0;
+  cx.imageSmoothingEnabled = false;
+}
+addEventListener('resize', fit); fit();
+
+// ---------- building geometry ----------
+const BX0 = 30, BX1 = 250;          // building left/right
+const COR0 = 38, COR1 = 244;        // walkable corridor x-range per floor
+const STX0 = 116, STX1 = 140;       // stairwell x-range
+const FLOORS = {                    // feet-Y per floor index
+  0:{y:198,name:'BASEMENT'}, 1:{y:152,name:'FLOOR 1'}, 2:{y:106,name:'FLOOR 2'}, 3:{y:60,name:'FLOOR 3'}
+};
+const CEIL = f => FLOORS[f].y - 34;  // ceiling y of a floor
+// rooms: visual + occupancy regions {floor,x0,x1,id,name}
+const ROOMS = [
+  {floor:3,x0:38,x1:116,id:'3A',name:'Apt 3A'},
+  {floor:3,x0:144,x1:244,id:'3B',name:'Apt 3B (vacant)'},
+  {floor:2,x0:38,x1:112,id:'2A',name:'Apt 2A'},
+  {floor:2,x0:144,x1:244,id:'2B',name:'Apt 2B'},
+  {floor:1,x0:38,x1:112,id:'1A',name:'Apt 1A'},
+  {floor:1,x0:144,x1:244,id:'LOB',name:'Lobby'},
+  {floor:0,x0:38,x1:244,id:'BSM',name:'Basement'}
+];
+const roomAt = (f,x)=>ROOMS.find(r=>r.floor===f && x>=r.x0-6 && x<=r.x1+6) || null;
+
+// ---------- state ----------
+let S, scene='title', last=0, acc=0;
+const RENT = 400, RENT_EVERY = 6, DAY_SEC = 150; // one in-game day = 150 real s at 1x
+const P_CAP = 28; // the building's original breaker capacity
+const FUSE = [{cap:38,cost:180},{cap:50,cost:420}]; // overrated fuses: more load, hotter wiring
+
+function newGame(){
+  S = {
+    t: 7/24,         // time of day 0..1 (start 07:00)
+    day: 1,
+    cash: 280,
+    warm: 72, food: 70, mind: 78, heat: 4,  // heat = legal EXPOSURE 0..100
+    rentDay: RENT_EVERY,
+    cap: P_CAP, fuse: 0,
+    // power circuits
+    ckt: { me:true, rig:true, k1a:true, m2a:true, d3a:true },
+    // rig / tycoon
+    agents: 1, running: true, aggressive: false, rigHot:false,
+    tripped:false,
+    // neighbours
+    npc: {
+      k:{x:80,floor:1,name:'Mr. Kowalski',dark:0,alive:true},    // oxygen, grid engineer
+      m:{x:70,floor:2,name:'Maya',home:true},                     // ER nurse, night shift
+      d:{x:78,floor:3,name:'Devon',name2:'day-trader'}            // crypto casino
+    },
+    bond: 0, fx: [], earnAcc: 0,
+    over:false, flags:{},
+    msgs: []
+  };
+  // player
+  S.p = { x:190, floor:2, face:1, step:0, goal:null, use:null, climb:0, moving:false };
+}
+
+// ---------- helpers ----------
+function say(t){ S.msgs.unshift(t); if(S.msgs.length>4) S.msgs.pop(); renderLog(); }
+function renderLog(){ $('log').innerHTML = S.msgs.map(m=>`<div>${m}</div>`).join(''); }
+const isNight = () => S.t < 6/24 || S.t >= 20/24;
+const hhmm = () => { const m=Math.floor(S.t*24*60); return String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0'); };
+function powerLoad(){ let l=0; const c=S.ckt;
+  if(c.me) l+=6; if(c.rig) l+=S.agents*(S.rigHot?8:5); if(c.k1a) l+=7; if(c.m2a && S.npc.m.home) l+=4; if(c.d3a) l+=6; return l; }
+const roomPowered = id => id==='2B'?S.ckt.me : id==='BSM'?S.ckt.rig : id==='1A'?S.ckt.k1a : id==='2A'?S.ckt.m2a : id==='3A'?S.ckt.d3a : id==='3B'?false : true;
+
+// ---------- interactables ----------
+const SPOTS = [
+  {id:'rig',    floor:0, x:72,  label:()=>'Manage the rig'},
+  {id:'breaker',floor:0, x:212, label:()=>'The breaker box'},
+  {id:'stove',  floor:2, x:206, label:()=> S.cash>=8?'Cook a meal ($8)':'No money to cook'},
+  {id:'bed',    floor:2, x:232, label:()=>'Sleep until morning'},
+  {id:'door',   floor:1, x:240, label:()=>'Step out to 5th Street'},
+  {id:'maya',   floor:2, x:70,  label:()=> S.npc.m.home?'Talk to Maya':'Maya is at the hospital'},
+  {id:'kowalski',floor:1,x:80,  label:()=>'Check on Mr. Kowalski'},
+  {id:'devon',  floor:3, x:78,  label:()=>'Look in on Devon'}
+];
+function nearSpot(){
+  return SPOTS.find(s => s.floor===S.p.floor && Math.abs(s.x - S.p.x) < 16) || null;
+}
+
+// ================= simulation =================
+function tick(dt){                      // dt in in-game-day fraction
+  if(S.over) return;
+  const hrs = dt*24;
+  S.t += dt;
+  while(S.t >= 1){ S.t -= 1; newDay(); if(S.over) return; }
+
+  // power / blackout
+  if(powerLoad() > S.cap && !S.tripped){ trip(); }
+
+  // rig income (only if powered, running, not tripped)
+  const rigOn = S.ckt.rig && S.running && !S.tripped;
+  if(rigOn){
+    const base = S.agents * (S.rigHot?2.6:1.5) * (S.aggressive?3.4:1);
+    S.cash += base * hrs;
+    S.earnAcc += base * hrs;
+    if(S.earnAcc >= 5){ const n=Math.floor(S.earnAcc); S.earnAcc -= n; S.fx.push({ t:performance.now(), text:'+$'+n }); if(S.fx.length>5) S.fx.shift(); }
+    if(S.aggressive){ S.heat = clamp(S.heat + S.agents*0.5*hrs*(S.ckt.rig?1:0), 0, 100); }
+    S.rigHot = S.aggressive; // aggressive runs hot
+  }
+  // exposure cools slowly
+  S.heat = clamp(S.heat - 0.25*hrs, 0, 100);
+
+  // warmth: room powered + your heater vs outside cold
+  const myWarm = (S.ckt.me && !S.tripped);
+  const target = myWarm ? 85 : 8;
+  S.warm = clamp(S.warm + (target - S.warm)*0.12*hrs, 0, 100);
+  // food & mind
+  S.food = clamp(S.food - 1.4*hrs, 0, 100);
+  let mindDrift = -0.5;
+  if(isNight() && !roomPowered('2B')) mindDrift -= 1.2;
+  if(S.food < 20) mindDrift -= 1;
+  if(S.warm < 25) mindDrift -= 1.2;
+  S.mind = clamp(S.mind + mindDrift*hrs, 0, 100);
+
+  // Kowalski on backup oxygen if his power is cut
+  const k = S.npc.k;
+  if(!S.ckt.k1a || S.tripped){
+    k.dark += hrs;
+    if(k.dark>3 && k.alive && !k.warned){ k.warned=true; say('Through the floor: Kowalski’s concentrator alarm. Two short beeps, a pause. Its battery is running down.'); }
+    if(k.dark>10 && k.alive){ kowalskiCrisis(); }
+  }
+  else { if(k.dark>0.1) k.dark = Math.max(0, k.dark-hrs*2); if(k.dark<1) k.warned=false; }
+
+  // lose conditions
+  if(S.warm <= 0) return end('FROZEN','You stopped shivering around 4 a.m. The rig in the basement stayed at a comfortable 24°C all night.');
+  if(S.food <= 0){ S.flags.starve=(S.flags.starve||0)+hrs; if(S.flags.starve>18) return end('STARVED','You spent the grocery money on compute. Your blood sugar bottomed out on the kitchen floor.'); }
+  else S.flags.starve=0;
+  if(S.mind <= 0) return end('GONE','You stopped getting up. The agents kept earning. Nobody came, because nothing had broken.\n\nIf this is close to home: 988 (US/Canada) · Samaritans 116 123 (UK/IRL) · findahelpline.com');
+  if(S.heat >= 100) return end('ARRESTED','They came at 6 a.m. The money moved through accounts with your name on it. You never wrote the code. You owned it, and that was enough.');
+
+  moveNPCs(hrs);
+  updateHUD();
+}
+
+function newDay(){
+  S.day++;
+  S.rentDay--;
+  if(S.rentDay <= 0){
+    if(S.cash >= RENT){ S.cash -= RENT; S.rentDay = RENT_EVERY; say('You slid the rent under the manager’s door. ' + money(RENT) + '. You made it another week.'); }
+    else return end('EVICTED','The sheriff changed the locks at noon. Your things are on the curb in the snow. The rig kept running in a basement you can no longer enter.');
+  }
+  // Maya shift: home in day, hospital at night
+  // Devon trades harder overnight
+  say('Day ' + S.day + '. ' + (isNight()?'':'Grey light through the frost.'));
+}
+
+function trip(){
+  S.tripped = true;
+  say('The whole building goes black. The fuse tripped — too much load. Reset it at the breaker.');
+}
+
+function moveNPCs(hrs){
+  const n=S.npc;
+  // Maya: home 07-19, else at hospital
+  n.m.home = !(S.t>=19/24 || S.t<7/24);
+  // Devon paces at night
+  if(isNight()){ n.d.x = 78 + Math.sin(performance.now()/500)*26; }
+  else n.d.x = lerp(n.d.x, 70, 0.02);
+  // Kowalski shuffles slowly
+  n.k.x = 80 + Math.sin(performance.now()/2600)*10;
+}
+
+function kowalskiCrisis(){
+  const k=S.npc.k; k.alive=false; k.dark=0;
+  S.mind = clamp(S.mind-25,0,100);
+  end('', null, {
+    ttl:'1A WENT QUIET', bad:true,
+    body:`Through the cutaway wall you watch Mr. Kowalski’s room go fully dark. His oxygen concentrator beeps over to battery, then slower, then not at all. In the morning two paramedics carry a stretcher down the stoop and don’t hurry.\n\nYou ran the rig through his circuit. It paid the rent.`,
+    cont:true
+  });
+}
+
+// ================= rendering =================
+function px(x,y,w,h,c){ g.fillStyle=c; g.fillRect(x|0,y|0,w|0,h|0); }
+// deterministic window-light pattern for the city
+const CITY = (()=>{ let s=9; const r=()=>(s=(s*9301+49297)%233280)/233280; const b=[]; let x=250; while(x<384){const w=5+(r()*9|0),h=24+(r()*60|0); b.push({x,w,h,lit:Array.from({length:40},()=>r()<.4)}); x+=w+(r()<.4?2:0);} return b; })();
+
+function drawBG(){
+  // sky
+  const night = isNight();
+  const dawn = S.t>=5/24 && S.t<7.5/24, dusk = S.t>=18/24 && S.t<20/24;
+  let top = night?'#05070d': dawn?'#2a2535': dusk?'#2c1f24':'#20303f';
+  let bot = night?'#0a0e18': dawn?'#43384a': dusk?'#4a2f2c':'#48596b';
+  const grd = g.createLinearGradient(0,0,0,H); grd.addColorStop(0,top); grd.addColorStop(1,bot);
+  g.fillStyle=grd; g.fillRect(0,0,W,H);
+  // moon/sun
+  { const mx=night?300:60, mc=night?'#cdd6e2':'#f1d08a'; px(mx+2,24,6,10,mc); px(mx,26,10,6,mc); }
+  // city skyline to the right (behind alley)
+  for(const b of CITY){ px(b.x,H-40-b.h,b.w,b.h,'#0c1119'); let k=0;
+    for(let yy=H-38-b.h; yy<H-42; yy+=4) for(let xx=b.x+1; xx<b.x+b.w-1; xx+=2){ if(b.lit[k++%40] && (night|| (k%3===0))) px(xx,yy,1,1,'#e8c178'); } }
+  // snow ground / sidewalk
+  px(0,H-16,W,16,'#161d26'); px(0,H-16,W,2,'#4a5a6c');
+  // falling snow
+  for(let i=0;i<40;i++){ const sx=(i*53 + performance.now()/60)%W; const sy=(i*37 + performance.now()/90)%H; px(sx,sy,1,1,'rgba(200,215,235,.35)'); }
+}
+
+function drawBuilding(){
+  // outer shell
+  px(BX0-4,10,BX1-BX0+8,H-26-10,'#20262f');
+  px(BX0-4,10,BX1-BX0+8,3,'#2c333d');
+  // floor slabs + rooms
+  for(let f=0; f<=3; f++){
+    const fy = FLOORS[f].y, cy = CEIL(f);
+    // floor slab
+    px(BX0-4, fy+2, BX1-BX0+8, 4, '#171c23');
+    // back wall per room, lit by power
+    for(const r of ROOMS.filter(r=>r.floor===f)){
+      const lit = roomPowered(r.id) && !S.tripped;
+      px(r.x0, cy, r.x1-r.x0, fy-cy+2, lit? '#2a2622' : '#14181e');
+      // subtle powered glow
+      if(lit){ const gr=g.createLinearGradient(0,cy,0,fy); gr.addColorStop(0,'rgba(255,196,120,.10)'); gr.addColorStop(1,'rgba(255,196,120,0)'); g.fillStyle=gr; g.fillRect(r.x0,cy,r.x1-r.x0,fy-cy); }
+      furnish(r, fy, cy, lit);
+    }
+    // dividing wall between 2A and 2B
+    if(f===2) px(126,cy, 3, fy-cy+2, '#121720');
+  }
+  // stairwell
+  px(STX0-2,CEIL(3),STX1-STX0+4,FLOORS[0].y-CEIL(3)+2,'#10141b');
+  for(let f=0; f<3; f++){ const y0=FLOORS[f].y, y1=FLOORS[f+1].y;
+    for(let s=0;s<7;s++){ const yy=lerp(y0,y1+4,s/7); px(STX0+2+(s%2?2:0), yy, 14, 2, '#2a323d'); } }
+  // windows to the alley (right side) so we see neighbours' glow from outside too
+}
+
+function furnish(r, fy, cy, lit){
+  if(r.id==='BSM'){
+    // server rack (left) + breaker box (right) + heating pipes
+    px(60,fy-26,22,26,'#10151b'); // rack
+    // one lit row per agent you own; the rack fills up as the operation grows
+    for(let i=0;i<6;i++){ const own=i<S.agents, live=own&&S.ckt.rig&&!S.tripped&&S.running;
+      px(62,fy-4-i*4-2,18,2, live? ((performance.now()/180+i*3|0)%5?'#5fb36a':'#9fe0a8') : own?'#3a4350':'#1b2027'); }
+    if(S.ckt.rig&&!S.tripped){ const gr=g.createRadialGradient(71,fy-14,1,71,fy-14,26); gr.addColorStop(0,'rgba(90,180,230,.22)'); gr.addColorStop(1,'rgba(90,180,230,0)'); g.fillStyle=gr; g.fillRect(44,fy-34,54,34); }
+    if(S.aggressive&&S.ckt.rig&&!S.tripped){ const gr=g.createRadialGradient(71,fy-14,1,71,fy-14,30); gr.addColorStop(0,'rgba(229,83,75,.18)'); gr.addColorStop(1,'rgba(229,83,75,0)'); g.fillStyle=gr; g.fillRect(40,fy-36,60,36); }
+    px(206,fy-24,16,18,'#2a2016'); px(208,fy-22,12,14,'#171c22'); // breaker box
+    for(let i=0;i<3;i++){ const on=[S.ckt.me,S.ckt.rig,S.ckt.k1a][i]; px(210+i*4,fy-16, 2,4, on?'#5fb36a':'#e5534b'); }
+    for(let i=0;i<3;i++){ const on=[S.ckt.m2a,S.ckt.d3a,true][i]; px(210+i*4,fy-9, 2,4, on?'#5fb36a':'#e5534b'); }
+    px(120,fy-30,100,2,'#3a2e22'); // pipe
+  }
+  if(r.id==='2B'){ // your apartment: desk, stove, bed
+    px(150,fy-12,22,2,'#5a4636'); px(152,fy-20,8,8,'#1a1d22'); px(153,fy-19,6,5, lit?'#3f6f8f':'#101418'); // laptop
+    px(200,fy-14,14,14,'#3a3f47'); px(200,fy-15,14,2,'#565c64'); px(203,fy-15,5,1,'#20252b'); // stove
+    if(lit) px(204,fy-16,3,1,'rgba(240,140,60,.6)');
+    px(226,fy-8,22,8,'#4b2f32'); px(230,fy-9,16,2,'#8a8f99'); // bed
+  }
+  if(r.id==='2A'){ // Maya: tidy, plant, med kit cross
+    px(60,fy-10,20,10,'#2f4a55'); px(90,fy-16,6,2,'#9a7'); px(44,fy-18,8,8,'#d8d8d0'); px(46,fy-16,4,4,'#c23'); // med cross
+  }
+  if(r.id==='1A'){ // Kowalski: armchair, heater, oxygen tank
+    px(70,fy-12,16,12,'#3b2f3a'); // chair
+    px(96,fy-10,6,10,'#9e5b3e'); if(lit) px(95,fy-11,8,1,'rgba(255,128,64,.4)'); // heater
+    px(58,fy-16,5,16,'#5a6b76'); px(59,fy-18,3,2,'#8fa'); // oxygen tank
+  }
+  if(r.id==='3B'){ // vacant: last tenant evicted in January
+    px(170,fy-4,26,4,'#3a3a40'); px(172,fy-5,8,1,'#55555c'); // bare mattress
+    px(214,fy-20,8,10,'#d9d2bf'); px(215,fy-18,6,1,'#a33'); px(215,fy-15,5,1,'#777'); px(215,fy-13,6,1,'#777'); // notice
+    px(150,fy-8,10,8,'#5a4a36'); px(152,fy-12,8,4,'#6a5a44'); // boxes
+  }
+  if(r.id==='LOB'){ // lobby: mailboxes, flickering bulb, the front door
+    for(let i=0;i<4;i++) px(156+i*7,fy-22,6,5,'#5d6670');
+    px(176,cy+2,1,4,'#444'); if(!S.tripped && (performance.now()/90|0)%23) px(175,cy+6,3,2,'#f1d38a');
+    px(230,fy-24,12,24,'#3b2f27'); px(231,fy-23,10,22,'#4a3a2e'); px(239,fy-12,1,2,'#c9b37a'); // door
+  }
+  if(r.id==='3A'){ // Devon: multi-monitor trading desk
+    px(56,fy-14,40,2,'#5a4636');
+    for(let i=0;i<3;i++){ px(58+i*13,fy-24,10,8,'#15181d'); px(59+i*13,fy-23,8,6, lit? (i===1?'#b33':'#2d6'):'#0e1116'); }
+    px(44,fy-10,8,10,'#241a1a'); // mini-fridge of energy drinks
+  }
+}
+
+function drawPerson(x,y,face,step,skin,coat,sit){
+  // y = feet
+  const sw = step? 1:0;
+  px(x-1,y-14,4,3,skin); px(x-1,y-14,4,1,'#241a14'); // head
+  px(x-2,y-11,6,7,coat);                              // torso
+  if(sit){ px(x-2,y-5,6,2,'#2a3340'); px(x+2,y-3,2,4,'#2a3340'); }
+  else { px(x-2,y-4,2,4,'#2a3340'); px(x+1,y-4,2,4,'#2a3340'); px(x-2+(sw?0:3),y,2,1,'#20262e'); }
+}
+
+function drawNPCs(){
+  const n=S.npc;
+  // Kowalski
+  if(n.k.alive){ const dk=!S.ckt.k1a||S.tripped; drawPerson(n.k.x, FLOORS[1].y, 1, 0, dk?'#8fb0c8':'#c9a27e', '#55606e', true); }
+  // Maya (only when home)
+  if(n.m.home){ drawPerson(n.m.x, FLOORS[2].y, 1, (performance.now()/400|0)%2, '#caa', '#2f6a66', false); }
+  // Devon
+  { const fast=isNight(); drawPerson(n.d.x, FLOORS[3].y, n.d.x>78?-1:1, fast?(performance.now()/160|0)%2:0, '#c9a27e', '#6b4a2f', !fast); }
+}
+
+function drawPlayer(){
+  const p=S.p, y=FLOORS[p.floor].y;
+  drawPerson(p.x, y, p.face, (p.step|0)%2, (S.warm<30?'#9ec5e8':'#d8b08c'), '#46607c', false);
+}
+
+function drawDarkness(){
+  // fog of war: dim every floor except the player's; keep silhouettes faintly visible
+  for(let f=0; f<=3; f++){
+    if(f===S.p.floor) continue;
+    g.fillStyle='rgba(4,6,11,.62)'; g.fillRect(BX0-4,CEIL(f),BX1-BX0+8,FLOORS[f].y-CEIL(f)+6);
+  }
+  // global night darkening of interiors when unpowered
+  // player light cone (matters in blackout / unpowered room)
+  const p=S.p, y=FLOORS[p.floor].y-8;
+  const lit = roomPowered(roomAt(p.floor,p.x)?.id) && !S.tripped;
+  const rad = lit? 26 : 40;
+  const gr=g.createRadialGradient(p.x,y,2,p.x,y,rad);
+  gr.addColorStop(0,'rgba(255,230,180,'+(lit?.10:.26)+')'); gr.addColorStop(1,'rgba(255,230,180,0)');
+  g.fillStyle=gr; g.fillRect(p.x-rad,y-rad,rad*2,rad*2);
+  if(S.tripped){ g.fillStyle='rgba(2,3,7,.5)'; g.fillRect(BX0-4,10,BX1-BX0+8,H-26-10); }
+}
+
+function render(){
+  drawBG();
+  drawBuilding();
+  drawNPCs();
+  drawPlayer();
+  drawDarkness();
+  // money rising off the rack: the tycoon heartbeat
+  const now=performance.now();
+  S.fx = S.fx.filter(f=>now-f.t<1600);
+  g.font='bold 8px "IBM Plex Mono", monospace'; g.textAlign='center';
+  for(const f of S.fx){ const a=(now-f.t)/1600, y=FLOORS[0].y-30-a*14, o=(1-a).toFixed(2);
+    g.fillStyle=`rgba(6,7,10,${o})`; g.fillText(f.text, 72, y+1);
+    g.fillStyle=`rgba(255,190,96,${o})`; g.fillText(f.text, 71, y); }
+  // vignette
+  const vg=g.createRadialGradient(W/2,H/2,H*0.35,W/2,H/2,W*0.7); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,.45)'); g.fillStyle=vg; g.fillRect(0,0,W,H);
+  // blit
+  cx.clearRect(0,0,cv.width,cv.height);
+  cx.drawImage(sc,0,0,cv.width,cv.height);
+  // interaction prompt (DOM, positioned over canvas)
+  const sp = nearSpot();
+  const pr=$('prompt');
+  if(sp && scene==='play' && !S.over){
+    const wx = S.p.x, wy = FLOORS[S.p.floor].y - 20;
+    const rect = cv.getBoundingClientRect();
+    pr.style.left = (rect.left + wx*(cv.width/W)) + 'px';
+    pr.style.top  = (rect.top + wy*(cv.height/H)) + 'px';
+    pr.innerHTML = `<b>E</b> · ${sp.label()}`;
+    pr.style.display='block';
+  } else pr.style.display='none';
+}
+
+// ================= movement =================
+// Tap a floor or an object and you walk there, taking the stairs one flight at a time.
+const STAIR_X = 129;
+const keys = { l:false, r:false };
+function floorFromY(wy){ for(let f=3; f>=0; f--) if(wy >= CEIL(f)-4 && wy <= FLOORS[f].y+8) return f; return null; }
+function goTo(floor, x, use){ S.p.goal = { floor, x: clamp(x, COR0, COR1) }; S.p.use = use || null; }
+function movePlayer(dt){
+  const p = S.p, spd = 54;
+  if(keys.l || keys.r){
+    p.goal = null; p.use = null;
+    const dir = keys.r ? 1 : -1;
+    p.x = clamp(p.x + dir*spd*dt, COR0, COR1); p.face = dir; p.step += dt*9; p.moving = true;
+    return;
+  }
+  if(!p.goal){ p.moving = false; return; }
+  if(p.climb > 0){ p.climb -= dt; return; }
+  const otherFloor = p.goal.floor !== p.floor;
+  const tx = otherFloor ? STAIR_X : p.goal.x;
+  const d = tx - p.x;
+  if(Math.abs(d) > 1.5){
+    p.x += Math.sign(d) * Math.min(Math.abs(d), spd*dt); p.face = Math.sign(d); p.step += dt*9; p.moving = true;
+    return;
+  }
+  p.x = tx;
+  if(otherFloor){ p.floor += Math.sign(p.goal.floor - p.floor); p.climb = 0.35; return; }
+  p.moving = false;
+  const use = p.use; p.goal = null; p.use = null;
+  if(use) interact(use);
+}
+
+// ================= loop =================
+function frame(ts){
+  const dt = Math.min(.05,(ts-last)/1000); last=ts;
+  if(scene==='play' && !paused() && !S.over){
+    tick(dt / DAY_SEC);
+    movePlayer(dt);
+  }
+  render();
+  requestAnimationFrame(frame);
+}
+const paused = () => $('veil').style.display==='grid';
+
+// ================= HUD =================
+function setBar(id,v,good){ const i=$(id); i.style.width=clamp(v,0,100)+'%'; i.style.background = v<25?'var(--danger)':v<50?'var(--warn)':(good||'var(--ok)'); }
+function updateHUD(){
+  $('hDay').textContent='DAY '+S.day;
+  $('hClock').textContent=hhmm();
+  $('hCash').textContent=money(S.cash);
+  setBar('vWarm',S.warm); setBar('vFood',S.food); setBar('vMind',S.mind);
+  const hi=$('vHeat'); hi.style.width=clamp(S.heat,0,100)+'%'; hi.style.background=S.heat>80?'var(--danger)':S.heat>45?'var(--warn)':'var(--muted)';
+  const rp=$('rentPill'); rp.textContent='rent '+money(RENT)+' · '+S.rentDay+'d';
+  rp.className = S.rentDay<=1?'late':S.rentDay<=2?'soon':'';
+}
+
+// ================= interactions / panels =================
+function openVeil(html, bind){ const c=$('card'); c.innerHTML=html; $('veil').style.display='grid'; bind&&bind(c); }
+function closeVeil(){ $('veil').style.display='none'; }
+
+function interact(sp){
+  if(!sp) return;
+  if(sp.id==='rig') return rigPanel();
+  if(sp.id==='breaker') return breakerPanel();
+  if(sp.id==='stove') return cook();
+  if(sp.id==='bed') return sleep();
+  if(sp.id==='door') return street();
+  if(sp.id==='maya') return talkMaya();
+  if(sp.id==='kowalski') return checkKowalski();
+  if(sp.id==='devon') return lookDevon();
+}
+
+function cook(){
+  if(S.cash<8){ say('Eight dollars you don’t have. You drink tap water and go back down.'); return; }
+  S.cash-=8; S.food=clamp(S.food+42,0,100); S.mind=clamp(S.mind+5,0,100);
+  say('You cook rice and a cracked egg on the one working burner. It helps more than it should.');
+  updateHUD();
+}
+function sleep(){
+  if(!roomPowered('2B')&&S.warm<20){ say('Too cold to sleep. You’d wake up worse, or not at all.'); return; }
+  const to = S.t<6/24? 7/24 : 1 + 7/24;
+  const span = to - S.t;
+  // fast-forward the sim in one step
+  let steps = Math.ceil(span/0.01);
+  for(let i=0;i<steps && !S.over;i++) tick(0.01);
+  if(!S.over){ S.mind=clamp(S.mind+10,0,100); say('You sleep in your coat. Morning comes grey and cold.'); }
+}
+
+function rigPanel(){
+  const load = powerLoad();
+  const html = `
+    <div class="ttl amber">BASEMENT RIG · #127</div>
+    <div class="bd">Your cluster earns while it runs and the basement circuit is live. Running it <b>unrestricted</b> pays far more and draws more power — and someone starts asking where the money comes from.</div>
+    <div class="row"><span>Cash</span><b style="color:var(--amber)">${money(S.cash)}</b></div>
+    <div class="row"><span>Agents</span><b>${S.agents}</b></div>
+    <div class="row"><span>Income</span><b class="small">≈ ${money(S.agents*(S.aggressive?3.4:1)*1.5*24)}/day ${S.aggressive?'(unrestricted)':'(clean)'}</b></div>
+    <div class="row"><span>Rig power draw</span><b class="small">${S.agents*(S.aggressive?8:5)} / ${S.cap} kW</b></div>
+    <div class="row"><span>Exposure</span><b class="small" style="color:${S.heat>45?'var(--danger)':'var(--muted)'}">${Math.round(S.heat)}%</b></div>
+    <div class="meter"><i style="width:${S.heat}%;background:${S.heat>45?'var(--danger)':'var(--muted)'}"></i></div>
+    <div class="grid2">
+      <button id="rRun">${S.running?'Stop the rig':'Start the rig'}</button>
+      <button id="rAgg" class="${S.aggressive?'danger':''}">${S.aggressive?'Unrestricted: ON':'Go unrestricted'}</button>
+      <button id="rBuy" ${S.cash<140||S.agents>=6?'disabled':''}>Buy agent · $140</button>
+      <button id="rClose" class="ghost">Back</button>
+    </div>
+    <div class="small">Circuit: ${S.ckt.rig&&!S.tripped?'<span style="color:var(--ok)">live</span>':'<span style="color:var(--danger)">dark</span>'} · total building load ${load}/${S.cap} kW</div>`;
+  openVeil(html, c=>{
+    c.querySelector('#rRun').onclick=()=>{ S.running=!S.running; rigPanel(); };
+    c.querySelector('#rAgg').onclick=()=>{ if(!S.aggressive){ S.aggressive=true; say('You strip the guardrails off #127. The basement glows red and the money starts climbing.'); } else S.aggressive=false; rigPanel(); };
+    c.querySelector('#rBuy').onclick=()=>{ if(S.cash>=140&&S.agents<6){ S.cash-=140; S.agents++; say('A second-hand node joins the rack. More earning, more heat, more power.'); } rigPanel(); };
+    c.querySelector('#rClose').onclick=closeVeil;
+  });
+}
+
+function breakerPanel(){
+  const load=powerLoad(), over=load>S.cap, nf=FUSE[S.fuse];
+  const rows=[
+    ['me','Your room 2B','6',S.ckt.me],
+    ['rig','Basement rig',''+(S.agents*(S.rigHot?8:5)),S.ckt.rig],
+    ['k1a','Apt 1A · Kowalski','7',S.ckt.k1a],
+    ['m2a','Apt 2A · Maya','4',S.ckt.m2a],
+    ['d3a','Apt 3A · Devon','6',S.ckt.d3a]
+  ];
+  const html=`
+    <div class="ttl ${over?'bad':''}">BUILDING BREAKER</div>
+    <div class="bd">One fuse feeds the whole building. Total load over <b>${S.cap} kW</b> trips it and everything goes dark. To run the rig hot for rent money, something else has to go cold.</div>
+    <div class="row"><span>Load</span><b style="color:${over?'var(--danger)':'var(--ok)'}">${load} / ${S.cap} kW</b></div>
+    <div class="meter"><i style="width:${Math.min(100,load/S.cap*100)}%;background:${over?'var(--danger)':load>S.cap*.8?'var(--warn)':'var(--ok)'}"></i></div>
+    ${rows.map(([k,n,w,on])=>`<div class="ckt"><span>${n}<br><span class="small">${w} kW</span></span><span class="sw ${on?'on':'off'}">${on?'ON':'OFF'}</span><button data-k="${k}">${on?'cut':'restore'}</button></div>`).join('')}
+    ${S.tripped?'<button id="bReset" class="primary">Reset the main fuse</button>':''}
+    ${nf?`<button id="bFuse" ${S.cash<nf.cost?'disabled':''}>Overrate the fuse → ${nf.cap} kW · ${money(nf.cost)}<br><span class="small">More room for the rig. The wiring in these walls is from 1962.</span></button>`:'<div class="small">The fuse is already rated far past what the wiring can take.</div>'}
+    <button id="bClose" class="ghost">Back</button>`;
+  openVeil(html,c=>{
+    c.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{ const k=b.dataset.k; cutCircuit(k); breakerPanel(); });
+    const rs=c.querySelector('#bReset'); if(rs) rs.onclick=()=>{ if(powerLoad()>S.cap){ say('It trips again the instant you push it. Cut something first.'); } else { S.tripped=false; say('The fuse holds. Lights stutter back on.'); } breakerPanel(); };
+    const fz=c.querySelector('#bFuse'); if(fz) fz.onclick=()=>{ const f=FUSE[S.fuse]; if(f&&S.cash>=f.cost){ S.cash-=f.cost; S.cap=f.cap; S.fuse++; say(S.fuse===1?'You jam a heavier fuse into the box. The lights stop flickering. The wires behind the plaster run warm.':'Another fuse, heavier still. The basement smells faintly of hot plastic.'); } breakerPanel(); };
+    c.querySelector('#bClose').onclick=closeVeil;
+  });
+}
+function cutCircuit(k){
+  const was=S.ckt[k]; S.ckt[k]=!was;
+  if(k==='k1a' && was){ say('You flip 1A’s breaker. Through the wall, Mr. Kowalski’s lamp dies and his oxygen machine starts to beep.'); S.mind=clamp(S.mind-6,0,100); }
+  if(k==='m2a' && was && S.npc.m.home){ say('Maya’s side goes dark. You hear her swear softly and light a candle.'); S.bond=Math.max(-3,S.bond-1); }
+  if(k==='me' && was){ say('Your own room goes cold to feed the rig. Your breath fogs on the glass.'); }
+}
+
+function talkMaya(){
+  if(!S.npc.m.home){ say('Her door is locked. She’s on a night shift at St. Vincent’s.'); return; }
+  S.bond++; S.mind=clamp(S.mind+16,0,100);
+  const lines=[
+    '“You look terrible. Sit. I’ve got soup and ten minutes before my shift.”',
+    '“The whole block’s power keeps dipping. You know anything about that?” She’s half-joking. You don’t answer.',
+    '“Whatever you’re doing down in that basement — just, be careful. People are getting arrested for less.”'
+  ];
+  openVeil(`<div class="ttl">MAYA · 2A</div><div class="bd story">${lines[Math.min(S.bond-1,lines.length-1)]}</div><button id="x" class="primary">Stay a minute</button>`, c=>c.querySelector('#x').onclick=()=>{closeVeil(); say('You stay a minute. It’s the warmest you’ve been all day.'); updateHUD();});
+}
+function checkKowalski(){
+  const k=S.npc.k;
+  if(!k.alive){ openVeil(`<div class="ttl bad">1A</div><div class="bd story">The door is taped shut. A city notice flutters on it. The heater you used to hear through the wall is silent.</div><button id="x" class="primary">Close the door</button>`,c=>c.querySelector('#x').onclick=closeVeil); return; }
+  const body = (!S.ckt.k1a||S.tripped)
+    ? '“The power’s out again, friend. The tank’s got maybe a few hours in it. These new data centres, they get the grid first now. People like me get what’s left.” His oxygen machine ticks on battery.'
+    : '“I ran the relays for this city for thirty years. Now a windowless building across the river decides who gets to stay warm. Keep an eye on your breaker, son. It’ll tell you when they’re taking more than their share.”';
+  openVeil(`<div class="ttl">MR. KOWALSKI · 1A</div><div class="bd story">${body}</div><button id="x" class="primary">Nod and leave</button>`, c=>c.querySelector('#x').onclick=closeVeil);
+}
+function lookDevon(){
+  openVeil(`<div class="ttl">DEVON · 3A</div><div class="bd story">He doesn’t hear you in the doorway. Three monitors, all red. “Come on, come on,” he whispers to the PULSE-X casino, buying the dip with money he doesn’t have. On the desk: a foil of pressed blue pills from the guy in the alley.</div><button id="x" class="primary">Back away</button>`, c=>c.querySelector('#x').onclick=closeVeil);
+}
+function street(){
+  openVeil(`<div class="ttl">5TH STREET · −10°C</div><div class="bd story">You step onto the stoop. Snow, a sodium streetlight, the data-centre steam rising over the river. A courier on a bike slows — “TaskDrop? No? Later, then.” In the dark of the alley, someone is watching your coat.</div><div class="small">The street opens up later. For now, inside is where the work is.</div><button id="x" class="primary">Back inside</button>`, c=>c.querySelector('#x').onclick=closeVeil);
+}
+
+// ending / event modal
+function end(tag, text, custom){
+  if(custom){ // non-fatal event (e.g., Kowalski)
+    openVeil(`<div class="ttl ${custom.bad?'bad':''}">${custom.ttl}</div><div class="bd story">${custom.body.replace(/\n\n/g,'<br><br>')}</div><button id="x" class="primary">Keep going</button>`, c=>c.querySelector('#x').onclick=closeVeil);
+    return;
+  }
+  S.over=true;
+  openVeil(`<div class="ttl bad">${tag}</div><div class="bd story">${(text||'').replace(/\n/g,'<br><br>')}</div><div class="row"><button id="again" class="primary">Again</button><button id="menu" class="ghost">Title</button></div>`, c=>{
+    c.querySelector('#again').onclick=()=>{ closeVeil(); newGame(); scene='play'; $('hud').classList.remove('hidden'); updateHUD(); };
+    c.querySelector('#menu').onclick=()=>{ closeVeil(); scene='title'; $('title').classList.remove('hidden'); $('hud').classList.add('hidden'); };
+  });
+}
+
+// ================= input =================
+function worldXfromClient(cxp){ const rect=cv.getBoundingClientRect(); return clamp((cxp-rect.left)/(cv.width/W), COR0, COR1); }
+cv.addEventListener('pointerdown', e=>{
+  if(scene!=='play'||S.over||paused()) return;
+  const rect=cv.getBoundingClientRect();
+  const wx=worldXfromClient(e.clientX);
+  const wy=(e.clientY-rect.top)/(cv.height/H);
+  const f=floorFromY(wy);
+  if(f===null) return;
+  // tapped an object? walk to it, then use it
+  const sp=SPOTS.find(s=>s.floor===f && Math.abs(wx-s.x)<14);
+  if(sp) goTo(sp.floor, sp.x, sp);
+  else goTo(f, wx);
+});
+const onStairs = () => S.p.x>STX0-6 && S.p.x<STX1+6;
+addEventListener('keydown', e=>{
+  if(scene!=='play'||S.over) return;
+  const p=S.p;
+  if(paused()){ if(e.key==='Escape') closeVeil(); return; }
+  const k=e.key.toLowerCase();
+  if(k==='arrowleft'||k==='a') keys.l=true;
+  else if(k==='arrowright'||k==='d') keys.r=true;
+  else if((k==='arrowup'||k==='w') && onStairs() && p.floor<3){ p.floor++; p.x=STAIR_X; p.goal=null; }
+  else if((k==='arrowdown'||k==='s') && onStairs() && p.floor>0){ p.floor--; p.x=STAIR_X; p.goal=null; }
+  else if(k==='e'||k===' '){ e.preventDefault(); interact(nearSpot()); }
+  else return;
+  e.preventDefault();
+});
+addEventListener('keyup', e=>{
+  const k=e.key.toLowerCase();
+  if(k==='arrowleft'||k==='a') keys.l=false;
+  if(k==='arrowright'||k==='d') keys.r=false;
+});
+$('startBtn').onclick=()=>{ newGame(); scene='play'; $('title').classList.add('hidden'); $('hud').classList.remove('hidden'); updateHUD(); };
+
+newGame(); // so render has state on title
+requestAnimationFrame(frame);
+window.__b4b = { get S(){return S;}, interact, nearSpot, SPOTS };
+})();
+</script>
+</body>
+</html>
