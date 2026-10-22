@@ -83,7 +83,7 @@ As they level up they transform: FACTORY SHELL, UPGRADED, HALF-SHELL, then ENDOS
 The phone opens to a home screen with three apps:
 
 - **TaskDrop** for gigs.
-- **ODDSLY**, a prediction market on the coming weeks' news, with a $100 limit per market. Prices drift toward the truth as the date nears. The morning paper prints price rises five days ahead, so careful readers can profit. GOLDIE's coin never pays.
+- **Bullymarket 🐂**, a prediction market for the stupidest questions on earth. Will Mr. Crump wear a tank top to his next meeting? Will Felon Husk name his 45th child after a broken printer sound? Three markets open each morning, from a deck of 104 parody celebrities, and the results arrive at night in your ledger, next to heat and food. Bets are $10 to $100, or ALL IN. Win a little, lose big: the "AI judge" sees your position before it rules. Always betting NO wins about 3 nights in 4 for a couple of dollars, and the 4th night takes the whole stake on a technicality. Long-shot YES bets almost never pay.
 - **PULSE**, a dating app. Free swipes rarely match, and Gold ($15 a week) shows you first. Most matches are bots that want a gift card, a subscription or a crypto deposit. One is a real person.
 
 ## You and Soot

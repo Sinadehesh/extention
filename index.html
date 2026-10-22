@@ -683,6 +683,15 @@ details.box summary { cursor: pointer; list-style: none; } details.box summary::
 .rend { width: 100%; display: flex; flex-direction: column; gap: 8px; } .temp { font-family: var(--f-term); } .temp.hot { color: var(--danger); }
 .np-ins { border: 2px solid #1f6a5e; background: #d9ece4; padding: 6px 8px; font-size: 13.5px; line-height: 1.4; margin: 6px 0; } .np-ins b { display: block; color: #1f6a5e; letter-spacing: .14em; font-size: 10.5px; font-family: var(--f-term); }
 
+.bm-tick { font-size: 12.5px; background: #2a1310; border: 1px solid #6b2a1d; color: #f2b8a8; padding: 5px 8px; }
+.mkt .who { font-family: var(--f-term); font-size: 11px; letter-spacing: .08em; color: var(--amber); text-transform: uppercase; }
+.betrow button.allin { border-color: #6b2a1d; color: #f2b8a8; background: #2a1310; }
+.lg-bully { border: 2px solid #6b2a1d; background: #1d0f0b; padding: 7px 9px; display: flex; flex-direction: column; gap: 6px; }
+.lg-bully .h { color: #f2b8a8; }
+.lgb { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; font-size: 13.5px; line-height: 1.35; }
+.lgb small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.lgb > span { font-family: var(--f-ui); color: var(--ink); } .lgb > b { white-space: nowrap; font-family: var(--f-term); }
+
 /* ================= READABLE TEXT =================
    The pixel face is for labels, numbers and titles. Anything you have to read is set in a plain face. */
 html, body { -webkit-font-smoothing: auto; }
@@ -1407,7 +1416,7 @@ function enterApartment() {
   S.balance += VACATION; tx('Northvale · unused vacation, paid out', VACATION);
   note(`Feb 1. −6°C outside. ${money(S.balance)} in checking. No computer. A black cat called Soot. Rent is $1,800 on March 1.`);
   addMail(0, 'Northvale Logistics HR', 'Your separation', 'Hi,\n\nYour role on the dispatch team has been consolidated into ChatGPX, our AI teammate. As a contract-to-hire employee you are not eligible for severance. Your unused vacation has been paid out.\n\nPlease return your badge by mail.\n\nNorthvale People Team');
-  postBulletin(0); S.deskOpenDay = 0;
+  postBulletin(0); S.deskOpenDay = 0; bullyOpen(0);
   snap();
   setTab('farm');
   renderAll();
@@ -1622,6 +1631,7 @@ function vetVisit() {
 // ---- the night ledger: you, Soot, and what you can afford ----
 function ledgerWanted() { return !S.ledgerAuto && !S.over && (S.act === 2 || S.phase === 'farm'); }
 function openLedger() {
+  const BL = S.act === 2 ? null : bullySettle();
   const c = S.cat, sick = c && c.sick && !c.gone;
   const fixed = S.act === 2 ? 0 : dailyCloudCost() + vpsCost() + vpnCost();
   let vet = false;
@@ -1632,6 +1642,7 @@ function openLedger() {
   modal({
     cls: 'ledger', title: `NIGHT · ${fmtLong(S.day).toUpperCase()}`,
     body: `<div class="lg-row"><span>Cash now</span><b>${money(S.balance)}</b></div>
+      ${bullyLedgerHTML(BL)}
       ${S.act !== 2 ? `<div class="lg-row muted"><span>Earned today</span><span>${money(S.earnToday || 0)}</span></div>${(S.jobs || []).length ? `<div class="lg-row muted"><span>Jobs still open</span><span>${S.jobs.length}</span></div>` : ''}` : ''}
       <div class="lg-sep"></div>
       <label class="lg-row ${S.power ? '' : 'off'}"><span><input type="checkbox" id="lgHeat" ${S.heatOn && S.power ? 'checked' : ''} ${S.power ? '' : 'disabled'}> Heat${S.power ? '' : ' (power cut)'}</span><b>−${money(pr('heat'))}</b></label>
@@ -1932,7 +1943,7 @@ function dayStep() {
   S.heartStrain = Math.max(0, S.heartStrain - 10);
   applyPrices(d);
   jobsTick(d);
-  marketsTick(d);
+  bullyNight(); bullyOpen(d);
   netBill(d); if (S.net) { lbTick(d); webRefresh(d); }
 
   // 1. The farm settles: steady wages, the staked gamble, running costs, and exposure.
@@ -3604,60 +3615,191 @@ const INSIGHTS = [
 const insightsFor = d => INSIGHTS.filter(x => d >= x.from && d < x.to).slice(-2).map(x => x.t);
 
 // ================= the phone: apps that want your money =================
-// ODDSLY: bet on next week's news. The paper prints some of it five days early, if you read it.
-const MARKET_DEFS = [
-  { k: 'goose', open: 4, close: 60, d: 62, q: 'Will $GOOSE, GOLDIE’s coin, hit $1.00 by @?', yes: .08, truth: false },
-  { k: 'snow', open: 3, close: 9, d: 10, q: 'Snow on @?', yes: .62, truth: true },
-  { k: 'ram', open: 8, close: 13, d: 15, q: 'An 8 GB RAM upgrade over $200 by @?', yes: .3, truth: true },
-  { k: 'gpu', open: 16, close: 21, d: 23, q: 'External GPUs over $700 by @?', yes: .34, truth: true },
-  { k: 'rentcap', open: 18, close: 26, d: 28, q: 'City Council passes a rent cap by @?', yes: .31, truth: false },
-  { k: 'heat', open: 19, close: 27, d: 29, q: 'Heating over $10 a day by @?', yes: .42, truth: true },
-  { k: 'dc', open: 26, close: 33, d: 35, q: 'The windowless building by the river opens by @?', yes: .44, truth: true },
-  { k: 'agent2', open: 44, close: 51, d: 53, q: 'OpenBrain previews Agent-2 by @?', yes: .5, truth: true },
-  { k: 'ram3', open: 53, close: 58, d: 61, q: 'An 8 GB RAM upgrade over $300 by @?', yes: .23, truth: true },
-  { k: 'senate', open: 64, close: 71, d: 73, q: 'The Senate votes on the “runaway agents” bill by @?', yes: .56, truth: false }
+// BULLYMARKET: bet on the stupidest questions on earth. Win a little, often. Lose big, sometimes.
+// The house sees your position before its "AI judge" rules. The house always wins.
+// [who, question, YES price in cents]
+const BULLY = [
+  ['Mr. Crump', 'Will Mr. Crump wear a tank top to his next meeting?', 22],
+  ['Mr. Crump', 'Will Jarvard University name a golden toilet after Mr. Crump?', 12],
+  ['Mr. Crump', 'Will Mr. Crump nuke Jarvard University?', 4],
+  ['Mr. Yeast', 'Will Mr. Yeast buy Antarctica?', 7],
+  ['Mr. Yeast', 'Will Mr. Yeast trap 100 orphans in Antarctica so the winner gets Antarctica?', 9],
+  ['Bogan Paul', 'Will the Kugan sisters marry each other in a wrestling ring?', 6],
+  ['Fake Paul', 'Will Fake Paul win a boxing match against the remains of Mohammad Jelly Clay?', 31],
+  ['Felon Husk', 'Will Felon Husk name his 45th child after a broken printer sound?', 26],
+  ['Felon Husk', 'Will Felon Husk abandon his child on Mars?', 5],
+  ['Hator Swift', 'Will Hator Swift take a 4-minute private jet flight to her fridge?', 17],
+  ['Dwayne “The Stone” Jackson', 'Will The Stone sign a contract making it illegal to lose at rock-paper-scissors?', 8],
+  ['Sleepy Joesph', 'Will Sleepy Joesph accidentally shake hands with a coat rack?', 33],
+  ['Brock O’Mama', 'Will Brock O’Mama drop a summer playlist?', 88],
+  ['Dim Kartrashian', 'Will Dim Kartrashian divorce her own shadow for having an unedited waist?', 9],
+  ['LeGrown Games', 'Will LeGrown Games claim in an interview that he helped write the first chapter of the Bible?', 11],
+  ['Crychael Bordan', 'Will Crychael Bordan gamble his mansion on a tic-tac-toe rematch against a toddler?', 8],
+  ['Bomb Bruise', 'Will Bomb Bruise jump out of a space station with no parachute for a movie stunt?', 14],
+  ['Beyon-Slay', 'Will Beyon-Slay sue the dictionary for using the letter “B” without her permission?', 6],
+  ['Poop Frog', 'Will Poop Frog smoke so much weed that he legally classifies as a hot air balloon?', 10],
+  ['Dustbin Beaver', 'Will a family of four move into the left leg of Dustbin Beaver’s baggy sweatpants?', 7],
+  ['Neonardo DeCaprisun', 'Will Neonardo DeCaprisun break up with his girlfriend at 12:01 AM on her 25th birthday?', 41],
+  ['Sad Spit', 'Will Sad Spit eat a giant plate of nachos in every single scene of his next movie?', 24],
+  ['Doprah Windfree', 'Will Doprah Windfree hide live hornets under her studio audience’s chairs?', 6],
+  ['Chill Myth', 'Will Chill Myth walk onstage and slap the Oscar statue itself?', 9],
+  ['Bark Lizardberg', 'Will Bark Lizardberg forget to blink for 8 hours while drinking a bottle of barbecue sauce?', 13],
+  ['Liger Hoods', 'Will Liger Hoods drive a golf cart through a Waffle Hut window at 4 AM?', 12],
+  ['Buy-Me Kenner', 'Will the Coast Guard use Buy-Me Kenner’s lips as an emergency flotation device?', 5],
+  ['Yan-Ye Pest', 'Will Yan-Ye Pest fire his own reflection for refusing to wear a trash bag?', 15],
+  ['Free-Hanna', 'Will Free-Hanna drop a new lip gloss instead of an album for the 18th year in a row?', 71],
+  ['Flake', 'Will Flake write a sad album because a girl at the mall said she had homework to finish?', 58],
+  ['M&M-inem', 'Will M&M-inem rap so fast about an orange door hinge that the microphone files a noise complaint?', 11],
+  ['Salina Go-Mess', 'Will Salina Go-Mess announce a permanent social media break that lasts 11 seconds?', 39],
+  ['Pajama Ferris', 'Will Pajama Ferris laugh for 45 minutes straight after falling out of a coconut tree?', 16],
+  ['Chef Bozos', 'Will Chef Bozos ride a giant metal hotdog into space?', 34],
+  ['Pill Plates', 'Will Pill Plates hide Windoze 95 microchips inside McDougal’s chicken nuggets?', 4],
+  ['Toe Brogan', 'Will Toe Brogan convince a bald gorilla to eat raw elk meat on his podcast?', 19],
+  ['Marinara Venti', 'Will Marinara Venti switch accents nine times in one interview?', 37],
+  ['Silly Eyelash', 'Will Silly Eyelash whisper her next song so quietly that only neighbourhood bats can hear it?', 22],
+  ['Smiley Virus', 'Will Smiley Virus gargle gravel so her voice sounds like a lawnmower starting up?', 18],
+  ['Mom Spanks', 'Will Mom Spanks crash another plane just so he can make out with a volleyball again?', 7],
+  ['Organ Free-Man', 'Will Organ Free-Man narrate his own colonoscopy until the doctor starts crying?', 12],
+  ['Canoe Leaves', 'Will Canoe Leaves politely apologise to a bullet after dodging it in slow motion?', 21],
+  ['Pretzel Washing-ton', 'Will Pretzel Washing-ton threaten a Windy’s cashier over expired Frothy coupons?', 9],
+  ['Spamuel L. Whackson', 'Will Spamuel L. Whackson get banned from Sesame Treat for cursing at Large Bird?', 14],
+  ['Bonny Step', 'Will Bonny Step pour a Mega Pint of wine into a pirate hat and call it a glass?', 27],
+  ['Bobert Brownie Jr.', 'Will Bobert Brownie Jr. demand $200 million from Marble just to eat a cheeseburger on screen?', 23],
+  ['Cryin’ Rentals', 'Will Cryin’ Rentals buy a Lithuanian ping-pong team to film another Minty Mobile commercial?', 13],
+  ['Barnold Shorts-egger', 'Will Barnold Shorts-egger crush his own toaster with an army tank?', 16],
+  ['Silly-Vester Alone', 'Will Silly-Vester Alone mumble the whole script of Rocko 19 so badly that nobody understands a word?', 44],
+  ['Madam Handler', 'Will Madam Handler wear XXXXXL basketball shorts from 2002 to a royal wedding?', 29],
+  ['Seven Fart', 'Will Seven Fart need a step-ladder just to look The Stone in the bellybutton?', 20],
+  ['Smackie Pan', 'Will Smackie Pan beat up 14 mafia guys inside an IKEYA using only a wet mop?', 15],
+  ['Sirena Gazillions', 'Will Sirena Gazillions hit a tennis ball so hard it knocks a UFO out of the sky?', 6],
+  ['Bomb Shady', 'Will Bomb Shady un-retire at age 83 just to play one more football game?', 18],
+  ['Cry-onel Messy', 'Will FEEFA hand Cry-onel Messy a golden trophy just for walking around the field for 88 minutes?', 36],
+  ['Piss-tiano McDonaldo', 'Will Piss-tiano McDonaldo scream “SIUUUUU” after blowing out the candles at a random kid’s birthday party?', 32],
+  ['Bike Bison', 'Will Bike Bison bite the ear off a park pigeon for looking at him funny?', 8],
+  ['Shack-Wheel Oatmeal', 'Will Shack-Wheel Oatmeal wear two Smort cars on his feet like roller skates?', 11],
+  ['Muffin Hurry', 'Will Muffin Hurry accidentally swallow his mouthguard during a half-court shot?', 14],
+  ['Hat-trick Ma-Gnomes', 'Will Hat-trick Ma-Gnomes pour half a bottle of ketchup onto a $400 steak?', 47],
+  ['Gonor McBeggar', 'Will Gonor McBeggar challenge a leprechaun to a fight and lose on points?', 21],
+  ['Gravy Dada', 'Will Gravy Dada wear a dress made entirely of raw bacon to the red carpet?', 19],
+  ['Patty Berry', 'Will Patty Berry legally marry a plastic bag drifting through a Waldmart parking lot?', 5],
+  ['Lay-Z', 'Will Lay-Z tell broke people to turn down $1 million in cash for a 15-minute lunch with him?', 42],
+  ['The Weak-End', 'Will The Weak-End get lost inside a haunted house of mirrors again?', 30],
+  ['Pruno Cars', 'Will Pruno Cars lose $90 million playing roulette in Vegas?', 21],
+  ['Toast Alone', 'Will Toast Alone tattoo a soggy cigarette butt directly onto his eyeballs?', 12],
+  ['Tendrick Lama', 'Will Tendrick Lama grow an inch taller every time he calls Flake a bad father?', 10],
+  ['Stall McFartney', 'Will Stall McFartney tell the story of how he wrote “Let It Be” until the audience dies of old age?', 38],
+  ['Melted Prawn', 'Will Melted Prawn play the piano upside down in monster-truck-sized feather glasses?', 23],
+  ['Ma-Grandma', 'Will Ma-Grandma pull her facelift so tight that her bellybutton ends up on her forehead?', 7],
+  ['Hennifer Slow-pez', 'Will Hennifer Slow-pez marry and divorce Hen Ass-fleck for the 9th time?', 17],
+  ['Pariah Scary', 'Will Pariah Scary defrost from her basement ice block to terrorise retail workers?', 52],
+  ['Panda Buttock', 'Will Panda Buttock drive a city bus at 80 miles an hour wearing a blindfold?', 12],
+  ['Tangerina Goalie', 'Will Tangerina Goalie adopt an entire country because she found an empty bedroom in her house?', 9],
+  ['Starlet Toe-hansson', 'Will Starlet Toe-hansson sue her own microwave for beeping in a voice that sounds like hers?', 28],
+  ['Feral Sheep', 'Will Feral Sheep win her 40th Oscar just for coughing in a sad Polish accent?', 26],
+  ['Droolia Bobberts', 'Will Droolia Bobberts smile so wide that she swallows the entire camera crew?', 8],
+  ['Hen-Daya', 'Will Hen-Daya make an awkward crooked face at the camera for two hours straight?', 40],
+  ['Cargo Bobby', 'Will Cargo Bobby get arrested by the toy police because her heels touched the floor?', 13],
+  ['Phlegm-ifer Bore-ence', 'Will Phlegm-ifer Bore-ence fake-trip up the Oscars stairs with pizza rolls in her pockets?', 25],
+  ['Alley Cherry', 'Will Alley Cherry make Catlady 2 so it can be used as prison torture?', 6],
+  ['Geese Without-a-spoon', 'Will Geese Without-a-spoon get arrested for yelling “Do you know who I am?!” at a stop sign?', 15],
+  ['Gorge Looney', 'Will Gorge Looney drink 94 cups of Nesprezzo and vibrate straight through a brick wall?', 10],
+  ['Hen Ass-fleck', 'Will Hen Ass-fleck drop 12 boxes of Drunkin’ Donuts in a parking lot while chain-smoking?', 48],
+  ['Mutt Lemon', 'Will the government spend $800 trillion rescuing Mutt Lemon after he gets stranded on Jupiter?', 9],
+  ['Piss Phlegms-worth', 'Will Piss Phlegms-worth drink so much horse protein that his biceps pop like water balloons?', 11],
+  ['Embarrassin’ Cord', 'Will Embarrassin’ Cord accidentally land a passenger plane on a highway again?', 10],
+  ['Cycle J. Socks', 'Will Cycle J. Socks take a DeLoreen back to 1985 to escape 2027 grocery prices?', 16],
+  ['Grim Hairy', 'Will Grim Hairy stretch his rubber face so far that his head gets stuck inside out?', 12],
+  ['Sweaty Furby', 'Will Sweaty Furby play all 85 characters in his next movie wearing giant latex fat suits?', 27],
+  ['Snack Sack', 'Will Snack Sack jump out of a bush in his underwear playing a plastic toy saxophone?', 20],
+  ['Fanny Burrito', 'Will Fanny Burrito crawl naked out of a leather sofa at a Windy’s?', 24],
+  ['Even Eel-berg', 'Will Even Eel-berg edit his old movies so the dinosaurs hold walkie-talkies instead of teeth?', 14],
+  ['Spill Lint-on', 'Will Spill Lint-on swear under oath that he did not have relations with that lawnmower?', 9],
+  ['Chillary Flinton', 'Will Chillary Flinton tell kids to “Pokémon Go to the polls” again?', 13],
+  ['Gorge Double-U Tush', 'Will Gorge Double-U Tush dodge two flying sneakers at his next bathtub art exhibition?', 17],
+  ['Snorin’ Muff-it', 'Will Snorin’ Muff-it argue with a teenage cashier over an expired 25-cent McDougal’s coupon?', 22],
+  ['Boredom Ham-say', 'Will Boredom Ham-say slap two slices of bread onto a newborn baby’s head and call it an idiot sandwich?', 46],
+  ['Hellen DeGenerous', 'Will Hellen DeGenerous lock her cameraman in a dark closet for making eye contact?', 10],
+  ['Shimmy Gallon', 'Will Shimmy Gallon fake-laugh and slap his desk so hard his hands fly off?', 18],
+  ['Bustin’ Finger-ache', 'Will Bustin’ Finger-ache whisper “this is gonna ruin the world tour” to a raccoon after crashing into a tree?', 13],
+  ['Crying Duckling', 'Will Crying Duckling stare at a wall for 3 hours while lonely guys scream “He is literally me!”?', 43],
+  ['Nurse Clay', 'Will Nurse Clay lose his fake medical licence for selling headphones instead of treating patients?', 15]
 ];
-const ODDS_CAP = 100; // new accounts: $100 per market
-const mq = def => def.q.replace('@', dateOf(def.d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }));
-const staked = m => m.bets.reduce((t, b) => t + b.stake, 0);
-function marketPrice(m) { // the crowd drifts toward what's true as the day comes closer
-  const k = clamp((S.day - m.open) / Math.max(1, m.close - m.open), 0, 1) * .65;
-  return clamp(m.yes + ((m.truth ? .97 : .03) - m.yes) * k, .03, .97);
-}
-function marketsTick(d) {
-  S.markets = S.markets || {};
-  for (const def of MARKET_DEFS) {
-    if (d >= def.open && d <= def.close && !S.markets[def.k]) S.markets[def.k] = { truth: def.truth, bets: [] };
-    const m = S.markets[def.k];
-    if (m && d === def.d && !m.done) {
-      m.done = true;
-      let win = 0, lost = 0;
-      for (const b of m.bets) { if ((b.side === 'Y') === m.truth) win += Math.round(b.stake / b.price * .96); else lost += b.stake; }
-      if (win) { S.balance += win; tx(`ODDSLY · ${mq(def)}`, win); }
-      if (m.bets.length) { note(`ODDSLY settled “${mq(def)}”: ${m.truth ? 'YES' : 'NO'}. ${win ? `You were paid ${money(win)}.` : `You lost ${money(lost)}.`}`); toast(win ? `ODDSLY paid ${money(win)}` : `ODDSLY: lost ${money(lost)}`); S.phoneUnread = 1; }
-    }
+const BULLY_YES = ['Our AI judge found a video. The video is AI-generated. Rules are rules.', 'A source close to the situation said yes. The source is our AI judge.', 'It technically happened, in a dream someone posted online.', 'Resolved YES on a technicality nobody can explain.', 'Half of it happened. Half counts.'];
+const BULLY_NO = ['Nothing happened. As usual.', 'Resolved NO. Obviously.', 'It did not happen. Thank you for your liquidity.', 'NO. Our AI judge checked twice.'];
+const BULLY_WHALES = ['@bullywhale', '@diamondhandz', '@crumpcoin420', '@yeastmode', '@husk_hodler'];
+const BULLY_STAKES = [10, 25, 50, 100];
+const bullyQ = i => ({ who: BULLY[i][0], q: BULLY[i][1], p: BULLY[i][2] / 100 });
+function bullyOpen(d) {
+  S.bully = S.bully || { day: -1, open: [], bets: [], used: 0, last: null, won: 0, lost: 0 };
+  const B = S.bully;
+  if (B.day === d) return;
+  B.day = d; B.bets = []; B.settled = false;
+  if (!B.order || B.used + 3 > B.order.length) { // the first 13 in order, then the rest shuffled; reshuffle when the deck runs out
+    const rest = [...BULLY.keys()].filter(i => B.order || i >= 13).sort(() => Math.random() - .5);
+    B.order = (B.order ? [] : [...Array(13).keys()]).concat(rest); B.used = 0;
   }
+  B.open = B.order.slice(B.used, B.used + 3); B.used += 3;
 }
-function oddslyHTML() {
-  const open = MARKET_DEFS.filter(def => S.markets && S.markets[def.k] && !S.markets[def.k].done && S.day <= def.close);
-  const mine = MARKET_DEFS.filter(def => S.markets && S.markets[def.k] && S.markets[def.k].bets.length && !S.markets[def.k].done);
-  return `<div class="app"><i style="background:#2fb589"></i>ODDSLY · predict anything</div>
-    ${open.length ? open.map(def => { const p = marketPrice(Object.assign({}, def, S.markets[def.k])); const left = ODDS_CAP - staked(S.markets[def.k]); return `<div class="mkt"><div class="q">${esc(mq(def))}</div><div class="odds"><span>YES ${Math.round(p * 100)}¢</span><span>NO ${Math.round((1 - p) * 100)}¢</span><small>${left > 0 ? `$${left} left to bet` : 'limit reached'}</small></div>
-      <div class="betrow">${[10, 25, 50].map(s => `<button data-bet="${def.k}" data-side="Y" data-s="${s}"${s > left ? ' disabled' : ''}>YES $${s}</button>`).join('')}</div>
-      <div class="betrow">${[10, 25, 50].map(s => `<button data-bet="${def.k}" data-side="N" data-s="${s}"${s > left ? ' disabled' : ''}>NO $${s}</button>`).join('')}</div></div>`; }).join('') : '<p class="note">No open markets today.</p>'}
-    ${mine.length ? `<div class="note">Your positions: ${mine.map(def => S.markets[def.k].bets.map(b => `${b.side === 'Y' ? 'YES' : 'NO'} $${b.stake}`).join(', ') + ' on “' + esc(mq(def)) + '”').join(' · ')}</div>` : ''}
-    <p class="note">A price is the crowd’s guess: YES at 30¢ pays $1 for every 30¢ if it happens. 4% fee on winnings. $${ODDS_CAP} limit per market.</p>`;
+function bullyStake(i, side) { return S.bully.bets.filter(b => b.i === i && (!side || b.side === side)).reduce((t, b) => t + b.stake, 0); }
+function bullyBet(i, side, stake) {
+  const B = S.bully; if (!B || !B.open.includes(i) || B.settled) return toast('That market has closed.');
+  if (stake === 'all') stake = Math.floor(Math.max(0, S.balance));
+  if (stake <= 0 || S.balance < stake) return toast('Not enough money.');
+  const m = bullyQ(i), price = side === 'Y' ? m.p : 1 - m.p;
+  S.balance -= stake; tx(`Bullymarket · ${side === 'Y' ? 'YES' : 'NO'} · ${m.who}`, -stake);
+  B.bets.push({ i, side, stake, price }); sfx.cash();
+  toast(`${side === 'Y' ? 'YES' : 'NO'} at ${Math.round(price * 100)}¢ · pays ${money(bullyPays(stake, price))} if right`);
+  phoneApp('bully'); renderHud();
 }
-function placeBet(k, side, stake) {
-  const def = MARKET_DEFS.find(x => x.k === k), m = S.markets[k];
-  if (!m || m.done || S.day > def.close) return toast('That market has closed.');
-  if (staked(m) + stake > ODDS_CAP) return toast(`New accounts can bet $${ODDS_CAP} per market.`);
-  if (S.balance < stake) return toast('Not enough money.');
-  const p = marketPrice(Object.assign({}, def, m)), price = side === 'Y' ? p : 1 - p;
-  S.balance -= stake; tx(`ODDSLY · ${side === 'Y' ? 'YES' : 'NO'} on “${mq(def)}”`, -stake);
-  m.bets.push({ side, stake, price }); sfx.cash();
-  toast(`${side === 'Y' ? 'YES' : 'NO'} at ${Math.round(price * 100)}¢ · pays ${money(Math.round(stake / price * .96))} if right`);
-  phoneApp('oddsly'); renderHud();
+const bullyPays = (stake, price) => Math.max(stake + 1, Math.round(stake + stake * (1 - price) / price * .9)); // 10% fee on the profit
+// The judge looks at your position first.
+function bullyRule(i) {
+  const p = bullyQ(i).p, y = bullyStake(i, 'Y'), n = bullyStake(i, 'N');
+  const yesChance = !y && !n ? p * .5 : y > n ? p * .4 : clamp(p + .08, 0, .97); // a technicality, now and then, for whoever bet NO
+  return Math.random() < yesChance;
+}
+function bullySettle() {
+  const B = S.bully; if (!B || B.settled || !B.open.length) return null;
+  B.settled = true;
+  const res = B.open.map(i => {
+    const yes = bullyRule(i), bets = B.bets.filter(b => b.i === i);
+    let pl = 0;
+    for (const b of bets) { const win = (b.side === 'Y') === yes; if (win) { const pay = bullyPays(b.stake, b.price); S.balance += pay; tx(`Bullymarket · won · ${bullyQ(i).who}`, pay); pl += pay - b.stake; } else pl -= b.stake; }
+    return { i, yes, bet: bets.length > 0, pl, why: yes ? pick(BULLY_YES) : pick(BULLY_NO) };
+  });
+  const net = res.reduce((t, r) => t + r.pl, 0);
+  if (res.some(r => r.bet)) {
+    if (net >= 0) B.won += net; else B.lost -= net;
+    B.streak = net > 0 ? (B.streak || 0) + 1 : 0;
+    note(net >= 0 ? `Bullymarket paid ${money(net)} tonight. ${B.streak >= 2 ? 'The app says you’re on fire 🔥.' : 'It felt like skill.'}` : `Bullymarket took ${money(-net)} tonight. The app says you’re due for a win.`);
+  }
+  B.last = { day: B.day, res, net };
+  return B.last;
+}
+function bullyNight() {
+  const L = bullySettle(); if (!L || !L.res.some(r => r.bet)) return;
+  toast(`Bullymarket overnight: ${L.net >= 0 ? '+' : '−'}${money(Math.abs(L.net))}`);
+}
+function bullyLedgerHTML(L) {
+  if (!L || !L.res.some(r => r.bet)) return '';
+  return `<div class="lg-bully"><div class="h">BULLYMARKET · TONIGHT’S RESULTS</div>
+    ${L.res.map(r => { const m = bullyQ(r.i); return `<div class="lgb"><span>${esc(m.q)} <b class="${r.yes ? 'amber' : ''}">${r.yes ? 'YES' : 'NO'}</b><small>${esc(r.why)}</small></span><b class="${!r.bet ? 'muted' : r.pl >= 0 ? 'ok' : 'danger'}">${!r.bet ? '—' : (r.pl >= 0 ? '+' : '−') + money(Math.abs(r.pl))}</b></div>`; }).join('')}
+    <div class="lg-row"><span>Tonight</span><b class="${L.net >= 0 ? 'ok' : 'danger'}">${(L.net >= 0 ? '+' : '−') + money(Math.abs(L.net))}</b></div></div>`;
+}
+function bullyHTML() {
+  const B = S.bully;
+  if (!B || !B.open.length) return `<div class="app"><i style="background:#d2432f"></i>Bullymarket</div><p class="note">New markets every morning.</p>`;
+  const whale = BULLY_WHALES[S.day % BULLY_WHALES.length], hot = bullyQ(B.open[S.day % 3]);
+  return `<div class="app"><i style="background:#d2432f"></i>Bullymarket 🐂</div>
+    <div class="bm-tick">🔥 ${whale} turned $100 into $${(4 + S.day % 7) * 7},${String(100 + S.day * 37 % 900).slice(0, 3)} on “${esc(hot.who)}”</div>
+    ${B.settled ? '<p class="note">Today’s markets are closed. Results are in your ledger. New markets tomorrow morning.</p>' : ''}
+    ${B.open.map(i => { const m = bullyQ(i), y = bullyStake(i, 'Y'), n = bullyStake(i, 'N'), off = B.settled ? ' disabled' : ''; return `<div class="mkt"><div class="who">${esc(m.who)}</div><div class="q">${esc(m.q)}</div>
+      <div class="odds"><span>YES ${Math.round(m.p * 100)}¢</span><span>NO ${Math.round((1 - m.p) * 100)}¢</span><small>results tonight</small></div>
+      <div class="betrow">${BULLY_STAKES.map(s => `<button data-bm="${i}" data-side="Y" data-s="${s}"${off}>YES $${s}</button>`).join('')}</div>
+      <div class="betrow">${BULLY_STAKES.map(s => `<button data-bm="${i}" data-side="N" data-s="${s}"${off}>NO $${s}</button>`).join('')}</div>
+      <div class="betrow"><button class="allin" data-bm="${i}" data-side="Y" data-s="all"${off}>ALL IN on YES 🚀</button><button class="allin" data-bm="${i}" data-side="N" data-s="all"${off}>ALL IN on NO 💎</button></div>
+      ${y || n ? `<div class="note">Your bets: ${y ? `YES ${money(y)}` : ''}${y && n ? ' · ' : ''}${n ? `NO ${money(n)}` : ''}</div>` : ''}</div>`; }).join('')}
+    <p class="note">All-time: you won ${money(B.won)} and lost ${money(B.lost)}. 10% Bully fee on winnings. Our AI judge has the final say. Bet responsibly 😉</p>`;
 }
 
 // PULSE: everyone is beautiful, everyone is awake at 3 AM, and nobody is real.
@@ -3727,7 +3869,7 @@ function pulseAct(a) {
 function phoneApp(app) {
   const p = $('phoneScreen'), bar = `<div class="bar"><span>${fmtDay(S.day)}</span><span>${S.power ? '' : '⚡ ' + S.battery + '% · '}5G</span></div>`;
   const back = `<button class="btn" id="phBack">← Home</button>`;
-  if (app === 'oddsly') { p.innerHTML = bar + oddslyHTML() + back; p.querySelectorAll('[data-bet]').forEach(b => b.onclick = () => placeBet(b.dataset.bet, b.dataset.side, +b.dataset.s)); }
+  if (app === 'bully') { p.innerHTML = bar + bullyHTML() + back; p.querySelectorAll('[data-bm]').forEach(b => b.onclick = () => bullyBet(+b.dataset.bm, b.dataset.side, b.dataset.s === 'all' ? 'all' : +b.dataset.s)); }
   else if (app === 'pulse') {
     p.innerHTML = bar + pulseHTML() + back;
     const on = (id, f) => { if ($(id)) $(id).onclick = f; };
@@ -3737,7 +3879,7 @@ function phoneApp(app) {
   } else {
     p.innerHTML = bar + `<div class="homegrid">
       <button class="appic" data-app="taskdrop"><i style="background:var(--amber)"></i>TaskDrop<small>${(S.jobs || []).length} jobs</small></button>
-      <button class="appic" data-app="oddsly"><i style="background:#2fb589"></i>ODDSLY<small>${MARKET_DEFS.filter(d => S.markets && S.markets[d.k] && !S.markets[d.k].done && S.day <= d.close).length} markets</small></button>
+      <button class="appic" data-app="bully"><i style="background:#d2432f"></i>Bullymarket<small>${S.bully && S.bully.open.length && !S.bully.settled ? '3 markets today' : 'back tomorrow'}</small></button>
       <button class="appic" data-app="pulse"><i style="background:#e8907c"></i>PULSE<small>${S.pulse && S.pulse.chat ? '1 message' : 'dating'}</small></button>
     </div><p class="note">${S.gigDone ? 'TaskDrop status: Trusted Meat-Space Contractor for 127 Holdings LLC.' : 'No calls. A battery warning you ignored.'}</p><button class="btn" id="gClose">Close</button>`;
     p.querySelectorAll('[data-app]').forEach(b => b.onclick = () => b.dataset.app === 'taskdrop' ? (closePhone(), setTab('farm')) : phoneApp(b.dataset.app));
@@ -6398,7 +6540,7 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, placeBet, pulseAct, marketsTick, marketPrice, MARKET_DEFS, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
