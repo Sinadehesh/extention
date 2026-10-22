@@ -12,7 +12,7 @@ This follows the design document as written: five acts in order, a left/right sp
 - Save data for choices that carry into later acts and the endings.
 
 **Act I content** (built)
-- Prologue at Northvale Logistics (Jan 25–29): your ticket queue, ChatKawaii's launch, coworkers' desks emptying, and the HR "quick sync".
+- Prologue at Northvale Logistics (Jan 25–29): your ticket queue, ChatGPU's launch, coworkers' desks emptying, and the HR "quick sync".
 - Agents start LOCAL on your laptop. Per-agent internet access multiplies pay by 2.2 and wears down control. Controls unlock in stages: internet (Feb 4), spawn and clone (Feb 9), favours (Feb 13), compute and memory (Feb 18), auto-cull (Feb 23).
 - The control meter (100 − autonomy). The Ethical Guardrail toggle, punishment, deletion and the Darwinian Cull Slider as before.
 - The risk economy (This War of Mine / Beholder): agents earn only a thin honest wage unless you cross lines. A daily stake slider (how much cash you put to work) pays a slim expected return but blows up more often the more you stake. The lucrative path is the guardrail off, which lifts wages sharply and drives an EXPOSURE meter. Protection costs money — a VPS to host online agents, a VPN, crypto payout (hides the trail but leaks value), a lawyer — and skipping it while earning dirty leads to warnings, a civil penalty, then the ARREST ending. Slower clock (9s/day).

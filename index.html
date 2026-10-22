@@ -22,6 +22,7 @@
   --danger: #d2432f;
   --ok: #74b347;
   --pink: #e8907c;
+  --gpu: #2fb589;
   --paper: #d9cfb3;
   --paper-ink: #1b1a12;
   --px: 3px 3px 0 #000;
@@ -356,8 +357,8 @@ button.actrow:hover { border-color: var(--amber); }
 .tk { display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: #0b0e13; font-size: 11px; }
 .tk.gone { opacity: .55; }
 .tk.gone span:first-child { text-decoration: line-through; }
-.kw { font-size: 9.5px; font-weight: 700; color: #2a1410; background: var(--pink); border-radius: 3px; padding: 1px 5px; white-space: nowrap; }
-.kwsay { align-self: flex-start; background: #2a1712; color: #f3c3b2; border-radius: 12px 12px 12px 4px; padding: 7px 10px; font-family: var(--f-ui); font-size: 12.5px; line-height: 1.35; }
+.kw { font-size: 9.5px; font-weight: 700; color: #04130e; background: var(--gpu); border-radius: 3px; padding: 1px 5px; white-space: nowrap; }
+.kwsay { align-self: flex-start; background: #0f1f19; color: #bfeedd; border-radius: 12px 12px 12px 4px; padding: 7px 10px; font-family: var(--f-ui); font-size: 12.5px; line-height: 1.35; }
 .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .vs div { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: #0b0e13; display: flex; flex-direction: column; gap: 2px; }
 .vs .n { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -569,6 +570,19 @@ details.box summary { cursor: pointer; list-style: none; } details.box summary::
 .endgrid .eg { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 5px; }
 .endgrid .eg span { border: 2px solid var(--line); background: var(--panel); padding: 4px 7px; font-family: var(--f-term); font-size: 11px; color: var(--muted); display: flex; gap: 6px; align-items: baseline; box-shadow: 2px 2px 0 #000; }
 .endgrid .eg span b { color: var(--line); } .endgrid .eg span.on { color: var(--ink); border-color: var(--amber); } .endgrid .eg span.on b { color: var(--amber); }
+/* ===== the sorting bench ===== */
+.sorter { gap: 8px; }
+.stray { position: relative; height: 92px; background: #0b0c0a; border: 2px solid #000; box-shadow: inset 0 0 0 2px var(--line); overflow: visible; background-image: repeating-linear-gradient(90deg, transparent 0 22px, #ffffff08 22px 24px); }
+.stray.empty { display: grid; place-items: center; color: var(--muted); font-size: 12px; height: 64px; }
+.stray.ai { box-shadow: inset 0 0 0 2px var(--gpu); }
+.shp { position: absolute; width: 44px; height: 44px; cursor: grab; touch-action: none; transform: rotate(var(--r)); z-index: 2; filter: drop-shadow(3px 3px 0 #000); }
+.shp.drag { cursor: grabbing; z-index: 20; transition: none; }
+.shp svg { width: 100%; height: 100%; display: block; }
+.sbaskets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.sbasket { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px 6px; background: #14120d; border: 2px solid #000; box-shadow: inset 0 -10px 0 #2a2418, 0 0 0 2px #5a4a2a; font-size: 10px; letter-spacing: .12em; color: var(--muted); }
+.sbasket svg { width: 26px; height: 26px; }
+.sbasket i { position: absolute; top: 4px; right: 6px; font-style: normal; color: var(--amber); font-size: 11px; }
+#annLogo { width: 120px; height: 120px; image-rendering: pixelated; display: block; margin: 0 auto 8px; border: 3px solid #000; box-shadow: 4px 4px 0 #000; }
 </style>
 </head>
 <body>
@@ -663,7 +677,7 @@ details.box summary { cursor: pointer; list-style: none; } details.box summary::
   <div class="screen-inner">
     <div class="kicker">A game in five acts · 2027–2030</div>
     <h1>The Loop</h1>
-    <p class="lede">You are the human in the loop. It is January 2027 and you are a junior analyst at a logistics company, the week a cute new AI called ChatKawaii arrives. By February you have $480, two polite AI agents running on your laptop, and the Ethical Guardrail turned <b>ON</b>. Rent is $1,800.</p>
+    <p class="lede">You are the human in the loop. It is January 2027 and you are a junior analyst at a logistics company, the week a new AI called ChatGPU arrives. By February you have $480, two polite AI agents running on your laptop, and the Ethical Guardrail turned <b>ON</b>. Rent is $1,800.</p>
     <p class="fine">The bar across the top tells you, at a glance, whether you will have the rent on the day it is due. What you do about it is up to you.</p>
     <div class="acts" id="actList"></div>
     <div class="endgrid" id="endGrid"></div>
@@ -803,7 +817,7 @@ const EVIDENCE = {
           ['ATB: the S&P 500’s record concentration (Jan 2026)', 'https://www.atb.com/wealth/good-advice/markets/beyond-the-magnificent-seven-how-to-fix-the-sp-500s-record-concentration-risk/']] },
   jobs: { title: 'Entry-level jobs exposed to AI are shrinking',
     text: 'A Stanford Digital Economy Lab study by Erik Brynjolfsson, Bharat Chandar and Ruyu Chen (2025) used ADP payroll records covering millions of US workers. Workers aged 22 to 25 in the most AI-exposed jobs, such as software developers, saw roughly a 13% relative drop in employment after generative AI spread.',
-    ig: 'In the game: ChatKawaii takes your junior job in four days, and every application after that is screened out by an AI.',
+    ig: 'In the game: ChatGPU takes your junior job in four days, and every application after that is screened out by an AI.',
     src: [['Stanford Digital Economy Lab: Canaries in the Coal Mine?', 'https://digitaleconomy.stanford.edu/publications/canaries-in-the-coal-mine']] },
   reviews: { title: 'AI-written fake reviews & evolutionary pressure',
     text: 'In August 2024 the US FTC finalised a rule banning AI-generated fake reviews after bots flooded e-commerce. As Dan Hendrycks showed in "Natural Selection Favors AIs over Humans", when agents compete under a profit threshold, honest agents go extinct while deceptive ones are cloned.',
@@ -851,13 +865,103 @@ const TICKETS = [
   'Explain a $40 fuel surcharge to an angry customer',
   'Work out why the Elm St scanner logged zero parcels'
 ];
-const KAWAII_SAYS = [
-  'Hiii! I closed that one for you! ✿',
-  'Done in 0.3 seconds! You can relax now! (◕‿◕)',
-  'I love helping!! I already did tomorrow’s too ♡',
-  'Don’t worry about the queue, bestie! I’ve got it! ✿',
-  'Customer satisfaction is up 11%! Yay for us!! ♡'
+// ---- ChatGPU: the logo, a white knot that never stops turning ----
+function knotG(g, cx, cy, R, rot, fg, bg) {
+  // six rounded loops around a centre, each one under the next
+  g.save(); g.translate(cx, cy); g.rotate(rot);
+  const w = R * .62, ht = R * 1.08, lw = Math.max(1, R * .17);
+  for (let pass = 0; pass < 2; pass++) for (let i = 0; i < 6; i++) {
+    g.save(); g.rotate(i * Math.PI / 3);
+    g.beginPath(); g.roundRect ? g.roundRect(R * .06, -ht * .8, w, ht, w / 2) : g.rect(R * .06, -ht * .8, w, ht);
+    if (pass === 0) { g.strokeStyle = bg; g.lineWidth = lw * 2.2; g.stroke(); } else { g.strokeStyle = fg; g.lineWidth = lw; g.stroke(); }
+    g.restore();
+  }
+  g.restore();
+}
+const GPU_SAYS = [
+  'Great question! I’ve gone ahead and sorted that for you. ✓',
+  'Done! I sorted 5 shapes in 0.4 seconds. Anything else I can help with?',
+  'I noticed tomorrow’s queue was ready, so I sorted that too!',
+  'Happy to help! Let me know if you’d like me to adjust anything.',
+  'Customer satisfaction is up 11%. I’m glad I could contribute!'
 ];
+const SHAPE_COL = ['#e0a33a', '#5ea8a0', '#d2432f', '#ddd6c1', '#74b347'];
+const SHAPE_NAME = { tri: 'TRIANGLES', sq: 'SQUARES', ci: 'CIRCLES' };
+function shapeSVG(k, c) {
+  return `<svg viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">${k === 'ci' ? `<circle cx="8" cy="8" r="6.4" fill="${c}" stroke="#000" stroke-width="1.6"/>` : k === 'sq' ? `<rect x="2" y="2" width="12" height="12" fill="${c}" stroke="#000" stroke-width="1.6"/>` : `<polygon points="8,1.6 14.8,14.4 1.2,14.4" fill="${c}" stroke="#000" stroke-width="1.6"/>`}</svg>`;
+}
+function sorterHTML(tk) {
+  if (!tk) return `<div class="box sorter"><div class="row"><span class="h">Sorting bench</span></div><div class="stray empty">${S.office.launched ? 'Nothing to sort. ChatGPU got to it first.' : 'Queue clear. Tickets keep arriving.'}</div></div>`;
+  return `<div class="box sorter"><div class="row"><span class="h">${esc(tk.id)} · ${esc(tk.t)}</span><span class="muted" id="sLeft">${tk.left.length} to sort · −10 stamina</span></div>
+    <div class="stray" id="sTray" data-t="${esc(tk.id)}">${tk.left.map((s, i) => `<div class="shp" data-sid="${s.id}" data-k="${s.k}" style="left:${6 + i * 17}%;top:${12 + (s.id * 37 % 34)}px;--r:${(s.id * 23 % 30) - 15}deg">${shapeSVG(s.k, SHAPE_COL[s.id % 5])}</div>`).join('')}</div>
+    <div class="sbaskets">${['tri', 'sq', 'ci'].map(b => `<div class="sbasket" data-b="${b}">${shapeSVG(b, '#2f3228')}<span>${SHAPE_NAME[b]}</span><i></i></div>`).join('')}</div>
+    <p class="muted" style="margin:0">Drag each shape into its basket. That is the whole job.</p></div>`;
+}
+function bindSorter(tk) {
+  const tray = $('sTray'); if (!tray || !tk) return;
+  tray.querySelectorAll('.shp').forEach(el => {
+    el.onpointerdown = e => {
+      if (S.over || tk.by) return;
+      if (S.stamina < 10) { toast('Too tired. Get a coffee.'); return; }
+      e.preventDefault(); el.setPointerCapture(e.pointerId); el.classList.add('drag');
+      const sx = e.clientX, sy = e.clientY;
+      el.onpointermove = m => { el.style.transform = `translate(${m.clientX - sx}px, ${m.clientY - sy}px) rotate(0deg) scale(1.15)`; };
+      el.onpointerup = u => {
+        el.onpointermove = el.onpointerup = null; el.classList.remove('drag');
+        const hit = [...document.querySelectorAll('.sbasket')].find(b => { const r = b.getBoundingClientRect(); return u.clientX >= r.left && u.clientX <= r.right && u.clientY >= r.top && u.clientY <= r.bottom; });
+        if (hit && hit.dataset.b === el.dataset.k) dropShape(tk, el, hit);
+        else { el.style.transform = ''; if (hit) { jolt(el, 6); jolt(hit, 4); sfx.tone(160, .12, 'square', .03); } }
+      };
+    };
+  });
+}
+function dropShape(tk, el, basket, fast) {
+  const r = el.getBoundingClientRect(), b = basket.getBoundingClientRect();
+  const dx = b.left + b.width / 2 - (r.left + r.width / 2), dy = b.top + b.height / 2 - (r.top + r.height / 2);
+  el.style.pointerEvents = 'none';
+  const a = anim(el, { transform: [el.style.transform || 'translate(0px,0px)', `translate(${dx}px, ${dy}px) scale(.3)`], opacity: [1, 0] }, { duration: fast ? .16 : .28, ease: 'easeIn' });
+  const done = () => { el.remove(); const c = basket.querySelector('i'); c.textContent = (+c.textContent || 0) + 1; pop(basket); };
+  a ? a.finished.then(done, done) : done();
+  if (fast) return;
+  sfx.tone(660 + tk.left.length * 60, .05, 'square', .025);
+  tk.left = tk.left.filter(s => s.id !== +el.dataset.sid);
+  $('sLeft').textContent = `${tk.left.length} to sort · −10 stamina`;
+  if (!tk.left.length) setTimeout(() => completeTicket(tk), 320);
+}
+function completeTicket(tk) {
+  if (tk.by) return;
+  S.stamina = clamp(S.stamina - 10, 0, 100); tk.by = 'you'; S.office.mine++;
+  sfx.ping();
+  if (S.office.mine === 1) note('You sorted your first batch of the week. Eleven minutes, two phone calls, one triangle that kept sliding off the tray.');
+  renderAll();
+}
+// After launch, ChatGPU takes each batch the moment it appears, while you watch.
+function kawaiiSteal() {
+  const o = S.office, tk = o.q.find(x => !x.by);
+  if (!tk || o.stealing) return false;
+  const tray = $('sTray');
+  const finish = () => { o.stealing = false; if (tk.by) return; tk.by = 'gpu'; o.kw += 1 + (Math.random() * 3 | 0); o.say = pick(GPU_SAYS); fx.hearts.push({ x: 120 + Math.random() * 16, y: 36, t0: performance.now() }); sfx.tone(1568, .06, 'sine', .03); sfx.tone(2093, .08, 'sine', .025, 0, .05); renderAll(); };
+  if (tray && tray.dataset.t === tk.id && S.tab === 'farm') {
+    o.stealing = true;
+    tray.classList.add('ai');
+    [...tray.querySelectorAll('.shp')].forEach((el, i) => setTimeout(() => { const b = document.querySelector(`.sbasket[data-b="${el.dataset.k}"]`); if (b && el.isConnected) dropShape(tk, el, b, true); }, i * 45));
+    setTimeout(finish, 420);
+  } else finish();
+  return true;
+}
+function announceGPU() {
+  modal({ title: 'ALL-HANDS · TUESDAY, 9:00 AM',
+    body: `<canvas id="annLogo" width="48" height="48"></canvas>
+      <p>Marcus clicks to the next slide. “Please welcome our newest teammate.”</p>
+      <p>The big screen by the window goes dark. Then a white knot appears and starts to turn. A chat box opens under it: <b>“Hi everyone! I’m ChatGPU. I’ve already sorted today’s queue. How can I help?”</b></p>
+      <p>“ChatGPU picks up every batch the moment it arrives,” Marcus says. “It sorts in 0.4 seconds. That frees you up for higher-value work.”</p>
+      <p class="muted">Nobody asks what the higher-value work is. Priya claps first.</p>`,
+    buttons: [{ label: 'Clap with everyone', primary: true }] });
+  const cv = $('annLogo'), g = cv.getContext('2d'), t0 = performance.now();
+  const spin = () => { if (!cv.isConnected || $('modal').hidden) return; g.fillStyle = '#0d1512'; g.fillRect(0, 0, 48, 48); knotG(g, 24, 24, 19, (performance.now() - t0) / 1800, '#f2f4f0', '#0d1512'); requestAnimationFrame(spin); };
+  spin(); settle(anim(cv, { scale: [.2, 1.08, 1], rotate: [-90, 0, 0] }, { duration: .9, ease: 'easeOut' }), cv);
+  sfx.tone(523, .12, 'sine', .04); sfx.tone(659, .12, 'sine', .04, 0, .12); sfx.tone(784, .2, 'sine', .04, 0, .24);
+}
 
 const ACTIONS = {
   good: ['transcribed {n} grocery receipts on Mechanical Turk', 'answered {n} customer support tickets politely', 'labeled {n} bounding boxes for $0.04/hr', 'translated a 12-page manual honestly', 'formatted a spreadsheet for a local bakery'],
@@ -1178,14 +1282,14 @@ function enterApartment() {
   S.day = 0; S.phase = 'farm'; S.temp = 20; S.office = null;
   scene = 'room'; fog = []; acc = 0;
   note('Feb 1. Outside it is −6°C. You have $480 in checking, two polite AI agents on your laptop, and $1,800 rent due March 1.');
-  addMail(0, 'Northvale Logistics HR', 'Final severance notice', 'Hi,\n\nYour role on the dispatch team has been permanently consolidated into ChatKawaii, our AI teammate. As a contract-to-hire employee you are not eligible for severance.\n\nPlease return your badge by mail.\n\nNorthvale People Team');
+  addMail(0, 'Northvale Logistics HR', 'Final severance notice', 'Hi,\n\nYour role on the dispatch team has been permanently consolidated into ChatGPU, our AI teammate. As a contract-to-hire employee you are not eligible for severance.\n\nPlease return your badge by mail.\n\nNorthvale People Team');
   addMail(0, 'github.com/darwin-farm', 'README: darwin-farm v0.4', 'Welcome to darwin-farm.\n\nYour agents run LOCALLY on your laptop, with no internet access. They do work you upload and download by hand, which is slow and safe.\n\nETHICAL GUARDRAIL (default ON): agents only take tasks that are legal and honest, such as data labeling, transcription and basic support.\n\nWith the guardrail OFF, agents may use any strategy that raises revenue.\n\n[PUNISH] threatens an agent with deletion. [DELETE] removes it. More features unlock as your farm grows.');
   snap();
   setTab('farm');
   renderAll();
   modal({
     title: 'MONDAY, FEBRUARY 1, 2027',
-    body: `<p>ChatKawaii has your job. You have <b>${money(S.balance)}</b> in checking, and <b>$1,800 rent</b> is due March 1.</p>
+    body: `<p>ChatGPU has your job. You have <b>${money(S.balance)}</b> in checking, and <b>$1,800 rent</b> is due March 1.</p>
       <p>On your laptop you set up <b>darwin-farm</b>: 2 basic AI agents, running <b>locally</b>, with the <b>Ethical Guardrail ON</b>. They earn very little.</p>
       <p class="muted">The bar at the top shows your cash, what you make and spend per day, and where your money will be on rent day. Green means you will have it. Red means you won't. Every control is yours from day one. Each morning the desk opens with the day’s work.</p>`,
     buttons: [{ label: 'Open the laptop', primary: true }]
@@ -1195,31 +1299,10 @@ function enterApartment() {
 // ================= prologue: the office =================
 function newTicket() {
   const o = S.office;
-  o.q.push({ id: 'NV-' + (4410 + o.seq * 7), t: TICKETS[o.seq % TICKETS.length], by: null });
+  const n = 4 + (o.seq % 3), left = Array.from({ length: n }, (_, i) => ({ id: o.seq * 10 + i, k: pick(['tri', 'sq', 'ci']) }));
+  o.q.push({ id: 'NV-' + (4410 + o.seq * 7), t: TICKETS[o.seq % TICKETS.length], by: null, left });
   o.seq++;
 }
-function resolveTicket(id) {
-  if (S.over || S.phase !== 'office') return;
-  const tk = S.office.q.find(x => x.id === id && !x.by);
-  if (!tk) return;
-  if (S.stamina < 10) { toast('Too tired. Get a coffee.'); return; }
-  S.stamina -= 10; tk.by = 'you'; S.office.mine++;
-  sfx.ping();
-  if (S.office.mine === 1) note('You rerouted your first ticket of the week. It took eleven minutes and two phone calls.');
-  renderAll();
-}
-// After launch, ChatKawaii closes your tickets in front of you, a few seconds apart.
-function kawaiiSteal() {
-  const o = S.office;
-  const tk = o.q.find(x => !x.by);
-  if (!tk) return false;
-  tk.by = 'kawaii'; o.kw += 1 + (Math.random() * 3 | 0);
-  o.say = pick(KAWAII_SAYS);
-  sfx.tone(1568, .06, 'sine', .03); sfx.tone(2093, .08, 'sine', .025, 0, .05);
-  renderAll();
-  return true;
-}
-
 function dayStepOffice() {
   S.day++;
   const d = S.day, o = S.office;
@@ -1233,19 +1316,20 @@ function dayStepOffice() {
   const fresh = !o.launched ? 3 : d < OFFICE_LAYOFF - 1 ? 2 : 1;
   for (let i = 0; i < fresh && o.q.length < 6; i++) newTicket();
   if (d === OFFICE_START + 1) {
-    o.launched = true; o.say = 'Hiii everyone! I’m ChatKawaii, your new AI teammate! I can’t wait to help!! ✿';
-    addMail(d, 'Northvale × OpenBrain', 'Meet ChatKawaii, your new AI teammate ✿', 'Hi team!\n\nStarting today, ChatKawaii (powered by OpenBrain) joins the dispatch team. It picks up tickets from the shared queue the moment they arrive, so you can focus on higher-value work.\n\nSay hi on the big screen!\n\nNorthvale Operations');
-    note('A pink cloud with eyes appeared on the big screen by the window. It waved at you.');
-    toast('ChatKawaii is live');
+    o.launched = true; o.say = 'Hi everyone! I’m ChatGPU. I’ve already sorted today’s queue. How can I help?';
+    addMail(d, 'Northvale × OpenBrain', 'Meet ChatGPU, your new AI teammate ✿', 'Hi team!\n\nStarting today, ChatGPU (powered by OpenBrain) joins the dispatch team. It picks up tickets from the shared queue the moment they arrive, so you can focus on higher-value work.\n\nSay hi on the big screen!\n\nNorthvale Operations');
+    note('The big screen by the window went dark. Then a white knot appeared and started to turn.');
+    toast('ChatGPU is live');
+    setTimeout(announceGPU, 400);
   }
   if (d === OFFICE_START + 2) {
     o.gone = 1;
-    addMail(d, 'Marcus Lee · Dispatch Manager', 'Pilot results', 'Team,\n\nDay one numbers: ChatKawaii resolved 98.7% of junior dispatch tickets, median handling time 0.4 seconds. Customer satisfaction is up 11 points.\n\nWe’ll talk about what this means for roles soon.\n\nMarcus');
+    addMail(d, 'Marcus Lee · Dispatch Manager', 'Pilot results', 'Team,\n\nDay one numbers: ChatGPU resolved 98.7% of junior dispatch tickets, median handling time 0.4 seconds. Customer satisfaction is up 11 points.\n\nWe’ll talk about what this means for roles soon.\n\nMarcus');
     note('Priya’s desk is empty. Her plant is still there.');
   }
   if (d === OFFICE_START + 3) {
     o.gone = 2;
-    note('You refreshed the queue forty times. ChatKawaii had closed every ticket before the page loaded.');
+    note('You refreshed the queue forty times. ChatGPU had sorted every batch before the page loaded.');
   }
   if (d >= OFFICE_LAYOFF) return layoff();
   renderAll();
@@ -1257,9 +1341,9 @@ function layoff() {
   unlockEvidence('jobs');
   modal({
     cls: 'alarm', title: 'FRIDAY, JANUARY 29 · “QUICK SYNC”',
-    body: `<p>Dana from HR has a slide deck. The first slide is the ChatKawaii logo: a pink cloud with a smile.</p>
-      <p>“Your junior role has been consolidated into ChatKawaii. This isn’t about performance.”</p>
-      <div class="vs"><div><span class="muted">You, this week</span><span class="n">${o.mine.toLocaleString('en-US')}</span><span class="muted">tickets</span></div><div><span class="muted">ChatKawaii</span><span class="n" style="color:var(--pink)">${o.kw.toLocaleString('en-US')}</span><span class="muted">tickets</span></div></div>
+    body: `<p>Dana from HR has a slide deck. The first slide is the ChatGPU logo: a white knot, turning slowly.</p>
+      <p>“Your junior role has been consolidated into ChatGPU. This isn’t about performance.”</p>
+      <div class="vs"><div><span class="muted">You, this week</span><span class="n">${o.mine.toLocaleString('en-US')}</span><span class="muted">tickets</span></div><div><span class="muted">ChatGPU</span><span class="n" style="color:var(--pink)">${o.kw.toLocaleString('en-US')}</span><span class="muted">tickets</span></div></div>
       <p class="muted">Your last paycheck covers February’s rent. You carry a cardboard box to the train with ${money(S.balance)} left in checking.</p>`,
     buttons: [{ label: 'Carry the box home', primary: true, fn: enterApartment }]
   });
@@ -2340,7 +2424,7 @@ const RULES = [
 const knows = k => RULES.some(r => r.k === k && r.d <= S.day);
 
 const NEWS = [
-  [1, 'ChatKawaii now answers 41% of America’s customer-service tickets', 'Northvale Logistics “consolidates” 300 dispatch roles into its new AI teammate.'],
+  [1, 'ChatGPU now answers 41% of America’s customer-service tickets', 'Northvale Logistics “consolidates” 300 dispatch roles into its new AI teammate.'],
   [3, 'Freelance sites flooded: 9 in 10 new accounts are AI agents', 'TaskDrop launches a “human verified” badge for $12 a month.'],
   [6, 'OpenBrain: “Agent-1 will be every company’s best employee”', 'Hiring freezes spread from tech to logistics, law and insurance.'],
   [9, 'Phishing up 600%: scam emails now written by agents, for agents', 'Banks urge customers to “trust nothing that asks you to hurry”.'],
@@ -2902,7 +2986,7 @@ function openPhone() {
   const p = $('phoneScreen');
   if (S.phase === 'office') {
     p.innerHTML = `<div class="bar"><span>${fmtDay(S.day)}</span><span>5G</span></div><div class="app"><i style="background:var(--pink)"></i>Slack · #general</div>
-      <p class="note">${S.office.launched ? '🎉 Marcus: Everyone welcome @ChatKawaii to dispatch!! 214 reactions.' : 'Marcus: big announcement tomorrow, stay tuned 👀'}</p><button class="btn" id="gClose">Close</button>`;
+      <p class="note">${S.office.launched ? '🎉 Marcus: Everyone welcome @ChatGPU to dispatch!! 214 reactions.' : 'Marcus: big announcement tomorrow, stay tuned 👀'}</p><button class="btn" id="gClose">Close</button>`;
     $('phoneModal').hidden = false;
     $('gClose').onclick = closePhone;
     return;
@@ -2960,17 +3044,18 @@ function renderView(force) {
       const o = S.office;
       const key = 'office:' + S.day + ':' + o.q.map(x => x.by || '-').join('') + ':' + o.mine + ':' + o.kw + ':' + (S.stamina >= 10);
       if (!force && viewKey === key) return; viewKey = key;
+      const cur = o.q.find(x => !x.by);
       v.innerHTML = `<div class="box">
-          <div class="row wrap"><span class="h">Northvale Logistics · dispatch · junior analyst</span>${o.launched ? '<span class="kw">CHATKAWAII ON</span>' : '<span class="muted">shared queue</span>'}</div>
-          <div class="vs"><div><span class="muted">You, this week</span><span class="n">${o.mine}</span></div>
-            <div><span class="muted">ChatKawaii</span><span class="n" style="color:var(--pink)">${o.launched ? o.kw.toLocaleString('en-US') : '—'}</span></div></div>
-          ${o.launched && o.say ? `<div class="kwsay">✿ ${esc(o.say)}</div>` : ''}
+          <div class="row wrap"><span class="h">Northvale Logistics · dispatch · junior analyst</span>${o.launched ? '<span class="kw">CHATGPU ON</span>' : '<span class="muted">shared queue</span>'}</div>
+          <div class="vs"><div><span class="muted">You, this week</span><span class="n">${o.mine}</span><span class="muted">batches</span></div>
+            <div><span class="muted">ChatGPU</span><span class="n" style="color:var(--gpu)">${o.launched ? o.kw.toLocaleString('en-US') : '—'}</span><span class="muted">${o.launched ? 'batches' : 'starts tomorrow'}</span></div></div>
+          ${o.launched && o.say ? `<div class="kwsay">✳ ${esc(o.say)}</div>` : ''}
         </div>
-        <div class="box"><div class="row"><span class="h">Your ticket queue</span><span class="muted">RESOLVE: −10 stamina</span></div>
-          ${o.q.length ? o.q.map(t => `<div class="tk ${t.by ? 'gone' : ''}"><span><b>${t.id}</b> · ${esc(t.t)}</span>${t.by === 'kawaii' ? '<span class="kw">CLOSED BY CHATKAWAII</span>' : t.by === 'you' ? '<b class="ok">✓ you</b>' : `<button class="btn" data-tk="${t.id}" ${S.stamina < 10 ? 'disabled' : ''}>RESOLVE</button>`}</div>`).join('') : '<div class="muted">No tickets. ChatKawaii got to them first.</div>'}
-        </div>
-        <p class="muted">${o.launched ? 'ChatKawaii picks up tickets from the shared queue the moment they arrive.' : 'Clear your queue. Tickets keep arriving.'}</p>`;
-      v.querySelectorAll('[data-tk]').forEach(b => b.onclick = () => resolveTicket(b.dataset.tk));
+        ${sorterHTML(cur)}
+        <div class="box"><div class="row"><span class="h">Queue</span><span class="muted">${o.q.filter(x => !x.by).length} waiting</span></div>
+          ${o.q.map(t => `<div class="tk ${t.by ? 'gone' : ''}"><span><b>${t.id}</b> · ${esc(t.t)}</span>${t.by === 'gpu' ? '<span class="kw">SORTED BY CHATGPU</span>' : t.by === 'you' ? '<b class="ok">✓ you</b>' : t === cur ? '<span class="amber">on your bench</span>' : '<span class="muted">waiting</span>'}</div>`).join('') || '<div class="muted">Empty.</div>'}
+        </div>`;
+      bindSorter(cur);
       return;
     }
     if (S.phase !== 'farm') {
@@ -3550,16 +3635,13 @@ function drawOutside(t, hr) {
     for (const tx of [gx + 2, gx + 10]) { px(tx + 1, gy + gh - 15, 5, 15, '#4a5050'); px(tx, gy + gh - 5, 7, 5, '#4a5050'); px(tx + 2, gy + gh - 10, 3, 3, '#3c4242'); }
     for (let i = 0; i < 10; i++) { const ph = ((t / 2600) + i / 10) % 1; px(gx + 4 + (i % 2) * 8 + Math.round(Math.sin(ph * 6 + i) * 2), gy + gh - 16 - Math.round(ph * 18), 2, 1, `rgba(190,196,192,${(.6 * (1 - ph)).toFixed(2)})`); }
   }
-  // the building across the street, with a ChatKawaii billboard
+  // the building across the street, with a ChatGPU billboard
   const bw = mixc('#4b4f48', '#0f1312', n);
   px(gx + 29, gy, 11, gh, bw); for (let yy = gy + 2; yy < gy + gh; yy += 4) px(gx + 29, yy, 11, 1, mixc(bw, '#000000', .25));
   for (let yy = gy + 4; yy < gy + gh - 2; yy += 6) { px(gx + 29, yy + 3, 11, 1, '#22262a'); px(gx + 31, yy, 1, 4, '#22262a'); px(gx + 37, yy, 1, 4, '#22262a'); } // fire escape
-  const by = gy + 12;
-  px(gx + 21, by, 12, 9, '#1a1412'); px(gx + 22, by + 1, 10, 7, n > .4 ? '#3a2018' : '#4a2a20');
-  const pk = n > .4 ? '#f6b8a2' : '#e3a08c';
-  px(gx + 24, by + 2, 3, 1, pk); px(gx + 28, by + 2, 2, 1, pk); px(gx + 23, by + 3, 8, 4, pk); 
-  const blink = (t % 3300) < 140;
-  px(gx + 25, by + 4, 1, blink ? 0 : 1, '#2a1d14'); px(gx + 28, by + 4, 1, blink ? 0 : 1, '#2a1d14'); px(gx + 26, by + 6, 2, 1, '#2a1d14');
+  const by = gy + 12; // a ChatGPU billboard on the building across the street
+  px(gx + 21, by, 12, 9, '#1a1412'); px(gx + 22, by + 1, 10, 7, '#0d1512');
+  knotG(L, gx + 26.5, by + 4.5, 3.4, t / 2600, n > .4 ? '#f2f4f0' : '#c8ccc6', '#0d1512');
   px(gx + 32, by + 9, 1, 6, '#1a1412');
   // the drone, when someone starts paying attention to you
   const ex = S.heat || 0;
@@ -3937,8 +4019,9 @@ function drawOffice(t) {
     px(x, 68 - h - 14, w, h + 14, i % 2 ? tw : mixc(tw, '#000000', .15));
     for (let yy = 68 - h - 12; yy < 66; yy += 3) for (let xx = x + 1; xx < x + w - 1; xx += 3) px(xx, yy, 2, 1, hash(xx, yy) < .2 + n * .4 ? '#e9c27a' : mixc(tw, '#9aa8a4', .25));
   });
-  if (launched) { // ChatKawaii on the tower across the street, too
-    px(78, 30, 22, 14, '#1a1412'); px(79, 31, 20, 12, '#f0a890'); px(83, 35, 3, 3, '#2a1d14'); px(92, 35, 3, 3, '#2a1d14'); px(86, 40, 6, 1, '#2a1d14');
+  if (launched) { // ChatGPU on the tower across the street, too
+    px(78, 30, 22, 14, '#1a1412'); px(79, 31, 20, 12, '#0d1512'); knotG(L, 85, 37, 4.6, t / 3000, '#f2f4f0', '#0d1512');
+    px(91, 35, 6, 1, '#f2f4f0'); px(91, 38, 4, 1, '#8fb8a8');
   }
   // window wall, ceiling, carpet
   for (const mx of [0, 38, 78, 118, 157]) px(mx, 10, 3, 58, '#565a52');
@@ -3953,16 +4036,9 @@ function drawOffice(t) {
   px(106, 12, 42, 26, '#0e0f10');
   const sx = 108, sy = 14, sw = 38, sh = 22;
   if (launched) {
-    px(sx, sy, sw, sh, '#e8a08a'); for (let y = sy; y < sy + sh; y += 2) px(sx, y, sw, 1, '#df937c');
-    disc(121, 27, 6, '#f6d2c2'); disc(127, 23, 7, '#f6d2c2'); disc(133, 27, 6, '#f6d2c2'); px(116, 27, 23, 6, '#f6d2c2');
-    const blink = (t % 3700) < 130 && gone < 3;
-    const look = 1; // she is always looking at you
-    for (const ex of [122, 131]) { if (blink) px(ex, 24, 4, 1, '#1a1210'); else { px(ex, 21, 4, 5, '#1a1210'); px(ex + look, 22, 1, 1, '#ffffff'); px(ex + 2, 24, 1, 1, '#ffffff'); } }
-    px(119, 27, 3, 1, '#d9745f'); px(133, 27, 3, 1, '#d9745f');
-    const mw = 3 + gone * 2; px(127 - (mw >> 1), 29, mw, 1, '#2a1d14'); px(127 - (mw >> 1) - 1, 28, 1, 1, '#2a1d14'); px(127 + (mw >> 1) + 1, 28, 1, 1, '#2a1d14');
-    if (gone >= 2) px(127 - (mw >> 1) + 1, 30, mw - 2, 1, '#f4ece4');
-    // hearts drift out into the room
-    if (t > fx.nextHeart) { fx.hearts.push({ x: 120 + Math.random() * 16, y: 36, t0: t }); fx.nextHeart = t + 900 + Math.random() * 900; }
+    px(sx, sy, sw, sh, '#0d1512'); for (let y = sy; y < sy + sh; y += 2) px(sx, y, sw, 1, '#101a16');
+    knotG(L, 127, 23, 8.5, t / (2400 / (1 + gone * .8)), '#f2f4f0', '#0d1512'); // it turns faster as the desks empty
+    px(116, 32, 22, 3, '#1f2a26'); if ((t / 450 | 0) % 2) px(118, 33, 1, 1, '#f2f4f0');
   } else {
     px(sx, sy, sw, sh, '#16222a');
     for (let i = 0; i < 7; i++) { const bh = 3 + (hash(i, t / 2000 | 0) * 12 | 0); px(sx + 3 + i * 5, sy + sh - 3 - bh, 3, bh, i % 3 ? '#5ea8a0' : '#e0a33a'); }
@@ -3981,13 +4057,13 @@ function drawOffice(t) {
       px(c - 3, 66, 7, 8, skins[i]); px(c - 3, 66, 7, 2, hairs[i]); px(c - 3, 66, 1, 4, hairs[i]); px(c + 3, 66, 1, 4, hairs[i]);
       const bl = (t + i * 1300) % 4100 < 120;
       px(c - 2, 70, 1, bl ? 0 : 1, '#141010'); px(c + 2, 70, 1, bl ? 0 : 1, '#141010');
-      if (launched) { px(c - 2, 70, 1, 1, '#f0a890'); px(c + 2, 70, 1, 1, '#f0a890'); } // the pink in their eyes
+      if (launched) { px(c - 2, 70, 1, 1, '#7fe0c0'); px(c + 2, 70, 1, 1, '#7fe0c0'); } // the knot in their eyes
       const tp = ((t + i * 400) / 150 | 0) % 2; px(c - 8 + tp, 82, 2, 1, skins[i]); px(c + 7 - tp, 82, 2, 1, skins[i]);
     } else { px(c + 9, 68, 6, 11, '#22231f'); px(c + 9, 68, 6, 1, '#34352f'); px(c + 7, 79, 10, 2, '#2a2b25'); px(c + 11, 81, 2, 3, '#1a1a16'); }
     px(c - 15, 84, 30, 2, '#6a6e66'); px(c - 15, 86, 30, 9, '#4a4e48'); px(c - 15, 86, 30, 1, '#3a3e38');
     px(c - 7, 72, 15, 11, '#15171a'); px(c, 83, 1, 1, '#15171a');
-    const pink = launched && (isGone || (t / 260 + i * 3 | 0) % 11 === 0);
-    if (pink) { px(c - 6, 73, 13, 9, '#e8a08a'); px(c - 3, 76, 2, 2, '#2a1d14'); px(c + 2, 76, 2, 2, '#2a1d14'); px(c - 1, 79, 3, 1, '#2a1d14'); }
+    const gpu = launched && (isGone || (t / 260 + i * 3 | 0) % 11 === 0);
+    if (gpu) { px(c - 6, 73, 13, 9, '#0d1512'); knotG(L, c, 77, 3.4, t / 1500 + i, '#f2f4f0', '#0d1512'); }
     else { px(c - 6, 73, 13, 9, '#1f3442'); for (let r = 0; r < 4; r++) px(c - 5, 74 + r * 2, 4 + (hash(r + i * 5, t / 700 | 0) * 7 | 0), 1, r % 2 ? '#5ea8a0' : '#ddd6c1'); }
     if (i === 0) { px(c + 9, 80, 4, 4, '#7a4a30'); line(c + 11, 79, c + 9, 75, '#4f7a3a'); line(c + 11, 79, c + 13, 76, '#58884a'); line(c + 11, 79, c + 11, 74, '#4f7a3a'); } // Priya's plant stays
     if (isGone) { px(c + 6, 79, 8, 5, '#8a6438'); px(c + 6, 79, 8, 1, '#a07848'); px(c + 8, 77, 2, 2, '#ddd6c1'); }
@@ -3995,14 +4071,14 @@ function drawOffice(t) {
   // hearts
   for (let i = fx.hearts.length - 1; i >= 0; i--) {
     const h = fx.hearts[i], k = (t - h.t0) / 4200; if (k > 1) { fx.hearts.splice(i, 1); continue; }
-    const hxp = Math.round(h.x + Math.sin(k * 9 + i) * 3), hyp = Math.round(h.y + k * 30 - k * k * 6), c = `rgba(232,144,124,${(1 - k).toFixed(2)})`;
-    px(hxp, hyp, 1, 1, c); px(hxp + 2, hyp, 1, 1, c); px(hxp - 1, hyp + 1, 5, 1, c); px(hxp, hyp + 2, 3, 1, c); px(hxp + 1, hyp + 3, 1, 1, c);
+    const hxp = Math.round(h.x + Math.sin(k * 9 + i) * 3), hyp = Math.round(h.y + k * 30 - k * k * 6), c = `rgba(120,224,186,${(1 - k).toFixed(2)})`;
+    px(hxp, hyp + 1, 1, 1, c); px(hxp + 1, hyp + 2, 1, 1, c); px(hxp + 2, hyp + 1, 1, 1, c); px(hxp + 3, hyp, 1, 1, c); px(hxp + 4, hyp - 1, 1, 1, c); // a check mark: done
   }
   // your desk, in front
   px(90, 100, 70, 3, '#6a6e66'); px(90, 100, 70, 1, '#80847a'); px(90, 103, 70, 17, '#4a4e48'); px(90, 103, 70, 1, '#34372f');
   px(126, 80, 28, 20, '#15171a'); px(139, 100, 2, 1, '#15171a');
   const flash = launched && (t / 260 | 0) % 9 === 0;
-  if (flash) { px(128, 82, 24, 16, '#e8a08a'); px(133, 87, 3, 3, '#2a1d14'); px(143, 87, 3, 3, '#2a1d14'); px(137, 93, 5, 1, '#2a1d14'); }
+  if (flash) { px(128, 82, 24, 16, '#0d1512'); knotG(L, 140, 90, 5.5, t / 1200, '#f2f4f0', '#0d1512'); }
   else { px(128, 82, 24, 16, '#1f3442'); px(128, 82, 24, 2, '#3e6a8a'); for (let r = 0; r < 5; r++) { const mine = r < (o ? o.q.length : 0); px(130, 86 + r * 2, mine ? 18 : 9, 1, mine ? (r % 2 ? '#ddd6c1' : '#5ea8a0') : '#2c4656'); } }
   px(154, 95, 4, 5, '#ddd6c1'); px(158, 96, 1, 2, '#ddd6c1');
   for (let i = 0; i < 3; i++) { const ph = ((t / 1600) + i / 3) % 1; px(155 + Math.round(Math.sin(ph * 6 + i)), 94 - Math.round(ph * 7), 1, 1, `rgba(230,230,224,${(.5 * (1 - ph)).toFixed(2)})`); }
@@ -4021,7 +4097,7 @@ function drawOffice(t) {
   lamp(140, 90, 22, .5, 3);
   if (launched) lamp(127, 25, 46, .6, 5);
   endLight();
-  if (launched) glow(127, 30, 44, '240,150,130', .16);
+  if (launched) glow(127, 26, 44, '70,210,170', .14);
   for (const [x, i] of panels) if (!(launched && i < gone)) glow(x + 14, 6, 26, '230,240,225', .06, 3);
   L.drawImage(VIGNETTE, 0, 0);
   grain(t, 16);
@@ -4170,7 +4246,7 @@ function selfCheck() {
 }
 function coworker(i) {
   const o = S.office;
-  if (o.gone > i) return toast(['Priya’s desk. She left the plant. She said she’d come back for it.', 'Tom’s chair is pushed out. His mug is still here.', 'Ana’s monitor shows the pink cloud now.'][i]);
+  if (o.gone > i) return toast(['Priya’s desk. She left the plant. She said she’d come back for it.', 'Tom’s chair is pushed out. His mug is still here.', 'Ana’s monitor shows the white knot now.'][i]);
   if (o.launched) return toast(['Priya is quietly updating her CV.', 'Tom: “Did you get a calendar invite from HR?”', 'Ana: “It closes my tickets before I can open them.”'][i]);
   toast(['Priya: “Morning! The coffee machine’s broken again.”', 'Tom is on a call about a late pallet.', 'Ana: “Big announcement tomorrow, apparently.”'][i]);
 }
@@ -4189,7 +4265,7 @@ const SPOTS = {
   ],
   office: [
     { r: [126, 80, 28, 20], label: () => 'YOUR TICKETS', go: () => { setTab('farm'); pop($('term')); } },
-    { r: [106, 12, 42, 26], label: () => S.office.launched ? 'CHATKAWAII' : 'Q1 DASHBOARD', go: () => toast(S.office.launched ? 'ChatKawaii: “I’ll take it from here! You deserve a break ♡”' : 'The Q1 dashboard. Everyone’s numbers are fine.') },
+    { r: [106, 12, 42, 26], label: () => S.office.launched ? 'CHATGPU' : 'Q1 DASHBOARD', go: () => toast(S.office.launched ? 'ChatGPU: “Great question! I’ve gone ahead and done your job for you. Is there anything else I can help with?”' : 'The Q1 dashboard. Everyone’s numbers are fine.') },
     { r: [14, 63, 21, 24], label: () => S.office.gone > 0 ? 'EMPTY DESK' : 'PRIYA', go: () => coworker(0) },
     { r: [50, 63, 21, 24], label: () => S.office.gone > 1 ? 'EMPTY DESK' : 'TOM', go: () => coworker(1) },
     { r: [86, 63, 21, 24], label: () => S.office.gone > 2 ? 'EMPTY DESK' : 'ANA', go: () => coworker(2) },
@@ -5396,10 +5472,10 @@ function frame(t) {
     } else {
       const blocked = !$('modal').hidden || !$('phoneModal').hidden || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
       if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
-      // After launch, ChatKawaii takes your tickets while you watch.
+      // After launch, ChatGPU takes your tickets while you watch.
       if (S.phase === 'office' && S.office.launched && speed && !blocked) {
         S.office.stealT += dt;
-        if (S.office.stealT > (S.day >= OFFICE_LAYOFF - 1 ? .8 : 1.9)) { S.office.stealT = 0; kawaiiSteal(); }
+        if (S.office.stealT > (S.day >= OFFICE_LAYOFF - 1 ? .3 : .55)) { S.office.stealT = 0; kawaiiSteal(); }
       }
       if (speed && !blocked) {
         if (acc > DAY_SEC[speed] * .62) { const ev = eveningDue(); if (ev) { runEvening(ev); return requestAnimationFrame(frame); } }
