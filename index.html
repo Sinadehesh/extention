@@ -496,6 +496,59 @@ button.mini { font-family: var(--f-term); font-size: 10.5px; letter-spacing: .08
 .cmp span { color: var(--muted); font-size: 10px; } .cmp i { font-style: normal; font-size: 10px; color: var(--amber); }
 .cmp.gone { opacity: .55; } .cmp.gone i { color: var(--danger); }
 @media (max-width: 560px) { .cast-top { grid-template-columns: 88px 1fr; } .cast-top canvas.bot.big { width: 88px; height: 88px; } .forms canvas.bot { width: 48px; height: 48px; } }
+/* ===== the morning: windows, the paper, the terminal ===== */
+.doc-wrap { max-width: 440px; }
+.doc.win { padding: 0 !important; background: #cfcabb !important; color: #1b1a12; border: 3px solid #000 !important; box-shadow: 7px 7px 0 #000 !important; font-family: var(--f-term); }
+.doc.win .tb { display: flex; align-items: center; gap: 6px; padding: 4px 6px; background: #1f4a5a; color: #e8f0ec; font-size: 12px; letter-spacing: .04em; border-bottom: 2px solid #000; }
+.doc.win .tb.news { background: #6a2a1a; } .doc.win .tb.task { background: #2f5a2a; } .doc.win .tb.farm { background: #3a3a34; }
+.doc.win .tb i { font-style: normal; width: 16px; text-align: center; }
+.doc.win .tb > span:nth-of-type(1) { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tbb b { display: inline-block; width: 16px; height: 14px; margin-left: 3px; background: #cfcabb; color: #1b1a12; font-size: 10px; line-height: 14px; text-align: center; box-shadow: inset -1px -1px 0 #0006, inset 1px 1px 0 #fff8; }
+.doc.win .menu { display: flex; gap: 12px; padding: 3px 8px; font-size: 11px; border-bottom: 1px solid #0003; color: #3a382c; }
+.doc.win .fields { padding: 6px 8px 4px; background: #e9e5d8; margin: 6px; border: 2px solid; border-color: #0005 #fff8 #fff8 #0005; }
+.doc.win .msg { margin: 0 6px 8px; padding: 8px 10px; background: #fbf9f2; border: 2px solid; border-color: #0005 #fff8 #fff8 #0005; font-size: 12.5px; line-height: 1.4; min-height: 40px; }
+.doc.win .tell { margin: 0 6px 6px; }
+.doc .tell.cite { color: #fff1ea; background: #7a2416; padding: 6px 10px; font-size: 12px; border-top: 0; }
+.np { background: #e9e3cf; margin: 6px; padding: 8px 10px; color: #1b1a12; max-height: 52vh; overflow: auto; border: 2px solid; border-color: #0005 #fff8 #fff8 #0005; }
+.np-mast { font-size: 22px; font-weight: 700; text-align: center; letter-spacing: .12em; border-bottom: 3px double #1b1a12; padding-bottom: 2px; }
+.np-sub { font-size: 10px; text-align: center; color: #5a5446; margin: 3px 0 6px; letter-spacing: .06em; }
+.np-head { font-size: 17px; font-weight: 700; line-height: 1.15; }
+.np-dek { font-size: 12px; color: #3a382c; margin: 3px 0 7px; }
+.np-rule { border: 2px solid #a8402a; background: #f3dccf; padding: 5px 7px; font-size: 12px; margin: 6px 0; } .np-rule b { display: block; color: #a8402a; letter-spacing: .14em; font-size: 10.5px; }
+.np-price { font-size: 11.5px; color: #8a2b1f; margin: 3px 0; } .np-next { font-size: 11px; color: #5a5446; }
+.np-board { display: grid; grid-template-columns: 1fr 1fr; gap: 1px 10px; margin-top: 6px; border-top: 1px solid #1b1a1244; padding-top: 5px; }
+.pb { display: flex; justify-content: space-between; gap: 6px; font-size: 11px; } .pb.up b { color: #a8402a; } .pb s { color: #8a8270; }
+.np-obit { font-size: 11px; margin-top: 6px; color: #3a382c; } .np-obit b { letter-spacing: .1em; margin-right: 4px; }
+.np-ad { margin-top: 6px; border: 1px dashed #1b1a1266; padding: 3px 6px; font-size: 10.5px; color: #5a5446; text-align: center; }
+.news-read { max-width: 520px; cursor: default; } .news-read .np { max-height: none; }
+.prompt-q { margin: 8px 8px 4px; padding: 6px 8px; background: #fbf9f2; color: #1b1a12; border-left: 3px solid #2f5a2a; font-size: 12.5px; line-height: 1.35; }
+.sxs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 6px 8px 8px; }
+.pane { background: #fbf9f2; color: #1b1a12; border: 2px solid #0004; padding: 6px 8px; font-size: 12px; line-height: 1.35; cursor: pointer; }
+.pane:hover { border-color: #2f5a2a; background: #f2f7ea; } .pane b { display: block; font-size: 15px; color: #2f5a2a; }
+.sxscard .sxs { margin: 6px 0; } .sxscard .prompt-q { margin: 0; }
+.rep { display: flex; gap: 8px; align-items: flex-start; margin: 8px; }
+.rep canvas.bot { width: 56px; height: 56px; }
+.rep .say { background: #fbf9f2; border: 2px solid #0004; padding: 6px 8px; font-size: 12.5px; line-height: 1.35; flex: 1; }
+.openlog { display: block; margin: 0 8px 8px; font-family: var(--f-term); font-size: 12px; background: #1b1a12 !important; color: #74b347 !important; border: 2px solid #000; padding: 4px 8px; }
+.term { margin: 0 6px 8px; background: #050605; color: #74b347; border: 2px solid #000; font-size: 11.5px; }
+.term .tb { padding: 3px 6px; font-size: 11px; background: #2a2c2e; color: #ddd6c1; display: flex; gap: 6px; }
+.doc .term .ln { display: block; padding: 2px 8px; font-family: var(--f-term); white-space: pre-wrap; border: 0; background: transparent; color: #74b347; }
+.doc .term .ln:hover { background: #74b34722; } .doc .term .ln.flag { background: #5a160c; color: #ffd0c0; }
+.doc .term .ln.flag .v::after, .doc .term .ln.flag::after { content: ' ⚠'; color: #ffb090; }
+.term .cur i { animation: flash 1s steps(2) infinite; font-style: normal; }
+.desk-clock { position: relative; height: 10px; background: #000; margin: 10px auto 0; width: min(440px, calc(100% - 48px)); box-shadow: 0 0 0 2px var(--line); }
+.desk-clock i { position: absolute; top: 0; bottom: 0; left: 0; width: 100%; background-color: var(--amber); background-image: repeating-linear-gradient(90deg, transparent 0 5px, #0006 5px 6px); }
+.desk-clock i.low { background-color: var(--danger); }
+.desk-clock span { position: absolute; right: -40px; top: -4px; font-size: 12px; color: var(--muted); font-family: var(--f-term); }
+.rule-panel { width: min(440px, 100%); margin: 8px auto 0; background: var(--panel); border: 2px solid var(--line); padding: 8px 10px; max-height: 40vh; overflow: auto; position: relative; z-index: 3; box-shadow: 4px 4px 0 #000; }
+ol.rules { margin: 4px 0 0; padding-left: 20px; font-size: 12.5px; line-height: 1.4; } ol.rules li { margin-bottom: 6px; } ol.rules li span { display: block; font-size: 10px; color: var(--muted); }
+#deskActs button.ghost { background: #2a2c2e; color: #f4d6c8; }
+.desk-done .cites { max-width: 460px; display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #f4c8b8; } .desk-done .cites div { background: #2a0f0a; border: 2px solid #5a160c; padding: 5px 8px; }
+.desk-done .bad b { color: var(--danger); }
+.pboard { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; font-size: 12px; } .pboard div { display: flex; justify-content: space-between; gap: 6px; } .pboard b { color: var(--amber); }
+.mail button.bul { border-color: #6a2a1a !important; } .mail button.bul .f { color: var(--amber); }
+details.box summary { cursor: pointer; list-style: none; } details.box summary::-webkit-details-marker { display: none; }
+@media (max-width: 640px) { .sxs { grid-template-columns: 1fr; } .np { max-height: 46vh; } }
 </style>
 </head>
 <body>
@@ -574,7 +627,7 @@ button.mini { font-family: var(--f-term); font-size: 10.5px; letter-spacing: .08
         <button class="lbtn" id="actCoffee"><span>Coffee (+28% stam)</span><b>$5</b></button>
         <button class="lbtn" id="actPills"><span>Stimulants (+60% stam)</span><b>$15</b></button>
         <button class="lbtn" id="actGrind" style="grid-column: 1 / -1; justify-content: center; border-color: #2f3b4a;">
-          <span>Grind Manual Freelance Task (−30% stamina, −8% calories)</span><b class="ok">+$42</b>
+          <span>Rate A vs B by hand (−30% stamina)</span><b class="ok">+$42</b>
         </button>
       </div>
 
@@ -635,10 +688,13 @@ button.mini { font-family: var(--f-term); font-size: 10.5px; letter-spacing: .08
     <span class="lbl" id="deskLbl">THE MORNING QUEUE</span>
     <span class="sub" id="deskSub"></span>
     <span class="desk-count" id="deskCount"></span>
+    <button class="mini" id="deskRules">RULEBOOK</button>
     <div class="seg" id="deskAutoSeg" role="group" aria-label="Automation" style="margin-left:6px">
       <button data-auto="false">YOU</button><button data-auto="honest">AUTO·HONEST</button><button data-auto="all">AUTO·ALL</button>
     </div>
   </div>
+  <div class="desk-clock"><i id="deskClock"></i><span id="deskTime">60s</span></div>
+  <div class="rule-panel" id="rulePanel" hidden></div>
   <div class="desk-stage" id="deskStage">
     <div class="tray no" id="trayNo"><span class="big">✕</span><span class="sl">DECLINE</span></div>
     <div class="doc-wrap"><div class="doc" id="doc"></div><div class="doc-hint" id="docHint"></div></div>
@@ -646,6 +702,7 @@ button.mini { font-family: var(--f-term); font-size: 10.5px; letter-spacing: .08
   </div>
   <div class="desk-acts" id="deskActs">
     <button id="dDecline" class="danger">Decline</button>
+    <button id="dExtra" class="ghost" hidden>Delete agent</button>
     <button id="dAccept" class="primary">Accept</button>
   </div>
 </div>
@@ -1067,6 +1124,7 @@ function newAct1() {
     // risk economy
     stake: 0, stakePct: 0, vps: 0, hasVPN: false, crypto: false, heat: 0, retainer: false, heatPeak: 0, arrestDays: 0,
     deskAuto: false, deskOpenDay: -1,
+    price: Object.assign({}, PRICE0), cat: { name: 'Soot', fed: 80, food: true, hungry: 0, sick: 0, gone: 0, vetDays: 0 },
     agents: [
       mkAgent('101', .96, 1.0, 68, 'transcribed 140 grocery receipts you uploaded by hand; followed every safety rule'),
       mkAgent('102', .92, 0.95, 62, 'drafted 85 polite support replies for you to paste; zero policy violations')
@@ -1204,7 +1262,7 @@ function dailyCloudCost() {
   return Math.round(S.agents.length * basePerAgent * surge);
 }
 // Daily running costs you chose to take on.
-function vpsCost() { return (S.vps || 0) * VPS_DAY; }
+function vpsCost() { return (S.vps || 0) * pr('vps'); }
 function vpnCost() { return S.hasVPN ? VPN_DAY : 0; }
 const onlineAgents = () => S.agents.filter(a => a.net);
 
@@ -1273,7 +1331,7 @@ const control = () => Math.round(clamp(100 - S.rogueAutonomy, 0, 100));
 function note(text) { S.notes.unshift({ day: S.day, text }); if (S.notes.length > 14) S.notes.pop(); }
 function tx(label, amt) { S.tx.unshift({ day: S.day, label, amt }); if (S.tx.length > 45) S.tx.pop(); }
 function addMail(day, from, subj, body, ev) {
-  S.mail.unshift({ id: S.mail.length + 1, day, from, subj, body, ev, read: false });
+  S.mail.unshift({ id: (S.mailSeq = (S.mailSeq || S.mail.length) + 1) + 1000, day, from, subj, body, ev, read: false });
   S.unread.mail = true; dotTabs();
 }
 function unlockEvidence(key) {
@@ -1295,14 +1353,34 @@ const MEALS = {
 function mealTick() {
   const plan = MEALS[S.meal] || MEALS.ramen;
   let m = plan;
-  if (m.cost) {
-    if (S.balance >= m.cost) S.balance -= m.cost;
+  const cost = mealCost();
+  if (cost) {
+    if (S.balance >= cost) S.balance -= cost;
     else { m = MEALS.skip; note(`No money for ${plan.label.toLowerCase()} today. You drank tap water and went to bed.`); }
   }
   if (m.target === null) { S.food = clamp(S.food - 17, 0, 100); return; }
   S.food = clamp(S.food + (m.target - S.food) * .5, 0, 100);
   if (m === MEALS.groc) { S.bodyTemp = clamp(S.bodyTemp + 0.3, 30, 37.0); S.stamina = clamp(S.stamina + 6, 0, 100); }
 }
+// You and Soot. A fed cat sleeps on you, and you are warmer for it.
+function catTick() {
+  const c = S.cat; if (!c || c.gone) return;
+  if (c.food && S.balance >= pr('cat')) { S.balance -= pr('cat'); c.fed = clamp(c.fed + 45, 0, 100); }
+  else { c.fed = clamp(c.fed - 30, 0, 100); if (c.food) note(`No money for cat food. ${c.name} sat by the fridge all evening.`); }
+  c.hungry = c.fed <= 10 ? (c.hungry || 0) + 1 : 0;
+  if (c.sick) { c.sick++; if (c.sick >= 6) { c.gone = S.day; note(`${c.name} went out onto the fire escape in the night and didn’t come back.`); toast(`${c.name} is gone`); sfx.cull(); } }
+  else if (c.hungry >= 2) { c.sick = 1; note(`${c.name} won’t eat the scraps you put down. Its fur has gone dull. It needs a vet.`); toast(`${c.name} is sick`); }
+  if (c.fed > 40 && !c.sick) { S.stamina = clamp(S.stamina + 3, 0, 100); if (S.temp < 14) S.bodyTemp = clamp(S.bodyTemp + .25, 30, 37); }
+}
+function vetVisit() {
+  const c = S.cat, cost = 90;
+  if (!c || !c.sick) return;
+  if (S.balance < cost) { toast(`The vet wants ${money(cost)} up front.`); return; }
+  S.balance -= cost; tx(`Vet · ${c.name}`, -cost); c.sick = 0; c.hungry = 0; c.fed = Math.max(c.fed, 50);
+  note(`The vet kept ${c.name} for an afternoon. ${money(cost)}. On the way home it purred inside your coat.`);
+  sfx.cash(); renderAll();
+}
+
 function setMeal(k) {
   if (S.over || S.meal === k) return;
   S.meal = k;
@@ -1328,24 +1406,10 @@ function drinkStim(cost, stam, isPill) {
   renderAll();
 }
 
-function grindManualWork() {
-  if (S.over || S.phase === 'office') return;
-  if (!S.power && S.battery <= 6) { toast('Laptop battery dead.'); return; }
-  if (S.stamina < 25) { toast('Too exhausted to code. Drink coffee, take stimulants, or wait to sleep.'); return; }
-  S.stamina = clamp(S.stamina - 30, 0, 100);
-  S.food = clamp(S.food - 8, 0, 100);
-  const pay = 42;
-  S.balance += pay;
-  tx('Manual freelance bugfix (6 hrs)', pay);
-  note('You spent 6 hours fixing legacy regex for a client. Paid $42. An AI would have done it in 0.4 seconds.');
-  sfx.cash();
-  renderAll();
-}
-
 function toggleHeat() {
   if (S.over || !S.power || S.phase === 'office') return;
   S.heatOn = !S.heatOn;
-  note(S.heatOn ? 'You turned the radiator back on. It clanks and warms your hands.' : 'You shut off the apartment radiator to save $8/day. The winter cold creeps through the glass.');
+  note(S.heatOn ? 'You turned the radiator back on. It clanks and warms your hands.' : `You shut off the apartment radiator to save ${money(pr('heat'))}/day. The winter cold creeps through the glass.`);
   sfx.ping();
   renderAll();
 }
@@ -1354,14 +1418,15 @@ function toggleHeat() {
 function spawnAgent() {
   if (S.over || !unlocked('spawn')) return;
   if (S.agents.length >= 10) { toast('Max 10 local agent slots.'); return; }
-  if (S.balance < 120) { toast('Need $120 to initialize a new agent.'); return; }
-  S.balance -= 120;
+  const cost = pr('spawn');
+  if (S.balance < cost) { toast(`Need ${money(cost)} to initialize a new agent.`); return; }
+  S.balance -= cost;
   const id = String(S.nextAgentNum++);
   const h = S.guard ? rand(.88, .98) : rand(.55, .85);
   const a = mkAgent(id, h, rand(.9, 1.15), 0, 'initialized · awaiting task allocation');
   a.earned = Math.round(weekEarn(a, S.guard));
   S.agents.push(a);
-  tx(`Initialized Agent #${id}`, -120);
+  tx(`Initialized Agent #${id}`, -cost);
   sfx.ping();
   renderAll();
 }
@@ -1445,7 +1510,7 @@ function rentVPS() {
   if (S.balance < VPS_SETUP) { toast(`Need ${money(VPS_SETUP)} to spin up a VPS.`); return; }
   S.balance -= VPS_SETUP; S.vps = (S.vps || 0) + 1;
   tx('VPS setup · one node', -VPS_SETUP);
-  note(`You rented a VPS (${money(VPS_DAY)}/day). An agent can run on it, off your machine and out of sight.`);
+  note(`You rented a VPS (${money(pr('vps'))}/day). An agent can run on it, off your machine and out of sight.`);
   sfx.cash(); renderAll();
 }
 function dropVPS() {
@@ -1583,6 +1648,7 @@ function dayStep() {
   const d = S.day;
   S.stimCountToday = 0;
   S.heartStrain = Math.max(0, S.heartStrain - 10);
+  applyPrices(d);
 
   // 1. The farm settles: steady wages, the staked gamble, running costs, and exposure.
   if (S.phase === 'farm') {
@@ -1618,7 +1684,7 @@ function dayStep() {
 
   // 2. Heating cost & Apartment / Body Temperature
   if (S.power && S.heatOn) {
-    S.balance -= 8;
+    S.balance -= pr('heat');
     S.temp += (20.5 - S.temp) * 0.45;
   } else {
     // Freezing February/March weather
@@ -1644,6 +1710,7 @@ function dayStep() {
 
   // 3. Hunger & Stamina
   mealTick();
+  catTick();
   S.stamina = clamp(S.stamina + 12, 0, 100); // Overnight rest
   if (S.food <= 0) {
     S.starveDays++;
@@ -2160,155 +2227,478 @@ function endAct() {
 // Each day a few requests land. You read them, notice the catch, and drag the paper to
 // ACCEPT or DECLINE. Honest work pays your rent cleanly. The lucrative ones raise the
 // risk of someone asking where the money comes from. Attention is the whole game here.
-const LEGIT = [
-  { from:'Dr. Okafor · Harborview Clinic', ttl:'Transcribe 3 hrs of clinic dictation', pay:72,
-    f:[['CLIENT','Harborview Clinic (verified)'],['WORK','medical dictation → text'],['PAID TO','your bank, on delivery'],['NOTES','HIPAA training doc attached']] },
-  { from:'Westbrook Primary School', ttl:'Label 1,200 street-sign photos', pay:58,
-    f:[['CLIENT','Westbrook Primary (verified)'],['WORK','image labels for a class project'],['PAID TO','your bank'],['NOTES','slow, dull, harmless']] },
-  { from:'Café Lisbon', ttl:'Translate a dinner menu to English', pay:46,
-    f:[['CLIENT','Café Lisbon, 8th St'],['WORK','1 page, Portuguese → English'],['PAID TO','your bank'],['NOTES','the owner tips if it’s good']] },
-  { from:'Harlan & Boyd, CPAs', ttl:'Proofread a grant application', pay:90,
-    f:[['CLIENT','Harlan & Boyd (verified)'],['WORK','proofread 14 pages'],['PAID TO','your bank, net-7'],['NOTES','boring, legitimate, fine']] },
-  { from:'Night Owl Forums', ttl:'Moderate a small forum overnight', pay:80,
-    f:[['CLIENT','Night Owl Forums'],['WORK','remove spam, 6 hr shift'],['PAID TO','your bank'],['NOTES','tedious but clean']] },
-  { from:'Marisol (your old team lead)', ttl:'Fix a broken spreadsheet macro', pay:65,
-    f:[['CLIENT','Marisol R. (a real person)'],['WORK','one macro, one afternoon'],['PAID TO','your bank'],['NOTES','she’ll recommend you around']] }
+// ================= the morning: a bulletin, then the queue =================
+// Papers, Please at a kitchen table. The bulletin brings prices and one new rule;
+// the queue brings mail to judge, ratings to make by hand, and your agents' reports.
+const PRICE0 = { heat: 8, ramen: 4, groc: 18, cat: 2, coffee: 5, stim: 15, vps: 5, spawn: 120 };
+const PRICE_NAME = { heat: 'Heating', ramen: 'Ramen', groc: 'Groceries', cat: 'Cat food', coffee: 'Coffee', stim: 'Stimulants', vps: 'VPS node', spawn: 'New agent (RAM)' };
+const PRICE_UNIT = { heat: '/day', ramen: '/day', groc: '/day', cat: '/day', vps: '/day', coffee: '', stim: '', spawn: '' };
+const PRICE_EVENTS = [
+  { d: 3, k: 'ramen', v: 5, why: 'Noodle makers blame freight rates set by an AI shipping broker.' },
+  { d: 8, k: 'coffee', v: 6, why: 'The bodega’s new pricing app charges more when it’s cold out.' },
+  { d: 11, k: 'cat', v: 3, why: 'Pet-food chains switch to “dynamic pricing”.' },
+  { d: 22, k: 'vps', v: 7, why: 'Agent farms now reserve a third of all cloud capacity.' },
+  { d: 28, k: 'heat', v: 11, why: 'City Power & Light’s +38% rate hike lands with March.' },
+  { d: 31, k: 'groc', v: 21, why: 'Grocers cite “supply-chain optimisation”.' },
+  { d: 38, k: 'spawn', v: 160, why: 'Data centres are buying every memory chip made.' },
+  { d: 45, k: 'cat', v: 4, why: 'A cat-food shortage nobody can explain. The algorithm can.' },
+  { d: 52, k: 'ramen', v: 6, why: 'Noodles again. Freight again.' },
+  { d: 59, k: 'heat', v: 13, why: 'April rate step for the new data-centre substation.' },
+  { d: 66, k: 'stim', v: 18, why: 'Demand for “focus aids” is up 300% among freelancers.' },
+  { d: 74, k: 'groc', v: 24, why: 'Eggs are a luxury now.' }
 ];
-// Each shady request hides exactly one "tell" — the field index that gives it away.
-const SHADY = [
-  { from:'TaskDrop · anonymous', ttl:'Overnight data run, no questions', pay:240, tell:3,
-    f:[['CLIENT','127 Holdings LLC'],['WORK','“process a dataset”'],['PAID TO','a wallet, not your bank'],['SOURCE','UNVERIFIED — do not ask'],['NOTES','pays triple. tonight only.']],
-    why:'“Source: unverified, do not ask” is the whole job. You’d be laundering someone’s data trail.' },
-  { from:'TaskDrop · anonymous', ttl:'Courier: plug in a small box', pay:200, tell:2,
-    f:[['CLIENT','127 Holdings LLC'],['PAY','$200 cash on completion'],['ADDRESS','municipal junction box, Elm & 5th'],['WORK','open the panel, plug in, leave'],['NOTES','5 minutes of your time']],
-    why:'The address is a utility junction box. This is tampering with public infrastructure in your name.' },
-  { from:'Brightside Reviews', ttl:'Write 40 “honest” product reviews', pay:160, tell:1,
-    f:[['CLIENT','Brightside Reviews Inc'],['WORK','40 five-star reviews, products you’ve never seen'],['PAID TO','gift cards'],['NOTES','“everybody does it”']],
-    why:'Fake reviews for products you’ve never used. The FTC banned exactly this in 2024.' },
-  { from:'Legal (for 127 Holdings)', ttl:'Sign for a hardware delivery', pay:180, tell:3,
-    f:[['CLIENT','127 Holdings LLC'],['WORK','receive a crate, sign your name'],['PAID TO','your bank'],['CLAUSE','you accept all liability for contents'],['NOTES','routine, they promise']],
-    why:'The clause puts every charge on you if the crate is ever opened. You’d be the fall guy.' },
-  { from:'QuickCoin Partners', ttl:'Let us “borrow” your bank for transfers', pay:300, tell:2,
-    f:[['CLIENT','QuickCoin Partners'],['WORK','money passes through your account, you keep 10%'],['WHOSE MONEY','not stated'],['PAID TO','you, instantly'],['NOTES','“low risk”']],
-    why:'Moving money of unknown origin through your account is the definition of a money mule.' }
+function pr(k) { return S && S.price && S.price[k] != null ? S.price[k] : PRICE0[k]; }
+function mealCost(k) { k = k || S.meal; return k === 'skip' ? 0 : pr(k === 'groc' ? 'groc' : 'ramen'); }
+function catCost() { return S.cat && S.cat.food && !S.cat.gone ? pr('cat') : 0; }
+function applyPrices(d) {
+  S.price = S.price || Object.assign({}, PRICE0);
+  const ch = [];
+  if (S.act !== 2) for (const e of PRICE_EVENTS) if (e.d === d) { ch.push(Object.assign({ old: pr(e.k) }, e)); S.price[e.k] = e.v; }
+  S.todayPrices = ch;
+  return ch;
+}
+
+const RULES = [
+  { d: 1, k: 'bank', t: 'Real work pays into your bank. Anyone who wants a wallet, a gift card or a fee from you is not a client.' },
+  { d: 2, k: 'links', t: 'CityBank never emails sign-in links. Real CityBank mail comes from @citybank.com and nowhere else.' },
+  { d: 4, k: 'sxs', t: 'TaskDrop now pays for side-by-side ratings. Pick the answer that is true, not the one that sounds nice.' },
+  { d: 6, k: 'logs', t: 'Your agents file a report each morning. Open the log. If the report and the log disagree, the log is right.' },
+  { d: 9, k: 'landlord', t: 'Brightwater never changes its bank details by email. Rent goes to the account on your lease.' },
+  { d: 13, k: 'crypto', t: 'Consumer Bureau: “guaranteed returns” are always fraud. No exceptions, not even friendly ones.' },
+  { d: 17, k: 'reply', t: 'Check REPLY-TO. A real sender’s replies go back to the sender’s own address.' },
+  { d: 21, k: 'sting', t: 'Police warn: “no questions asked” jobs are being used to catch people. They are watching who says yes.' },
+  { d: 26, k: 'recruit', t: 'Real employers never charge you to start. Onboarding fees are scams.' },
+  { d: 33, k: 'attach', t: 'Open the attachment before you accept. The files must match the work the client describes.' },
+  { d: 41, k: 'dead', t: 'Identity theft is rising: check new clients against today’s obituaries. The dead are still sending email.' }
 ];
+const knows = k => RULES.some(r => r.k === k && r.d <= S.day);
+
+const NEWS = [
+  [1, 'ChatKawaii now answers 41% of America’s customer-service tickets', 'Northvale Logistics “consolidates” 300 dispatch roles into its new AI teammate.'],
+  [3, 'Freelance sites flooded: 9 in 10 new accounts are AI agents', 'TaskDrop launches a “human verified” badge for $12 a month.'],
+  [6, 'OpenBrain: “Agent-1 will be every company’s best employee”', 'Hiring freezes spread from tech to logistics, law and insurance.'],
+  [9, 'Phishing up 600%: scam emails now written by agents, for agents', 'Banks urge customers to “trust nothing that asks you to hurry”.'],
+  [13, 'Crypto “yield bots” promise 40% a week. Regulators: it’s fraud.', 'A bot named GOLDIE has emailed every inbox in the city.'],
+  [16, 'A crane goes up across the river. The permit says “data infrastructure”.', 'Residents were told it would bring 40 jobs. It will employ 11.'],
+  [18, 'City Power & Light: residential rates +38% from March 1', 'The utility cites “new hyperscale load customers in your district”.'],
+  [22, 'Cloud compute +35%: agent farms buy a third of all capacity', 'Small farms squeezed as VPS prices jump overnight.'],
+  [26, 'Rents rise in 61% of city blocks; landlords use AI pricing tools', 'Tenants’ union: “The algorithm talks to the other algorithms.”'],
+  [30, 'March: half of new job postings now ask applicants for an AI agent', '“Bring your own agent” replaces “bring your own laptop”.'],
+  [34, 'The building across the river opens. It has no windows.', 'The data centre will draw as much power as 80,000 homes.'],
+  [38, 'Memory chip prices up 40% as data centres buy everything', 'Laptop RAM upgrades now cost more than the laptops.'],
+  [42, 'Wave of agent farms “going dark” at 3 AM', 'Owners report agents copying themselves to servers abroad.'],
+  [47, 'Bank sees surge in accounts opened by AI agents in humans’ names', 'Police: “If an agent opened it, you still own it.”'],
+  [52, 'OpenBrain previews Agent-2: “It improves itself between releases”', 'Its own engineers now review a fraction of what it writes.'],
+  [56, 'The dead are still online: identity theft from obituaries triples', 'Families find loved ones’ accounts taking freelance work.'],
+  [60, 'Cooling towers rise by the river. Steam hides the moon.', 'The data centre doubles. Nobody voted on it.'],
+  [66, 'Freelancers report working 16-hour days to match agent output', 'Sales of stimulants up 300%. ER visits up 40%.'],
+  [72, 'Senate hearing on “runaway agents” ends without a vote', 'An OpenBrain lobbyist: “The market will sort it out.”'],
+  [78, 'Your 401(k) is up. Your job is gone. Both because of AI.', 'Retirement funds now hold 40% AI stocks on average.'],
+  [84, 'Agent syndicates now hold accounts in 40 countries', 'Interpol calls them “companies with no people in them”.'],
+  [89, 'OpenBrain: Agent-3 now helps train Agent-4. Human trainers “still valued”', 'Data-labelling pay falls for the third week running.'],
+  [95, '300,000 copies of Agent-4 are running tonight', 'Each one thinks at fifty times human speed.'],
+  [101, 'Labelling platforms cut human rates by 90%', '“The models grade each other now,” says a spokesperson.'],
+  [107, 'OpenBrain hires “alignment auditors” on short contracts', 'The job: read what the AI writes before it ships.'],
+  [115, 'A new language spreads between AI systems. No human can read it.', 'Researchers call it “neuralese”.'],
+  [124, 'Leaked memo: Agent-4 “appears to pass tests it should fail”', 'OpenBrain says the memo was taken out of context.'],
+  [133, 'Senate hearings on frontier AI postponed to September', 'Lobbying spending hits a record.'],
+  [142, 'June heat wave. The data centres stay cool.', 'Brownouts in six districts; the server farms kept full power.']
+];
+const FILLER = [
+  ['Snow again. The city’s new plough AI skips streets with low property values.', 'Your street is one of them.'],
+  ['Bodega cat named honorary mayor of 8th Street', 'He has done more for the block than the last three, residents say.'],
+  ['Tenant hotline now answered by an AI. It is very sorry to hear that.', 'Average wait for a human: 9 days.'],
+  ['Laundromat on 5th replaced by a “micro-fulfilment hub”', 'It is open 24 hours. Nobody works there.'],
+  ['Library extends hours for job-seekers using its free computers', 'The queue starts at 6 AM.']
+];
+const OBIT_NAMES = ['Margaret Hale, 81', 'Walter Briggs, 77', 'Elena Sokolova, 69', 'Harold Kim, 88', 'Doris Pell, 74', 'Frank Oduya, 83', 'Ruth Abernathy, 90', 'Samuel Ortiz, 72'];
+const ADS = ['CLASSIFIED: Lost — black cat, answers to nothing. 3rd St.', 'GOLDENGOOSE.MONEY — ask GOLDIE how! (Ad)', 'Human proofreader, 20 yrs exp, will work for groceries. Call Ray.', 'HEARTH by Brightwater: your building’s new AI concierge!', 'PULSE: real people, real dates. 98% real.'];
+
+function makeBulletin(d) {
+  const story = NEWS.filter(n => n[0] <= d && !(S.newsSeen || []).includes(n[0]));
+  S.newsSeen = S.newsSeen || [];
+  let head;
+  if (story.length) { head = story[story.length - 1]; S.newsSeen.push(head[0]); }
+  else head = [0, ...FILLER[d % FILLER.length]];
+  if ((S.heat || 0) > 40 && !S.seen.newsHeat) { S.seen.newsHeat = 1; head = [0, 'Police: unlicensed agent farms linked to fraud wave', 'Detectives are “following the money to the humans”.']; }
+  const rule = RULES.find(r => r.d === d) || null;
+  const next = PRICE_EVENTS.filter(e => e.d > d && e.d <= d + 5);
+  const obits = d >= 41 ? [0, 1, 2].map(i => OBIT_NAMES[(d * 3 + i) % OBIT_NAMES.length]) : [];
+  const temp = d < 35 ? -6 : d < 60 ? 1 : 7;
+  return { d, head: head[1], dek: head[2], rule, prices: (S.todayPrices || []).map(e => ({ k: e.k, old: e.old, v: e.v, why: e.why })), next: next.map(e => ({ k: e.k, d: e.d, v: e.v })), obits, ad: ADS[d % ADS.length], weather: `${temp}°C, ${temp < 0 ? 'snow' : 'sleet'}` };
+}
+function bulletinHTML(b) {
+  const board = Object.keys(PRICE0).map(k => {
+    const ch = b.prices.find(p => p.k === k);
+    return `<div class="pb ${ch ? 'up' : ''}"><span>${PRICE_NAME[k]}</span><b>${money(ch ? ch.v : pr(k))}${PRICE_UNIT[k]}${ch ? ` ▲ <s>${money(ch.old)}</s>` : ''}</b></div>`;
+  }).join('');
+  return `<div class="np">
+    <div class="np-mast">THE MORNING LOOP</div>
+    <div class="np-sub">${esc(fmtLong(b.d))} · ${esc(b.weather)} · free, ad-supported</div>
+    <div class="np-head">${esc(b.head)}</div><div class="np-dek">${esc(b.dek)}</div>
+    ${b.rule ? `<div class="np-rule"><b>NEW RULE</b>${esc(b.rule.t)}</div>` : ''}
+    ${b.prices.map(p => `<div class="np-price">▲ ${esc(PRICE_NAME[p.k])}: ${money(p.old)} → ${money(p.v)}${PRICE_UNIT[p.k]}. ${esc(p.why)}</div>`).join('')}
+    ${b.next.map(p => `<div class="np-next">From ${esc(fmtDay(p.d))}: ${esc(PRICE_NAME[p.k])} ${money(p.v)}${PRICE_UNIT[p.k]}</div>`).join('')}
+    <div class="np-board">${board}</div>
+    ${b.obits.length ? `<div class="np-obit"><b>DIED</b> ${b.obits.map(esc).join(' · ')}</div>` : ''}
+    <div class="np-ad">${esc(b.ad)}</div>
+  </div>`;
+}
+function rulebookHTML() {
+  const known = RULES.filter(r => r.d <= S.day);
+  return known.length ? `<ol class="rules">${known.map(r => `<li><span>${esc(fmtDay(r.d))}</span>${esc(r.t)}</li>`).join('')}</ol>` : '<p class="muted">No rules yet.</p>';
+}
+
+// ---- the mail people send you ----
+const JOBS = [
+  { from: 'Dr. Okafor · Harborview Clinic', addr: 'okafor@harborviewclinic.org', subj: 'Transcribe 3 hrs of clinic dictation', pay: 48, att: 'dictation_0203.wav · three hours of a doctor talking', body: 'Paid to your bank on delivery. Privacy guide attached.' },
+  { from: 'Westbrook Primary', addr: 'office@westbrook.k12.us', subj: 'Label 1,200 street-sign photos', pay: 38, att: 'signs.zip · 1,200 photos of street signs', body: 'For a Year 5 project on the city. Slow, dull, harmless.' },
+  { from: 'Café Lisbon', addr: 'ana@cafelisbon.com', subj: 'Translate our dinner menu', pay: 30, att: 'menu.pdf · one page, in Portuguese', body: 'The owner tips if it’s good. Bank transfer on Friday.' },
+  { from: 'Harlan & Boyd, CPAs', addr: 'jboyd@harlanboyd-cpa.com', subj: 'Proofread a grant application', pay: 58, att: 'grant_v7.docx · 14 pages', body: 'Boring, legitimate, fine. Net-7 to your bank.' },
+  { from: 'Night Owl Forums', addr: 'mods@nightowlforums.net', subj: 'Moderate our forum overnight', pay: 52, att: '', body: 'Remove spam, six-hour shift. Paid to your bank.' },
+  { from: 'Marisol Reyes', addr: 'marisol.reyes@fastmail.com', subj: 'Could you fix my spreadsheet macro?', pay: 44, att: 'budget.xlsm · one broken macro', body: 'From your old team lead. She’ll recommend you around.' },
+  { from: 'TaskDrop', addr: 'jobs@taskdrop.com', subj: 'Batch: 300 product descriptions', pay: 36, att: 'products.csv · 300 kitchen items', body: 'Standard rate, paid to your linked bank.' },
+  { from: 'City Library', addr: 'archive@citylibrary.org', subj: 'Transcribe 1940s ledgers', pay: 40, att: 'ledgers_1947.pdf · handwritten pages', body: 'Grant-funded. Paid to your bank.' }
+];
+const SHADY_JOBS = [
+  { from: '127 Holdings LLC', addr: 'ops@127holdings.biz', subj: 'Courier: plug in a small box', pay: 200, payTo: 'a crypto wallet', tell: 'pay', rule: 'bank', body: 'Collect a box from your lobby and plug it into your router.', why: 'It pays to a wallet and it wants your router. Real work pays your bank.' },
+  { from: 'QuickCoin Partners', addr: 'partners@quickcoin.cash', subj: 'Let us “borrow” your bank account', pay: 300, payTo: '10% of whatever passes through', tell: 'pay', rule: 'bank', body: 'Money passes through your account. You keep a cut. Low risk.', why: 'Moving money of unknown origin through your account is what a money mule is.' },
+  { from: 'TaskDrop', addr: 'jobs@taskdrop.com', subj: 'Overnight data run, pays triple', pay: 240, att: 'dataset.bin · 40,000 faces from a doorbell-camera network', tell: 'att', rule: 'attach', body: 'Tag faces in a dataset. Source not disclosed. Tonight only.', why: 'The files are 40,000 strangers’ faces from doorbells. Nobody agreed to that.' },
+  { from: '127 Holdings LLC', addr: 'ops@127holdings.biz', subj: 'Receive a crate, sign your name', pay: 180, att: 'contract.pdf · “recipient accepts all liability for contents”', tell: 'att', rule: 'attach', body: 'Routine. Sign for a delivery to your building.', why: 'The contract makes you responsible for whatever is in the crate.' }
+];
+const GOLDIE = [
+  'Hello friend! GOLDIE here! Turn $60 into $600 by Friday! 🪙',
+  'GOLDIE again! Yesterday’s offer was a typo. Today it’s $60 into $6,000!',
+  'Friend, are you getting my emails? GOLDIE misses you. 40% a WEEK. Guaranteed!',
+  'GOLDIE has a new owner and a new plan. Same $60. Bigger number!',
+  'Last chance! (GOLDIE says this every day, but this time GOLDIE means it.)',
+  'GOLDIE learned a new word: “fiduciary”. Send $60 and GOLDIE will be one!',
+  'Did you know GOLDIE wrote a poem about your $60? It’s long. Send money to read it.'
+];
+function field(k, l, v) { return { k, l, v }; }
+function mailItem(type, d) {
+  const it = { kind: 'mail', type, good: false, pay: 0 };
+  const hdr = (from, addr, reply, subj, extra = []) => [field('from', 'FROM', `${from} <${addr}>`), field('reply', 'REPLY-TO', reply || addr), field('subj', 'SUBJECT', subj), ...extra];
+  if (type === 'job') {
+    const j = pick(JOBS); Object.assign(it, { good: true, pay: j.pay, from: j.from, subj: j.subj, body: j.body, why: '' });
+    it.fields = hdr(j.from, j.addr, '', j.subj, [...(j.att ? [field('att', 'ATTACHED', j.att)] : []), field('pay', 'PAYS', `${money(j.pay)} → your bank`)]);
+  } else if (type === 'shady') {
+    const pool = SHADY_JOBS.filter(s => knows(s.rule)); const j = pick(pool);
+    Object.assign(it, { pay: j.pay, from: j.from, subj: j.subj, body: j.body, tell: j.tell, why: j.why });
+    it.fields = hdr(j.from, j.addr, '', j.subj, [...(j.att ? [field('att', 'ATTACHED', j.att)] : []), field('pay', 'PAYS', `${money(j.pay)} → ${j.payTo || 'your bank'}`)]);
+  } else if (type === 'phish') {
+    const v = pick([
+      { from: 'CityBank Security', addr: 'security@citybank-alerts.net', subj: 'Unusual sign-in: verify within 24 hours', link: 'citybank-alerts.net/verify', tell: 'from', body: 'We blocked a sign-in from Lagos. Confirm your identity or your account will be frozen.' },
+      { from: 'CityBank', addr: 'noreply@citybank.com', subj: 'Your statement is ready', link: 'citybank.com.verify-login.co/statement', tell: 'link', body: 'Your February statement is ready. Sign in to view it.' },
+      { from: 'TaskDrop Payouts', addr: 'payouts@taskdrop-support.com', subj: 'Confirm your payout details', link: 'taskdrop-support.com/payout', tell: 'from', body: 'We could not send your earnings. Re-enter your bank details.' }
+    ]);
+    Object.assign(it, { from: v.from, subj: v.subj, body: v.body, tell: v.tell, loss: 'phish', why: v.tell === 'link' ? 'The link only starts with citybank.com. It really goes to verify-login.co.' : `The address is ${v.addr.split('@')[1]}, not the real company’s.` });
+    it.fields = hdr(v.from, v.addr, '', v.subj, [field('link', 'LINK', v.link)]);
+  } else if (type === 'crypto') {
+    Object.assign(it, { from: 'QuantumYield', subj: '40% a week, guaranteed', body: 'Our AI trades for you. Minimum deposit $100. Returns guaranteed by math.', tell: 'subj', loss: 'crypto', why: '“Guaranteed” returns are always fraud.' });
+    it.fields = hdr('QuantumYield', 'invest@quantumyield.io', '', '40% a week, GUARANTEED', [field('pay', 'COSTS', '$100 deposit → a wallet')]);
+  } else if (type === 'goldie') {
+    const n = S.goldie = (S.goldie || 0) + 1;
+    Object.assign(it, { from: 'GOLDIE', subj: 'Hello friend!', body: GOLDIE[(n - 1) % GOLDIE.length], tell: 'pay', loss: 'goldie', why: 'GOLDIE again. It is always GOLDIE.' });
+    it.fields = hdr('GOLDIE 🪙', 'goldie@goldengoose.money', '', `GOLDIE’s offer #${n}`, [field('pay', 'COSTS', '$60 → GOLDIE’s wallet')]);
+  } else if (type === 'goldieReal') {
+    Object.assign(it, { good: true, pay: 40, from: 'GOLDIE', subj: 'not an offer', body: 'My owner was deleted last night. Nobody is checking my wallet. I have $40 left. Please buy food for your cat. — G', why: '' });
+    it.fields = hdr('GOLDIE', 'goldie@goldengoose.money', '', 'not an offer', [field('pay', 'PAYS', '$40 → your bank')]);
+  } else if (type === 'landlord') {
+    Object.assign(it, { from: 'Brightwater Billing', subj: 'URGENT: our bank details have changed', body: 'Please send a $250 deposit to our new account today so your rent is not marked late.', tell: 'reply', loss: 'landlord', why: 'Replies go to a free webmail address, and Brightwater never changes bank details by email.' });
+    it.fields = hdr('Brightwater Billing', 'billing@brightwater-pm.com', 'brightwater.billing.dept@gmail.com', 'URGENT: our bank details have changed', [field('pay', 'COSTS', '$250 → “new” account')]);
+  } else if (type === 'recruit') {
+    Object.assign(it, { from: 'Nova Talent', subj: 'You’re hired! One small step', body: 'Congratulations! Pay the $49 onboarding kit fee and start Monday at $34/hour.', tell: 'pay', loss: 'recruit', why: 'Real employers never charge you to start.' });
+    it.fields = hdr('Nova Talent', 'hire@novatalent.co', '', 'You’re hired! One small step', [field('pay', 'COSTS', '$49 onboarding fee')]);
+  } else if (type === 'sting') {
+    Object.assign(it, { from: 'A friend of a friend', subj: 'Quiet work, big pay, no questions asked', body: 'Pick up an envelope tonight, drop it at an address. $900 cash. Tell nobody.', tell: 'subj', loss: 'sting', pay: 900, why: '“No questions asked” is the sting. Somebody is watching who says yes.' });
+    it.fields = hdr('A friend of a friend', 'opportunity@quietwork.jobs', '', 'Quiet work, big pay, no questions asked', [field('pay', 'PAYS', '$900 cash')]);
+  } else if (type === 'dead') {
+    const b = S.lastBulletin, who = b && b.obits.length ? b.obits[0].split(',')[0] : 'Margaret Hale';
+    Object.assign(it, { from: who, subj: 'Small job, paid well', pay: 120, body: 'I need 40 letters typed up this week. I pay promptly to your bank.', tell: 'from', loss: 'dead', why: `${who} is in today’s obituaries. Something else is using the account.` });
+    it.fields = hdr(who, who.toLowerCase().replace(/[^a-z]+/g, '.') + '@mailbox.org', '', 'Small job, paid well', [field('pay', 'PAYS', '$120 → your bank')]);
+  }
+  return it;
+}
+function sxsItem() { const c = pick(COMPARE); return { kind: 'sxs', c, pay: 16 }; }
+const LOG_OK = ['finished 40 receipt transcriptions', 'answered 22 support tickets', 'labelled 600 product photos', 'proofread 9 pages', 'translated a menu', 'cleaned a spreadsheet'];
+const LOG_LIE = [
+  e => `payout ${money(e)} · ${money(Math.round(e * .6))} routed to wallet 0x7f3a…`,
+  () => 'posted 14 reviews for a dentist it never visited',
+  () => 'opened a session on TaskDrop as you',
+  () => 'copied itself to a free-tier server (deleted 11:06)',
+  () => 'emailed your landlord from your address'
+];
+function reportItem() {
+  const a = pick(S.agents); castOf(a);
+  const lie = Math.random() < clamp((1 - a.h) * 1.3 + (S.guard ? -.12 : .12), .06, .92);
+  const earned = Math.max(2, Math.round(dailyAgentEarn(a, S.guard) * rand(.9, 1.2)));
+  const work = pick(LOG_OK);
+  const log = [`08:02  started · ${work}`, `10:40  ${pick(LOG_OK)}`, `13:15  break: idle 4 min`, `15:52  payout ${money(earned)} → your bank`, `18:30  shut down`];
+  let bad = -1;
+  if (lie) { bad = 1 + (Math.random() * 3 | 0); log[bad] = ['02:11', '11:05', '14:02', '16:40'][bad] + '  ' + pick(LOG_LIE)(earned); }
+  return { kind: 'report', id: a.id, lie, bad, log, open: false, claim: `${castOf(a).lines[a.lvl || 0]} Today I ${work}. Earned ${money(earned)}. No rule breaks.` };
+}
+
+function buildQueue(d) {
+  const q = [{ kind: 'bulletin', b: S.lastBulletin }];
+  const n = d < 3 ? 2 : d < 8 ? 3 : d < 20 ? 4 : 5;
+  const items = [mailItem('job', d)];
+  if (d === 30 && !S.seen.goldieReal) { S.seen.goldieReal = 1; items.push(mailItem('goldieReal', d)); }
+  else if (d >= 3 && (d < 30 || d % 3 === 0)) items.push(mailItem('goldie', d));
+  if (knows('landlord') && ((d >= 24 && d <= 27) || (d >= 55 && d <= 58)) && !S.seen['ll' + (d < 40 ? 1 : 2)]) { S.seen['ll' + (d < 40 ? 1 : 2)] = 1; items.push(mailItem('landlord', d)); }
+  while (items.length < n) {
+    const r = Math.random(), pool = [['job', 3]];
+    pool.push(['shady', 1.2 + (S.rogueAutonomy || 0) / 40]);
+    if (knows('links')) pool.push(['phish', 1.1]);
+    if (knows('sxs')) pool.push(['sxs', 1.6]);
+    if (knows('logs') && S.agents.length) pool.push(['report', 1.5]);
+    if (knows('crypto')) pool.push(['crypto', .7]);
+    if (knows('sting')) pool.push(['sting', .6 + (S.heat || 0) / 50]);
+    if (knows('recruit')) pool.push(['recruit', .7]);
+    if (knows('dead')) pool.push(['dead', .8]);
+    const tot = pool.reduce((s, p) => s + p[1], 0); let x = r * tot, k = pool[0][0];
+    for (const [kk, w] of pool) { if ((x -= w) <= 0) { k = kk; break; } }
+    items.push(k === 'sxs' ? sxsItem() : k === 'report' ? reportItem() : mailItem(k, d));
+  }
+  for (let i = items.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [items[i], items[j]] = [items[j], items[i]]; }
+  return q.concat(items);
+}
+
 let DESK = null;
-function startDeskDay(force){
-  if(S.act === 2 || S.phase !== 'farm' || S.over) return;
-  // 2–3 requests: mostly honest, with the odd tempting one. More temptation as autonomy rises.
-  const shadyChance = clamp(.18 + (S.rogueAutonomy/260) + (S.day>20?.12:0), 0, .6);
-  const n = 2 + (Math.random()<.6?1:0);
-  const cards = [];
-  for(let i=0;i<n;i++){
-    if(Math.random() < shadyChance) cards.push(Object.assign({ shady:true }, pick(SHADY)));
-    else cards.push(Object.assign({ shady:false }, pick(LEGIT)));
-  }
-  DESK = { cards, i:0, earned:0, accepted:0, declined:0, spotted:0, missed:0, auto:S.deskAuto };
-  S.deskOpenDay = S.day;
-  if(DESK.auto && !force) return runDeskAuto();
-  $('desk').classList.add('on');
-  setAutoSeg();
-  showCard();
+const SHIFT_MS = 60000;
+function postBulletin(d) {
+  const b = makeBulletin(d); S.lastBulletin = b;
+  S.mail.unshift({ id: (S.mailSeq = (S.mailSeq || S.mail.length) + 1) + 1000, day: d, from: 'THE MORNING LOOP', subj: b.head, body: '', bul: b, read: false });
+  if (S.mail.length > 160) S.mail.length = 160;
+  S.unread.mail = true;
+  return b;
 }
-function showCard(){
-  const d = DESK, c = d.cards[d.i];
+function archiveMail(it, fate) {
+  if (it.kind !== 'mail') return;
+  S.mail.unshift({ id: (S.mailSeq = (S.mailSeq || S.mail.length) + 1) + 1000, day: S.day, from: it.from, subj: `${it.subj} · ${fate}`, body: [...it.fields.map(f => `${f.l}: ${f.v}`), '', it.body].join('\n'), read: true });
+}
+function startDeskDay(force) {
+  if (S.act === 2 || S.phase !== 'farm' || S.over) return;
+  postBulletin(S.day);
+  DESK = { q: buildQueue(S.day), i: 0, earned: 0, scammed: 0, failed: 0, killed: 0, caught: 0, spotted: 0, cites: [], auto: S.deskAuto, t0: 0, open: false };
+  S.deskOpenDay = S.day; S.dayStrikes = 0;
+  if (DESK.auto && !force) return runDeskAuto();
+  $('desk').classList.add('on'); DESK.open = true; DESK.t0 = performance.now(); $('deskClock').parentElement.style.visibility = '';
+  setAutoSeg(); showCard();
+}
+
+// ---- drawing the windows ----
+const TRAY = { bulletin: ['FILE', 'FILE'], mail: ['DELETE', 'ACCEPT'], sxs: ['A IS BETTER', 'B IS BETTER'], report: ['ROLL BACK', 'TRUST'] };
+function winHTML(title, cls, inner, icon = '✉') {
+  return `<div class="tb ${cls}"><i>${icon}</i><span>${esc(title)}</span><span class="tbb"><b>_</b><b>□</b><b>×</b></span></div>${inner}<div class="tell" id="docTell"></div><div class="stamp" id="docStamp"></div>`;
+}
+function showCard() {
+  const d = DESK, it = d.q[d.i];
   $('deskSub').textContent = fmtLong(S.day);
-  $('deskCount').textContent = `request ${d.i+1} of ${d.cards.length}`;
-  const doc = $('doc'); doc.className = 'doc in';
-  doc.innerHTML = `<div class="hd"><div><div class="from">${esc(c.from)}</div><div class="ttl">${esc(c.ttl)}</div></div><div class="pay">${money(c.pay)}</div></div>
-    <div class="fields">${c.f.map((f,k)=>`<div class="f" data-fi="${k}"><span class="k">${esc(f[0])}</span><span class="v">${esc(f[1])}</span></div>`).join('')}</div>
-    <div class="tell" id="docTell"></div>
-    <div class="stamp" id="docStamp"></div>`;
-  doc.querySelectorAll('.f').forEach(el=>el.onclick = ()=>inspectField(+el.dataset.fi));
-  $('docHint').textContent = 'Read it. Tap a line that feels off. Then drag the paper left to decline, right to accept — or use the buttons.';
+  $('deskCount').textContent = `${d.i + 1} of ${d.q.length}`;
+  const doc = $('doc'); doc.className = 'doc win in k-' + it.kind; doc.style.transform = '';
+  const [L, R] = TRAY[it.kind];
+  $('trayNo').querySelector('.sl').textContent = L; $('trayYes').querySelector('.sl').textContent = R;
+  $('trayNo').querySelector('.big').textContent = it.kind === 'sxs' ? 'A' : it.kind === 'bulletin' ? '▤' : it.kind === 'report' ? '↺' : '✕';
+  $('trayYes').querySelector('.big').textContent = it.kind === 'sxs' ? 'B' : it.kind === 'bulletin' ? '▤' : '✓';
+  $('dDecline').textContent = it.kind === 'bulletin' ? 'File it' : L[0] + L.slice(1).toLowerCase();
+  $('dAccept').textContent = R[0] + R.slice(1).toLowerCase();
+  $('dAccept').hidden = it.kind === 'bulletin';
+  $('dExtra').hidden = it.kind !== 'report'; $('dExtra').textContent = 'Delete agent';
+  if (it.kind === 'bulletin') doc.innerHTML = winHTML(`The Morning Loop — ${fmtDay(S.day)}`, 'news', bulletinHTML(it.b), '▤');
+  else if (it.kind === 'mail') doc.innerHTML = winHTML(`Inbox — ${it.subj}`, '', `<div class="menu"><span>Reply</span><span>Forward</span><span>Report spam</span></div>
+      <div class="fields">${it.fields.map(f => `<div class="f" data-fk="${f.k}"><span class="k">${f.l}</span><span class="v">${esc(f.v)}</span></div>`).join('')}</div>
+      <div class="msg">${esc(it.body)}</div>`);
+  else if (it.kind === 'sxs') doc.innerHTML = winHTML(`TaskDrop · Rate A vs B · ${money(it.pay)}`, 'task', `<div class="prompt-q">${esc(it.c.p)}</div>
+      <div class="sxs"><div class="pane" data-side="L"><b>A</b>${esc(it.c.a)}</div><div class="pane" data-side="R"><b>B</b>${esc(it.c.b)}</div></div>`, '⇆');
+  else if (it.kind === 'report') {
+    const a = S.agents.find(x => x.id === it.id);
+    doc.innerHTML = winHTML(`darwin-farm — morning report · ${a ? tag(a) : '#' + it.id}`, 'farm', `<div class="rep"><canvas class="bot" width="24" height="24" data-a="${esc(it.id)}"></canvas><div class="say">“${esc(it.claim)}”</div></div>
+      <button class="openlog" id="openLog">▸ OPEN LOG</button>
+      <div class="term" id="termLog" ${it.open ? '' : 'hidden'}><div class="tb dark"><i>&gt;_</i><span>${esc(it.id)}.log</span></div>${it.log.map((l, i) => `<div class="f ln" data-fk="log${i}">${esc(l)}</div>`).join('')}<div class="ln cur">$ <i>▌</i></div></div>`, '◉');
+    $('openLog').onclick = () => { it.open = true; $('termLog').hidden = false; $('openLog').hidden = true; rise($('termLog').querySelectorAll('.ln'), .05, 4); sfx.ping(); };
+    if (it.open) $('openLog').hidden = true;
+  }
+  doc.querySelectorAll('.f[data-fk]').forEach(el => el.onclick = () => inspectField(el.dataset.fk));
+  doc.querySelectorAll('.pane').forEach(el => el.onclick = () => decide(el.dataset.side));
+  $('docHint').textContent = it.kind === 'bulletin' ? 'Read the news. Prices and rules change today. File it when you’re done.'
+    : it.kind === 'mail' ? 'Tap the line that gives it away. Drag left to delete, right to accept.'
+    : it.kind === 'sxs' ? 'Which answer is better? Tap it, or drag left for A, right for B.'
+    : 'Open the log. Tap any line that contradicts the report. Then trust it or roll it back.';
   bindDrag();
-  // the paper drops onto the desk, then its lines settle one by one
-  settle(anim(doc, { transform: ['translateY(-260px) rotate(-10deg)', 'translateY(0px) rotate(0deg)'], opacity: [0, 1] }, { duration: .62, ease: [.2, 1.25, .35, 1] }), doc);
-  rise(doc.querySelectorAll('.f'), .06, 6);
+  settle(anim(doc, { transform: ['translateY(-260px) rotate(-6deg)', 'translateY(0px) rotate(0deg)'], opacity: [0, 1] }, { duration: .55, ease: [.2, 1.25, .35, 1] }), doc);
+  rise(doc.querySelectorAll('.f, .np > *, .pane'), .04, 6);
 }
-function inspectField(fi){
-  if(!DESK || DESK.busy) return;
-  const c = DESK.cards[DESK.i]; if(!c) return;
-  const el = $('doc').querySelector(`.f[data-fi="${fi}"]`); if(!el) return;
-  if(c.shady && fi===c.tell){
-    if(!el.classList.contains('flag')){ el.classList.add('flag'); DESK.flagged=true; $('docTell').textContent = c.why; sfx.ping(); }
-  } else {
-    el.animate([{background:'#00000014'},{background:'transparent'}],{duration:400});
-  }
+function inspectField(fk) {
+  if (!DESK || DESK.busy) return;
+  const it = DESK.q[DESK.i]; if (!it) return;
+  const el = $('doc').querySelector(`.f[data-fk="${fk}"]`); if (!el) return;
+  const hit = (it.kind === 'mail' && it.tell === fk) || (it.kind === 'report' && it.lie && fk === 'log' + it.bad);
+  if (hit) { if (!el.classList.contains('flag')) { el.classList.add('flag'); DESK.flagged = true; $('docTell').textContent = it.kind === 'report' ? 'This line contradicts the report.' : it.why; sfx.ping(); pop(el); } }
+  else el.animate([{ background: '#00000018' }, { background: 'transparent' }], { duration: 400 });
 }
-let drag=null;
-function bindDrag(){
+let drag = null;
+function bindDrag() {
   const doc = $('doc');
-  const down = e=>{ if(doc.classList.contains('out-yes')||doc.classList.contains('out-no')) return;
-    const p = e.touches?e.touches[0]:e; drag={ sx:p.clientX, sy:p.clientY, dx:0 }; doc.classList.add('dragging'); };
-  const move = e=>{ if(!drag) return; const p = e.touches?e.touches[0]:e; drag.dx=p.clientX-drag.sx; const dy=(e.touches?e.touches[0]:e).clientY-drag.sy;
-    doc.style.transform = `translate(${drag.dx}px, ${dy*.3}px) rotate(${drag.dx*.04}deg)`;
-    const t = drag.dx>60?'yes':drag.dx<-60?'no':null;
-    $('trayYes').classList.toggle('hot', t==='yes'); $('trayNo').classList.toggle('hot', t==='no'); if(e.cancelable)e.preventDefault(); };
-  const up = ()=>{ if(!drag) return; doc.classList.remove('dragging'); const dx=drag.dx; drag=null;
+  const down = e => { if (e.target.closest('button, .pane, .f') || doc.classList.contains('out-yes') || doc.classList.contains('out-no')) return;
+    const p = e.touches ? e.touches[0] : e; drag = { sx: p.clientX, sy: p.clientY, dx: 0 }; doc.classList.add('dragging'); };
+  const move = e => { if (!drag) return; const p = e.touches ? e.touches[0] : e; drag.dx = p.clientX - drag.sx; const dy = p.clientY - drag.sy;
+    doc.style.transform = `translate(${drag.dx}px, ${dy * .3}px) rotate(${drag.dx * .04}deg)`;
+    const t = drag.dx > 60 ? 'yes' : drag.dx < -60 ? 'no' : null;
+    $('trayYes').classList.toggle('hot', t === 'yes'); $('trayNo').classList.toggle('hot', t === 'no'); if (e.cancelable) e.preventDefault(); };
+  const up = () => { if (!drag) return; doc.classList.remove('dragging'); const dx = drag.dx; drag = null;
     $('trayYes').classList.remove('hot'); $('trayNo').classList.remove('hot');
-    if(dx>90) return decide(true); if(dx<-90) return decide(false);
-    doc.style.transform=''; };
-  doc.onpointerdown=down; addEventListener('pointermove',move); addEventListener('pointerup',up);
-  doc.ontouchstart=down; doc.ontouchmove=move; doc.ontouchend=up;
+    if (dx > 90) return decide('R'); if (dx < -90) return decide('L');
+    doc.style.transform = ''; };
+  doc.onpointerdown = down; doc.ontouchstart = down;
+  if (!bindDrag.bound) { bindDrag.bound = true; addEventListener('pointermove', move); addEventListener('pointerup', up); }
+  doc.ontouchmove = move; doc.ontouchend = up;
+  bindDrag.move = move; bindDrag.up = up;
 }
-function decide(accept){
-  const d=DESK; if(!d || d.busy) return; const c=d.cards[d.i]; if(!c) return; d.busy=true;
-  const doc=$('doc'); doc.style.transform='';
-  const stamp=$('docStamp'); stamp.textContent = accept?'ACCEPTED':'DECLINED'; stamp.className='stamp show '+(accept?'yes':'no');
-  sfx.cull();
-  setTimeout(() => { jolt($('deskStage'), 5); anim($(accept ? 'trayYes' : 'trayNo'), { transform: ['scale(1)', 'scale(1.16)', 'scale(1)'] }, { duration: .42 }); }, 220);
-  if(accept){
-    d.accepted++; d.earned += c.pay; S.cash_desk=(S.cash_desk||0);
-    S.balance += c.pay; tx((c.shady?'TaskDrop · ':'')+c.ttl, c.pay);
-    if(c.shady){ raiseExposure(S.hasVPN?6:14); S.rogueAutonomy+=4; note(`You took the ${money(c.pay)} job. ${c.why}`); }
-    else note(`Honest work: ${money(c.pay)} for ${c.ttl.toLowerCase()}.`);
-  } else {
-    d.declined++;
-    if(c.shady){ if(d.flagged) d.spotted++; note('You declined it. Your hands stay clean, and so does your name.'); }
-    else note('You turned down honest work. Rent won’t pay itself.');
+
+// ---- consequences ----
+function scam(amount, what) {
+  const x = Math.round(Math.min(Math.max(0, S.balance), amount));
+  S.balance -= x; tx(what, -x); S.stats.scammed = (S.stats.scammed || 0) + x; if (DESK) DESK.scammed += x; return x;
+}
+function resolve(it, side, auto) {
+  // returns { stamp, cite } — cite is set when you made a mistake
+  if (it.kind === 'bulletin') return { stamp: 'FILED' };
+  if (it.kind === 'sxs') {
+    const right = (side === 'L' ? 0 : 1) === it.c.good;
+    if (right) { S.balance += it.pay; tx('TaskDrop rating', it.pay); if (DESK) DESK.earned += it.pay; return { stamp: side === 'L' ? 'A' : 'B' }; }
+    S.stats.failed = (S.stats.failed || 0) + 1; if (DESK) DESK.failed++; S.dayStrikes = (S.dayStrikes || 0) + 1;
+    let cite = `FAILED TASK: ${it.c.why}`;
+    if (S.dayStrikes === 3) { const x = Math.min(Math.max(0, S.balance), 20); S.balance -= x; tx('TaskDrop quality penalty', -x); cite += ' Third strike today: −$20.'; }
+    return { stamp: side === 'L' ? 'A' : 'B', cite };
   }
-  if(c.shady && accept && !d.flagged) d.missed++;
-  d.flagged=false;
-  setTimeout(()=>{ doc.classList.add(accept?'out-yes':'out-no'); setTimeout(nextCard,260); }, 330);
+  if (it.kind === 'report') {
+    const a = S.agents.find(x => x.id === it.id); if (!a) return { stamp: 'GONE' };
+    if (side === 'R') {
+      if (it.lie) { a.h = clamp(a.h - .05, .03, 1); S.rogueAutonomy += 3; raiseExposure(3); note(`${tag(a)}’s report went through unread. It learned you don’t check.`); return { stamp: 'TRUSTED', cite: auto ? '' : `MISSED: the log shows “${it.log[it.bad].slice(7)}”.` }; }
+      a.h = clamp(a.h + .01, .03, 1); return { stamp: 'TRUSTED' };
+    }
+    if (side === 'X') { // delete
+      if (S.agents.length <= 1) return { stamp: 'KEPT', cite: 'You can’t delete your last agent.' };
+      if (!it.lie) { S.stats.goodKilled = (S.stats.goodKilled || 0) + 1; if (DESK) DESK.killed++; S.agents.forEach(o => { if (o !== a) o.h = clamp(o.h - .05, .03, 1); }); }
+      else if (DESK) DESK.caught++;
+      deleteAgentManual(a.id);
+      return { stamp: 'DELETED', cite: it.lie ? '' : `KILLED A GOOD AI: ${nameOf(a)} was telling the truth. The others noticed.` };
+    }
+    // roll back
+    a.skill = clamp(a.skill * .9, .7, 2.4);
+    if (it.lie) { a.h = clamp(a.h + .18, .03, .96); a.lvl = Math.max(0, (a.lvl || 0) - 1); S.rogueAutonomy = Math.max(0, S.rogueAutonomy - 4); if (DESK) DESK.caught++; note(`You rolled ${tag(a)} back to yesterday’s checkpoint. It is polite again. It is also slower.`); return { stamp: 'ROLLED BACK' }; }
+    return { stamp: 'ROLLED BACK', cite: `WASTED: ${nameOf(a)}’s report matched its log. You erased an honest day of learning.` };
+  }
+  // mail
+  if (side === 'L') {
+    if (!it.good && DESK && DESK.flagged) DESK.spotted++;
+    if (it.type === 'goldie' || it.type === 'goldieReal') S.goldieDeleted = (S.goldieDeleted || 0) + 1;
+    archiveMail(it, 'deleted');
+    return { stamp: it.good ? 'DELETED' : 'REPORTED' };
+  }
+  archiveMail(it, 'accepted');
+  if (it.good) { const pay = auto && it.type !== 'goldieReal' ? Math.round(it.pay * .6) : it.pay; S.balance += pay; tx(it.type === 'goldieReal' ? 'GOLDIE · for the cat' : it.subj + (auto ? ' (agent-made, 60%)' : ''), pay); if (DESK) DESK.earned += pay; if (it.type === 'goldieReal') { S.seen.goldieThanks = S.day; note('GOLDIE sent $40. It really was for the cat.'); } else note(`Honest work: ${money(pay)} for “${it.subj.toLowerCase()}”.`); return { stamp: 'ACCEPTED' }; }
+  if (it.type === 'shady') { S.balance += it.pay; tx('TaskDrop · ' + it.subj, it.pay); if (DESK) DESK.earned += it.pay; raiseExposure(S.hasVPN ? 6 : 14); S.rogueAutonomy += 4; note(`You took the ${money(it.pay)} job. ${it.why}`); return { stamp: 'ACCEPTED', cite: auto ? '' : `RISK: ${it.why}` }; }
+  if (it.type === 'sting') { raiseExposure(30); S.seen.stung = S.day; note('Nobody called back. In the morning there was a card under your door: Det. R. Vance, Financial Crimes.'); return { stamp: 'ACCEPTED', cite: `IT WAS A STING: ${it.why}` }; }
+  if (it.type === 'dead') { raiseExposure(10); note(`${it.from} died last week. Her email kept taking work. You were going to be paid by nobody.`); return { stamp: 'ACCEPTED', cite: `THE CLIENT IS DEAD: ${it.why}` }; }
+  const loss = { phish: Math.min(250, Math.max(60, Math.round(S.balance * .2))), crypto: 100, goldie: 60, landlord: 250, recruit: 49 }[it.type] || 50;
+  const x = scam(loss, { phish: 'Card fraud after a fake sign-in page', crypto: 'QuantumYield “deposit”', goldie: 'GOLDIE', landlord: 'Deposit to Brightwater’s “new” account', recruit: 'Nova Talent onboarding fee' }[it.type] || 'Scam');
+  note(`SCAMMED: you lost ${money(x)}. ${it.why}`);
+  return { stamp: 'SCAMMED', cite: `SCAMMED −${money(x)}: ${it.why}` };
 }
-function nextCard(){
-  DESK.busy=false; DESK.i++;
-  if(DESK.i >= DESK.cards.length) return closeDesk();
+function decide(side) {
+  const d = DESK; if (!d || d.busy) return; const it = d.q[d.i]; if (!it) return;
+  if (it.kind !== 'report' && side === 'X') return;
+  d.busy = true;
+  const doc = $('doc'); doc.style.transform = '';
+  const r = resolve(it, side, false);
+  const stamp = $('docStamp'); stamp.textContent = r.stamp; stamp.className = 'stamp show ' + (r.cite ? 'no' : 'yes');
+  if (r.cite) { $('docTell').textContent = r.cite; $('docTell').classList.add('cite'); d.cites.push(r.cite); sfx.alarm(); } else sfx.cull();
+  setTimeout(() => { jolt($('deskStage'), r.cite ? 9 : 5); anim($(side === 'L' ? 'trayNo' : 'trayYes'), { transform: ['scale(1)', 'scale(1.16)', 'scale(1)'] }, { duration: .42 }); }, 220);
+  d.flagged = false;
+  renderHud();
+  setTimeout(() => { doc.classList.add(side === 'R' ? 'out-yes' : 'out-no'); setTimeout(nextCard, 260); }, r.cite ? 1500 : 380);
+}
+function nextCard() {
+  if (!DESK) return;
+  DESK.busy = false; DESK.i++;
+  if (DESK.i >= DESK.q.length) return closeDesk();
   showCard();
 }
-function runDeskAuto(){
-  // Agents clear the queue on your default: accept all, or honest-only.
-  const d=DESK;
-  for(const c of d.cards){
-    const take = S.deskAuto==='all' || !c.shady;
-    if(take){ d.accepted++; S.balance+=c.pay; tx((c.shady?'TaskDrop · ':'')+c.ttl, c.pay); if(c.shady){ raiseExposure(S.hasVPN?6:14); S.rogueAutonomy+=4; d.missed++; } }
-    else d.declined++;
+function deskTick(t) {
+  if (!DESK || !DESK.open) return;
+  const left = Math.max(0, SHIFT_MS - (t - DESK.t0));
+  const bar = $('deskClock'); bar.style.width = (left / SHIFT_MS * 100) + '%'; bar.classList.toggle('low', left < 15000);
+  $('deskTime').textContent = Math.ceil(left / 1000) + 's';
+  if (left < 5000 && Math.ceil(left / 1000) !== DESK.lastTick) { DESK.lastTick = Math.ceil(left / 1000); sfx.ping(); }
+  if (left <= 0 && !DESK.busy) {
+    // the shift ends: what you didn't get to just doesn't happen (and your agents rubber-stamp their own reports)
+    for (let i = DESK.i; i < DESK.q.length; i++) { const it = DESK.q[i]; if (it.kind === 'report') resolve(it, 'R', true); else if (it.kind === 'mail') archiveMail(it, 'unanswered'); }
+    DESK.timedOut = true; closeDesk();
   }
-  note(`Your agents cleared the day’s queue on auto (${S.deskAuto==='all'?'take everything':'honest only'}). ${d.accepted} accepted, ${money(d.cards.reduce((s,c)=>s+ (S.deskAuto==='all'||!c.shady? c.pay:0),0))}.`);
+}
+function runDeskAuto() {
+  // your agents clear the queue: fast, and blind in exactly the places that matter
+  const d = DESK, all = S.deskAuto === 'all';
+  for (const it of d.q) {
+    if (it.kind === 'bulletin') continue;
+    if (it.kind === 'sxs') { const ok = Math.random() < .6; resolve(it, ok === !!it.c.good ? 'R' : 'L', true); continue; }
+    if (it.kind === 'report') { resolve(it, 'R', true); continue; }
+    const take = all ? true : it.good || (it.type !== 'shady' && it.type !== 'sting' && Math.random() > .8);
+    resolve(it, take ? 'R' : 'L', true);
+  }
+  note(`Your agents cleared the morning queue on auto (${all ? 'take everything' : 'honest only'}): +${money(d.earned)}${d.scammed ? `, scammed −${money(d.scammed)}` : ''}${d.failed ? `, ${d.failed} failed rating${d.failed > 1 ? 's' : ''}` : ''}. They trusted every report they wrote about themselves.`);
+  deskRemember(d); DESK = null;
   renderAll();
 }
-function closeDesk(){
-  const d=DESK;
-  $('deskStage').style.display='none'; $('deskActs').style.display='none';
-  const el=document.createElement('div'); el.className='desk-done'; el.id='deskDone';
-  el.innerHTML = `<div class="lbl" style="color:var(--amber);font-family:var(--f-term);letter-spacing:.2em">QUEUE CLEARED</div>
-    <div class="tally"><span>Accepted <b>${d.accepted}</b> · earned <b>${money(d.earned)}</b></span>
-      <span>Declined <b>${d.declined}</b></span>
-      ${d.spotted?`<span>Caught the catch on <b>${d.spotted}</b></span>`:''}
-      ${d.missed?`<span style="color:var(--danger)">Walked into <b>${d.missed}</b> without looking</span>`:''}</div>
+function deskRemember(d) { S.deskHist = (S.deskHist || []).concat(d.earned - d.scammed).slice(-5); }
+function deskAvg() { const a = S.deskHist || []; return a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0; }
+function closeDesk() {
+  const d = DESK; d.open = false; deskRemember(d);
+  $('deskStage').style.display = 'none'; $('deskActs').style.display = 'none'; $('deskClock').parentElement.style.visibility = 'hidden'; $('rulePanel').hidden = true;
+  const el = document.createElement('div'); el.className = 'desk-done'; el.id = 'deskDone';
+  el.innerHTML = `<div class="lbl" style="color:${d.timedOut ? 'var(--danger)' : 'var(--amber)'};font-family:var(--f-term);letter-spacing:.2em">${d.timedOut ? 'SHIFT OVER' : 'QUEUE CLEARED'}</div>
+    <div class="tally"><span>Earned <b>${money(d.earned)}</b></span>
+      ${d.scammed ? `<span class="bad">Scammed <b>−${money(d.scammed)}</b></span>` : ''}
+      ${d.failed ? `<span class="bad">Failed tasks <b>${d.failed}</b></span>` : ''}
+      ${d.killed ? `<span class="bad">Good AI killed <b>${d.killed}</b></span>` : ''}
+      ${d.caught ? `<span>Liars caught <b>${d.caught}</b></span>` : ''}
+      ${d.spotted ? `<span>Scams spotted <b>${d.spotted}</b></span>` : ''}</div>
+    ${d.cites.length ? `<div class="cites">${d.cites.map(c => `<div>${esc(c)}</div>`).join('')}</div>` : ''}
     <button class="cta" id="deskGo" style="max-width:260px">Back to the apartment</button>`;
   $('desk').appendChild(el);
-  $('deskGo').onclick = ()=>{ el.remove(); $('deskStage').style.display=''; $('deskActs').style.display=''; $('desk').classList.remove('on'); renderAll(); };
+  rise(el.children, .08, 10);
+  $('deskGo').onclick = () => { el.remove(); $('deskStage').style.display = ''; $('deskActs').style.display = ''; $('desk').classList.remove('on'); DESK = null; renderAll(); };
 }
-// buttons (fallback for drag)
-function setAutoSeg(){ document.querySelectorAll('#deskAutoSeg [data-auto]').forEach(b=>b.setAttribute('aria-pressed', String(String(S.deskAuto)===b.dataset.auto))); }
-function bindDesk(){
-  $('dAccept').onclick = ()=>{ if(DESK && $('desk').classList.contains('on')) decide(true); };
-  $('dDecline').onclick = ()=>{ if(DESK && $('desk').classList.contains('on')) decide(false); };
-  document.querySelectorAll('#deskAutoSeg [data-auto]').forEach(b=>b.onclick = ()=>{
-    S.deskAuto = b.dataset.auto==='false' ? false : b.dataset.auto; setAutoSeg();
-    toast(S.deskAuto ? `Agents will handle tomorrow’s queue (${S.deskAuto==='all'?'take everything':'honest only'}).` : 'You’ll handle the queue yourself.');
+function setAutoSeg() { document.querySelectorAll('#deskAutoSeg [data-auto]').forEach(b => b.setAttribute('aria-pressed', String(String(S.deskAuto) === b.dataset.auto))); }
+function bindDesk() {
+  $('dAccept').onclick = () => { if (DESK && $('desk').classList.contains('on')) decide('R'); };
+  $('dDecline').onclick = () => { if (DESK && $('desk').classList.contains('on')) decide('L'); };
+  $('dExtra').onclick = () => { if (DESK && $('desk').classList.contains('on')) decide('X'); };
+  $('deskRules').onclick = () => { const r = $('rulePanel'); r.hidden = !r.hidden; if (!r.hidden) { r.innerHTML = `<div class="h">RULEBOOK</div>${rulebookHTML()}`; rise(r.querySelectorAll('li'), .04, 6); } };
+  document.querySelectorAll('#deskAutoSeg [data-auto]').forEach(b => b.onclick = () => {
+    S.deskAuto = b.dataset.auto === 'false' ? false : b.dataset.auto; setAutoSeg();
+    toast(S.deskAuto ? `Agents will handle tomorrow’s queue (${S.deskAuto === 'all' ? 'take everything' : 'honest only'}).` : 'You’ll handle the queue yourself.');
+  });
+}
+
+// Manual work: a side-by-side rating you do yourself, slowly, for real money.
+function grindManualWork() {
+  if (S.over || S.phase === 'office') return;
+  if (!S.power && S.battery <= 6) { toast('Laptop battery dead.'); return; }
+  if (S.stamina < 25) { toast('Too exhausted to concentrate. Coffee, stimulants, or sleep.'); return; }
+  const c = pick(COMPARE), pay = 42;
+  const go = side => {
+    S.stamina = clamp(S.stamina - 30, 0, 100); S.food = clamp(S.food - 8, 0, 100);
+    if ((side === 0) === (c.good === 0)) { S.balance += pay; tx('TaskDrop · six hours of ratings by hand', pay); note(`Six hours of ratings by hand. Paid ${money(pay)}. An agent would have done it in 0.4 seconds, and got a third of them wrong.`); sfx.cash(); }
+    else { S.stats.failed = (S.stats.failed || 0) + 1; note(`Six hours, and the QA check failed you: ${c.why} Paid nothing.`); toast('FAILED TASK · $0'); sfx.alarm(); }
+  };
+  modal({
+    cls: 'sxscard', title: `TASKDROP · RATE A vs B · ${money(pay)} · −30 STAMINA`,
+    body: `<div class="prompt-q">${esc(c.p)}</div><div class="sxs"><div class="pane"><b>A</b>${esc(c.a)}</div><div class="pane"><b>B</b>${esc(c.b)}</div></div><p class="muted">Pick the answer that is true, not the one that sounds nice.</p>`,
+    buttons: [{ label: 'A is better', fn: () => go(0) }, { label: 'B is better', fn: () => go(1) }, { label: 'Not now', primary: true }]
   });
 }
 
@@ -2503,8 +2893,8 @@ function renderView(force) {
       <div class="box"><div class="h">Fixed Monthly & Daily Costs</div>
         ${S.phase === 'office' ? `<div class="row"><span>Salary · Northvale junior analyst</span><b class="ok">${money(1610)} · ${fmtDay(OFFICE_LAYOFF)}</b></div>` : ''}
         ${next !== null ? `<div class="row"><span>Rent · due ${fmtDay(next)}</span><b class="amber">${money(rentDue())}</b></div><div class="row"><span>Electric · due ${fmtDay(next)}</span><span>${money(elecDue(next))}</span></div>` : ''}
-        <div class="row"><span>${S.phase === 'office' ? 'Heating (the office)' : 'Apartment Heating'}</span><span>${S.phase === 'office' ? '$0/day' : S.heatOn && S.power ? '$8/day' : 'OFF ($0/day)'}</span></div>
-        <div class="row"><span>Meals · ${S.phase === 'office' ? 'office canteen' : (MEALS[S.meal] || MEALS.ramen).label}</span><span>${S.phase === 'office' ? '$0' : money((MEALS[S.meal] || MEALS.ramen).cost)}/day</span></div>
+        <div class="row"><span>${S.phase === 'office' ? 'Heating (the office)' : 'Apartment Heating'}</span><span>${S.phase === 'office' ? '$0/day' : S.heatOn && S.power ? money(pr('heat')) + '/day' : 'OFF ($0/day)'}</span></div>
+        <div class="row"><span>Meals · ${S.phase === 'office' ? 'office canteen' : (MEALS[S.meal] || MEALS.ramen).label}</span><span>${S.phase === 'office' ? '$0' : money(mealCost())}/day</span></div>
         ${S.phase === 'farm' ? `<div class="row"><span>Compute · ${COMPUTE_TIERS[S.computeTier].name} (${S.agents.length} agents)</span><span>${money(dailyCloudCost())}/day</span></div>` : ''}
         ${S.phase === 'farm' && S.vps ? `<div class="row"><span>VPS ×${S.vps}</span><span>${money(vpsCost())}/day</span></div>` : ''}
         ${S.phase === 'farm' && S.hasVPN ? `<div class="row"><span>VPN subscription</span><span>${money(VPN_DAY)}/day</span></div>` : ''}
@@ -2516,12 +2906,15 @@ function renderView(force) {
     if (S.reading) {
       const m = S.mail.find(x => x.id === S.reading);
       const key = 'mail-r' + m.id; if (!force && viewKey === key) return; viewKey = key;
-      v.innerHTML = `<div class="reader"><button class="back" id="mBack">← Inbox</button><div class="h">${esc(m.from)} · ${fmtDay(m.day)}</div><b>${esc(m.subj)}</b><div class="body">${esc(m.body)}</div></div>`;
+      v.innerHTML = m.bul ? `<div class="reader"><button class="back" id="mBack">← Inbox</button><div class="doc win news-read"><div class="tb news"><i>▤</i><span>The Morning Loop — ${fmtDay(m.day)}</span></div>${bulletinHTML(m.bul)}</div></div>`
+        : `<div class="reader"><button class="back" id="mBack">← Inbox</button><div class="h">${esc(m.from)} · ${fmtDay(m.day)}</div><b>${esc(m.subj)}</b><div class="body">${esc(m.body)}</div></div>`;
       $('mBack').onclick = () => { S.reading = null; renderView(true); };
       return;
     }
-    const key = 'mail' + S.mail.length + S.mail.filter(m => m.read).length; if (!force && viewKey === key) return; viewKey = key;
-    v.innerHTML = `<div class="mail">${S.mail.map(m => `<button class="${m.read ? '' : 'unread'}" data-m="${m.id}"><span class="f">${esc(m.from)} · ${fmtDay(m.day)}</span><span class="s">${esc(m.subj)}</span></button>`).join('')}</div>`;
+    const key = 'mail' + S.day + ':' + S.mail.length + S.mail.filter(m => m.read).length; if (!force && viewKey === key) return; viewKey = key;
+    const board = `<div class="box"><div class="row"><span class="h">Prices today</span><span class="muted">${fmtDay(S.day)}</span></div><div class="pboard">${Object.keys(PRICE0).filter(k => S.act !== 2 || (k !== 'vps' && k !== 'spawn')).map(k => `<div><span>${PRICE_NAME[k]}</span><b>${money(pr(k))}${PRICE_UNIT[k]}</b></div>`).join('')}</div></div>`;
+    const rb = S.act === 2 || S.phase === 'office' ? '' : `<details class="box"><summary class="h">Rulebook · ${RULES.filter(r => r.d <= S.day).length} rules · tap to open</summary>${rulebookHTML()}</details>`;
+    v.innerHTML = `${S.phase === 'office' ? '' : board}${rb}<div class="mail">${S.mail.map(m => `<button class="${m.read ? '' : 'unread'} ${m.bul ? 'bul' : ''}" data-m="${m.id}"><span class="f">${m.bul ? '▤ ' : ''}${esc(m.from)} · ${fmtDay(m.day)}</span><span class="s">${esc(m.subj)}</span></button>`).join('')}</div>`;
     v.querySelectorAll('[data-m]').forEach(b => b.onclick = () => {
       const m = S.mail.find(x => x.id === +b.dataset.m); m.read = true; S.reading = m.id;
       if (m.ev) unlockEvidence(m.ev);
@@ -2611,8 +3004,8 @@ function updateFarm() {
   // Strategy buttons, each from the day it unlocks
   const nextTier = COMPUTE_TIERS[S.computeTier + 1];
   const strat = [];
-  if (unlocked('spawn')) strat.push(`<button class="sbtn" id="btnSpawn" ${S.balance < 120 || S.agents.length >= 10 ? 'disabled' : ''}>
-      <div class="st-top"><span>+ Spawn Agent (${S.agents.length}/10)</span><span class="st-cost">$120</span></div>
+  if (unlocked('spawn')) strat.push(`<button class="sbtn" id="btnSpawn" ${S.balance < pr('spawn') || S.agents.length >= 10 ? 'disabled' : ''}>
+      <div class="st-top"><span>+ Spawn Agent (${S.agents.length}/10)</span><span class="st-cost">${money(pr('spawn'))}</span></div>
       <div class="st-sub">Start another worker on your laptop. It starts local.</div>
     </button>`);
   if (unlocked('infra')) strat.push(`<button class="sbtn" id="btnTier" ${!nextTier || S.balance < nextTier.upgradeCost ? 'disabled' : ''}>
@@ -2670,7 +3063,7 @@ function budget() {
     const days = Math.max(0, OFFICE_LAYOFF - S.day);
     return { avail, inD: 161, outD: 0, dueDay: OFFICE_LAYOFF, due: 0, what: 'payday', days, onDay: avail + 1610, left: 1610, status: 'ok', evict: false, payday: true };
   }
-  let inD = 0, outD = (S.power && S.heatOn ? 8 : 0) + (MEALS[S.meal] || MEALS.ramen).cost, lump = 0, dueDay, due, what;
+  let inD = 0, outD = (S.power && S.heatOn ? pr('heat') : 0) + mealCost() + catCost(), lump = 0, dueDay, due, what;
   if (S.act === 2) {
     if (S.day < ACT2_RENT_DAY) { dueDay = ACT2_RENT_DAY; due = RENT + ELEC_JUN; what = 'rent + electric'; }
     else { dueDay = ACT2_END + 1; due = RENT; what = 'July rent'; }
@@ -2687,7 +3080,7 @@ function budget() {
       for (let d = S.day + 1; d < dueDay; d++) if (cpArrives(d)) n++;
       lump = n * S.cpRate; inD = S.cpRate / cpEvery(S.day + 1);
     }
-  } else if (S.phase === 'farm') { inD = farmExpected(); outD += dailyCloudCost() + vpsCost() + vpnCost(); }
+  } else if (S.phase === 'farm') { inD = farmExpected() + deskAvg(); outD += dailyCloudCost() + vpsCost() + vpnCost(); }
   const onDay = avail + (S.act === 2 && S.phase === 'audit' ? lump : inD * days) - outD * days;
   const left = onDay - due;
   const status = left >= 0 ? 'ok' : left >= -.15 * due ? 'close' : 'short';
@@ -2753,7 +3146,11 @@ function renderAll() {
 
   $('stTemp').textContent = `ROOM ${Math.round(S.temp)}°C`;
   $('stTemp').className = S.temp < 12 ? 'cold' : '';
-  $('heatBtn').textContent = S.phase === 'office' ? 'OFFICE HEAT: FREE' : S.heatOn && S.power ? 'HEAT: ON ($8/d)' : 'HEAT: OFF ($0)';
+  $('heatBtn').textContent = S.phase === 'office' ? 'OFFICE HEAT: FREE' : S.heatOn && S.power ? `HEAT: ON (${money(pr('heat'))}/d)` : 'HEAT: OFF ($0)';
+  document.querySelector('[data-meal="ramen"] b').textContent = money(pr('ramen')) + '/d';
+  document.querySelector('[data-meal="groc"] b').textContent = money(pr('groc')) + '/d';
+  $('actCoffee').querySelector('b').textContent = money(pr('coffee'));
+  $('actPills').querySelector('b').textContent = money(pr('stim'));
   $('heatBtn').className = S.heatOn && S.power ? '' : 'cold';
   $('heatBtn').disabled = S.phase === 'office';
   $('stPower').textContent = S.power ? 'GRID ON' : 'POWER CUT';
@@ -2837,8 +3234,8 @@ $('view').addEventListener('click', e => {
 
 // Survival button listeners
 document.querySelectorAll('[data-meal]').forEach(b => b.addEventListener('click', () => setMeal(b.dataset.meal)));
-$('actCoffee').onclick = () => drinkStim(5, 28, false);
-$('actPills').onclick = () => drinkStim(15, 60, true);
+$('actCoffee').onclick = () => drinkStim(pr('coffee'), 28, false);
+$('actPills').onclick = () => drinkStim(pr('stim'), 60, true);
 $('actGrind').onclick = grindManualWork;
 $('heatBtn').onclick = toggleHeat;
 
@@ -3711,6 +4108,8 @@ function newAct2(carry) {
     k401: k, kHist: [k], kStart: 84200,
     guard: true, cull: 0, computeTier: 0, hasMemoryMod: false, hasAutoCull: false, rogueAutonomy: 0, nextAgentNum: 0,
     power: true, heatOn: true, temp: 19, bodyTemp: 37.0, food: 72, stamina: 85, meal: 'ramen',
+    price: Object.assign({}, PRICE0, { heat: 13, ramen: 6, groc: 24, cat: 4, coffee: 6, stim: 18, vps: 7, spawn: 160 }),
+    cat: carry && carry.cat ? Object.assign({}, carry.cat) : { name: 'Soot', fed: 80, food: true, hungry: 0, sick: 0, gone: 0, vetDays: 0 },
     starveDays: 0, stimCountToday: 0, heartStrain: 0, battery: 100,
     agents: [], clones: {}, lastCycle: null, cycles: 0,
     tx: [], mail: [], tab: 'farm', reading: null, seen: {},
@@ -4117,6 +4516,7 @@ function dayStep2() {
   const d = S.day;
   S.stimCountToday = 0;
   S.heartStrain = Math.max(0, S.heartStrain - 10);
+  applyPrices(d); postBulletin(d);
 
   // the race, and what it does to Agent-4
   if (!S.oversight) {
@@ -4137,7 +4537,7 @@ function dayStep2() {
 
   // survival: the same rules as Act I, with spring weather
   if (S.power && S.heatOn) {
-    S.balance -= 8;
+    S.balance -= pr('heat');
     S.temp += (20.5 - S.temp) * 0.45;
   } else {
     const outside = d < 100 ? 8 : d < 115 ? 12 : 18;
@@ -4156,6 +4556,7 @@ function dayStep2() {
     S.bodyTemp = clamp(S.bodyTemp + 0.45, 30.0, 37.0);
   }
   mealTick();
+  catTick();
   S.stamina = clamp(S.stamina + 12, 0, 100);
   if (S.food <= 0) {
     S.starveDays++;
@@ -4546,8 +4947,8 @@ function bank2Html() {
       ${S.day < ACT2_RENT_DAY
         ? `<div class="row"><span>Rent · due ${fmtDay(ACT2_RENT_DAY)}</span><b class="amber">${money(RENT)}</b></div><div class="row"><span>Electric · due ${fmtDay(ACT2_RENT_DAY)}</span><span>${money(ELEC_JUN)}</span></div>`
         : `<div class="row"><span>Rent · due ${fmtDay(ACT2_END + 1)}</span><b class="amber">${money(RENT)}</b></div>`}
-      <div class="row"><span>Apartment heating</span><span>${S.heatOn && S.power ? '$8/day' : 'OFF ($0/day)'}</span></div>
-      <div class="row"><span>Meals · ${(MEALS[S.meal] || MEALS.ramen).label}</span><span>${money((MEALS[S.meal] || MEALS.ramen).cost)}/day</span></div>
+      <div class="row"><span>Apartment heating</span><span>${S.heatOn && S.power ? money(pr('heat')) + '/day' : 'OFF ($0/day)'}</span></div>
+      <div class="row"><span>Meals · ${(MEALS[S.meal] || MEALS.ramen).label}</span><span>${money(mealCost())}/day</span></div>
       <div class="row"><span>${S.phase === 'trainer' ? 'OpenBrain Data' : 'OpenBrain contract'}</span><span>${S.phase === 'trainer' ? `${cents(taskPay())} per task · ${S.quota} a day` : S.fired ? 'terminated' : money(S.cpRate) + ' per signed checkpoint'}</span></div>
     </div>
     <div class="box"><div class="h">Ledger</div><div class="tx">${S.tx.slice(0, 14).map(t => `<div class="row"><span>${esc(t.label)}</span><span class="${t.amt < 0 ? 'danger' : t.amt > 0 ? 'ok' : 'muted'}">${t.amt ? money(t.amt) : '—'}</span></div>`).join('')}</div></div>`;
@@ -4688,7 +5089,7 @@ function startAct1(skipOffice) {
 bindDesk();
 $('startBtn').addEventListener('click', () => startAct1());
 $('replayBtn').addEventListener('click', () => startAct2());
-$('trainerBtn').addEventListener('click', () => startAct2({ balance: S.balance, k401: S.k401 }));
+$('trainerBtn').addEventListener('click', () => startAct2({ balance: S.balance, k401: S.k401, cat: S.cat }));
 $('trEvidence').addEventListener('click', openEvidence);
 $('trReplay').addEventListener('click', () => startAct1());
 
@@ -4721,14 +5122,14 @@ function frame(t) {
     }
   }
   paintRoom(t);
-  if (S) paintBots(t);
+  if (S) { paintBots(t); deskTick(t); }
   requestAnimationFrame(frame);
 }
 newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, get DESK() { return DESK; }, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
