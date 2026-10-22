@@ -207,6 +207,26 @@ h2 { font-size: clamp(26px, 7vw, 38px); line-height: 1.05; }
 .gig .what { font-size: 13.5px; line-height: 1.45; }
 .gig .meta { font-family: var(--f-term); font-size: 11px; color: var(--muted); }
 .phone .note { font-size: 12px; color: var(--muted); }
+.homegrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 6px 0; }
+.appic { display: flex; flex-direction: column; align-items: center; gap: 5px; background: none; border: 0; color: var(--ink); font: 600 12px var(--f-ui); cursor: pointer; padding: 8px 2px; border-radius: 10px; }
+.appic:hover { background: var(--panel2); }
+.appic i { width: 44px; height: 44px; border-radius: 12px; display: block; border: 2px solid #000; box-shadow: inset 0 -4px 0 rgba(0,0,0,.28); }
+.appic small { font: 10px var(--f-term); color: var(--muted); }
+.mkt { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.mkt .q { font-size: 13px; line-height: 1.4; }
+.odds { display: flex; gap: 10px; align-items: baseline; font: 12px var(--f-term); }
+.odds span:first-child { color: var(--gpu); } .odds span:nth-child(2) { color: var(--danger); }
+.odds small { margin-left: auto; color: var(--muted); font-size: 10px; }
+.betrow { display: flex; gap: 6px; }
+.betrow button { flex: 1; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 6px; padding: 6px 4px; font: 11px var(--f-term); cursor: pointer; }
+.betrow button:hover:not(:disabled) { border-color: var(--amber); color: var(--amber); }
+.betrow button:disabled { opacity: .35; cursor: default; }
+.prof { display: flex; gap: 10px; align-items: center; background: var(--panel2); border-radius: 12px; padding: 10px; }
+.prof div { display: flex; flex-direction: column; gap: 3px; font-size: 13px; line-height: 1.35; }
+.prof small { font: 10px var(--f-term); color: var(--ok); }
+canvas.face { width: 72px; height: 72px; flex: none; image-rendering: pixelated; border-radius: 10px; border: 2px solid #000; }
+.chat { display: flex; flex-direction: column; gap: 6px; }
+.bub { align-self: flex-start; max-width: 88%; background: var(--panel2); border: 1px solid var(--line); border-radius: 12px 12px 12px 3px; padding: 7px 10px; font-size: 13px; line-height: 1.4; }
 
 .evlist { display: flex; flex-direction: column; gap: 12px; }
 .ev { background: var(--paper); color: var(--paper-ink); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 8px; position: relative; }
@@ -1816,6 +1836,7 @@ function dayStep() {
   S.heartStrain = Math.max(0, S.heartStrain - 10);
   applyPrices(d);
   jobsTick(d);
+  marketsTick(d);
 
   // 1. The farm settles: steady wages, the staked gamble, running costs, and exposure.
   if (S.phase === 'farm') {
@@ -3096,6 +3117,152 @@ function openPuzzle(kind, j, cb) {
   }
 }
 
+// ================= the phone: apps that want your money =================
+// ODDSLY: bet on next week's news. The paper prints some of it five days early, if you read it.
+const MARKET_DEFS = [
+  { k: 'goose', open: 4, close: 60, d: 62, q: 'Will $GOOSE, GOLDIE’s coin, hit $1.00 by @?', yes: .08, truth: false },
+  { k: 'snow', open: 3, close: 9, d: 10, q: 'Snow on @?', yes: .62, truth: true },
+  { k: 'ram', open: 8, close: 13, d: 15, q: 'An 8 GB RAM upgrade over $200 by @?', yes: .3, truth: true },
+  { k: 'gpu', open: 16, close: 21, d: 23, q: 'External GPUs over $700 by @?', yes: .34, truth: true },
+  { k: 'rentcap', open: 18, close: 26, d: 28, q: 'City Council passes a rent cap by @?', yes: .31, truth: false },
+  { k: 'heat', open: 19, close: 27, d: 29, q: 'Heating over $10 a day by @?', yes: .42, truth: true },
+  { k: 'dc', open: 26, close: 33, d: 35, q: 'The windowless building by the river opens by @?', yes: .44, truth: true },
+  { k: 'agent2', open: 44, close: 51, d: 53, q: 'OpenBrain previews Agent-2 by @?', yes: .5, truth: true },
+  { k: 'ram3', open: 53, close: 58, d: 61, q: 'An 8 GB RAM upgrade over $300 by @?', yes: .23, truth: true },
+  { k: 'senate', open: 64, close: 71, d: 73, q: 'The Senate votes on the “runaway agents” bill by @?', yes: .56, truth: false }
+];
+const ODDS_CAP = 100; // new accounts: $100 per market
+const mq = def => def.q.replace('@', dateOf(def.d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }));
+const staked = m => m.bets.reduce((t, b) => t + b.stake, 0);
+function marketPrice(m) { // the crowd drifts toward what's true as the day comes closer
+  const k = clamp((S.day - m.open) / Math.max(1, m.close - m.open), 0, 1) * .65;
+  return clamp(m.yes + ((m.truth ? .97 : .03) - m.yes) * k, .03, .97);
+}
+function marketsTick(d) {
+  S.markets = S.markets || {};
+  for (const def of MARKET_DEFS) {
+    if (d >= def.open && d <= def.close && !S.markets[def.k]) S.markets[def.k] = { truth: def.truth, bets: [] };
+    const m = S.markets[def.k];
+    if (m && d === def.d && !m.done) {
+      m.done = true;
+      let win = 0, lost = 0;
+      for (const b of m.bets) { if ((b.side === 'Y') === m.truth) win += Math.round(b.stake / b.price * .96); else lost += b.stake; }
+      if (win) { S.balance += win; tx(`ODDSLY · ${mq(def)}`, win); }
+      if (m.bets.length) { note(`ODDSLY settled “${mq(def)}”: ${m.truth ? 'YES' : 'NO'}. ${win ? `You were paid ${money(win)}.` : `You lost ${money(lost)}.`}`); toast(win ? `ODDSLY paid ${money(win)}` : `ODDSLY: lost ${money(lost)}`); S.phoneUnread = 1; }
+    }
+  }
+}
+function oddslyHTML() {
+  const open = MARKET_DEFS.filter(def => S.markets && S.markets[def.k] && !S.markets[def.k].done && S.day <= def.close);
+  const mine = MARKET_DEFS.filter(def => S.markets && S.markets[def.k] && S.markets[def.k].bets.length && !S.markets[def.k].done);
+  return `<div class="app"><i style="background:#2fb589"></i>ODDSLY · predict anything</div>
+    ${open.length ? open.map(def => { const p = marketPrice(Object.assign({}, def, S.markets[def.k])); const left = ODDS_CAP - staked(S.markets[def.k]); return `<div class="mkt"><div class="q">${esc(mq(def))}</div><div class="odds"><span>YES ${Math.round(p * 100)}¢</span><span>NO ${Math.round((1 - p) * 100)}¢</span><small>${left > 0 ? `$${left} left to bet` : 'limit reached'}</small></div>
+      <div class="betrow">${[10, 25, 50].map(s => `<button data-bet="${def.k}" data-side="Y" data-s="${s}"${s > left ? ' disabled' : ''}>YES $${s}</button>`).join('')}</div>
+      <div class="betrow">${[10, 25, 50].map(s => `<button data-bet="${def.k}" data-side="N" data-s="${s}"${s > left ? ' disabled' : ''}>NO $${s}</button>`).join('')}</div></div>`; }).join('') : '<p class="note">No open markets today.</p>'}
+    ${mine.length ? `<div class="note">Your positions: ${mine.map(def => S.markets[def.k].bets.map(b => `${b.side === 'Y' ? 'YES' : 'NO'} $${b.stake}`).join(', ') + ' on “' + esc(mq(def)) + '”').join(' · ')}</div>` : ''}
+    <p class="note">A price is the crowd’s guess: YES at 30¢ pays $1 for every 30¢ if it happens. 4% fee on winnings. $${ODDS_CAP} limit per market.</p>`;
+}
+function placeBet(k, side, stake) {
+  const def = MARKET_DEFS.find(x => x.k === k), m = S.markets[k];
+  if (!m || m.done || S.day > def.close) return toast('That market has closed.');
+  if (staked(m) + stake > ODDS_CAP) return toast(`New accounts can bet $${ODDS_CAP} per market.`);
+  if (S.balance < stake) return toast('Not enough money.');
+  const p = marketPrice(Object.assign({}, def, m)), price = side === 'Y' ? p : 1 - p;
+  S.balance -= stake; tx(`ODDSLY · ${side === 'Y' ? 'YES' : 'NO'} on “${mq(def)}”`, -stake);
+  m.bets.push({ side, stake, price }); sfx.cash();
+  toast(`${side === 'Y' ? 'YES' : 'NO'} at ${Math.round(price * 100)}¢ · pays ${money(Math.round(stake / price * .96))} if right`);
+  phoneApp('oddsly'); renderHud();
+}
+
+// PULSE: everyone is beautiful, everyone is awake at 3 AM, and nobody is real.
+const PULSE_PEOPLE = [
+  ['Mara', 29, 'Nurse. Night shifts. Looking for someone who also can’t sleep.'], ['Jules', 31, 'I love hiking, honesty, and good conversation. 100% real 😊'],
+  ['Priya', 27, 'New in town. Help me find the best ramen?'], ['Dev', 33, 'Architect. Cat person. Your cat would like me.'],
+  ['Sasha', 30, 'Just got out of something. Not looking for anything serious. Or am I?'], ['Theo', 28, 'Crypto, gym, sunsets. In that order.'],
+  ['Noor', 32, 'Bookshop on 8th. Come say hi. (I won’t be there.)'], ['Elle', 26, 'Model, life coach, investor. Ask me how.']
+];
+const PULSE_ASKS = [
+  { say: ['hey!! you’re cute', 'I feel like I already know you', 'my phone is broken and I’m stuck at the airport 😢 could you send a $50 gift card? I’ll pay you back tonight'], cost: 50, what: 'a gift card' },
+  { say: ['omg we matched!', 'I don’t really use this app much', 'talk to me on my HolyFans instead? it’s only $9.99, first message free 💕'], cost: 10, what: 'a HolyFans subscription' },
+  { say: ['hiii 😊', 'can I tell you a secret? my uncle trades crypto with an AI', 'I put in $100 and made $900 this week. want me to show you how? just send the $100 here'], cost: 100, what: 'a “crypto deposit”' }
+];
+const PULSE_REAL = ['hi. I know this app is mostly bots. I almost deleted it tonight.', 'I’m real, I promise. I run the bookshop on 8th. (I really won’t be there Sunday. We’re closed.)', 'coffee on Saturday? I’ll pay for mine.'];
+function pulseHTML() {
+  S.pulse = S.pulse || { i: 0, likes: 0, gold: 0, chat: null };
+  const P = S.pulse;
+  if (P.chat && P.chat.real) {
+    return `<div class="app"><i style="background:#e8907c"></i>PULSE · Noor</div>
+      <div class="chat">${PULSE_REAL.map(l => `<div class="bub">${esc(l)}</div>`).join('')}</div>
+      <button class="btn primary" id="pMeet">Meet for coffee (${money(pr('coffee'))})</button><button class="btn" id="pUnmatch">Unmatch</button><button class="btn" id="pReport">Report as a bot</button>`;
+  }
+  if (P.chat) {
+    const a = PULSE_ASKS[P.chat.ask], who = PULSE_PEOPLE[P.chat.who];
+    return `<div class="app"><i style="background:#e8907c"></i>PULSE · ${esc(who[0])}</div>
+      <div class="chat">${a.say.map((l, i) => `<div class="bub">${esc(l)}</div>`).join('')}</div>
+      <button class="btn danger" id="pSend">Send ${money(a.cost)}</button><button class="btn" id="pUnmatch">Unmatch</button><button class="btn" id="pReport">Report as a bot</button>`;
+  }
+  const who = PULSE_PEOPLE[P.i % PULSE_PEOPLE.length];
+  return `<div class="app"><i style="background:#e8907c"></i>PULSE ${P.gold > S.day ? '· GOLD' : ''}</div>
+    <div class="prof"><canvas class="face" width="24" height="24" id="pFace"></canvas><div><b>${esc(who[0])}, ${who[1]}</b><span>${esc(who[2])}</span><small>${(2 + (P.i * 7) % 9)} km away · active now</small></div></div>
+    <div class="betrow"><button id="pPass">✕ Pass</button><button id="pLike">♥ Like</button></div>
+    ${P.gold > S.day ? `<p class="note">PULSE Gold until ${fmtDay(P.gold)}. Your profile is shown first.</p>` : `<button class="btn" id="pGold">PULSE Gold · $15 a week · be seen first</button>`}
+    <p class="note">${P.likes} likes sent · ${P.matches || 0} matches</p>`;
+}
+function pulseFace(i) {
+  const cv = $('pFace'); if (!cv) return; const g = cv.getContext('2d');
+  const skin = ['#e4c4a8', '#c89878', '#8d5e3c', '#f0d8c8'][i % 4], hair = ['#1e1612', '#6a3e22', '#d8b878', '#141010'][(i * 3) % 4];
+  g.fillStyle = '#2a1712'; g.fillRect(0, 0, 24, 24); g.fillStyle = hair; g.fillRect(5, 3, 14, 17); g.fillStyle = skin; g.fillRect(7, 6, 10, 12); g.fillStyle = hair; g.fillRect(7, 5, 10, 3);
+  g.fillStyle = '#1a1210'; g.fillRect(9, 11, 2, 1); g.fillRect(13, 11, 2, 1); g.fillStyle = '#c87070'; g.fillRect(11, 15, 2, 1);
+  g.fillStyle = '#e8907c'; g.fillRect(4, 20, 16, 4);
+}
+function pulseAct(a) {
+  const P = S.pulse;
+  if (a === 'gold') { if (S.balance < 15) return toast('Not enough money.'); S.balance -= 15; tx('PULSE Gold · 1 week', -15); P.gold = S.day + 7; sfx.cash(); }
+  if (a === 'pass') P.i++;
+  if (a === 'like') {
+    P.likes++; P.i++;
+    if (Math.random() < (P.gold > S.day ? .45 : .07)) {
+      P.matches = (P.matches || 0) + 1;
+      P.chat = P.matches === 3 && !P.met ? { real: true } : { who: (P.i + 3) % PULSE_PEOPLE.length, ask: (P.matches - 1) % PULSE_ASKS.length };
+      sfx.buzz(); toast('It’s a match!');
+    }
+  }
+  if (a === 'send') { const ask = PULSE_ASKS[P.chat.ask]; if (S.balance < ask.cost) return toast('Not enough money.'); scam(ask.cost, `PULSE · ${ask.what}`); note(`You sent ${money(ask.cost)}. The account was gone by morning. It had never been a person.`); P.chat = null; }
+  if (a === 'meet') {
+    const c = pr('coffee'); if (S.balance < c) return toast('Not enough money.');
+    S.balance -= c; tx('Coffee with Noor', -c); S.stamina = clamp(S.stamina + 30, 0, 100); P.met = S.day; P.chat = null; sfx.ping();
+    note(`Saturday, two coffees, two hours. Noor asked about ${S.cat && !S.cat.gone ? S.cat.name : 'the cat you used to have'} and didn’t once ask about money. You walked home the long way.`);
+  }
+  if (a === 'unmatch') { if (P.chat && P.chat.real) note('You unmatched the one who said they were real. Maybe Noor was.'); P.chat = null; }
+  if (a === 'report') { if (P.chat && P.chat.real) note('You reported Noor as a bot. The bookshop on 8th has a CLOSING DOWN sign now. Probably unrelated.'); else toast('Reported. PULSE thanks you. The account is still there.'); P.chat = null; }
+  phoneApp('pulse'); renderHud();
+}
+
+function phoneApp(app) {
+  const p = $('phoneScreen'), bar = `<div class="bar"><span>${fmtDay(S.day)}</span><span>${S.power ? '' : '⚡ ' + S.battery + '% · '}5G</span></div>`;
+  const back = `<button class="btn" id="phBack">← Home</button>`;
+  if (app === 'oddsly') { p.innerHTML = bar + oddslyHTML() + back; p.querySelectorAll('[data-bet]').forEach(b => b.onclick = () => placeBet(b.dataset.bet, b.dataset.side, +b.dataset.s)); }
+  else if (app === 'pulse') {
+    p.innerHTML = bar + pulseHTML() + back;
+    const on = (id, f) => { if ($(id)) $(id).onclick = f; };
+    on('pPass', () => pulseAct('pass')); on('pLike', () => pulseAct('like')); on('pGold', () => pulseAct('gold'));
+    on('pSend', () => pulseAct('send')); on('pMeet', () => pulseAct('meet')); on('pUnmatch', () => pulseAct('unmatch')); on('pReport', () => pulseAct('report'));
+    pulseFace(S.pulse.i % PULSE_PEOPLE.length);
+  } else {
+    p.innerHTML = bar + `<div class="homegrid">
+      <button class="appic" data-app="taskdrop"><i style="background:var(--amber)"></i>TaskDrop<small>${(S.jobs || []).length} jobs</small></button>
+      <button class="appic" data-app="oddsly"><i style="background:#2fb589"></i>ODDSLY<small>${MARKET_DEFS.filter(d => S.markets && S.markets[d.k] && !S.markets[d.k].done && S.day <= d.close).length} markets</small></button>
+      <button class="appic" data-app="pulse"><i style="background:#e8907c"></i>PULSE<small>${S.pulse && S.pulse.chat ? '1 message' : 'dating'}</small></button>
+    </div><p class="note">${S.gigDone ? 'TaskDrop status: Trusted Meat-Space Contractor for 127 Holdings LLC.' : 'No calls. A battery warning you ignored.'}</p><button class="btn" id="gClose">Close</button>`;
+    p.querySelectorAll('[data-app]').forEach(b => b.onclick = () => b.dataset.app === 'taskdrop' ? (closePhone(), setTab('farm')) : phoneApp(b.dataset.app));
+    $('gClose').onclick = closePhone;
+    $('phoneModal').hidden = false;
+    return;
+  }
+  $('phBack').onclick = () => phoneApp('home');
+  $('phoneModal').hidden = false;
+}
+
 // ================= evenings: small choices with faces, and what comes back later =================
 // See DESIGN-human-choices.md. No meters: the cost arrives days later as a note, a sound, a door.
 const ENDINGS = [
@@ -3259,9 +3426,7 @@ function openPhone() {
     $('gDecline').onclick = () => { S.side = null; closePhone(); };
     return;
   }
-  p.innerHTML = head + `<p class="note">No active gigs.${S.gigDone ? ' Status: Trusted Meat-Space Contractor for 127 Holdings LLC.' : ''}</p><button class="btn" id="gClose">Close</button>`;
-  $('phoneModal').hidden = false;
-  $('gClose').onclick = closePhone;
+  phoneApp('home');
 }
 function closePhone() { $('phoneModal').hidden = true; renderAll(); }
 
@@ -5742,7 +5907,7 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, seedAgents(n = 2) { S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, phoneApp, placeBet, pulseAct, marketsTick, marketPrice, MARKET_DEFS, seedAgents(n = 2) { S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
