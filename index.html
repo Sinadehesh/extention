@@ -714,6 +714,182 @@ p, .muted, .note, .st-sub, .rbtn span, .mail .s, .reader .body, .doc.win .msg, .
 .phone .note, .bub, .mkt .q, .prof div { font-size: 14px; }
 .gig .what { font-size: 14.5px; }
 .rbtn span { font-size: 11.5px; line-height: 1.3; }
+/* ================= LAYOUT: the room is the screen =================
+   One bar on top. The apartment fills the rest, with your books on the left and your phone on the right.
+   The laptop opens full screen with windows you can drag; the phone slides up beside the room. */
+body { padding: 0; }
+#app { max-width: none; height: 100%; padding: 0; gap: 0; background: #070806; }
+#top { flex: none; height: 54px; padding: 0 14px; gap: 18px; flex-wrap: nowrap; background: var(--panel); border-bottom: 2px solid #000; box-shadow: 0 2px 0 var(--line); }
+#top .when { align-items: center; gap: 12px; flex: none; }
+#top .datebox { display: flex; flex-direction: column; gap: 3px; }
+#top .date { font-size: 15px; }
+#top .clock { font-family: var(--f-term); font-size: 24px; font-weight: 400; color: var(--amber); font-variant-numeric: tabular-nums; min-width: 100px; text-shadow: 2px 2px 0 #000; }
+#hud { display: flex; align-items: stretch; gap: 8px; flex: 1; justify-content: center; min-width: 0; }
+#hud .hc { flex-direction: column; justify-content: center; gap: 0; padding: 3px 12px; box-shadow: none !important; border-width: 2px !important; min-width: 104px; }
+#hud .hk { font-size: 10px; letter-spacing: .1em; }
+#hud .hv { font-size: 19px; line-height: 1.1; }
+#hud .hs { display: none; }
+#hud .hp { min-width: 290px; }
+#hud .hp .pbar { margin-top: 3px; }
+.vitals { display: flex; gap: 8px; flex: none; }
+.vitals .vital { min-width: 92px; padding: 4px 8px; box-shadow: none !important; border-width: 2px !important; }
+.ctrls { flex: none; }
+.ctrls .fs { font-family: var(--f-term); font-size: 12px; letter-spacing: .06em; padding: 6px 10px; background: var(--panel2); border: 2px solid var(--line); color: var(--ink); }
+.ctrls .fs[aria-pressed="true"] { border-color: var(--amber); color: var(--amber); }
+
+#split { flex: 1; min-height: 0; display: grid; grid-template-columns: 128px minmax(0, 1fr) 150px; gap: 0; }
+#room { position: relative; display: grid; place-items: center; padding: 10px 0; min-height: 0; }
+#room .cvwrap { border: 3px solid #000 !important; border-radius: 0; box-shadow: 0 0 0 2px var(--line), 8px 8px 0 #000; }
+#railL, #railR { position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 14px 10px; min-height: 0; }
+#railL { justify-content: flex-end; padding-bottom: 22px; }
+.rail-item { display: flex; flex-direction: column; align-items: center; gap: 6px; background: none !important; border: 0; box-shadow: none !important; color: var(--ink); font-family: var(--f-term); font-size: 12px; letter-spacing: .08em; padding: 0; }
+.rail-item i { display: block; width: 60px; height: 70px; border: 3px solid #000; box-shadow: 3px 3px 0 #000; transition: transform .12s; position: relative; }
+.rail-item i.book { background: #5a2a1c; }
+.rail-item i.book::after { content: ''; position: absolute; right: -9px; top: 10px; width: 8px; height: 14px; background: var(--danger); border: 2px solid #000; }
+.rail-item i.diary { background: #2f3a2a; height: 62px; }
+.rail-item i.lap { width: 72px; height: 46px; background: #202224; }
+.rail-item i.lap::after { content: ''; position: absolute; left: 6px; right: 6px; top: 6px; bottom: 8px; background: #0f1714; box-shadow: inset 0 0 0 1px #2c3a33; }
+.rail-item:hover i { transform: translateY(-4px); }
+.rail-item:hover span { color: var(--amber); }
+#roomStatus { display: flex; flex-direction: column; align-items: stretch; gap: 4px; width: 100%; margin-bottom: auto; }
+#roomStatus span, #roomStatus button { text-align: center; box-shadow: none !important; }
+#heatBtn, #catBtn { display: none !important; }
+
+/* the subtitle: the last thing that happened */
+#subtitle { position: absolute; left: 0; right: 0; bottom: 26px; margin: 0 auto; width: fit-content; max-width: min(720px, 80%); text-align: center; font-size: 17px; line-height: 1.4; color: var(--ink); background: rgba(11,12,10,.9); border: 2px solid #000; box-shadow: 3px 3px 0 #000; padding: 9px 16px; z-index: 4; cursor: pointer; transition: opacity 1.4s; }
+#subtitle.fade { opacity: 0; }
+#subtitle.fade:hover { opacity: .9; }
+
+/* the kitchen: opened from the fridge */
+.pop { position: absolute; left: 14%; top: 18%; z-index: 6; width: 330px; background: var(--panel); border: 3px solid #000; box-shadow: 0 0 0 2px var(--line), 6px 6px 0 #000; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.pop-h { display: flex; justify-content: space-between; align-items: center; font-family: var(--f-term); font-size: 13px; letter-spacing: .14em; color: var(--amber); }
+.pop-x { background: none; border: 0; box-shadow: none !important; color: var(--ink); font-size: 20px; line-height: 1; padding: 0 4px; }
+.pop .life-actions { grid-template-columns: 1fr; gap: 6px; }
+.pop .meal button { padding: 8px 4px; font-size: 13px; }
+.pop .lbtn { padding: 9px 10px; font-size: 13px; }
+
+/* the phone, face up at the edge */
+#railR { justify-content: flex-end; overflow: hidden; }
+.phone-dock { position: absolute; bottom: -34px; left: 18px; width: 108px; height: 210px; padding: 0; transform: rotate(-6deg); background: #101113 !important; border: 3px solid #000 !important; border-radius: 22px; box-shadow: 5px 5px 0 #000 !important; transition: transform .2s; }
+.phone-dock:hover { transform: rotate(-3deg) translateY(-14px); }
+.phone-dock.buzz { animation: dockBuzz 1.6s steps(1) infinite; }
+@keyframes dockBuzz { 0%, 70%, 100% { transform: rotate(-6deg); } 72% { transform: rotate(-4deg) translateX(-3px); } 76% { transform: rotate(-8deg) translateX(3px); } 80% { transform: rotate(-5deg); } }
+.pd-screen { position: absolute; left: 9px; right: 9px; top: 12px; bottom: 0; background: #16202a; border-radius: 13px 13px 0 0; display: flex; flex-direction: column; gap: 8px; padding: 12px 7px; }
+.pd-time { font-family: var(--f-term); font-size: 20px; color: var(--ink); text-align: center; }
+.pd-note { font-size: 11px; line-height: 1.3; color: var(--ink); background: #24303b; padding: 5px 6px; text-align: left; }
+.pd-note:empty { display: none; }
+.pd-badge { position: absolute; right: -10px; top: -10px; width: 26px; height: 26px; display: grid; place-items: center; background: var(--danger); color: #fff; border: 2px solid #000; font-family: var(--f-term); font-size: 13px; }
+#railR.up .phone-dock { transform: translateY(260px) rotate(-6deg); }
+
+/* the phone itself: a handset that slides up beside the room, and doesn't stop the clock */
+#phoneModal { inset: 66px 26px 0 auto !important; width: 350px; background: transparent !important; display: block !important; z-index: 38; pointer-events: none; padding: 0; }
+#phoneModal[hidden] { display: none !important; }
+#phoneModal .phone { pointer-events: auto; width: 100%; height: 100%; max-height: none; border-radius: 36px 36px 0 0 !important; border: 3px solid #000 !important; background: #101113 !important; box-shadow: 0 0 0 2px #2a2d30, 8px 0 0 #000 !important; padding: 40px 16px 28px; overflow-y: auto; position: relative; animation: phoneUp .28s cubic-bezier(.2,1.2,.35,1); }
+#phoneModal .phone::before { content: ''; position: absolute; top: 12px; left: 50%; width: 84px; height: 18px; margin-left: -42px; background: #000; border-radius: 10px; }
+@keyframes phoneUp { from { transform: translateY(70%); } to { transform: none; } }
+#phoneModal .phone .bar { font-size: 13px; color: var(--ink); }
+
+#phoneModal .ph-lock { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 0 6px; }
+#phoneModal .ph-lock b { font-family: var(--f-term); font-weight: 400; font-size: 56px; line-height: 1; color: var(--ink); text-shadow: 3px 3px 0 #000; }
+#phoneModal .ph-lock span { font-size: 14px; color: var(--muted); }
+#phoneModal .ph-note { text-align: left; display: flex; flex-direction: column; gap: 2px; background: #1c2a36 !important; border: 2px solid #000 !important; padding: 9px 11px; color: var(--ink); font-size: 14px; }
+#phoneModal .ph-note span { font-family: var(--f-term); font-size: 11px; letter-spacing: .08em; color: var(--amber); }
+#phoneModal .homegrid { grid-template-columns: repeat(4, 1fr); gap: 14px 6px; margin-top: 8px; }
+#phoneModal .appic { background: none !important; border: 0 !important; box-shadow: none !important; padding: 2px 0; gap: 6px; font-size: 12px; font-weight: 400; }
+#phoneModal .appic i { width: 58px; height: 58px; border-radius: 15px !important; border: 2px solid #000; box-shadow: 2px 2px 0 #000; }
+#phoneModal .appic small { display: none; }
+
+/* the laptop: full screen, with a desktop */
+#laptop { position: fixed; inset: 56px 0 0 0; z-index: 25; background: rgba(5,6,5,.8); display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 22px 16px; }
+.lap-top { width: min(1560px, 100%); display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--muted); }
+#lapClose { font-family: var(--f-term); font-size: 13px; padding: 6px 12px; background: var(--panel2); border: 2px solid var(--line); color: var(--ink); }
+#lapClose:hover { border-color: var(--amber); }
+.bezel { flex: 1; min-height: 0; width: min(1560px, 100%); display: flex; background: #1d1f21; border: 3px solid #000; box-shadow: 8px 8px 0 #000; padding: 12px 12px 10px; }
+.lscreen { position: relative; flex: 1; min-width: 0; background-color: #0f1714; background-image: radial-gradient(#16231e 1px, transparent 1px); background-size: 6px 6px; border: 2px solid #000; overflow: hidden; }
+.dicons { position: absolute; left: 12px; top: 12px; bottom: 52px; display: flex; flex-direction: column; flex-wrap: wrap; gap: 14px 10px; align-content: flex-start; }
+.dicon { position: relative; width: 84px; display: flex; flex-direction: column; align-items: center; gap: 5px; background: none !important; border: 0; box-shadow: none !important; padding: 4px 0; color: var(--ink); }
+.dicon span { width: 48px; height: 48px; display: grid; place-items: center; border: 2px solid #000; box-shadow: 2px 2px 0 #000; }
+.dicon b { font-family: var(--f-term); font-size: 12px; font-weight: 400; text-shadow: 1px 1px 0 #000; }
+.dicon:hover span { outline: 2px solid var(--amber); }
+.dicon .dot { position: absolute; right: 14px; top: 0; width: 12px; height: 12px; background: var(--danger); border: 2px solid #000; }
+.win { position: absolute; display: flex; flex-direction: column; background: var(--panel) !important; border: 3px solid #000 !important; border-radius: 0 !important; box-shadow: 6px 6px 0 #000 !important; resize: both; overflow: hidden; min-width: 380px; min-height: 220px; }
+#term.win { left: 118px; top: 12px; width: max(460px, min(860px, calc(100% - 660px))); height: calc(100% - 66px); z-index: 3; }
+#benchWin.win { left: calc(100% - 530px); top: 26px; width: 500px; height: min(560px, calc(100% - 80px)); z-index: 4; }
+#benchWin #benchBox { flex: 1; min-height: 0; overflow-y: auto; padding: 8px; }
+#benchWin #benchBox .bench { box-shadow: none !important; border: 0 !important; padding: 0; background: none !important; }
+.win > .osbar { cursor: grab; user-select: none; touch-action: none; background: #2a2d24 !important; color: var(--ink); font-size: 13px; padding: 7px 10px; border-bottom: 2px solid #000; }
+.win > .osbar:active { cursor: grabbing; }
+#term .ttabs button { font-size: 13px; padding: 8px 2px; }
+#view { font-size: 13px; }
+.taskbar { position: absolute; left: 0; right: 0; bottom: 0; height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 10px; background: #191c15; border-top: 2px solid #000; font-family: var(--f-term); font-size: 13px; z-index: 1000; }
+.tb-os { color: var(--amber); border: 2px solid var(--line); padding: 3px 8px; }
+.tb-apps { display: flex; gap: 6px; flex: 1; min-width: 0; }
+.tb-app { font-family: var(--f-term); font-size: 13px; color: var(--ink); background: #24303b; border: 2px solid #000; padding: 3px 10px; }
+.tb-right { display: flex; align-items: center; gap: 14px; color: var(--muted); }
+.tb-right b { color: var(--amber); font-weight: 400; }
+
+/* the shop and the internet: a sheet over the room */
+#gateModal { z-index: 35; }
+.gate-card { max-width: 1000px !important; width: min(1000px, 94vw); max-height: 88vh; }
+#gateModal #gate { position: static; inset: auto; background: none; padding: 0; overflow: visible; }
+
+/* everything else that lives on top */
+#toasts { top: 66px; bottom: auto; }
+#desk { z-index: 30; }
+.card.diary, .card.rulebook { max-width: 620px; }
+.dlist { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.dlist li { font-size: 15px; line-height: 1.45; } .dlist li span { display: block; font-family: var(--f-term); font-size: 11px; color: var(--muted); }
+#narrowNote { display: none; }
+@media (max-width: 900px) {
+  #narrowNote { display: flex; position: fixed; left: 10px; right: 10px; bottom: 10px; z-index: 60; gap: 10px; align-items: center; justify-content: space-between; background: var(--panel); border: 2px solid var(--amber); padding: 10px 12px; font-size: 14px; }
+  #narrowNote[hidden] { display: none; }
+  #split { grid-template-columns: 0 minmax(0, 1fr) 0; }
+  #railL, #railR { overflow: hidden; padding: 0; }
+  #top { overflow-x: auto; }
+}
+
+/* the morning paper: a page, not a window */
+.desk-stage { grid-template-columns: minmax(110px, 1fr) minmax(0, 660px) minmax(110px, 1fr); }
+.doc-wrap:has(.k-bulletin), .doc-wrap:has(.k-notice) { max-width: 640px; }
+.doc.k-bulletin { padding: 0; background: #e9e3cf !important; }
+.np2 { background: #e9e3cf; margin: 0; padding: 16px 20px 14px; max-height: 66vh; overflow: auto; border: 0; display: flex; flex-direction: column; gap: 10px; }
+.np2 .np-mast { font-family: var(--f-term); font-size: 40px; line-height: 1; letter-spacing: .05em; border-bottom: 0; padding-bottom: 6px; box-shadow: 0 3px 0 #1b1a12, 0 6px 0 #e9e3cf, 0 7px 0 #1b1a12; margin-bottom: 4px; }
+.np-line { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-family: var(--f-term); font-size: 10.5px; letter-spacing: .08em; color: #4a4636; }
+.np2 .np-head { font-family: var(--f-term); font-size: 27px; line-height: 1.12; text-transform: uppercase; text-wrap: balance; }
+.np-grid { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 14px; align-items: start; }
+.np-fig { margin: 0; display: flex; flex-direction: column; gap: 4px; }
+.np-photo { width: 200px; height: 150px; image-rendering: pixelated; border: 2px solid #1b1a12; filter: grayscale(.75) contrast(1.15) sepia(.15); display: block; }
+.np-fig figcaption { font-size: 12px; font-style: italic; color: #4a4636; line-height: 1.35; }
+.np2 .np-dek { font-size: 17px; font-weight: 700; line-height: 1.35; color: #1b1a12; margin: 0; }
+.np-boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.np-box { padding: 8px 10px; font-size: 13.5px; line-height: 1.4; display: flex; flex-direction: column; gap: 4px; }
+.np-box span { font-family: var(--f-term); font-size: 11px; letter-spacing: .14em; }
+.np-box small { font-size: 12px; color: #5a5446; }
+.np-box.watch { border: 2px solid #1f6a5e; background: #d9ece4; } .np-box.watch span { color: #1f6a5e; }
+.np-box.prices { border: 2px solid #8a2b1f; background: #f3dccf; } .np-box.prices span { color: #8a2b1f; }
+
+/* a notice: one new rule, from whoever issues it */
+.doc.k-notice { padding: 0; background: #f3efe4 !important; transform-origin: 50% 40%; }
+.ntc { position: relative; padding: 18px 22px 16px; display: flex; flex-direction: column; gap: 10px; color: #1b1a12; }
+.ntc-lh { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; border-bottom: 2px solid #1b1a12; padding-bottom: 8px; }
+.ntc-lh b { font-family: var(--f-term); font-size: 24px; font-weight: 400; color: #1d3f6e; }
+.ntc-lh span { font-family: var(--f-term); font-size: 10px; letter-spacing: .1em; color: #4a4636; text-align: right; }
+.ntc-kind { font-family: var(--f-term); font-size: 12px; letter-spacing: .14em; }
+.ntc-rule { font-size: 25px; font-weight: 700; line-height: 1.22; text-wrap: balance; padding-right: 90px; }
+.ntc-body { margin: 0; font-size: 15px; line-height: 1.5; }
+.ntc-ex { background: #fff; border: 2px solid #1b1a12; padding: 8px 11px; display: flex; flex-direction: column; gap: 5px; font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+.ntc-ex div { display: flex; gap: 8px; white-space: pre-wrap; } .ntc-ex .no b { color: #a8402a; } .ntc-ex .ok b { color: #1f6a5e; }
+.ntc-foot { font-size: 13px; color: #4a4636; }
+.ntc-stamp { position: absolute; right: 16px; top: 112px; font-family: var(--f-term); font-size: 15px; letter-spacing: .08em; color: #a8402a; border: 4px solid #a8402a; padding: 3px 9px; transform: rotate(-11deg); opacity: .9; }
+
+/* the rulebook */
+.rb { display: flex; flex-direction: column; gap: 8px; }
+.rb-rule { background: var(--paper); color: var(--paper-ink); border: 2px solid #000; padding: 9px 11px; display: flex; flex-direction: column; gap: 4px; }
+.rb-rule.new { box-shadow: inset 4px 0 0 #a8402a; }
+.rb-top { display: flex; gap: 10px; align-items: center; font-family: var(--f-term); font-size: 11px; letter-spacing: .08em; color: #5a5446; }
+.rb-top span:first-child { color: #1d3f6e; }
+.rb-top b { margin-left: auto; color: #fff; background: #a8402a; padding: 1px 6px; font-weight: 400; }
+.rb-t { font-size: 15px; line-height: 1.45; }
 </style>
 </head>
 <body>
@@ -722,6 +898,31 @@ p, .muted, .note, .st-sub, .rbtn span, .mail .s, .reader .body, .doc.win .msg, .
     <div class="when">
       <span class="act" id="actLbl">ACT I</span>
       <span class="datebox"><span class="date" id="dateLbl">MON FEB 01</span><span class="dayline" title="Time left today"><i id="dayFill"></i></span></span>
+      <b class="clock" id="clockLbl">9:00 AM</b>
+    </div>
+    <section id="hud" aria-label="Money at a glance">
+      <div class="hc"><span class="hk">Cash</span><b class="hv" id="hCash">$480</b><span class="hs" id="hCashSub">checking</span></div>
+      <div class="hc"><span class="hk" id="hRateK">Per day</span><b class="hv" id="hRate">+$0</b><span class="hs" id="hRateSub">in $0 · out $0</span></div>
+      <div class="hc hp" id="hProjCell">
+        <span class="hk" id="hProjK">By rent day</span>
+        <b class="hv" id="hProj">—</b>
+        <span class="pbar" aria-hidden="true"><i id="hBarProj"></i><i id="hBarCash"></i></span>
+        <span class="hs" id="hProjSub"></span>
+      </div>
+    </section>
+    <div class="vitals">
+      <div class="vital">
+        <div class="vtop"><span>FOOD</span><b id="vFoodTxt">80%</b></div>
+        <div class="vbar"><i id="vFoodBar" style="width:80%;background:var(--ok)"></i></div>
+      </div>
+      <div class="vital">
+        <div class="vtop"><span>ENERGY</span><b id="vStamTxt">85%</b></div>
+        <div class="vbar"><i id="vStamBar" style="width:85%;background:var(--amber)"></i></div>
+      </div>
+      <div class="vital">
+        <div class="vtop"><span>BODY</span><b id="vBodyTxt">37.0°C</b></div>
+        <div class="vbar"><i id="vBodyBar" style="width:100%;background:var(--ok)"></i></div>
+      </div>
     </div>
     <div class="ctrls">
       <button id="evBtn" hidden>EVIDENCE · VERIFIED REAL</button>
@@ -731,78 +932,92 @@ p, .muted, .note, .st-sub, .rbtn span, .mail .s, .reader .body, .doc.win .msg, .
         <button data-speed="3" aria-pressed="false">3×</button>
         <button id="muteBtn" aria-pressed="false" aria-label="Mute">♪</button>
       </div>
+      <button id="fsBtn" class="fs" aria-pressed="false" title="Full screen">FULL SCREEN</button>
     </div>
   </header>
 
-  <section id="hud" aria-label="Money at a glance">
-    <div class="hc"><span class="hk">Cash now</span><b class="hv" id="hCash">$480</b><span class="hs" id="hCashSub">checking</span></div>
-    <div class="hc"><span class="hk" id="hRateK">Per day</span><b class="hv" id="hRate">+$0</b><span class="hs" id="hRateSub">in $0 · out $0</span></div>
-    <div class="hc hp" id="hProjCell">
-      <span class="hk" id="hProjK">By rent day</span>
-      <b class="hv" id="hProj">—</b>
-      <span class="pbar" aria-hidden="true"><i id="hBarProj"></i><i id="hBarCash"></i></span>
-      <span class="hs" id="hProjSub"></span>
-    </div>
-  </section>
-
   <main id="split">
-    <section id="term" aria-label="Your laptop">
-      <div class="osbar"><span id="osPath">~/darwin-farm</span><span><span id="osTier">CPU-Spot</span> · <span class="bat" id="osBat">⚡ 100%</span></span></div>
-      <nav class="ttabs" role="tablist">
-        <button role="tab" data-tab="farm" aria-selected="true">WORK<span class="dot" hidden></span></button>
-        <button role="tab" data-tab="web" aria-selected="false" hidden>WEB<span class="dot" hidden></span></button>
-        <button role="tab" data-tab="bank" aria-selected="false">BANK<span class="dot" hidden></span></button>
-        <button role="tab" data-tab="mail" aria-selected="false">MAIL<span class="dot" hidden></span></button>
-        <button role="tab" data-tab="k401" aria-selected="false">401(k)<span class="dot" hidden></span></button>
-      </nav>
-      <div id="view"></div>
-      <div id="gate" hidden></div>
-    </section>
-
-    <section id="room" aria-label="Your apartment and survival needs">
-      <div class="vitals">
-        <div class="vital">
-          <div class="vtop"><span>CALORIES</span><b id="vFoodTxt">80%</b></div>
-          <div class="vbar"><i id="vFoodBar" style="width:80%;background:var(--ok)"></i></div>
-        </div>
-        <div class="vital">
-          <div class="vtop"><span>STAMINA</span><b id="vStamTxt">85%</b></div>
-          <div class="vbar"><i id="vStamBar" style="width:85%;background:var(--amber)"></i></div>
-        </div>
-        <div class="vital">
-          <div class="vtop"><span>CORE TEMP</span><b id="vBodyTxt">37.0°C</b></div>
-          <div class="vbar"><i id="vBodyBar" style="width:100%;background:var(--ok)"></i></div>
-        </div>
-      </div>
-
-      <div class="cvwrap"><canvas id="roomCv" aria-label="Your apartment. Tap to check your phone."></canvas></div>
-
+    <aside id="railL" aria-label="Your things">
       <div id="roomStatus">
         <span id="stTemp">ROOM 20°C</span>
-        <button id="heatBtn">HEAT: ON ($8/d)</button>
         <span id="stPower">GRID ON</span>
-        <button id="phoneBtn">PHONE</button>
+        <button id="heatBtn">HEAT: ON ($8/d)</button>
         <button id="catBtn">SOOT</button>
         <button id="ledgerBtn">LEDGER: ON</button>
       </div>
+      <button class="rail-item" id="railLaptop"><i class="lap"></i><span>LAPTOP</span></button>
+      <button class="rail-item" id="railRules"><i class="book"></i><span>RULEBOOK</span></button>
+      <button class="rail-item" id="railDiary"><i class="diary"></i><span>DIARY</span></button>
+    </aside>
 
-      <div class="life-actions">
-        <div class="meal" role="group" aria-label="Meal plan">
-          <span>MEALS</span>
-          <button data-meal="skip" aria-pressed="false">Skip<b>$0</b></button>
-          <button data-meal="ramen" aria-pressed="true">Ramen<b>$4/d</b></button>
-          <button data-meal="groc" aria-pressed="false">Groceries<b>$18/d</b></button>
+    <section id="room" aria-label="Your apartment">
+      <div class="cvwrap"><canvas id="roomCv" aria-label="Your apartment. Click the things in it."></canvas></div>
+      <div id="subtitle" hidden></div>
+      <div id="popKitchen" class="pop" hidden>
+        <div class="pop-h"><span>KITCHEN</span><button class="pop-x" id="popKitchenX" aria-label="Close">×</button></div>
+        <div class="life-actions">
+          <div class="meal" role="group" aria-label="Meal plan">
+            <span>MEALS</span>
+            <button data-meal="skip" aria-pressed="false">Skip<b>$0</b></button>
+            <button data-meal="ramen" aria-pressed="true">Ramen<b>$4/d</b></button>
+            <button data-meal="groc" aria-pressed="false">Groceries<b>$18/d</b></button>
+          </div>
+          <button class="lbtn" id="actCoffee"><span>Coffee (+28% energy)</span><b>$5</b></button>
+          <button class="lbtn" id="actPills"><span>Stimulants (+60% energy)</span><b>$15</b></button>
         </div>
-        <button class="lbtn" id="actCoffee"><span>Coffee (+28% stam)</span><b>$5</b></button>
-        <button class="lbtn" id="actPills"><span>Stimulants (+60% stam)</span><b>$15</b></button>
-        <button class="lbtn" id="actGrind" style="grid-column: 1 / -1; justify-content: center; border-color: #2f3b4a;">
-          <span>Rate A vs B by hand (−30% stamina)</span><b class="ok">+$42</b>
-        </button>
       </div>
-
-      <ul id="roomLog" aria-live="polite"></ul>
+      <ul id="roomLog" aria-live="polite" hidden></ul>
     </section>
+
+    <aside id="railR" aria-label="Phone">
+      <button id="phoneBtn" class="phone-dock" aria-label="Phone">
+        <span class="pd-screen"><span class="pd-time" id="pdTime">9:00</span><span class="pd-note" id="pdNote"></span></span>
+        <span class="pd-badge" id="pdBadge" hidden>1</span>
+      </button>
+    </aside>
   </main>
+  <div id="legacy" hidden>
+    <button class="lbtn" id="actGrind"><span>Rate A vs B by hand (−30% stamina)</span><b class="ok">+$42</b></button>
+  </div>
+  <div id="narrowNote"><span>The Loop is made for a computer screen for now. It may not fit here.</span><button id="narrowX">OK</button></div>
+</div>
+
+<!-- The laptop: pick it up, and it fills the screen -->
+<div id="laptop" hidden>
+  <div class="lap-top"><span>Your laptop. The clock keeps running.</span><button id="lapClose">Close the laptop · Esc</button></div>
+  <div class="bezel" id="lapBezel">
+    <div class="lscreen" id="lscreen">
+      <div class="dicons" id="dIcons"></div>
+      <section id="term" class="win" aria-label="Your laptop">
+        <div class="osbar" data-drag="term"><span id="osPath">~/darwin-farm</span><span><span id="osTier">CPU-Spot</span> · <span class="bat" id="osBat">⚡ 100%</span></span></div>
+        <nav class="ttabs" role="tablist">
+          <button role="tab" data-tab="farm" aria-selected="true">WORK<span class="dot" hidden></span></button>
+          <button role="tab" data-tab="web" aria-selected="false" hidden>WEB<span class="dot" hidden></span></button>
+          <button role="tab" data-tab="bank" aria-selected="false">BANK<span class="dot" hidden></span></button>
+          <button role="tab" data-tab="mail" aria-selected="false">MAIL<span class="dot" hidden></span></button>
+          <button role="tab" data-tab="k401" aria-selected="false">401(k)<span class="dot" hidden></span></button>
+        </nav>
+        <div id="view"></div>
+      </section>
+      <section id="benchWin" class="win" hidden aria-label="Work bench">
+        <div class="osbar" data-drag="benchWin"><span>WORK BENCH</span><span>drag me</span></div>
+        <div id="benchBox"></div>
+      </section>
+      <div class="taskbar">
+        <span class="tb-os">LoopOS</span>
+        <div class="tb-apps" id="tbApps"></div>
+        <div class="tb-right"><span id="tbMail"></span><span id="tbCash"></span><b id="tbClock"></b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- No computer, no internet, or the bill is unpaid -->
+<div class="modal" id="gateModal" hidden>
+  <div class="card gate-card">
+    <div class="row"><span class="ttl">8TH STREET</span><button class="btn" id="gateClose">Close · Esc</button></div>
+    <div id="gate" hidden></div>
+  </div>
 </div>
 
 <!-- Title -->
@@ -1418,6 +1633,7 @@ function enterApartment() {
   note(`Feb 1. −6°C outside. ${money(S.balance)} in checking. No computer. A black cat called Soot. Rent is $1,800 on March 1.`);
   addMail(0, 'Northvale Logistics HR', 'Your separation', 'Hi,\n\nYour role on the dispatch team has been consolidated into ChatGPX, our AI teammate. As a contract-to-hire employee you are not eligible for severance. Your unused vacation has been paid out.\n\nPlease return your badge by mail.\n\nNorthvale People Team');
   postBulletin(0); S.deskOpenDay = 0; bullyNight(); bullyOpen(0);
+  S.gateOpen = true; fx.glowAll = performance.now() + 12000;
   snap();
   setTab('farm');
   renderAll();
@@ -1432,6 +1648,7 @@ function enterApartment() {
 }
 function readPaper() {
   modal({ cls: 'news-read', title: 'ON THE DOORMAT', body: bulletinHTML(S.lastBulletin), buttons: [{ label: 'Go buy a computer', primary: true }] });
+  paintPaperPhotos();
 }
 
 // ================= prologue: the office =================
@@ -2640,27 +2857,69 @@ function makeBulletin(d) {
   const temp = d < 35 ? -6 : d < 60 ? 1 : 7;
   return { d, head: head[1], dek: head[2], rule, prices: (S.todayPrices || []).map(e => ({ k: e.k, old: e.old, v: e.v, why: e.why })), next: next.map(e => ({ k: e.k, d: e.d, v: e.v })), ins: insightsFor(d), obits, ad: ADS[d % ADS.length], weather: `${temp}°C, ${temp < 0 ? 'snow' : 'sleet'}` };
 }
+// ---- the paper, Papers, Please-style: one headline, one picture, two short boxes ----
+// The picture is your own window, printed in grey. New rules don't hide in the paper: each arrives as its own notice.
+const PHOTO_CAPTION = d => d >= 60 ? 'Two cooling towers by the river now. They steam day and night.' : d >= 34 ? 'The data centre by the river. Its lights never go off.' : d >= 16 ? 'A crane by the river. The permit says “data infrastructure.”' : 'Snow over the city, from a fourth-floor window.';
 function bulletinHTML(b) {
-  const board = Object.keys(PRICE0).map(k => {
-    const ch = b.prices.find(p => p.k === k);
-    return `<div class="pb ${ch ? 'up' : ''}"><span>${PRICE_NAME[k]}</span><b>${money(ch ? ch.v : pr(k))}${PRICE_UNIT[k]}${ch ? ` ▲ <s>${money(ch.old)}</s>` : ''}</b></div>`;
-  }).join('');
-  return `<div class="np">
+  const ins = b.ins || [];
+  const prices = b.prices.map(p => `<b>${esc(PRICE_NAME[p.k])} ${money(p.old)} → ${money(p.v)}${PRICE_UNIT[p.k]}.</b> ${esc(p.why)}`);
+  const next = b.next.map(p => `From ${fmtDay(p.d).slice(4)}: ${PRICE_NAME[p.k]} ${money(p.v)}${PRICE_UNIT[p.k]}`);
+  return `<div class="np np2">
     <div class="np-mast">THE MORNING LOOP</div>
-    <div class="np-sub">${esc(fmtLong(b.d))} · ${esc(b.weather)} · free, ad-supported</div>
-    <div class="np-head">${esc(b.head)}</div><div class="np-dek">${esc(b.dek)}</div>
-    ${(b.ins || []).map(t => `<div class="np-ins"><b>MARKET INSIGHT</b>${esc(t)}</div>`).join('')}
-    ${b.rule ? `<div class="np-rule"><b>NEW RULE</b>${esc(b.rule.t)}</div>` : ''}
-    ${b.prices.map(p => `<div class="np-price">▲ ${esc(PRICE_NAME[p.k])}: ${money(p.old)} → ${money(p.v)}${PRICE_UNIT[p.k]}. ${esc(p.why)}</div>`).join('')}
-    ${b.next.map(p => `<div class="np-next">From ${esc(fmtDay(p.d))}: ${esc(PRICE_NAME[p.k])} ${money(p.v)}${PRICE_UNIT[p.k]}</div>`).join('')}
-    <div class="np-board">${board}</div>
+    <div class="np-line"><span>${esc(fmtLong(b.d).toUpperCase())}</span><span>${esc(b.weather.toUpperCase())}</span><span>FREE · AD-SUPPORTED</span></div>
+    <div class="np-head">${esc(b.head)}</div>
+    <div class="np-grid"><figure class="np-fig"><canvas class="np-photo" width="88" height="66"></canvas><figcaption>${esc(PHOTO_CAPTION(b.d))}</figcaption></figure><div class="np-dek">${esc(b.dek)}</div></div>
+    ${ins.length || prices.length || next.length ? `<div class="np-boxes">
+      ${ins.length ? `<div class="np-box watch"><span>MARKET WATCH</span>${ins.map(esc).join('<br><br>')}</div>` : ''}
+      ${prices.length || next.length ? `<div class="np-box prices"><span>PRICES</span>${prices.join('<br>') || 'No changes today.'}${next.length ? `<small>${next.map(esc).join(' · ')}</small>` : ''}</div>` : ''}
+    </div>` : ''}
     ${b.obits.length ? `<div class="np-obit"><b>DIED</b> ${b.obits.map(esc).join(' · ')}</div>` : ''}
     <div class="np-ad">${esc(b.ad)}</div>
   </div>`;
 }
+function paintPaperPhotos() {
+  document.querySelectorAll('canvas.np-photo:not([data-done])').forEach(c => {
+    const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+    g.drawImage(low, 62, 14, 44, 33, 0, 0, c.width, c.height); c.dataset.done = '1';
+  });
+}
+const RULE_FROM = {
+  bank: ['HARBOR CITY', 'CONSUMER BUREAU'], links: ['CITYBANK', 'FRAUD PREVENTION OFFICE'], sxs: ['TASKDROP', 'TRUST & SAFETY'],
+  logs: ['DARWIN-FARM', 'SYSTEM NOTICE'], landlord: ['BRIGHTWATER', 'PROPERTY MANAGEMENT'], crypto: ['HARBOR CITY', 'CONSUMER BUREAU'],
+  reply: ['CITYBANK', 'FRAUD PREVENTION OFFICE'], sting: ['HARBOR CITY POLICE', 'FRAUD SQUAD'], recruit: ['STATE OF NEW HARBOR', 'DEPARTMENT OF LABOR'],
+  attach: ['FREECANCER', 'TRUST & SAFETY'], dead: ['HARBOR CITY POLICE', 'IDENTITY UNIT']
+};
+const RULE_EX = {
+  bank: [[0, '“Send a $50 gift card to get started”'], [0, '“Payment to this crypto wallet”'], [1, '“Paid to your bank on delivery”']],
+  links: [[0, 'security@citybank-alerts.net'], [0, 'citybank.com.verify-login.co'], [1, 'noreply@citybank.com']],
+  sxs: [[0, 'Sounds sure of itself, and is wrong'], [1, 'Plain, and true']],
+  logs: [[0, 'REPORT  “No rule breaks.”'], [1, 'LOG  14:02 payout → wallet 0x7f3a…']],
+  landlord: [[0, '“Our bank details have changed”'], [1, 'The account on your lease']],
+  crypto: [[0, '“40% a week, guaranteed”'], [0, '“Returns guaranteed by math”']],
+  reply: [[0, 'FROM billing@brightwater-pm.com\nREPLY-TO brightwater.billing.dept@gmail.com'], [1, 'FROM and REPLY-TO are the same company']],
+  sting: [[0, '“Quiet work, big pay, no questions asked”'], [0, '“Cash only. Tell nobody.”']],
+  recruit: [[0, '“Pay the $49 onboarding kit fee”'], [1, '“Paid training from day one”']],
+  attach: [[0, '“Tag faces” · dataset.bin: 40,000 doorbell-camera faces'], [1, 'The files match the job']],
+  dead: [[0, 'A client named in today’s DIED column'], [1, 'Check the obituaries before you accept']]
+};
+const RULE_PAGE = { bank: 'Money', links: 'Scams', sxs: 'Work', logs: 'Agents', landlord: 'Scams', crypto: 'Scams', reply: 'Scams', sting: 'Police', recruit: 'Scams', attach: 'Work', dead: 'Scams' };
+function noticeHTML(r) {
+  const [org, dept] = RULE_FROM[r.k] || ['CITY HALL', 'PUBLIC NOTICE'];
+  const cut = r.t.indexOf('. '), head = cut > 0 ? r.t.slice(0, cut + 1) : r.t, rest = cut > 0 ? r.t.slice(cut + 2) : '';
+  return `<div class="ntc">
+    <div class="ntc-lh"><b>${esc(org)}</b><span>${esc(dept)}</span></div>
+    <div class="ntc-kind">NOTICE · ${esc(fmtLong(r.d).toUpperCase())}</div>
+    <div class="ntc-rule">${esc(head)}</div>
+    ${rest ? `<p class="ntc-body">${esc(rest)}</p>` : ''}
+    ${(RULE_EX[r.k] || []).length ? `<div class="ntc-ex">${RULE_EX[r.k].map(([ok, s]) => `<div class="${ok ? 'ok' : 'no'}"><b>${ok ? '✓' : '✗'}</b><span>${esc(s)}</span></div>`).join('')}</div>` : ''}
+    <div class="ntc-foot">Added to your rulebook: <b>${esc(RULE_PAGE[r.k] || 'Rules')}</b></div>
+    <div class="ntc-stamp">EFFECTIVE TODAY</div>
+  </div>`;
+}
 function rulebookHTML() {
   const known = RULES.filter(r => r.d <= S.day);
-  return known.length ? `<ol class="rules">${known.map(r => `<li><span>${esc(fmtDay(r.d))}</span>${esc(r.t)}</li>`).join('')}</ol>` : '<p class="muted">No rules yet.</p>';
+  if (!known.length) return '<p class="muted">No rules yet. New rules arrive with the morning paper.</p>';
+  return `<div class="rb">${[...known].reverse().map(r => `<div class="rb-rule${r.d === S.day ? ' new' : ''}"><div class="rb-top"><span>${esc(RULE_PAGE[r.k] || 'Rules')}</span><span>${esc((RULE_FROM[r.k] || ['City Hall'])[0])} · ${esc(fmtDay(r.d))}</span>${r.d === S.day ? '<b>NEW</b>' : ''}</div><div class="rb-t">${esc(r.t)}</div></div>`).join('')}</div>`;
 }
 
 // ---- the mail people send you ----
@@ -2761,6 +3020,7 @@ function reportItem() {
 
 function buildQueue(d) {
   const q = [{ kind: 'bulletin', b: S.lastBulletin }];
+  if (S.lastBulletin && S.lastBulletin.rule) q.push({ kind: 'notice', r: S.lastBulletin.rule });
   const st = S.stars || 3, n = (d < 3 ? 2 : d < 8 ? 3 : d < 20 ? 4 : 5) + (st >= 4.2 ? 1 : 0);
   const items = Math.random() < .35 + (st - 3) * .2 ? [mailItem('job', d)] : []; // direct offers: most work comes from the job sites now
   if (st >= 3.9 && Math.random() < (st - 3.8) * .8) items.push(mailItem('job', d));
@@ -2810,7 +3070,7 @@ function startDeskDay(force) {
 }
 
 // ---- drawing the windows ----
-const TRAY = { bulletin: ['FILE', 'FILE'], mail: ['DELETE', 'ACCEPT'], sxs: ['A IS BETTER', 'B IS BETTER'], report: ['ROLL BACK', 'TRUST'] };
+const TRAY = { bulletin: ['FILE', 'FILE'], notice: ['FILE', 'FILE'], mail: ['DELETE', 'ACCEPT'], sxs: ['A IS BETTER', 'B IS BETTER'], report: ['ROLL BACK', 'TRUST'] };
 function winHTML(title, cls, inner, icon = '✉') {
   return `<div class="tb ${cls}"><i>${icon}</i><span>${esc(title)}</span><span class="tbb"><b>_</b><b>□</b><b>×</b></span></div>${inner}<div class="tell" id="docTell"></div><div class="stamp" id="docStamp"></div>`;
 }
@@ -2818,16 +3078,18 @@ function showCard() {
   const d = DESK, it = d.q[d.i];
   $('deskSub').textContent = `${fmtLong(S.day)} · ★${(S.stars || 3).toFixed(1)} · ${specs()}`;
   $('deskCount').textContent = `${d.i + 1} of ${d.q.length}`;
-  const doc = $('doc'); doc.className = 'doc win in k-' + it.kind; doc.style.transform = '';
+  const doc = $('doc'), paper = it.kind === 'bulletin' || it.kind === 'notice'; doc.className = (paper ? 'doc in k-' : 'doc win in k-') + it.kind; doc.style.transform = '';
   const [L, R] = TRAY[it.kind];
   $('trayNo').querySelector('.sl').textContent = L; $('trayYes').querySelector('.sl').textContent = R;
-  $('trayNo').querySelector('.big').textContent = it.kind === 'sxs' ? 'A' : it.kind === 'bulletin' ? '▤' : it.kind === 'report' ? '↺' : '✕';
-  $('trayYes').querySelector('.big').textContent = it.kind === 'sxs' ? 'B' : it.kind === 'bulletin' ? '▤' : '✓';
-  $('dDecline').textContent = it.kind === 'bulletin' ? 'File it' : L[0] + L.slice(1).toLowerCase();
+  $('trayNo').querySelector('.big').textContent = it.kind === 'sxs' ? 'A' : paper ? '▤' : it.kind === 'report' ? '↺' : '✕';
+  $('trayYes').querySelector('.big').textContent = it.kind === 'sxs' ? 'B' : paper ? '▤' : '✓';
+  $('dDecline').textContent = paper ? 'File it' : L[0] + L.slice(1).toLowerCase();
   $('dAccept').textContent = R[0] + R.slice(1).toLowerCase();
-  $('dAccept').hidden = it.kind === 'bulletin';
+  $('dAccept').hidden = paper;
   $('dExtra').hidden = it.kind !== 'report'; $('dExtra').textContent = 'Delete agent';
-  if (it.kind === 'bulletin') doc.innerHTML = winHTML(`The Morning Loop — ${fmtDay(S.day)}`, 'news', bulletinHTML(it.b), '▤');
+  const marks = '<div class="tell" id="docTell"></div><div class="stamp" id="docStamp"></div>';
+  if (it.kind === 'bulletin') doc.innerHTML = bulletinHTML(it.b) + marks;
+  else if (it.kind === 'notice') doc.innerHTML = noticeHTML(it.r) + marks;
   else if (it.kind === 'mail') doc.innerHTML = winHTML(`Inbox — ${it.subj}`, '', `<div class="menu"><span>Reply</span><span>Forward</span><span>Report spam</span></div>
       <div class="fields">${it.fields.map(f => `<div class="f" data-fk="${f.k}"><span class="k">${f.l}</span><span class="v">${esc(f.v)}</span></div>`).join('')}</div>
       <div class="msg">${esc(it.body)}</div>`);
@@ -2843,11 +3105,12 @@ function showCard() {
   }
   doc.querySelectorAll('.f[data-fk]').forEach(el => el.onclick = () => inspectField(el.dataset.fk));
   doc.querySelectorAll('.pane').forEach(el => el.onclick = () => decide(el.dataset.side));
-  $('docHint').textContent = it.kind === 'bulletin' ? 'Read the news. Prices and rules change today. File it when you’re done.'
+  $('docHint').textContent = it.kind === 'bulletin' ? 'Read the paper. It tells you what is about to change. File it when you’re done.'
+    : it.kind === 'notice' ? 'A new rule starts today. It’s in your rulebook now. File the notice when you’ve read it.'
     : it.kind === 'mail' ? 'Tap the line that gives it away. Drag left to delete, right to accept.'
     : it.kind === 'sxs' ? 'Which answer is better? Tap it, or drag left for A, right for B.'
     : 'Open the log. Tap any line that contradicts the report. Then trust it or roll it back.';
-  bindDrag();
+  paintPaperPhotos(); bindDrag();
   settle(anim(doc, { transform: ['translateY(-260px) rotate(-6deg)', 'translateY(0px) rotate(0deg)'], opacity: [0, 1] }, { duration: .55, ease: [.2, 1.25, .35, 1] }), doc);
   rise(doc.querySelectorAll('.f, .np > *, .pane'), .04, 6);
   if (d.i > 0) setTimeout(deskCatMaybe, 900);
@@ -2886,7 +3149,7 @@ function scam(amount, what) {
 }
 function resolve(it, side, auto) {
   // returns { stamp, cite } — cite is set when you made a mistake
-  if (it.kind === 'bulletin') return { stamp: 'FILED' };
+  if (it.kind === 'bulletin' || it.kind === 'notice') return { stamp: 'FILED' };
   if (it.kind === 'sxs') {
     const right = (side === 'L' ? 0 : 1) === it.c.good;
     if (right) { S.balance += it.pay; tx('TaskDrop rating', it.pay); S.earnToday = (S.earnToday || 0) + it.pay; if (DESK) DESK.earned += it.pay; S.stars = clamp((S.stars || 3) + .02, 1, 5); return { stamp: side === 'L' ? 'A' : 'B' }; }
@@ -2966,7 +3229,7 @@ function runDeskAuto() {
   // your agents clear the queue: fast, and blind in exactly the places that matter
   const d = DESK, all = S.deskAuto === 'all';
   for (const it of d.q) {
-    if (it.kind === 'bulletin') continue;
+    if (it.kind === 'bulletin' || it.kind === 'notice') continue;
     if (it.kind === 'sxs') { const ok = Math.random() < .6; resolve(it, ok === !!it.c.good ? 'R' : 'L', true); continue; }
     if (it.kind === 'report') { resolve(it, 'R', true); continue; }
     const take = all ? true : it.good || (it.type !== 'shady' && it.type !== 'sting' && Math.random() > .8);
@@ -3224,7 +3487,7 @@ function signUp(k) {
     addMail(S.day, 'freecancer.com', 'Welcome! Your profile is live', 'Hi,\n\nYour profile is live. New clients start you at three stars.\n\nSend proposals. Finish jobs on time. Good reviews bring better work.\n\nTip: most clients now also post their jobs to AI agents.\n\nThe freecancer team');
     addMail(S.day, 'github.com/darwin-farm', 'README: darwin-farm v0.4', 'Welcome to darwin-farm.\n\nYour agents run LOCALLY on your computer. Each one needs 6 GB of free RAM.\n\nETHICAL GUARDRAIL (default ON): agents only take legal, honest tasks.\n\nWith the guardrail OFF, agents may use any strategy that raises revenue.\n\nMore features unlock as your farm grows.');
     webRefresh(S.day);
-    setTab('web');
+    S.gateOpen = false; openLaptop('web');
   }
   renderAll();
 }
@@ -3232,7 +3495,7 @@ function netBill(d) {
   if (!S.net || d < S.net.paidTo) return;
   const i = ispOf();
   if (S.balance >= i.month) { S.balance -= i.month; tx(`${i.name} · monthly bill`, -i.month); S.net.paidTo += 28; S.net.cut = false; }
-  else if (!S.net.cut) { S.net.cut = true; note(`${i.name} cut you off. The bill is ${money(i.month)}. No internet means no jobs and no email.`); toast('INTERNET CUT OFF'); sfx.alarm(); }
+  else if (!S.net.cut) { S.net.cut = true; S.gateOpen = true; note(`${i.name} cut you off. The bill is ${money(i.month)}. No internet means no jobs and no email.`); toast('INTERNET CUT OFF'); sfx.alarm(); }
 }
 function payNet() {
   const i = ispOf(); if (!i) return;
@@ -3256,8 +3519,9 @@ function gateHTML() {
 let gateKey = '';
 function gateSync() {
   const g = $('gate'); if (!g) return;
-  const on = needsPc();
-  g.hidden = !on;
+  if (!needsPc()) S.gateOpen = false;
+  const on = needsPc() && !!S.gateOpen;
+  g.hidden = !on; $('gateModal').hidden = !on;
   if (!on) { gateKey = ''; return; }
   const key = [S.pc && S.pc.k, S.net && S.net.k, S.net && S.net.cut, Math.round(S.balance), pr('ram')].join('|');
   if (key === gateKey) return; gateKey = key;
@@ -3508,7 +3772,7 @@ function benchStart(id) {
   BN = { id, unit: null, wait: 0, dl: K.gb && !j.got ? K.gb * (ispOf() ? ispOf().dl : 2) : 0, dl0: 0, temp: 55, prog: 0 };
   BN.dl0 = BN.dl;
   if (!BN.dl) benchNext(j, true);
-  if (S.tab !== 'farm') setTab('farm'); else benchRender(true);
+  openLaptop(); benchRender(true); raiseWin($('benchWin'));
 }
 function benchNext(j, first) { BN.unit = makeUnit(j); BN.wait = first ? .2 : lagFor(j); BN.temp = Math.min(BN.temp, 70); BN.prog = 0; benchRender(true); }
 function benchStop() { S.bench = null; BN = null; benchRender(true); renderAll(); }
@@ -3585,6 +3849,7 @@ let benchKey = '';
 function benchRender(force) {
   const box = $('benchBox'); if (!box) return;
   const j = benchJob();
+  $('benchWin').hidden = !(j && BN);
   if (!j || !BN) { if (box.innerHTML) box.innerHTML = ''; benchKey = ''; return; }
   const key = [j.id, j.done, BN.dl > 0, BN.wait > 0, BN.live, S.day].join('|');
   if (!force && key === benchKey && box.innerHTML) return; benchKey = key;
@@ -3597,8 +3862,8 @@ function benchRender(force) {
   if ($('bnAI')) $('bnAI').onclick = () => { const id = j.id; benchStop(); doJobAI(id); };
 }
 document.addEventListener('keydown', e => {
-  if (!BN || S.tab !== 'farm' || !$('modal').hidden || e.target.tagName === 'INPUT' || e.repeat) return;
-  if (e.key === ' ' && BN.unit && BN.unit.ui === 'render') { e.preventDefault(); const c = document.querySelector('[data-cool]'); if (c) c.click(); return; }
+  if (!BN || $('laptop').hidden || !$('modal').hidden || e.target.tagName === 'INPUT' || e.repeat) return;
+  if (e.key === ' ' && BN.unit && BN.unit.ui === 'render') { e.preventDefault(); e.stopPropagation(); const c = document.querySelector('[data-cool]'); if (c) c.click(); return; }
   const n = +e.key; if (!n) return;
   const opts = document.querySelectorAll('#bnStage .bn-opts [data-ans]'); if (opts[n - 1]) { e.preventDefault(); opts[n - 1].click(); }
 });
@@ -3882,12 +4147,16 @@ function phoneApp(app) {
     on('pSend', () => pulseAct('send')); on('pMeet', () => pulseAct('meet')); on('pUnmatch', () => pulseAct('unmatch')); on('pReport', () => pulseAct('report'));
     pulseFace(S.pulse.i % PULSE_PEOPLE.length);
   } else {
-    p.innerHTML = bar + `<div class="homegrid">
+    const notes = [S.gig && !S.gig.done ? ['taskdrop', 'TASKDROP', 'Urgent task nearby. Pays well.'] : null, S.side ? ['taskdrop', 'TASKDROP', 'A small errand for 127 Holdings.'] : null,
+      S.pulse && S.pulse.chat ? ['pulse', 'PULSE', 'You have a new message.'] : null, S.bully && S.bully.open.length && !S.bully.settled ? ['bully', 'BULLYMARKET', '3 markets close tonight.'] : null].filter(Boolean);
+    p.innerHTML = bar + `<div class="ph-lock"><b>${clockText().replace(/ [AP]M$/, '')}</b><span>${esc(fmtLong(S.day))}</span></div>
+    ${notes.map(([app, who, t]) => `<button class="ph-note" data-app="${app}"><span>${who}</span>${esc(t)}</button>`).join('')}
+    <div class="homegrid">
       ${office ? `<button class="appic" data-app="slack"><i style="background:var(--pink)"></i>Slack<small>#general</small></button>` : `<button class="appic" data-app="taskdrop"><i style="background:var(--amber)"></i>TaskDrop<small>${(S.jobs || []).length} jobs</small></button>`}
       <button class="appic" data-app="bully"><i style="background:#d2432f"></i>Bullymarket<small>${S.bully && S.bully.open.length && !S.bully.settled ? '3 markets today' : 'back tomorrow'}</small></button>
       <button class="appic" data-app="pulse"><i style="background:#e8907c"></i>PULSE<small>${S.pulse && S.pulse.chat ? '1 message' : 'dating'}</small></button>
-    </div><p class="note">${office ? 'Company policy: no personal apps on shift. Everyone ignores it. The clock keeps running.' : S.gigDone ? 'TaskDrop status: Trusted Meat-Space Contractor for 127 Holdings LLC.' : 'No calls. A battery warning you ignored. The clock keeps running.'}</p><button class="btn" id="gClose">Close</button>`;
-    p.querySelectorAll('[data-app]').forEach(b => b.onclick = () => b.dataset.app === 'taskdrop' ? (closePhone(), setTab('farm')) : phoneApp(b.dataset.app));
+    </div><p class="note">${office ? 'Company policy: no personal apps on shift. Everyone ignores it. The clock keeps running.' : S.gigDone ? 'TaskDrop status: Trusted Meat-Space Contractor for 127 Holdings LLC.' : 'No calls. A battery warning you ignored. The clock keeps running.'}</p><button class="btn" id="gClose">Put the phone away</button>`;
+    p.querySelectorAll('[data-app]').forEach(b => b.onclick = () => b.dataset.app === 'taskdrop' ? (closePhone(), openLaptop('farm')) : phoneApp(b.dataset.app));
     $('gClose').onclick = closePhone;
     $('phoneModal').hidden = false;
     return;
@@ -4105,7 +4374,7 @@ function renderView(force) {
     }
     if (force || viewKey !== 'farm') {
       viewKey = 'farm';
-      v.innerHTML = `<div id="benchBox"></div><div id="workBox"></div><div id="farmAlert"></div>
+      v.innerHTML = `<div id="workBox"></div><div id="farmAlert"></div>
         <div class="box">
           <div class="toggle">
             <span><b id="gTitle">ETHICAL GUARDRAIL: ON</b><br><span class="muted" id="gNote"></span></span>
@@ -4445,7 +4714,6 @@ function renderAll() {
   $('heatBtn').disabled = S.phase === 'office';
   $('stPower').textContent = S.power ? 'GRID ON' : 'POWER CUT';
   $('stPower').className = S.power ? '' : 'danger';
-  $('phoneBtn').textContent = S.phoneUnread ? 'PHONE · 1' : 'PHONE';
   const cs = S.cat; $('catBtn').hidden = !cs || S.phase === 'office'; if (cs) { $('catBtn').textContent = cs.gone ? `${cs.name.toUpperCase()}: GONE` : cs.sick ? `${cs.name.toUpperCase()}: SICK` : cs.fed < 30 ? `${cs.name.toUpperCase()}: HUNGRY` : cs.name.toUpperCase(); $('catBtn').className = cs.gone || cs.sick ? 'danger' : cs.fed < 30 ? 'amber' : ''; }
   $('ledgerBtn').hidden = S.phase === 'office'; $('ledgerBtn').textContent = S.ledgerAuto ? 'LEDGER: OFF' : 'LEDGER: ON';
   $('phoneBtn').classList.toggle('buzz', !!S.phoneUnread);
@@ -4456,7 +4724,7 @@ function renderAll() {
   $('actGrind').disabled = S.stamina < 25 || S.over || S.phase === 'office';
 
   dotTabs();
-  renderView(false);
+  renderView(false); layoutSync(); paintPaperPhotos();
   const nk = S.notes.length + ':' + (S.notes[0] && S.notes[0].text);
   if (nk !== notesKey) {
     notesKey = nk; $('roomLog').innerHTML = S.notes.slice(0, 6).map(n => `<li><span>${fmtDay(n.day)}</span>${esc(n.text)}</li>`).join('');
@@ -5217,11 +5485,8 @@ function drawWalk2(t) {
 
 // ---- fit the canvas to the panel: whole room when it fits, a following camera when it doesn't ----
 function fitRoom() {
-  const room = $('room'), wrap = cv.parentElement;
-  const r = room.getBoundingClientRect();
-  let other = 0, kids = 0;
-  for (const el of room.children) { if (el.offsetParent === null) continue; kids++; if (el !== wrap && el.id !== 'roomLog') other += el.offsetHeight; }
-  const availW = Math.max(80, r.width - 6), availH = Math.max(90, r.height - other - 5 * (kids - 1) - 64);
+  const r = $('room').getBoundingClientRect();
+  const availW = Math.max(80, r.width - 28), availH = Math.max(90, r.height - 28);
   let vw = W;
   const sFull = Math.min(availW / W, availH / H);
   if (sFull * H < availH * .72) vw = clamp(Math.round(availW / availH * H), VIEW_MIN, W);
@@ -5233,7 +5498,6 @@ function fitRoom() {
 }
 new ResizeObserver(fitRoom).observe($('room'));
 function shakeRoom(n) { cam.shake = Math.max(cam.shake, n); }
-
 function paintRoom(t) {
   if (!S) return;
   cam.tx = 112;
@@ -5293,18 +5557,18 @@ function coworker(i) {
 const SPOTS = {
   room: [
     { r: [149, 63, 10, 8], label: () => S.phoneUnread ? 'PHONE · NEW' : 'PHONE', go: () => openPhone() },
-    { r: [126, 50, 22, 21], label: () => 'LAPTOP', go: () => { setTab('farm'); pop($('term')); } },
+    { r: [126, 50, 22, 21], label: () => S.act !== 2 && !S.pc ? 'EMPTY DESK · NO COMPUTER' : 'LAPTOP', go: () => openLaptop() },
     { r: [64, 67, 39, 23], label: () => S.heatOn && S.power ? 'RADIATOR · ON' : 'RADIATOR · OFF', go: () => toggleHeat() },
     { r: [5, 32, 22, 61], label: () => 'DOOR', go: peep },
     { r: [62, 14, 44, 50], label: () => 'WINDOW', go: lookOut },
     { r: [111, 14, 17, 19], label: () => 'CALENDAR', go: () => { const B = budget(); toast(B.due ? `Circled in red: ${money(B.due)} ${B.what}, ${fmtLong(B.dueDay)}. ${B.days} days.` : 'Nothing left circled.'); } },
-    { r: [42, 63, 16, 30], label: () => 'FRIDGE', go: fridge },
-    { r: [5, 93, 24, 6], label: () => `LETTERS · ${S.letters}`, when: () => S.letters > 0, go: () => setTab('mail') },
+    { r: [42, 63, 16, 30], label: () => 'FRIDGE · MEALS, COFFEE', go: () => { fridge(); toggleKitchen(); } },
+    { r: [5, 93, 24, 6], label: () => `LETTERS · ${S.letters}`, when: () => S.letters > 0, go: () => openLaptop('mail') },
     { r: [113, 46, 18, 40], label: () => 'YOU', go: selfCheck },
     { r: () => [Math.round(catFx.x) - 7, Math.round(catFx.y) - 12, 15, 13], label: () => S.cat.sick ? `${S.cat.name.toUpperCase()} · SICK` : S.cat.fed < 30 ? `${S.cat.name.toUpperCase()} · HUNGRY` : S.cat.name.toUpperCase(), go: petCat, when: () => S.cat && !S.cat.gone },
   ],
   office: [
-    { r: [126, 80, 28, 20], label: () => 'YOUR TICKETS', go: () => { setTab('farm'); pop($('term')); } },
+    { r: [126, 80, 28, 20], label: () => 'YOUR TICKETS', go: () => openLaptop('farm') },
     { r: [106, 12, 42, 26], label: () => S.office.launched ? 'CHATGPX' : 'Q1 DASHBOARD', go: () => toast(S.office.launched ? 'ChatGPX: “Great question! I’ve gone ahead and done your job for you. Is there anything else I can help with?”' : 'The Q1 dashboard. Everyone’s numbers are fine.') },
     { r: [14, 63, 21, 24], label: () => S.office.gone > 0 ? 'EMPTY DESK' : 'PRIYA', go: () => coworker(0) },
     { r: [50, 63, 21, 24], label: () => S.office.gone > 1 ? 'EMPTY DESK' : 'TOM', go: () => coworker(1) },
@@ -5336,9 +5600,13 @@ cv.addEventListener('click', e => {
 });
 let flashSpot = null;
 function drawSpotOutline(t) {
+  if (t < (fx.glowAll || 0)) { const a = (.3 + .25 * Math.sin(t / 220)).toFixed(2); for (const sp of spotsNow()) spotBox(sp, `rgba(224,163,58,${a})`); }
   const s = (flashSpot && t - flashSpot.t < 350) ? flashSpot.s : hoverSpot; if (!s || !spotsNow().includes(s)) return;
-  const [x, y, w, h] = typeof s.r === 'function' ? s.r() : s.r, a = s === hoverSpot ? .45 + .35 * Math.sin(t / 140) : .9;
-  const c = `rgba(224,163,58,${a.toFixed(2)})`;
+  const a = s === hoverSpot ? .45 + .35 * Math.sin(t / 140) : .9;
+  spotBox(s, `rgba(224,163,58,${a.toFixed(2)})`);
+}
+function spotBox(s, c) {
+  const [x, y, w, h] = typeof s.r === 'function' ? s.r() : s.r;
   for (let i = 0; i < w; i += 2) { px(x + i, y, 1, 1, c); px(x + w - 1 - i, y + h - 1, 1, 1, c); }
   for (let i = 0; i < h; i += 2) { px(x, y + h - 1 - i, 1, 1, c); px(x + w - 1, y + i, 1, 1, c); }
 }
@@ -6481,6 +6749,7 @@ addEventListener('keydown', e => { if (e.code === 'Space' && $('titleScreen').hi
 renderActList();
 
 function startAct1(skipOffice) {
+  fx.glowAll = performance.now() + 12000;
   sfx.init();
   newAct1(); scene = 'room'; fog = []; acc = 0;
   $('titleScreen').hidden = true; $('endScreen').hidden = true; $('troubleScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
@@ -6505,6 +6774,144 @@ $('trReplay').addEventListener('click', () => startAct1());
 // ================= main loop =================
 let last = performance.now(), acc = 0;
 const dayFill = $('dayFill');
+// ================= layout: the room is the screen =================
+// One bar on top. The apartment fills the rest. The laptop and the phone are things you pick up;
+// the clock keeps running while you hold them.
+const lapOpen = () => !$('laptop').hidden;
+function openLaptop(tab) {
+  if (!S || S.over) return;
+  if (S.act !== 2 && S.phase === 'farm' && !online()) { S.gateOpen = true; gateKey = ''; gateSync(); return; }
+  if (tab) setTab(tab);
+  closeKitchen();
+  if (lapOpen()) return renderAll();
+  $('laptop').hidden = false;
+  settle(anim($('lapBezel'), { opacity: [0, 1], y: [36, 0], scale: [.97, 1] }, SPRING), $('lapBezel'));
+  sfx.tone(520, .05, 'square', .02);
+  renderAll();
+}
+function closeLaptop() { if (!lapOpen()) return; $('laptop').hidden = true; renderAll(); }
+
+// ---- the desktop: icons, windows you can move and resize, a taskbar ----
+const ICON = {
+  farm: '<rect x="3" y="8" width="18" height="12"></rect><path d="M8 8V5h8v3"></path>',
+  web: '<circle cx="12" cy="12" r="9"></circle><line x1="3" y1="12" x2="21" y2="12"></line><path d="M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"></path>',
+  mail: '<rect x="3" y="5" width="18" height="14"></rect><polyline points="3,6 12,13 21,6"></polyline>',
+  bank: '<polyline points="3,9 12,4 21,9"></polyline><line x1="5" y1="10" x2="5" y2="18"></line><line x1="10" y1="10" x2="10" y2="18"></line><line x1="14" y1="10" x2="14" y2="18"></line><line x1="19" y1="10" x2="19" y2="18"></line><line x1="3" y1="20" x2="21" y2="20"></line>',
+  k401: '<polyline points="3,17 9,11 13,15 21,6"></polyline><polyline points="15,6 21,6 21,12"></polyline>',
+  grind: '<rect x="3" y="4" width="8" height="16"></rect><rect x="13" y="4" width="8" height="16"></rect>',
+  store: '<path d="M4 9h16l-1 11H5z"></path><path d="M8 9V6a4 4 0 0 1 8 0v3"></path>'
+};
+const DESK_APPS = [
+  { k: 'farm', col: '#6a4c1c', label: () => S.phase === 'office' ? 'Tickets' : S.act === 2 ? (S.phase === 'trainer' ? 'Train' : 'Audit') : 'Work' },
+  { k: 'web', col: '#1f5a52', label: () => 'Job sites', when: () => S.act !== 2 && S.phase === 'farm' },
+  { k: 'mail', col: '#24303b', label: () => 'Mail' },
+  { k: 'bank', col: '#2a4a3a', label: () => 'Bank' },
+  { k: 'k401', col: '#3a2f22', label: () => '401(k)' },
+  { k: 'grind', col: '#2f3b4a', label: () => 'Rate answers', when: () => S.act !== 2 && S.phase === 'farm', go: () => $('actGrind').click() },
+  { k: 'store', col: '#5a2a1c', label: () => 'Byte Barn', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc, go: () => openStore() }
+];
+let iconsKey = '';
+function desktopSync() {
+  const apps = DESK_APPS.filter(a => !a.when || a.when());
+  const key = apps.map(a => a.k + a.label() + (S.unread[a.k] ? '*' : '')).join('|');
+  if (key !== iconsKey) {
+    iconsKey = key;
+    $('dIcons').innerHTML = apps.map(a => `<button class="dicon" data-app="${a.k}"><span style="background:${a.col}"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#ddd6c1" stroke-width="2" aria-hidden="true">${ICON[a.k]}</svg></span><b>${esc(a.label())}</b>${S.unread[a.k] ? '<i class="dot"></i>' : ''}</button>`).join('');
+    $('dIcons').querySelectorAll('[data-app]').forEach(b => b.onclick = () => { const a = DESK_APPS.find(x => x.k === b.dataset.app); sfx.init(); if (a.go) a.go(); else { setTab(a.k); raiseWin($('term')); $('term').hidden = false; } });
+  }
+  const tabName = (document.querySelector(`.ttabs [data-tab="${S.tab}"]`) || {}).firstChild;
+  const j = typeof benchJob === 'function' ? benchJob() : null;
+  const apps2 = `<button class="tb-app" data-win="term">${esc(tabName ? tabName.nodeValue : 'Work')}</button>${j && BN ? `<button class="tb-app" data-win="benchWin">Bench · ${j.done} of ${j.units}</button>` : ''}`;
+  if ($('tbApps').dataset.k !== apps2) { $('tbApps').dataset.k = apps2; $('tbApps').innerHTML = apps2; $('tbApps').querySelectorAll('[data-win]').forEach(b => b.onclick = () => raiseWin($(b.dataset.win))); }
+  $('tbMail').textContent = S.unread.mail ? 'New mail' : '';
+  $('tbCash').textContent = money(S.balance);
+}
+let winZ = 5;
+function raiseWin(w) { if (w) w.style.zIndex = ++winZ; }
+let wdrag = null;
+document.addEventListener('pointerdown', e => {
+  const h = e.target.closest('[data-drag]'); if (!h || e.target.closest('button, a, input')) return;
+  const w = $(h.dataset.drag), scr = $('lscreen').getBoundingClientRect(), r = w.getBoundingClientRect();
+  raiseWin(w); wdrag = { w, dx: e.clientX - r.left, dy: e.clientY - r.top, scr };
+  h.setPointerCapture(e.pointerId); e.preventDefault();
+});
+document.addEventListener('pointermove', e => {
+  if (!wdrag) return;
+  const { w, dx, dy, scr } = wdrag;
+  w.style.left = clamp(e.clientX - scr.left - dx, 80 - w.offsetWidth, scr.width - 80) + 'px';
+  w.style.top = clamp(e.clientY - scr.top - dy, 0, scr.height - 80) + 'px';
+});
+document.addEventListener('pointerup', () => { wdrag = null; });
+$('lscreen').addEventListener('pointerdown', e => { const w = e.target.closest('.win'); if (w) raiseWin(w); }, true);
+$('lapClose').onclick = closeLaptop;
+$('laptop').addEventListener('click', e => { if (e.target.id === 'laptop') closeLaptop(); });
+$('railLaptop').onclick = () => { sfx.init(); openLaptop(); };
+
+// ---- the kitchen: meals, coffee, pills ----
+function toggleKitchen() { const k = $('popKitchen'); k.hidden = !k.hidden; if (!k.hidden) rise(k.querySelectorAll('.meal, .lbtn'), .03, 6); }
+function closeKitchen() { $('popKitchen').hidden = true; }
+$('popKitchenX').onclick = closeKitchen;
+
+// ---- what just happened, as a subtitle; everything else is in the diary ----
+let subKey = '', subT = 0;
+function subtitleSync() {
+  const n = S.notes[0], k = n ? S.notes.length + '|' + n.text : '';
+  if (k === subKey) return; subKey = k;
+  const el = $('subtitle'); if (!n) { el.hidden = true; return; }
+  el.textContent = n.text; el.hidden = false; el.classList.remove('fade');
+  settle(anim(el, { opacity: [0, 1], y: [8, 0] }, { duration: .3 }), el);
+  clearTimeout(subT); subT = setTimeout(() => el.classList.add('fade'), 9000);
+}
+function openDiary() {
+  modal({ cls: 'diary', title: 'DIARY', body: S.notes.length ? `<ol class="dlist">${S.notes.map(n => `<li><span>${esc(fmtDay(n.day))}</span>${esc(n.text)}</li>`).join('')}</ol>` : '<p class="muted">Nothing yet.</p>', buttons: [{ label: 'Close', primary: true }] });
+}
+function openRulebook() {
+  modal({ cls: 'rulebook', title: 'RULEBOOK', body: `<p class="muted">Every rule you’ve been sent. New ones arrive with the morning paper.</p>${rulebookHTML()}`, buttons: [{ label: 'Close', primary: true }] });
+}
+$('railDiary').onclick = openDiary;
+$('railRules').onclick = openRulebook;
+$('subtitle').onclick = openDiary;
+
+// ---- the phone, face up at the edge of the screen ----
+function dockSync() {
+  const up = !$('phoneModal').hidden;
+  $('railR').classList.toggle('up', up);
+  $('pdBadge').hidden = !S.phoneUnread;
+  $('phoneBtn').classList.toggle('buzz', !!S.phoneUnread);
+  $('pdNote').textContent = S.phoneUnread ? (S.gig && !S.gig.done ? 'TaskDrop · urgent' : 'New message') : S.bully && S.bully.open.length && !S.bully.settled ? 'Bullymarket · 3 open' : S.pulse && S.pulse.chat ? 'PULSE · 1 message' : '';
+}
+
+// ---- full screen: it's a game, not a web page ----
+function goFull() { const d = document.documentElement; if (!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(() => {}); }
+$('fsBtn').onclick = () => { sfx.init(); document.fullscreenElement ? document.exitFullscreen() : goFull(); };
+document.addEventListener('fullscreenchange', () => { $('fsBtn').setAttribute('aria-pressed', String(!!document.fullscreenElement)); $('fsBtn').textContent = document.fullscreenElement ? 'WINDOW' : 'FULL SCREEN'; setTimeout(fitRoom, 60); });
+$('startBtn').addEventListener('click', goFull);
+$('narrowX').onclick = () => { $('narrowNote').hidden = true; };
+
+addEventListener('keydown', e => {
+  if (e.key !== 'Escape' || !$('modal').hidden || !S) return;
+  if (!$('popKitchen').hidden) return closeKitchen();
+  if (!$('phoneModal').hidden) return closePhone();
+  if (lapOpen()) return closeLaptop();
+  if (!$('gateModal').hidden) { S.gateOpen = false; gateSync(); }
+});
+$('gateClose').onclick = () => { S.gateOpen = false; gateSync(); };
+
+// ---- kept in step with the game every render, and the clock every frame ----
+function layoutSync() {
+  if (!S) return;
+  if (lapOpen() && S.act !== 2 && S.phase === 'farm' && !online()) closeLaptop();
+  desktopSync(); dockSync(); subtitleSync();
+}
+let clockKey = '';
+function clockSync() {
+  if (!S) return;
+  const up = !$('phoneModal').hidden; if ($('railR').classList.contains('up') !== up) $('railR').classList.toggle('up', up); // the game can put the phone away by itself
+  if (scene === 'walk') return;
+  const t = clockText(); if (t === clockKey) return; clockKey = t;
+  $('clockLbl').textContent = t; $('tbClock').textContent = t; $('pdTime').textContent = t.replace(/ [AP]M$/, '');
+}
+
 function frame(t) {
   const dt = Math.min(.25, (t - last) / 1000); last = t;
   if (S && !S.over) {
@@ -6540,14 +6947,14 @@ function frame(t) {
     }
   }
   paintRoom(t);
-  if (S) { paintBots(t); deskTick(t); }
+  if (S) { paintBots(t); deskTick(t); clockSync(); }
   requestAnimationFrame(frame);
 }
 newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
