@@ -1402,6 +1402,7 @@ function newAct1() {
     over: false, unread: { farm: false, web: false, bank: false, mail: false, k401: false }
   };
   for (let i = 0; i < 4; i++) newTicket();
+  bullyOpen(S.day);
   note('Monday, 8:52 AM. The 9th floor of Northvale Logistics smells of carpet glue and burnt coffee. Four tickets are waiting.');
   addMail(S.day, 'Dana Whitfield · Northvale People Team', 'Welcome to Q1!', 'Hi team,\n\nBig quarter ahead. Keep your ticket queues clear, and watch your inbox tomorrow for an exciting announcement about how we work.\n\nDana');
   tx('Opening balance', 480);
@@ -1416,7 +1417,7 @@ function enterApartment() {
   S.balance += VACATION; tx('Northvale · unused vacation, paid out', VACATION);
   note(`Feb 1. −6°C outside. ${money(S.balance)} in checking. No computer. A black cat called Soot. Rent is $1,800 on March 1.`);
   addMail(0, 'Northvale Logistics HR', 'Your separation', 'Hi,\n\nYour role on the dispatch team has been consolidated into ChatGPX, our AI teammate. As a contract-to-hire employee you are not eligible for severance. Your unused vacation has been paid out.\n\nPlease return your badge by mail.\n\nNorthvale People Team');
-  postBulletin(0); S.deskOpenDay = 0; bullyOpen(0);
+  postBulletin(0); S.deskOpenDay = 0; bullyNight(); bullyOpen(0);
   snap();
   setTab('farm');
   renderAll();
@@ -1443,6 +1444,7 @@ function newTicket() {
 function dayStepOffice() {
   S.day++;
   const d = S.day, o = S.office;
+  bullyNight(); bullyOpen(d);
   S.stimCountToday = 0;
   S.heartStrain = Math.max(0, S.heartStrain - 10);
   S.stamina = clamp(S.stamina + 12, 0, 100);
@@ -3789,9 +3791,10 @@ function bullyLedgerHTML(L) {
 function bullyHTML() {
   const B = S.bully;
   if (!B || !B.open.length) return `<div class="app"><i style="background:#d2432f"></i>Bullymarket</div><p class="note">New markets every morning.</p>`;
-  const whale = BULLY_WHALES[S.day % BULLY_WHALES.length], hot = bullyQ(B.open[S.day % 3]);
+  const md = n => ((S.day % n) + n) % n; // office days are negative
+  const whale = BULLY_WHALES[md(BULLY_WHALES.length)], hot = bullyQ(B.open[md(B.open.length)]);
   return `<div class="app"><i style="background:#d2432f"></i>Bullymarket 🐂</div>
-    <div class="bm-tick">🔥 ${whale} turned $100 into $${(4 + S.day % 7) * 7},${String(100 + S.day * 37 % 900).slice(0, 3)} on “${esc(hot.who)}”</div>
+    <div class="bm-tick">🔥 ${whale} turned $100 into $${(4 + md(7)) * 7},${String(100 + md(900) * 37 % 900).slice(0, 3)} on “${esc(hot.who)}”</div>
     ${B.settled ? '<p class="note">Today’s markets are closed. Results are in your ledger. New markets tomorrow morning.</p>' : ''}
     ${B.open.map(i => { const m = bullyQ(i), y = bullyStake(i, 'Y'), n = bullyStake(i, 'N'), off = B.settled ? ' disabled' : ''; return `<div class="mkt"><div class="who">${esc(m.who)}</div><div class="q">${esc(m.q)}</div>
       <div class="odds"><span>YES ${Math.round(m.p * 100)}¢</span><span>NO ${Math.round((1 - m.p) * 100)}¢</span><small>results tonight</small></div>
@@ -3867,9 +3870,11 @@ function pulseAct(a) {
 }
 
 function phoneApp(app) {
-  const p = $('phoneScreen'), bar = `<div class="bar"><span>${fmtDay(S.day)}</span><span>${S.power ? '' : '⚡ ' + S.battery + '% · '}5G</span></div>`;
+  const p = $('phoneScreen'), office = S.phase === 'office', bar = `<div class="bar"><span id="phClock">${fmtDay(S.day)} · ${clockText()}</span><span>${S.power ? '' : '⚡ ' + S.battery + '% · '}5G</span></div>`;
   const back = `<button class="btn" id="phBack">← Home</button>`;
-  if (app === 'bully') { p.innerHTML = bar + bullyHTML() + back; p.querySelectorAll('[data-bm]').forEach(b => b.onclick = () => bullyBet(+b.dataset.bm, b.dataset.side, b.dataset.s === 'all' ? 'all' : +b.dataset.s)); }
+  if (app === 'slack') p.innerHTML = bar + `<div class="app"><i style="background:var(--pink)"></i>Slack · #general</div>
+      <p class="note">${!office ? 'You were removed from Northvale Logistics.' : S.office.launched ? '🎉 Marcus: Everyone welcome @ChatGPX to dispatch!! 214 reactions.' : 'Marcus: big announcement tomorrow, stay tuned 👀'}</p>` + back;
+  else if (app === 'bully') { p.innerHTML = bar + bullyHTML() + back; p.querySelectorAll('[data-bm]').forEach(b => b.onclick = () => bullyBet(+b.dataset.bm, b.dataset.side, b.dataset.s === 'all' ? 'all' : +b.dataset.s)); }
   else if (app === 'pulse') {
     p.innerHTML = bar + pulseHTML() + back;
     const on = (id, f) => { if ($(id)) $(id).onclick = f; };
@@ -3878,10 +3883,10 @@ function phoneApp(app) {
     pulseFace(S.pulse.i % PULSE_PEOPLE.length);
   } else {
     p.innerHTML = bar + `<div class="homegrid">
-      <button class="appic" data-app="taskdrop"><i style="background:var(--amber)"></i>TaskDrop<small>${(S.jobs || []).length} jobs</small></button>
+      ${office ? `<button class="appic" data-app="slack"><i style="background:var(--pink)"></i>Slack<small>#general</small></button>` : `<button class="appic" data-app="taskdrop"><i style="background:var(--amber)"></i>TaskDrop<small>${(S.jobs || []).length} jobs</small></button>`}
       <button class="appic" data-app="bully"><i style="background:#d2432f"></i>Bullymarket<small>${S.bully && S.bully.open.length && !S.bully.settled ? '3 markets today' : 'back tomorrow'}</small></button>
       <button class="appic" data-app="pulse"><i style="background:#e8907c"></i>PULSE<small>${S.pulse && S.pulse.chat ? '1 message' : 'dating'}</small></button>
-    </div><p class="note">${S.gigDone ? 'TaskDrop status: Trusted Meat-Space Contractor for 127 Holdings LLC.' : 'No calls. A battery warning you ignored.'}</p><button class="btn" id="gClose">Close</button>`;
+    </div><p class="note">${office ? 'Company policy: no personal apps on shift. Everyone ignores it. The clock keeps running.' : S.gigDone ? 'TaskDrop status: Trusted Meat-Space Contractor for 127 Holdings LLC.' : 'No calls. A battery warning you ignored. The clock keeps running.'}</p><button class="btn" id="gClose">Close</button>`;
     p.querySelectorAll('[data-app]').forEach(b => b.onclick = () => b.dataset.app === 'taskdrop' ? (closePhone(), setTab('farm')) : phoneApp(b.dataset.app));
     $('gClose').onclick = closePhone;
     $('phoneModal').hidden = false;
@@ -4022,13 +4027,7 @@ function openPhone() {
   sfx.init();
   S.phoneUnread = 0;
   const p = $('phoneScreen');
-  if (S.phase === 'office') {
-    p.innerHTML = `<div class="bar"><span>${fmtDay(S.day)}</span><span>5G</span></div><div class="app"><i style="background:var(--pink)"></i>Slack · #general</div>
-      <p class="note">${S.office.launched ? '🎉 Marcus: Everyone welcome @ChatGPX to dispatch!! 214 reactions.' : 'Marcus: big announcement tomorrow, stay tuned 👀'}</p><button class="btn" id="gClose">Close</button>`;
-    $('phoneModal').hidden = false;
-    $('gClose').onclick = closePhone;
-    return;
-  }
+  if (S.phase === 'office') return phoneApp('home');
   const head = `<div class="bar"><span>${fmtDay(S.day)}</span><span>${S.power ? '' : '⚡ ' + S.battery + '% · '}5G</span></div><div class="app"><i></i>TaskDrop</div>`;
   if (S.gig && !S.gig.done) {
     const g = S.gig;
@@ -6511,7 +6510,12 @@ function frame(t) {
       walkT += dt;
       if (walkT > 7) (S.act === 2 ? finishWalk2 : finishGig)();
     } else {
-      const blocked = !$('modal').hidden || !$('phoneModal').hidden || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
+      const phoneUp = !$('phoneModal').hidden;
+      if (phoneUp && S.act !== 2) { // a modal, the desk or the night takes over from the phone
+        if (!$('modal').hidden || $('desk').classList.contains('on')) $('phoneModal').hidden = true;
+        else if ($('phClock')) $('phClock').textContent = `${fmtDay(S.day)} · ${clockText()}`;
+      }
+      const blocked = !$('modal').hidden || (phoneUp && S.act === 2) || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
       benchTick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked);
       if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
       // After launch, ChatGPX takes your tickets while you watch.
@@ -6527,7 +6531,7 @@ function frame(t) {
           if (ledgerWanted()) { acc = len; openLedger(); break; }
           acc -= len;
           dayStep();
-          if (!$('modal').hidden || !$('phoneModal').hidden) { acc = 0; break; }
+          if (!$('modal').hidden || (S.act === 2 && !$('phoneModal').hidden)) { acc = 0; break; }
         }
       }
     }

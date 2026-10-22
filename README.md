@@ -80,7 +80,7 @@ As they level up they transform: FACTORY SHELL, UPGRADED, HALF-SHELL, then ENDOS
 
 ## The phone
 
-The phone opens to a home screen with three apps:
+The phone works from your first day at the office. The clock keeps running while you use it, so an hour of swiping is an hour you didn't work. It opens to a home screen with three apps (in the office, Slack takes TaskDrop's place):
 
 - **TaskDrop** for gigs.
 - **Bullymarket 🐂**, a prediction market for the stupidest questions on earth. Will Mr. Crump wear a tank top to his next meeting? Will Felon Husk name his 45th child after a broken printer sound? Three markets open each morning, from a deck of 104 parody celebrities, and the results arrive at night in your ledger, next to heat and food. Bets are $10 to $100, or ALL IN. Win a little, lose big: the "AI judge" sees your position before it rules. Always betting NO wins about 3 nights in 4 for a couple of dollars, and the 4th night takes the whole stake on a technicality. Long-shot YES bets almost never pay.
