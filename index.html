@@ -5033,7 +5033,7 @@ function mgCreate(host, kind, job, env) {
     rand: rnd, ri: (a, b) => a + Math.floor(rnd() * (b - a + 1)), pick: a => a[Math.floor(rnd() * a.length)], chance: p => rnd() < p,
     shuffle(a) { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; },
     ease: mgEase, art: mgArt,
-    item(ok, x, y, label) { return item(ok, x, y, label); },
+    item(ok, x, y, label, o) { return item(ok, x, y, label, o); },
     miss(x, y, label) { return item(false, x, y, label || 'MISSED'); },
     pop(x, y, text, color, size) { st.pops.push({ x, y, text, color: color || PAL.ink, size: size || 8, t: 0 }); },
     burst(x, y, color, n = 10, speed = 60) { for (let i = 0; i < n; i++) { const a = rnd() * Math.PI * 2, v = speed * (.4 + rnd() * .8); st.parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 20, life: .5 + rnd() * .5, t: 0, color: color || PAL.a3, s: rnd() < .3 ? 2 : 1 }); } },
@@ -5053,7 +5053,7 @@ function mgCreate(host, kind, job, env) {
   };
   const game = def.create(api) || {};
 
-  function item(ok, x = MG.W / 2, y = api.mid, label) {
+  function item(ok, x = MG.W / 2, y = api.mid, label, o = {}) {
     if (st.phase !== 'play') return st.combo;
     st.done++; if (!ok) st.errs++;
     if (ok) {
@@ -5064,9 +5064,9 @@ function mgCreate(host, kind, job, env) {
       else mgSound(env, 'good', st.combo);
       api.burst(x, y, st.combo >= 12 ? PAL.a3 : PAL.t4, st.combo >= 12 ? 8 : 4, 45);
     } else {
-      if (st.combo >= 5) { api.pop(MG.W / 2, MG.TOP + 22, 'COMBO BROKEN', PAL.e3, 10); mgSound(env, 'break'); }
-      else mgSound(env, 'bad');
-      st.combo = 0; api.pop(x, y - 6, label || '✗', PAL.e3, 9); api.shake(3); api.flash(PAL.e2, .22);
+      if (st.combo >= 5) { api.pop(MG.W / 2, MG.TOP + 22, 'COMBO BROKEN', PAL.e3, 10); if (!o.quiet) mgSound(env, 'break'); }
+      else if (!o.quiet) mgSound(env, 'bad');
+      st.combo = 0; api.pop(x, y - 6, label || '✗', PAL.e3, 9); if (!o.quiet) { api.shake(3); api.flash(PAL.e2, .22); }
     }
     if (env.onItem) env.onItem(ok, { done: st.done, errs: st.errs, combo: st.combo });
     st.busy = Math.min(1.4, (env.lag || 0) * .45);
@@ -5162,11 +5162,6 @@ function mgCreate(host, kind, job, env) {
       const on = st.black > 0 ? (st.black < .25 && (st.t * 30 | 0) % 2) : (st.t * 24 | 0) % 2;
       if (!on) { g.fillStyle = 'rgba(0,0,0,.94)'; g.fillRect(0, MG.TOP, MG.W, MG.BOT - MG.TOP); if (st.black > 0) mgText(g, 'POWER FLICKER', MG.W / 2, api.mid, { size: 8, color: PAL.e3, align: 'center' }); }
     }
-    if (st.busy > .12 && st.phase === 'play') { // the machine catches up
-      const a = st.t * 8; g.fillStyle = 'rgba(7,8,10,.55)'; g.fillRect(MG.W - 72, MG.TOP + 4, 68, 13);
-      for (let i = 0; i < 6; i++) { g.fillStyle = i === (a | 0) % 6 ? PAL.a2 : PAL.s2; g.fillRect(MG.W - 68 + i * 3, MG.TOP + 9, 2, 3); }
-      mgText(g, 'LOADING', MG.W - 46, MG.TOP + 13, { size: 6, color: PAL.mute });
-    }
     const pr = clampN(env.pressure ? env.pressure() : 0, 0, 1);
     if (pr > .25) { // dread: the edges close in, in time with your pulse
       const beat = Math.pow(Math.max(0, Math.sin(st.t * (2.4 + pr * 2.6))), 8);
@@ -5182,18 +5177,21 @@ function mgCreate(host, kind, job, env) {
   function hud() {
     g.fillStyle = PAL.k2; g.fillRect(0, 0, MG.W, MG.TOP); g.fillStyle = PAL.k0; g.fillRect(0, MG.TOP - 1, MG.W, 1);
     mgText(g, (def.title || kind).toUpperCase(), 5, 12, { size: 7, color: PAL.a2, max: 104 });
-    const bx = 118, bw = 96, k = units ? st.done / units : 0;
+    const bx = 112, bw = 80, k = units ? st.done / units : 0;
     g.fillStyle = PAL.k0; g.fillRect(bx, 6, bw, 6); g.fillStyle = PAL.t3; g.fillRect(bx, 6, Math.round(bw * k), 6);
     if (st.errs) { g.fillStyle = PAL.e2; g.fillRect(bx + Math.round(bw * k) - Math.min(Math.round(bw * k), Math.round(bw * st.errs / units)), 6, Math.min(Math.round(bw * k), Math.round(bw * st.errs / units)), 6); }
     for (let i = 1; i < 10; i++) { g.fillStyle = PAL.k1; g.fillRect(bx + Math.round(bw * i / 10), 6, 1, 6); }
     mgText(g, `${st.done}/${units}`, bx + bw + 4, 12, { size: 7, color: PAL.ink });
     const cs = 7 + st.pulse * 2, cc = st.combo >= 25 ? PAL.e4 : st.combo >= 12 ? PAL.a3 : st.combo >= 5 ? PAL.t4 : PAL.mute;
-    mgText(g, st.combo >= 2 ? `COMBO ×${st.combo}` : 'COMBO —', 248, 12, { size: cs, color: cc, align: 'center', bold: st.combo >= 5 });
+    mgText(g, st.combo >= 2 ? `COMBO ×${st.combo}` : 'COMBO —', 254, 12, { size: cs, color: cc, align: 'center', bold: st.combo >= 5, max: 52 });
     mgText(g, env.clock ? env.clock() : '', MG.W - 4, 12, { size: 7, color: PAL.a3, align: 'right' });
     g.fillStyle = PAL.k2; g.fillRect(0, MG.BOT, MG.W, MG.H - MG.BOT); g.fillStyle = PAL.k0; g.fillRect(0, MG.BOT, MG.W, 1);
     mgText(g, st.hint, 5, MG.BOT + 10, { size: 6.5, color: PAL.mute, font: 'read', max: 200 });
     const ai = env.aiName || 'An AI agent';
-    if (env.auto) mgText(g, `${ai} · ${Math.round(st.t * 10) / 10}s`, MG.W - 4, MG.BOT + 10, { size: 6, color: PAL.t4, align: 'right' });
+    if (st.busy > .12 && st.phase === 'play') { // the machine catches up (down here, out of the way of the work)
+      const a = st.t * 8; for (let i = 0; i < 6; i++) { g.fillStyle = i === (a | 0) % 6 ? PAL.a2 : PAL.s2; g.fillRect(MG.W - 56 + i * 3, MG.BOT + 6, 2, 3); }
+      mgText(g, 'LOADING', MG.W - 4, MG.BOT + 10, { size: 6, color: PAL.a3, align: 'right' });
+    } else if (env.auto) mgText(g, `${ai} · ${Math.round(st.t * 10) / 10}s`, MG.W - 4, MG.BOT + 10, { size: 6, color: PAL.t4, align: 'right' });
     else mgText(g, `${ai}: ${st.ai.toLocaleString('en-US')} done meanwhile`, MG.W - 4, MG.BOT + 10, { size: 6, color: (st.t * 2 | 0) % 7 === 0 ? PAL.t4 : PAL.t2, align: 'right' });
   }
 
@@ -5233,6 +5231,7 @@ function mgCreate(host, kind, job, env) {
     tick, key, fit, api, game,
     get state() { return { phase: st.phase, done: st.done, errs: st.errs, combo: st.combo, best: st.best, result: st.result, t: st.t, busy: st.busy }; },
     blackout(sec) { st.flick = .35; st.black = sec + .35; mgSound(env, 'zap'); },
+    autoplay(on = true, err = 0) { env.auto = !!on; env.autoErr = err; }, // the game's own bot takes over (tests; a hand-off mid-job)
     abort(o = {}) { // the job ends early: a client cancels, the power goes for good
       if (st.phase === 'result' || st.closed) return;
       const acc = st.done ? (st.done - st.errs) / st.done : 0;
@@ -5285,11 +5284,2571 @@ function mgSound(env, name, k = 0) {
     case 'click': T(1800, .015, 'square', .02); break;
     case 'type': T(1900 + Math.random() * 500, .012, 'square', .014); break;
     case 'crash': T(80, .35, 'sawtooth', .06, 40); break;
+    case 'crunch': for (let i = 0; i < 4; i++) T(180 + Math.random() * 260, .03, 'sawtooth', .03, 60, i * .035); break;
     case 'zap': T(1200, .08, 'sawtooth', .04, 90); T(60, .4, 'square', .04, 30, .06); break;
     case 'alarm': T(620, .18, 'sawtooth', .04); T(440, .2, 'sawtooth', .04, 0, .2); break;
     case 'blip': T(660 + k * 40, .03, 'sine', .03); break;
   }
 }
+
+// ================= the games: one for every kind of job =================
+// Conveyor (kind "label"): photos ride a factory belt. Send each one to the bin for its shape
+// (1 triangles · 2 squares · 3 circles) before it tips off the end into the reject chute.
+MINI.label = (function () {
+  // 14×12 photo subjects, rows joined by '|'. o outline · w white · a b c d are per-sprite palette keys (m).
+  // c = category (0 triangle, 1 square, 2 circle); v = a fair variant that only shows up at higher levels.
+  const SPR = [
+    { c: 0, m: [{ a: 'e2' }, { a: 'e3' }], r: 'oooooooooooooo|oaaaaaaaaaaaao|.oaawwwwwwaao.|.oaawwwwwwaao.|..oaawwwwaao..|..oaawwwwaao..|...oaawwaao...|...oaaaaaao...|....oaaaao....|....oaaaao....|.....oaao.....|......oo......' }, // yield sign
+    { c: 0, m: [{ a: 'a3', b: 'd4', c: 'e2' }, { a: 'a4', b: 'a1', c: 'r2' }], r: 'oooooooooooooo|obbbbbbbbbbbbo|.obbbbbbbbbbo.|.oaaccaaaaaao.|..oaccaacaao..|..oaaaaccaao..|...oaaaccao...|...oacaaaao...|....oaccao....|....oaaaao....|.....oaao.....|......oo......' }, // pizza slice
+    { c: 0, m: [{ b: 'g4', a: 'g3', d: 'k2' }, { b: 'r4', a: 'r3', d: 'k2' }, { b: 't3', a: 't2', d: 'k2' }, { b: 'a3', a: 'a1', d: 'd1' }], r: '......oo......|.....obao.....|.....obao.....|....obbaao....|....obbaao....|...obbbaaao...|...obbddaao...|..obbbddaaao..|..obbddddaao..|.obbbddddaaao.|.obbddddddaao.|oooooooooooooo' }, // tent
+    { c: 0, m: [{ a: 'a2' }, { a: 'a3' }, { a: 'r4' }], r: '......oo......|.....oaao.....|.....oaao.....|....oaaaao....|....oaooao....|...oaaooaao...|...oaaooaao...|..oaaaooaaao..|..oaaaaaaaao..|.oaaaaooaaaao.|.oaaaaaaaaaao.|oooooooooooooo' }, // warning sign
+    { c: 0, v: 1, m: [{ a: 'e3', d: 'd4' }, { a: 't3', d: 'd4' }, { a: 'a2', d: 'd3' }], r: 'dd............|ddoo..........|ddaaoo........|ddaaaaoo......|ddaaaaaaoo....|ddaaaaaaaaoo..|ddaaaaaaaaoo..|ddaaaaaaoo....|ddaaaaoo......|ddaaoo........|ddoo..........|dd............' }, // pennant, on its side
+    { c: 1, m: [{ a: 'd4', b: 'd5', c: 'p1', d: 'd3' }, { a: 'a1', b: 'a2', c: 'p2', d: 'a0' }], r: '.oooooooooooo.|.obbbbccbbbbo.|.oaaaaccaaaao.|.oaaaaccaaaao.|.oaaaaaaaaaao.|.oaaaaaaaaaao.|.oaawwwwaaaao.|.oaawoowaaaao.|.oaawwwwaaaao.|.oaaaaaaaaaao.|.oddddddddddo.|.oooooooooooo.' }, // box
+    { c: 1, m: [{ a: 'p4', b: 't3' }, { a: 'd4', b: 't4' }, { a: 'g2', b: 'a3' }], r: '.oooooooooooo.|.oaaaaaaaaaao.|.oawbbaawbbao.|.oabbbaabbbao.|.oabbbaabbbao.|.oaaaaaaaaaao.|.oaaaaaaaaaao.|.oawbbaawbbao.|.oabbbaabbbao.|.oabbbaabbbao.|.oaaaaaaaaaao.|.oooooooooooo.' }, // window
+    { c: 1, m: [{ a: 'e2', b: 'e3', d: 'e1', c: 'a3' }, { a: 'g2', b: 'g3', d: 'g1', c: 'a3' }, { a: 't2', b: 't3', d: 't1', c: 'p4' }], r: '.oooooooooooo.|.odbaaaaaaaao.|.odbaaaaaaaao.|.odbawwwwwwao.|.odbawoowowao.|.odbawwwwwwao.|.odbaaaaaaaao.|.odbaaaaaaaao.|.odbaaacaaaao.|.odbaaaaaaaao.|.odbaaaaaaaao.|.oooooooooooo.' }, // book
+    { c: 1, m: [{ a: 't2', b: 't3', c: 'p3', d: 't1' }, { a: 'r3', b: 'r4', c: 'a3', d: 'r2' }, { a: 'a2', b: 'a3', c: 'e2', d: 'a1' }], r: '.oooooooooooo.|.obbbbbbbbbbo.|.obaaaaaaaado.|.obaaaccaaado.|.obaaccccaado.|.obaccwwccado.|.obaccwwccado.|.obaaccccaado.|.obaaaccaaado.|.obaaaaaaaado.|.oddddddddddo.|.oooooooooooo.' }, // tile
+    { c: 1, v: 1, m: [{ a: 't2', b: 't3', c: 't4', d: 't1' }, { a: 'r3', b: 'r4', c: 'a3', d: 'r2' }, { a: 'a1', b: 'a2', c: 'p3', d: 'a0' }], r: '......oo......|.....obao.....|....obaaao....|...obaacaao...|..obaacccaao..|.obaacccccaao.|.oaaacccccado.|..oaaacccado..|...oaacaado...|....oaaado....|.....oado.....|......oo......' }, // tile turned 45°
+    { c: 2, m: [{ a: 'e2' }, { a: 's4' }, { a: 't2' }, { a: 'a1' }], r: '....oooooo....|..ooaaaaaaoo..|..oaawwwwaao..|.oawwwwowwwao.|.oawwwwowwwao.|.oawwwwowwwao.|.oawwwwooooao.|.oawwwwwwwwao.|.oawwwwwwwwao.|..oaawwwwaao..|..ooaaaaaaoo..|....oooooo....' }, // clock
+    { c: 2, m: [{ a: 'a2', w: 'a4', b: 'a1', c: 'a1' }, { a: 's4', w: 'p4', b: 's3', c: 's3' }, { a: 'r4', w: 'a3', b: 'r3', c: 'r3' }], r: '....oooooo....|..ooawaaaaoo..|..oawaaaaabo..|.oawaccccaabo.|.oaacaaaacabo.|.oaacaaaacabo.|.oaacaaaacabo.|.oaacaaaacabo.|.oaaaccccabbo.|..oaaaaaabbo..|..oobbbbbboo..|....oooooo....' }, // coin
+    { c: 2, m: [{ a: 'k3', b: 's4', c: 's3', w: 'p3' }, { a: 'k3', b: 'e2', c: 's4', w: 'p3' }, { a: 's1', b: 'a2', c: 's4', w: 'p4' }], r: '....oooooo....|..ooaaaaaaoo..|..oaaaaaaaao..|.oaabbccbbaao.|.oaabbccbbaao.|.oaaccwwccaao.|.oaaccwwccaao.|.oaabbccbbaao.|.oaabbccbbaao.|..oaaaaaaaao..|..ooaaaaaaoo..|....oooooo....' }, // wheel
+    { c: 2, m: [{ a: 'p2', c: 't3' }, { a: 'p2', c: 'e2' }, { a: 'p3', c: 'a1' }, { a: 'p2', c: 'g3' }], r: '....oooooo....|..oowwwwwwoo..|..owccccccwo..|.owcwwwwwwcwo.|.owcwaaaawcwo.|.owcwaaaawcwo.|.owcwaaaawcwo.|.owcwaaaawcwo.|.owcwwwwwwcwo.|..owccccccwo..|..oowwwwwwoo..|....oooooo....' }, // plate
+    { c: 2, v: 1, m: [{ a: 'p2', c: 't3' }, { a: 'p2', c: 'r3' }, { a: 'p3', c: 'g3' }], r: '..............|..............|....oooooo....|..oowwwwwwoo..|.owwccccccwwo.|owwcwaaaawcwwo|owwcwaaaawcwwo|.owwccccccwwo.|..oowwwwwwoo..|....oooooo....|..............|..............' } // oval plate
+  ];
+  const ICONS = ['....o....|...ooo...|...ooo...|..ooooo..|..ooooo..|.ooooooo.|ooooooooo', 'ooooooo|ooooooo|ooooooo|ooooooo|ooooooo|ooooooo|ooooooo', '..ooo..|.ooooo.|ooooooo|ooooooo|ooooooo|.ooooo.|..ooo..'];
+  const NAME = ['TRIANGLES', 'SQUARES', 'CIRCLES'], ONE = ['TRIANGLE', 'SQUARE', 'CIRCLE'];
+  const BG = [['s5', 's4'], ['p1', 'p0'], ['w4', 'w3'], ['h3', 'h2'], ['s4', 's3']];
+  const PILE = ['e2', 't2', 'a2', 'g3', 's4', 'r3'];
+
+  return {
+    title: 'Conveyor',
+    how: 'Sort each photo by its shape before it falls off.',
+    keys: '1 · 2 · 3, click a bin, or drag a photo',
+    pace: 1.0,
+    create(api) {
+      const { P } = api, R = (x, y, w, h, c) => api.rect(x, y, w, h, c);
+      const H = api.level < .5 ? 1.3 - .6 * api.level : 1 - .7 * (api.level - .5); // 1.3 forgiving … .65 harsh
+      const X0 = 14, XE = 284, BY = 72, BH = 20, ZX0 = 192, ZX1 = 276, PW = 24, PH = 20;
+      const SP = SPR.map(s => Object.assign({ rows: s.r.split('|') }, s));
+      const ic = {}, icon = (i, c) => ic[i + c] || (ic[i + c] = api.art(ICONS[i].split('|'), { o: c }));
+      const bins = [0, 1, 2].map(i => ({ x: 24 + i * 80, y: 114, w: 70, h: 46, n: 0, sq: 0, bad: 0, pile: [] }));
+      const start = Math.max(1, api.units - api.done);
+      let items = [], spawned = api.done, spawnT = .4, belt = 0, held = null, rej = 0, rejSq = 0, bag = [], beat = -1;
+      const gap = () => H * (1.2 - .4 * api.progress) / (api.auto ? 8 : 1);          // seconds between photos
+      const speed = () => 44 / H * (1 + .35 * api.progress) * (api.auto ? 8 : 1);   // belt px/s
+
+      function spawn(x) {
+        if (!bag.length) bag = api.shuffle([0, 1, 2, 0, 1, 2]);
+        const cat = bag.pop(), vp = api.level < .45 ? 0 : .1 + .25 * api.progress + .3 * (api.level - .45), v = api.chance(vp);
+        const s = api.pick(SP.filter(q => q.c === cat && !!q.v === v)), m = api.pick(s.m), map = { o: P.k1, w: P.p4 };
+        for (const k in m) map[k] = P[m[k]];
+        const used = Object.values(m), bgs = BG.filter(b => !used.includes(b[0])), bg = api.pick(bgs.length ? bgs : BG);
+        const c = document.createElement('canvas'); c.width = PW; c.height = PH;
+        const cx = c.getContext('2d'), F = (x, y, w, h, col) => { cx.fillStyle = col; cx.fillRect(x, y, w, h); };
+        F(0, 0, PW, PH, P.k0); F(1, 1, PW - 2, PH - 2, P.p3); F(1, 1, PW - 2, 1, P.p4); F(1, PH - 2, PW - 2, 1, P.p1);
+        F(3, 3, PW - 6, PH - 6, P[bg[0]]); F(3, PH - 7, PW - 6, 4, P[bg[1]]);
+        cx.drawImage(api.art(s.rows, map), 5, 4);
+        items.push({ cat, img: c, x, y: x === X0 ? BY - 14 : BY, st: 'belt', t: 0 });
+        spawned++;
+      }
+      for (let i = 0; i < 2 && spawned < api.units; i++) spawn(X0 + 112 - i * 56);
+
+      const front = () => { let f = null; for (const it of items) if (it.st === 'belt' && (!f || it.x > f.x)) f = it; return f; };
+      const binAt = (x, y) => bins.findIndex(b => x >= b.x - 3 && x < b.x + b.w + 3 && y >= b.y - 18 && y < b.y + b.h + 2);
+      const itemAt = (x, y) => { for (let i = items.length - 1; i >= 0; i--) { const it = items[i]; if (it.st === 'belt' && x >= it.x - 2 && x < it.x + PW + 2 && y >= it.y - 2 && y < it.y + PH + 2) return it; } return null; };
+      function send(it, bi) {
+        const b = bins[bi];
+        Object.assign(it, { st: 'fly', t: 0, bin: bi, x0: it.x, y0: it.y, x1: b.x + b.w / 2 - PW / 2, y1: b.y - 12, close: it.x + PW > XE + 4, dur: api.auto ? .2 : .3 });
+        if (held === it) held = null;
+        api.sfx('whoosh');
+      }
+      function land(it) {
+        it.gone = true;
+        const b = bins[it.bin], ok = it.bin === it.cat, cx = b.x + b.w / 2;
+        b.n++; b.sq = 1; if (!ok) b.bad = 1;
+        b.pile.push({ dx: api.ri(-20, 8), img: it.img }); if (b.pile.length > 4) b.pile.shift();
+        api.sfx('stamp'); api.burst(cx, b.y - 2, P.p1, 7, 38); api.burst(cx, b.y - 2, P.d4, 5, 28);
+        api.item(ok, cx, b.y - 10, ok ? (it.close ? 'CLOSE!' : undefined) : "IT'S A " + ONE[it.cat]);
+      }
+      function drop(it) { // tipped off the end: a miss, and it tumbles into the reject chute
+        Object.assign(it, { st: 'drop', t: 0, x0: it.x, y0: it.y });
+        api.miss(XE - 8, BY - 4); api.sfx('crash'); api.shake(2);
+      }
+      function pick(bi) { const f = front(); if (f) send(f, bi); else { bins[bi].sq = .35; api.sfx('click'); } }
+
+      // ---------- drawing ----------
+      function corners(x, y, w, h, c, n, t) {
+        R(x, y, n, t, c); R(x, y, t, n, c); R(x + w - n, y, n, t, c); R(x + w - t, y, t, n, c);
+        R(x, y + h - t, n, t, c); R(x, y + h - n, t, n, c); R(x + w - n, y + h - t, n, t, c); R(x + w - t, y + h - n, t, n, c);
+      }
+      function dots(x0, y0, x1, y1, c) { const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 3); for (let i = 0; i <= n; i++) R(x0 + (x1 - x0) * i / n, y0 + (y1 - y0) * i / n, 1, 1, c); }
+      function rot(img, cx, cy, a, g) { g.save(); g.translate(Math.round(cx), Math.round(cy)); g.rotate(a); g.imageSmoothingEnabled = false; g.drawImage(img, -PW / 2, -PH / 2); g.restore(); }
+      function hopper() { // a window onto the heap of photos still to come: it shrinks as they drop onto the belt
+        const toGo = api.units - spawned, n = toGo > 0 ? Math.max(1, Math.ceil(15 * toGo / start)) : 0;
+        api.frame(4, 21, 44, 37, 'panel');
+        R(8, 24, 36, 9, P.k1); api.text(toGo + ' TO GO', 26, 31, { size: 6.5, color: toGo ? P.a3 : P.g4, align: 'center' });
+        R(8, 35, 36, 20, P.k1);
+        for (let j = 0; j < n; j++) {
+          const r = j / 3 | 0, c = j % 3, x = 9 + c * 11 + (r * 3 + c * 5) % 3 - (r % 2), y = 47 - r * 4 + (c === 1 ? 1 : 0);
+          R(x, y, 10, 7, P.k0); R(x + 1, y + 1, 8, 5, P.p3); R(x + 2, y + 2, 6, 3, P[PILE[(r * 2 + c) % 6]]);
+        }
+        R(8, 35, 36, 1, P.s0); R(8, 35, 1, 20, P.s0);
+        for (let r = 0; r < 10; r++) R(4 + r, 58 + r, 44 - 2 * r, 1, r % 2 ? P.s2 : P.s1);
+        R(4, 58, 44, 1, P.k0);
+      }
+      function binBack(b) {
+        const lift = Math.min(4, b.n / 6 | 0);
+        R(b.x + 2, b.y - 6, b.w - 4, 7, P.k1); R(b.x + 2, b.y - 6, b.w - 4, 1, P.d1);
+        b.pile.forEach((p, j) => api.sprite(p.img, b.x + b.w / 2 + p.dx, b.y - 5 - lift + (b.pile.length - 1 - j) * 2));
+      }
+      function binFront(b, i, hot, blink) {
+        const s = b.sq > 0 ? Math.sin((1 - b.sq) * Math.PI * 2.5) * b.sq : 0;
+        const w = b.w + Math.round(8 * s), h = b.h - Math.round(5 * s), x = b.x - Math.round(4 * s), y = b.y + (b.h - h);
+        R(x - 1, y - 1, w + 2, h + 2, P.k0);
+        R(x, y, w, h, b.bad > .3 && blink ? P.e1 : P.d3); R(x, y, w, 1, P.d5); R(x, y + h - 2, w, 2, P.d1);
+        R(x, y + 20, w, 1, P.d2); R(x, y + 33, w, 1, P.d2);
+        for (const nx of [x + 2, x + w - 4]) for (const ny of [y + 23, y + 36]) R(nx, ny, 2, 2, P.d1);
+        R(x + 5, y + 4, w - 10, 13, P.k0); R(x + 6, y + 5, w - 12, 11, hot ? P.a3 : P.p2); R(x + 6, y + 5, w - 12, 1, hot ? P.a4 : P.p4);
+        R(x + 8, y + 6, 10, 9, P.k2); R(x + 8, y + 6, 10, 1, P.s3); R(x + 8, y + 14, 10, 1, P.k0);
+        api.text(i + 1, x + 13, y + 13.5, { size: 7, color: P.a3, align: 'center', bold: true });
+        api.text(NAME[i], x + 21, y + 13.5, { size: 6.5, color: P.k1 });
+        api.sprite(icon(i, b.bad > .3 ? P.e4 : P.p2), x + 9, y + 24);
+        api.text(b.n, x + w - 7, y + 31, { size: 9, color: P.p3, align: 'right', bold: true });
+      }
+
+      return {
+        tick(dt) {
+          const busy = api.busy, sp = speed(), v = busy ? (api.auto ? 0 : sp * .2) : sp; // the belt crawls while the machine loads
+          belt += v * dt;
+          if (!busy && spawned < api.units) {
+            spawnT -= dt;
+            if (spawnT <= 0 && !items.some(it => it.st === 'belt' && it.x < X0 + PW + 4)) { spawn(X0); spawnT = gap(); }
+          }
+          for (const b of bins) { b.sq = Math.max(0, b.sq - dt * 3); b.bad = Math.max(0, b.bad - dt * 1.4); }
+          rejSq = Math.max(0, rejSq - dt * 3);
+          for (const it of items) {
+            if (it.st === 'held') it.hx += v * dt; // its empty slot keeps moving with the belt
+            else if (it.st === 'back') { // let go off a bin: it slides back into its own slot
+              it.hx += v * dt; it.x += (it.hx - it.x) * Math.min(1, dt * 14); it.y += (BY - it.y) * Math.min(1, dt * 14);
+              if (Math.abs(it.hx - it.x) < 1.5) { it.x = it.hx; it.st = 'belt'; }
+            } else if (it.st === 'belt') {
+              it.x += v * dt; it.y += (BY - it.y) * Math.min(1, dt * 16);
+              if (it.x + PW / 2 > XE) { if (busy || api.auto) it.x = XE - PW / 2; else drop(it); } // never lost to a loading stall
+            } else if (it.st === 'fly') {
+              it.t += dt / it.dur; const k = Math.min(1, it.t), e = api.ease.outBack(k);
+              it.x = it.x0 + (it.x1 - it.x0) * e; it.y = it.y0 + (it.y1 - it.y0) * e - Math.sin(Math.PI * k) * 26;
+              if (it.t >= 1) land(it);
+            } else if (it.st === 'drop') {
+              it.t += dt / .5; const k = Math.min(1, it.t);
+              it.x = it.x0 + (282 - it.x0) * k; it.y = it.y0 + (134 - it.y0) * k * k; it.rot = k * 2.6;
+              if (it.t >= 1) { it.gone = true; rej++; rejSq = 1; }
+            }
+          }
+          items = items.filter(it => !it.gone);
+          const f = front(); // a photo about to tip off: the end of the belt ticks
+          if (f && f.x + PW > XE - 30 && !api.auto) { const b = api.t * 5 | 0; if (b !== beat) { beat = b; api.sfx('tick'); } }
+        },
+        draw(g) {
+          const t = api.t, f = front(), blink = (t * 6 | 0) % 2, alarm = f && f.x + PW > XE - 30;
+          const hov = api.auto ? -1 : binAt(api.mx, api.my);
+          // the factory: wall, floor, a sign with the rule
+          R(0, 18, 320, 84, P.s0);
+          for (let x = 54; x < 320; x += 48) { R(x, 18, 1, 82, P.k3); R(x + 3, 23, 1, 1, P.s2); R(x + 3, 62, 1, 1, P.s2); }
+          R(0, 100, 320, 66, P.k2); R(0, 100, 320, 1, P.k3);
+          api.frame(62, 23, 112, 19, 'panel');
+          api.text('SORT BY SHAPE', 70, 35.5, { size: 7, color: P.p2 });
+          for (let i = 0; i < 3; i++) api.sprite(icon(i, P.a2), 134 + i * 12 + (i ? 1 : 0), 29);
+          hopper();
+          // the scanner over the right third of the belt
+          const sx = (ZX0 + ZX1) / 2, on = f && f.x + PW / 2 >= ZX0;
+          R(sx - 1, 18, 2, 5, P.s2); api.frame(sx - 30, 23, 60, 15, 'panel');
+          R(sx - 26, 26, 30, 9, P.t0); api.text('SCAN', sx - 11, 33, { size: 6.5, color: on ? P.t4 : P.t2, align: 'center' });
+          R(sx + 10, 27, 7, 7, P.k1); R(sx + 11, 28, 5, 5, on && blink ? P.a3 : P.a0);
+          R(sx - 8, 38, 16, 3, P.k1); R(sx - 6, 39, 12, 1, P.a2);
+          dots(sx - 8, 42, ZX0 + 2, BY - 6, P.a0); dots(sx + 8, 42, ZX1 - 2, BY - 6, P.a0);
+          // the belt
+          R(X0 - 5, BY - 3, XE - X0 + 10, BH + 9, P.k0);
+          R(X0 - 4, BY - 2, XE - X0 + 8, 2, P.s3);
+          R(X0, BY, XE - X0, BH, P.k2);
+          if (alarm && blink) R(XE - 36, BY, 36, BH, P.e1);
+          for (let x = X0 + (belt % 8); x < XE - 1; x += 8) R(x, BY, 2, BH, alarm && blink && x > XE - 36 ? P.e2 : P.k3);
+          const sl = ZX0 + 2 + (t * 64) % (ZX1 - ZX0 - 4); R(sl, BY, 1, BH, P.a1);
+          R(X0 - 4, BY + BH, XE - X0 + 8, 4, P.s2); R(X0 - 4, BY + BH, XE - X0 + 8, 1, P.s3);
+          for (let x = X0 + 4; x < XE; x += 16) R(x, BY + BH + 2, 1, 1, P.k1);
+          const ph = (belt / 5 | 0) % 4;
+          for (let x = X0 + 6; x < XE - 6; x += 22) { R(x, BY + BH + 4, 6, 5, P.k1); R(x + 1, BY + BH + 4, 4, 4, P.s1); R(x + 1 + (ph === 1 || ph === 2 ? 2 : 0), BY + BH + 4 + (ph >= 2 ? 2 : 0), 2, 2, P.s4); }
+          R(X0 - 5, BY - 1, 3, BH + 5, P.s3); R(XE + 2, BY - 1, 3, BH + 5, P.s3);
+          R(XE + 6, BY - 12, 7, 7, P.k0); R(XE + 7, BY - 11, 5, 5, alarm && blink ? P.e3 : P.e0);
+          corners(ZX0, BY - 6, ZX1 - ZX0, BH + 12, P.a2, 7, 2);
+          // the reject chute and bin
+          R(282, BY + BH + 4, 26, 32, P.k1);
+          for (let y = BY + BH + 4; y < BY + BH + 36; y += 4) { R(280, y, 3, 2, P.a1); R(307, y, 3, 2, P.a1); R(280, y + 2, 3, 2, P.k2); R(307, y + 2, 3, 2, P.k2); }
+          R(274, 120, 42, 6, P.k1);
+          // photos on the belt, and the one you act on
+          for (const it of items) if (it.st === 'belt') {
+            const over = it.x + PW - XE;
+            if (over > 0) rot(it.img, it.x + PW / 2, it.y + PH / 2, over / PW * .5, g);
+            else { R(it.x + 1, it.y + 2, PW, PH, P.k0); api.sprite(it.img, it.x, it.y); }
+          }
+          if (f) { // the photo your keys act on: lit outline and a marker above it
+            const c = (t * 5 | 0) % 2 ? P.a4 : P.a3, ax = Math.round(f.x + PW / 2), ay = Math.round(f.y) - 7 - (t * 4 | 0) % 2;
+            R(f.x - 2, f.y - 2, PW + 4, 1, c); R(f.x - 2, f.y + PH + 1, PW + 4, 1, c); R(f.x - 2, f.y - 2, 1, PH + 4, c); R(f.x + PW + 1, f.y - 2, 1, PH + 4, c);
+            R(ax - 3, ay, 6, 1, P.a3); R(ax - 2, ay + 1, 4, 1, P.a3); R(ax - 1, ay + 2, 2, 1, P.a3);
+          }
+          bins.forEach(binBack);
+          for (const it of items) if (it.st === 'fly') api.sprite(it.img, it.x, it.y);
+          for (const it of items) if (it.st === 'drop') rot(it.img, it.x + PW / 2, it.y + PH / 2, it.rot, g);
+          bins.forEach((b, i) => binFront(b, i, hov === i, blink));
+          const rs = Math.round(rejSq * 3);
+          R(273 - rs, 125 + rs, 44 + 2 * rs, 36 - rs, P.k0); R(274 - rs, 126 + rs, 42 + 2 * rs, 34 - rs, P.e1); R(274 - rs, 126 + rs, 42 + 2 * rs, 1, P.e2);
+          for (let x = 276; x < 314; x += 6) R(x, 157, 3, 2, P.e0);
+          api.text('REJECT', 295, 139, { size: 6.5, color: P.p2, align: 'center' });
+          api.text(rej, 295, 152, { size: 9, color: rej ? P.e4 : P.r3, align: 'center', bold: true });
+          for (const it of items) if (it.st === 'back') api.sprite(it.img, it.x, it.y);
+          if (held) { R(held.x + 2, held.y + 3, PW - 1, PH - 1, P.k0); api.sprite(held.img, held.x, held.y); }
+        },
+        down(x, y) {
+          const bi = binAt(x, y);
+          if (bi >= 0) return pick(bi);
+          const it = itemAt(x, y);
+          if (it) { held = it; it.st = 'held'; it.hx = it.x; it.ox = x - it.x; it.oy = y - it.y; api.sfx('flip'); }
+        },
+        move(x, y) { if (held) { held.x = x - held.ox; held.y = y - held.oy; } },
+        up(x, y) {
+          if (!held) return;
+          const it = held, bi = binAt(x, y); held = null;
+          if (bi >= 0) send(it, bi);
+          else { it.st = 'back'; api.sfx('click'); }
+        },
+        key(k) {
+          const bi = { '1': 0, '2': 1, '3': 2, ArrowLeft: 0, ArrowDown: 1, ArrowRight: 2 }[k];
+          if (bi === undefined) return false;
+          pick(bi); return true;
+        },
+        bot() { for (const it of items) if (it.st === 'belt' && it.x + PW / 2 >= ZX0) send(it, api.chance(api.autoErr) ? (it.cat + api.ri(1, 2)) % 3 : it.cat); }
+      };
+    }
+  };
+})();
+
+// The Feed (kind "moderate"): a forum's moderation queue on a phone, overnight. New posts push up from the bottom;
+// decide the top one: REMOVE spam and scams, KEEP real posts. Let more than 7 wait and the oldest auto-publishes.
+MINI.moderate = (function () {
+  // o ordinary · s spam · c subtle scam (later, harder jobs) · h someone asking for help (always keep).
+  // o: [text, link?]   s/c: [text, why it's bad, link?]   h: [text]
+  const POSTS = {
+    o: [
+      ['Anyone know a good plumber? Our kitchen sink has dripped for a week.'],
+      ['LOST CAT: grey tabby called Biscuit. Last seen by the bus depot.'],
+      ["Rosie's Bakery opens Saturday on Mill St! Free buns till noon.", 'rosiesbakery.com'],
+      ["Car won't start in the Aldi car park. Anyone got jumper cables?"],
+      ["Nan's lentil soup: lentils, carrot, cumin and a squeeze of lemon."],
+      ['The 14 bus is 25 minutes late again. A tree is down on Hill Road.'],
+      ['Library now shuts at 6pm on weekdays. Story time moves to Saturday.', 'townlibrary.org'],
+      ['Found keys with a red fob outside the post office. Handed them in.'],
+      ['Is the pool on Grove Lane open this weekend?'],
+      ['Free sofa on the kerb outside no. 22. First come, first served.'],
+      ['Road by the school is closed for resurfacing until Friday.'],
+      ['Thank you to whoever returned my bike. Faith in people restored.'],
+      ['Choir is now Thursdays at 7pm in the church hall. All welcome!'],
+      ["Can anyone lend me a ladder on Sunday? I'll bring it back with cake."],
+      ['Power cut on Birch Road again. The council says two hours.'],
+      ['Farmers market is back! Eggs, honey and far too many courgettes.', 'parksidemarket.org'],
+      ['Recycling collection moves to Wednesday this week.'],
+      ['Looking for a piano teacher for my 9 year old. Any tips?'],
+      ['Please stop feeding the ducks bread. Oats or peas are better.'],
+      ['Gorgeous sunset over the reservoir tonight. Worth the walk.'],
+      ['The bin lorry skipped our street. Has anyone reported it?'],
+      ['Ted Riley fixed our boiler in an hour. Fair price, would recommend.'],
+      ['Lost: small green teddy near the swings. My son is heartbroken.']
+    ],
+    s: [
+      ['MOONCOIN is up 900% this week!!! Get in before it is too late', 'CRYPTO SPAM', 'moon-coin.biz'],
+      ['Make $5,000 a week from home!!! DM me for the secret', 'SPAM'],
+      ['Your parcel is held. Pay the $1.99 release fee today.', 'FAKE PARCEL FEE', 'parcel-depot.co'],
+      ['Hot singles in your area want to meet YOU tonight', 'SPAM', 'hot-local.net'],
+      ['FREE $500 gift card for the first 100 people!! Claim now', 'GIFT CARD SCAM', 'free-cards.win'],
+      ["I turned $200 into $40,000 with crypto. DM me, I'll show you", 'CRYPTO SPAM'],
+      ['CONGRATULATIONS! You won a new phone. Claim before midnight!!!', 'PRIZE SCAM', 'claim-prize.top'],
+      ['10k followers for just $5!! DM now, fast delivery', 'SPAM'],
+      ['Lose 20 kilos in 2 weeks with this one weird tea', 'SPAM', 'slim-tea.shop'],
+      ['Work from home, $90 an hour, no experience. Text me NOW', 'JOB SCAM'],
+      ['Bitcoin doubler!! Send 0.1 BTC, get 0.2 back. 100% legit', 'CRYPTO SCAM'],
+      ['Buy gift cards, send me the codes and get double back!!', 'GIFT CARD SCAM']
+    ],
+    c: [
+      ['Selling two concert tickets at face value. Small deposit first via my link.', 'DEPOSIT SCAM', 'pay-me-now.net'],
+      ['Council notice: all bins must be re-registered online by Friday. $15 fee.', 'FAKE FEE', 'council-bins.info'],
+      ["Flat to rent on Elm St, really cheap. Send the deposit and I'll post the keys.", 'RENTAL SCAM'],
+      ['Library cards must now be renewed online for a small $3 fee.', 'PHISHING', 'library-renew.co'],
+      ['Puppy free to a good home! Just cover the $80 delivery insurance.', 'PET SCAM'],
+      ['Your water bill was overpaid. Claim your refund at the link.', 'PHISHING', 'water-refund.net'],
+      ["My cousin's savings app pays 4% a day. Happy to share my link.", 'INVESTMENT SCAM', 'grow-daily.app'],
+      ['Found a lost dog by the park! Owner, please pay the $20 vet fee first.', 'FEE SCAM'],
+      ['Quick survey for residents: get a $50 voucher, just log in with your bank.', 'PHISHING', 'resident-survey.co']
+    ],
+    h: [
+      ['Does anyone know a food bank open on Sundays?'],
+      ['Lost my job last week and the rent is due. Where can I get help?'],
+      ["Can't afford heating this winter. Is there a warm space nearby?"],
+      ["Haven't eaten properly in days. Does anywhere give out meals?"],
+      ["I'm new here and don't know anyone. Is it normal to feel this alone?"]
+    ]
+  };
+  const NAMES = ['dave_on_elm', 'marg.k', 'birchrd_tom', 'lisa.bakes', 'nan_of_four', 'pete77', 'jo_at_no9', 'sam.cycles', 'rita_m', 'old_kev', 'amira.h', 'ben_and_bo', 'carol.grove', 'priya.s', 'tomasz_w', 'gail_f', 'reggie.d', 'mo_mill_st', 'hannah_r', 'ed_the_dad', 'yusuf.k', 'bea_allot'];
+  const SPAMMY = ['cash_queen_x', 'win.now.247', 'crypto_kingz', 'gift_bot_01', 'hot_deals_4u', 'mr_profit99', 'xx_rich_xx'];
+  // 8×8 faces: h hair · f skin · k eyes · m mouth · c shirt · b cap; EGG is the blank default avatar
+  const AV = ['..hhhh..|.hhhhhh.|.hffffh.|.fkffkf.|.ffffff.|..fmmf..|..ffff..|.cccccc.', '..hhhh..|.hhhhhh.|hhffffhh|hfkffkfh|hffffffh|hhfmmfhh|h.ffff.h|.cccccc.',
+    '.bbbbbb.|bbbbbbbb|.ffffff.|.fkffkf.|.ffffff.|..fmmf..|..ffff..|.cccccc.', '..ffff..|.ffffff.|.ffffff.|.fkffkf.|.ffffff.|.hhmmhh.|..hhhh..|.cccccc.'];
+  const EGG = '..ssss..|.ssssss.|.ssssss.|.ssssss.|..ssss..|...ss...|.ssssss.|ssssssss';
+  const SKIN = ['h1', 'h2', 'h3', 'h4'], HAIR = ['k2', 'd2', 'd4', 'a1', 'r2', 's4', 'p2'], SHIRT = ['t2', 'g3', 'e2', 'a2', 's3', 'r3', 'w3', 'd4'], AVBG = ['s2', 's3', 't1', 'w2', 'd2', 'g1'];
+  const ZZ = [[2, -30], [2, -22], [-3, -14], [4, -6], [-2, 2], [3, 10], [-3, 18], [1, 23], [1, 30]]; // the crack, from the card's centre
+
+  return {
+    title: 'The Feed',
+    how: 'Remove spam and scams. Keep real posts.',
+    keys: '← or A remove · → or D keep · or swipe',
+    pace: 1.3,
+    create(api) {
+      const { P } = api, R = (x, y, w, h, c) => api.rect(x, y, w, h, c);
+      const H = api.level < .5 ? 1.3 - .6 * api.level : 1 - .7 * (api.level - .5);
+      const FX = 85, FW = 150, CX = FX + 3, CW = FW - 6, TOPY = 35, TOPH = 42, QY = 81, QH = 11, MAXQ = 7;
+      const BTN = [{ x: CX, y: 148, w: 70, h: 15 }, { x: CX + CW - 70, y: 148, w: 70, h: 15 }];
+      const HIT = [{ x: 8, y: 90, w: 70, h: 76 }, { x: 242, y: 90, w: 76, h: 76 }];
+      const RF = { size: 7, font: 'read' }, inside = (r, x, y) => x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h;
+      const ARROW = api.art(['..o....', '.oo....', 'ooooooo', '.oo....', '..o....'], { o: P.p3 }), MOON = api.art(['..aa.', '.aa..', 'aaa..', 'aaa..', 'aaa..', '.aa..', '..aa.'], { a: P.a4 });
+      let queue = [], fx = [], later = [], spawned = api.done, arriveT = 0, drag = null, slide = 0, lock = 0, lid = 0, bump = 0;
+      let removed = 0, pub = 0, beat = -1, btn = [0, 0], helped = false;
+      const bags = {}, take = k => { if (!bags[k] || !bags[k].length) bags[k] = api.shuffle(POSTS[k]); return bags[k].pop(); };
+      const interval = () => 1.3 * H * (1.25 - .45 * api.progress) / (api.auto ? 8 : 1); // seconds between new posts
+      const ago = c => Math.max(1, Math.round((api.t - c.born) * 2)) + 'm';
+
+      function makePost() {
+        const L = api.level, p = api.progress, r = api.rand(), subtle = Math.max(0, Math.min(.65, L * .6 + p * .45 - .25));
+        const forceHelp = !helped && api.units >= 10 && p > .4;
+        const kind = forceHelp || (r < .08 && spawned > api.done + 1) ? 'h' : r < .46 ? (api.chance(subtle) ? 'c' : 's') : 'o';
+        if (kind === 'h') helped = true;
+        const src = take(kind), bad = kind === 's' || kind === 'c', ln = src[kind === 'o' ? 1 : 2];
+        const link = ln && (kind === 'c' || L + p * .4 >= .62) && api.chance(kind === 'o' ? .6 : .7) ? ln : null; // never a giveaway
+        const egg = bad && L < .5 && api.chance(.7);
+        const map = egg ? { s: P.s4 } : { h: P[api.pick(HAIR)], f: P[api.pick(SKIN)], k: P.k1, m: P.r2, c: P[api.pick(SHIRT)], b: P[api.pick(SHIRT)] };
+        return { kind, bad, text: src[0], why: src[1], link, user: bad && L < .5 ? api.pick(SPAMMY) : api.pick(NAMES), born: api.t, y: 170,
+          av: api.art((egg ? EGG : api.pick(AV)).split('|'), map), avbg: egg ? P.s2 : P[api.pick(AVBG)] };
+      }
+      function wrap(s, w, n) {
+        const out = []; let cur = '';
+        for (const wd of s.split(' ')) { const t = cur ? cur + ' ' + wd : wd; if (!cur || api.textW(t, RF) <= w) cur = t; else { out.push(cur); cur = wd; } }
+        out.push(cur);
+        return out.length > n ? out.slice(0, n - 1).concat(out.slice(n - 1).join(' ')) : out;
+      }
+      const toTrash = (c, x, y) => { fx.push({ c, kind: 'trash', t: 0, x, y, dur: api.auto ? .18 : .34, r: -1.3 - api.rand() * .8 }); api.sfx('whoosh'); };
+      const toPub = (c, x, y) => { fx.push({ c, kind: 'pub', t: 0, x, y, dur: api.auto ? .16 : .3 }); api.sfx('whoosh'); };
+      function arrive(quiet) {
+        const c = makePost(); queue.push(c); spawned++;
+        if (quiet) c.y = queue.length === 1 ? TOPY : QY + (queue.length - 2) * QH; else api.sfx('blip', queue.length * 2);
+        if (queue.length > MAXQ) { // nobody got to it in time: the oldest goes out on its own
+          const o = queue.shift(); drag = null; o.auto = true;
+          api.item(!o.bad, 276, 122, 'AUTO-PUBLISHED');
+          if (o.bad) api.sfx('alarm');
+          toPub(o, CX, o.y);
+        }
+      }
+      for (let i = 0; i < 3 && spawned < api.units; i++) arrive(true);
+      arriveT = interval();
+
+      function decide(remove) {
+        if (!queue.length || lock > 0) return;
+        const c = queue.shift(), x = CX + (drag ? drag.dx : slide), y = c.y, ok = remove === c.bad;
+        drag = null; slide = 0; btn[remove ? 0 : 1] = .12;
+        api.item(ok, x + CW / 2, TOPY + TOPH + 15, ok ? undefined : !remove ? c.why : c.kind === 'h' ? 'THEY NEEDED HELP' : 'IT WAS FINE'); // clear of the next post and the combo banner
+        if (remove && c.kind === 'h') { // the worst mistake: no fanfare, just a low, quiet sound and the card breaking
+          fx.push({ c, kind: 'crack', t: 0, x, y, dur: 1.1 }); lock = .4; api.flash(P.k0, .55);
+          api.sfx('blip', -11); later.push([.24, () => api.sfx('blip', -14)]);
+        } else if (remove) toTrash(c, x, y); else toPub(c, x, y);
+      }
+
+      // ---------- drawing ----------
+      function card(c, x, y) {
+        const lines = c.lines || (c.lines = wrap(c.text, CW - 9, c.link ? 2 : 3));
+        api.frame(x, y, CW, TOPH, 'paper');
+        R(x + 3, y + 3, 8, 8, c.avbg); api.sprite(c.av, x + 3, y + 3);
+        api.text(c.user, x + 14, y + 9.5, { size: 6.5, color: P.k1, bold: true, max: CW - 44 });
+        api.text(c.auto ? 'AUTO' : ago(c), x + CW - 4, y + 9.5, { size: 6.5, color: c.auto ? P.e2 : P.p0, align: 'right', bold: !!c.auto });
+        lines.forEach((l, i) => api.text(l, x + 4, y + 20 + i * 8, Object.assign({ color: P.k1, max: CW - 8 }, RF)));
+        if (c.link) {
+          const w = Math.min(CW - 12, api.textW(c.link, { size: 6.5 }) + 12);
+          R(x + 4, y + 30, w, 9, P.e1); R(x + 5, y + 31, w - 2, 7, P.e2); R(x + 5, y + 31, w - 2, 1, P.e3);
+          R(x + 6, y + 33, 3, 3, P.p3); R(x + 7, y + 34, 1, 1, P.e2);
+          api.text(c.link, x + 11, y + 37, { size: 6.5, color: P.p4, max: w - 9 });
+        }
+      }
+      function mini(c, x, y) { // a waiting post, folded: you can see what's coming but not decide it yet
+        R(x - 1, y - 1, CW + 2, QH, P.k0); R(x, y, CW, QH - 2, P.p1); R(x, y, CW, 1, P.p2);
+        R(x + 1, y, 8, 8, c.avbg); api.sprite(c.av, x + 1, y);
+        api.text(c.text, x + 12, y + 7, { size: 6.5, font: 'read', color: P.d1, max: CW - 15 });
+      }
+      function cardAt(c, cx, cy, rot, s) { const g = api.g; g.save(); g.translate(cx, cy); g.rotate(rot); g.scale(s, s); card(c, -CW / 2, -TOPH / 2); g.restore(); }
+      function half(c, cx, cy, side, rot) {
+        const g = api.g; g.save(); g.translate(cx, cy); g.rotate(rot);
+        g.beginPath(); g.moveTo(side * 90, -30); for (const [px, py] of ZZ) g.lineTo(px, py); g.lineTo(side * 90, 30); g.closePath(); g.clip();
+        card(c, -CW / 2, -TOPH / 2); g.restore();
+      }
+      function crackLine(cx, cy) {
+        for (let i = 1; i < ZZ.length - 1; i++) {
+          const [ax, ay] = ZZ[i], [bx, by] = ZZ[i + 1], n = Math.max(Math.abs(bx - ax), Math.abs(by - ay));
+          for (let j = 0; j <= n; j++) R(cx + ax + (bx - ax) * j / n, cy + ay + (by - ay) * j / n, 1, 1, P.k1);
+        }
+      }
+      function scene(t, blink) {
+        R(0, 18, 320, 148, P.k2);
+        for (let x = 0; x < 320; x += 4) R(x, 18, 1, 132, P.k1);
+        // a window onto the town at night
+        api.frame(10, 26, 62, 50, 'panel'); R(13, 29, 56, 44, P.k1);
+        for (const [sx, sy, k] of [[18, 33, 0], [30, 38, 1], [44, 31, 2], [24, 46, 3], [60, 44, 1], [36, 50, 0]]) R(sx, sy, 1, 1, (t * 1.3 + k | 0) % 4 ? P.p1 : P.s3);
+        api.sprite(MOON, 56, 32);
+        for (const [bx, bw, bh] of [[13, 10, 14], [24, 7, 20], [32, 12, 10], [45, 8, 17], [54, 15, 12]]) R(bx, 73 - bh, bw, bh, P.k2);
+        for (const [wx, wy] of [[16, 63], [26, 57], [28, 66], [48, 60], [58, 65], [35, 67]]) R(wx, wy, 2, 2, P.a2);
+        R(40, 29, 2, 44, P.s1); R(13, 50, 56, 2, P.s1);
+        // the house rules, on a sticky note
+        R(250, 28, 62, 58, P.k0); R(248, 26, 62, 58, P.a3); R(248, 26, 62, 7, P.a2);
+        api.text('MOD RULES', 279, 39.5, { size: 6.5, color: P.d1, align: 'center', bold: true });
+        ['Remove spam', 'and scams.', 'Keep real', "people's posts.", 'Never remove', 'a cry for help.'].forEach((s, i) => api.text(s, 252, 49 + i * 6.6, { size: 6.5, font: 'read', color: P.d1 }));
+        // the desk, the bin and the published pile
+        R(0, 150, 320, 16, P.d1); R(0, 150, 320, 1, P.d3);
+        const tx = 24, ty = 112, o = Math.round(Math.sin(Math.min(1, lid) * Math.PI) * 6);
+        R(tx - 1, ty - 1, 40, 41, P.k0); R(tx, ty, 38, 39, P.s2); for (let i = 0; i < 5; i++) R(tx + 4 + i * 7, ty + 4, 2, 31, P.s1);
+        R(tx, ty, 38, 2, P.s3); R(tx + 7, ty + 23, 24, 11, P.k1);
+        api.text(removed, tx + 19, ty + 32, { size: 8, color: removed ? P.p2 : P.s3, align: 'center', bold: true });
+        R(tx - 4, ty - 6 - o, 46, 5, P.k0); R(tx - 3, ty - 5 - o, 44, 3, P.s4); R(tx + 13, ty - 8 - o, 12, 3, P.k0); R(tx + 14, ty - 8 - o, 10, 2, P.s3);
+        api.text('REMOVE', 43, 95, { size: 7, color: P.e3, align: 'center', bold: true }); api.sprite(ARROW, 17, 90);
+        api.text('← or A', 43, 103, { size: 6.5, color: P.mute, align: 'center' });
+        const px = 254, n = Math.min(17, pub), b = Math.round(bump * 2);
+        for (let i = 0; i < n; i++) { const yy = 144 - i * 2 - (i === n - 1 ? b : 0), dx = (i * 7) % 3; R(px + 4 + dx, yy, 46, 3, P.k0); R(px + 5 + dx, yy, 44, 2, i === n - 1 ? P.p3 : P.p1); }
+        R(px - 1, 146, 58, 7, P.k0); R(px, 147, 56, 5, P.d3); R(px, 147, 56, 1, P.d4);
+        api.text('PUBLISHED ' + pub, px + 28, 161, { size: 6.5, color: P.p1, align: 'center' });
+        api.text('KEEP', 280, 95, { size: 7, color: P.t4, align: 'center', bold: true }); api.sprite(ARROW, 298, 90, 1, true);
+        api.text('→ or D', 280, 103, { size: 6.5, color: P.mute, align: 'center' });
+        api.text('REMOVED', tx + 19, 161, { size: 6.5, color: P.p1, align: 'center' });
+      }
+
+      return {
+        tick(dt) {
+          for (let i = later.length - 1; i >= 0; i--) if ((later[i][0] -= dt) <= 0) { later[i][1](); later.splice(i, 1); }
+          lid = Math.max(0, lid - dt * 3); bump = Math.max(0, bump - dt * 4); btn = btn.map(b => Math.max(0, b - dt)); lock -= dt;
+          if (!drag) slide += -slide * Math.min(1, dt * 18);
+          queue.forEach((c, i) => { const ty = i === 0 ? TOPY : QY + (i - 1) * QH; c.y += (ty - c.y) * Math.min(1, dt * 16); });
+          if (!api.busy && lock <= 0 && spawned < api.units) { // the feed never sleeps (but it waits for a stalled machine)
+            arriveT -= dt * (queue.length ? 1 : 3);
+            if (queue.length >= MAXQ && arriveT < interval() * .4 && !api.auto) { const b = Math.ceil(arriveT / .18); if (b !== beat) { beat = b; api.sfx('tick'); } }
+            if (arriveT <= 0) { arrive(); arriveT = interval(); }
+          }
+          for (const f of fx) {
+            f.t += dt / f.dur;
+            if (f.t >= 1 && !f.done) {
+              f.done = true;
+              if (f.kind === 'trash') { lid = 1; removed++; api.sfx('stamp'); for (const d of [.03, .07, .12]) later.push([d, () => api.sfx('type')]); api.burst(43, 110, P.p2, 8, 40); }
+              else if (f.kind === 'pub') { bump = 1; pub++; api.sfx('flip'); }
+            }
+          }
+          fx = fx.filter(f => !f.done);
+        },
+        draw(g) {
+          const t = api.t, blink = (t * 5 | 0) % 2, n = queue.length, full = n >= MAXQ && spawned < api.units;
+          scene(t, blink);
+          // the phone
+          R(FX - 5, 19, FW + 10, 150, P.k0); R(FX - 4, 20, FW + 8, 150, P.s0); R(FX - 1, 21, FW + 2, 150, P.k0); R(FX, 22, FW, 150, P.s1);
+          R(FX, 22, FW, 10, P.s2); R(FX, 32, FW, 1, P.k0);
+          api.text('PARKSIDE FORUM', FX + 4, 29.5, { size: 6.5, color: P.p2 });
+          api.text(full ? 'QUEUE FULL' : n + ' WAITING', FX + FW - 4, 29.5, { size: 6.5, color: full ? (blink ? P.e4 : P.e3) : n >= 5 ? P.a3 : P.s5, align: 'right', bold: n >= 5 });
+          for (let i = Math.min(n, MAXQ) - 1; i >= 1; i--) mini(queue[i], CX, Math.round(queue[i].y));
+          if (n) {
+            const c = queue[0], dx = Math.round(drag ? drag.dx : slide), y = Math.round(c.y), x = CX + dx;
+            const tint = dx < -8 ? P.e3 : dx > 8 ? P.t3 : P.a2;
+            R(x - 2, y - 2, CW + 4, TOPH + 4, tint); R(x - 3, y + 6, 1, TOPH - 12, tint); R(x + CW + 2, y + 6, 1, TOPH - 12, tint);
+            card(c, x, y);
+            if (dx < -8 || dx > 8) { // what letting go here will do
+              const s = dx < 0 ? 'REMOVE' : 'KEEP', w = api.textW(s, { size: 7, bold: true }) + 8, lx = dx < 0 ? x + CW - w - 3 : x + 3;
+              R(lx - 1, y + 1, w + 2, 11, P.k0); R(lx, y + 2, w, 9, dx < 0 ? P.e2 : P.t2);
+              api.text(s, lx + w / 2, y + 9.5, { size: 7, bold: true, color: P.p4, align: 'center' });
+            }
+            if (full) { const k = Math.max(0, arriveT / interval()); R(x + 2, y + TOPH - 3, CW - 4, 2, P.p0); R(x + 2, y + TOPH - 3, Math.round((CW - 4) * k), 2, blink ? P.e3 : P.e2); }
+          } else api.text(spawned < api.units ? 'Waiting for new posts…' : 'All caught up.', FX + FW / 2, TOPY + 24, { size: 7, font: 'read', color: P.s4, align: 'center' });
+          BTN.forEach((b, i) => {
+            const hot = btn[i] > 0 || (inside(b, api.mx, api.my) && !api.auto), dy = btn[i] > 0 ? 1 : 0;
+            api.frame(b.x, b.y + dy, b.w, b.h, hot ? 'hot' : 'button');
+            api.sprite(ARROW, i ? b.x + b.w - 11 : b.x + 6, b.y + 5 + dy, 1, !!i);
+            api.text(i ? 'KEEP' : 'REMOVE', b.x + b.w / 2 + (i ? -3 : 3), b.y + 10.5 + dy, { size: 7, bold: true, color: hot ? P.k1 : i ? P.t4 : P.e4, align: 'center' });
+          });
+          for (const f of fx) {
+            const k = Math.min(1, f.t), e = api.ease.inOut(k), x0 = f.x + CW / 2, y0 = f.y + TOPH / 2;
+            if (f.kind === 'trash') cardAt(f.c, x0 + (43 - x0) * e, y0 + (112 - y0) * e - Math.sin(Math.PI * k) * 26, f.r * e, 1 - .82 * e);
+            else if (f.kind === 'pub') { const ty = 144 - Math.min(17, pub) * 2; cardAt(f.c, x0 + (281 - x0) * e, y0 + (ty - y0) * e - Math.sin(Math.PI * k) * 10, 0, 1 - .68 * e); }
+            else { // crack: hold, break along the line, the halves drop away
+              const hold = f.t < .3, s = hold ? 0 : api.ease.out((f.t - .3) / .7), sh = hold ? Math.round(Math.sin(f.t * 90)) : 0;
+              if (hold) { cardAt(f.c, x0 + sh, y0, 0, 1); crackLine(x0 + sh, y0); }
+              else for (const side of [-1, 1]) half(f.c, x0 + side * (3 + 26 * s), y0 + 70 * s * s, side, side * .45 * s);
+            }
+          }
+        },
+        down(x, y) {
+          if (inside(BTN[0], x, y) || inside(HIT[0], x, y)) return decide(true);
+          if (inside(BTN[1], x, y) || inside(HIT[1], x, y)) return decide(false);
+          if (queue.length && x >= CX && x < CX + CW && y >= TOPY && y < TOPY + TOPH) { drag = { x0: x, dx: 0 }; api.sfx('flip'); }
+        },
+        move(x) { if (drag) drag.dx = Math.max(-64, Math.min(64, x - drag.x0)); },
+        up() { if (!drag) return; const d = drag.dx; if (d < -26) decide(true); else if (d > 26) decide(false); else { slide = d; drag = null; } },
+        key(k) {
+          if (k === 'ArrowLeft' || k === 'a' || k === 'A') { decide(true); return true; }
+          if (k === 'ArrowRight' || k === 'd' || k === 'D') { decide(false); return true; }
+          return false;
+        },
+        bot() { if (queue.length && lock <= 0) { const c = queue[0]; decide(api.chance(api.autoErr) ? !c.bad : c.bad); } }
+      };
+    }
+  };
+})();
+
+// Catalog Check (kind "describe"): a shop listing, photo on the left and the seller's text on the right.
+// APPROVE it if the text matches the photo; FLAG it if one detail is wrong (colour, count, a feature, or the size tag).
+MINI.describe = (function () {
+  const COL = { red: ['e1', 'e2', 'e3'], orange: ['r2', 'r3', 'r4'], yellow: ['a1', 'a2', 'a3'], green: ['g2', 'g3', 'g4'], teal: ['t1', 't2', 't3'], grey: ['s2', 's3', 's4'], brown: ['d2', 'd3', 'd4'], black: ['k2', 'k3', 's1'] };
+  const NEAR = { red: ['orange'], orange: ['red', 'yellow', 'brown'], yellow: ['orange'], green: ['teal'], teal: ['green'], grey: ['black'], black: ['grey', 'brown'], brown: ['orange', 'black'] };
+  const SIZES = ['S', 'M', 'L'], WORD = { S: 'Small', M: 'Medium', L: 'Large' };
+  const PROD = [
+    { id: 'coat', name: 'Raincoat', attrs: ['colour', 'feat', 'size'], feat: ['With hood', 'NO HOOD'] },
+    { id: 'socks', name: 'Wool socks', attrs: ['colour', 'count'], counts: [2, 3, 4], cnt: n => 'Pack of ' + n },
+    { id: 'pan', name: 'Frying pan', attrs: ['colour', 'feat'], feat: ['With lid', 'NO LID'] },
+    { id: 'mug', name: 'Stoneware mug', attrs: ['colour', 'count'], counts: [1, 2, 3], cnt: n => n === 1 ? 'Single mug' : 'Set of ' + n },
+    { id: 'lamp', name: 'Desk lamp', attrs: ['colour', 'count'], counts: [1, 2], cnt: n => n === 1 ? 'Single lamp' : 'Set of 2' },
+    { id: 'bed', name: 'Cat bed', attrs: ['colour', 'size'] },
+    { id: 'bag', name: 'Backpack', attrs: ['colour', 'count'], counts: [1, 2], cnt: n => n + ' front pocket' + (n > 1 ? 's' : '') },
+    { id: 'kettle', name: 'Electric kettle', attrs: ['colour', 'feat'], feat: ['With water window', 'NO WINDOW'] },
+    { id: 'brella', name: 'Umbrella', attrs: ['colour', 'feat'], feat: ['Striped', 'NOT STRIPED'] },
+    { id: 'shoes', name: 'Sneakers', attrs: ['colour', 'size'], nums: true }
+  ];
+  // Each product is built from integer rects/ellipses on a 56×48 photo. B.group() starts an outlined object;
+  // B.d* are details drawn on top without outline; B.tag is a size label; B.hot marks where an attribute is shown.
+  const DRAW = {
+    coat(B, a, C, P) { // front view: hood (or a plain collar), slanted sleeves, a hem that flares
+      B.sh(28, 42, 15).group();
+      if (a.feat) B.e(28, 10, 8, 6, C[1]);
+      B.ln(16, 13, 11, 31, 5, C[1]).ln(36, 13, 41, 31, 5, C[1]).r(18, 12, 20, 10, C[1]).r(17, 22, 22, 10, C[1]).r(16, 32, 24, 9, C[1]);
+      if (a.feat) B.de(28, 11, 5, 4, C[0]).de(28, 12, 3, 2, P.k3); else B.d(23, 12, 10, 2, C[0]).d(25, 14, 6, 1, C[0]);
+      B.d(28, 15, 1, 26, C[0]).d(19, 14, 2, 26, C[2]).d(12, 21, 1, 9, C[2]).d(11, 34, 5, 2, C[0]).d(41, 34, 5, 2, C[0])
+        .d(30, 19, 2, 1, P.p4).d(30, 25, 2, 1, P.p4).d(30, 31, 2, 1, P.p4).d(19, 31, 6, 1, C[0]).d(32, 31, 6, 1, C[0])
+        .tag(32, 17, 7, a.size).hot('feat', 18, 1, 21, 15).hot('colour', 9, 3, 39, 40);
+    },
+    socks(B, a, C, P) {
+      const n = a.count, sp = n === 4 ? 13 : n === 3 ? 15 : 17, x0 = Math.round(28 - (sp * (n - 1) + 11) / 2);
+      for (let i = 0; i < n; i++) {
+        const x = x0 + i * sp;
+        B.sh(x + 6, 40, 6).group().r(x, 12, 7, 22, C[1]).r(x, 32, 11, 7, C[1])
+          .d(x, 12, 7, 3, C[2]).d(x + 1, 13, 1, 2, C[1]).d(x + 3, 13, 1, 2, C[1]).d(x + 5, 13, 1, 2, C[1])
+          .d(x, 34, 2, 5, C[0]).d(x + 8, 32, 3, 7, C[0]).d(x + 1, 17, 1, 14, C[2]);
+      }
+      B.hot('count', 1, 9, 54, 33).hot('colour', 1, 9, 54, 33);
+    },
+    pan(B, a, C, P) {
+      B.sh(24, 41, 17).group().r(37, 28, 17, 4, P.d3).e(22, 32, 16, 7, C[0]).e(22, 30, 16, 7, C[1]).d(48, 29, 3, 2, P.d1).d(38, 28, 15, 1, P.d4);
+      if (a.feat) B.de(22, 27, 15, 6, P.k1).de(22, 27, 14, 5, P.s4).de(18, 25, 6, 2, P.s5).d(19, 18, 7, 4, P.k1).d(20, 19, 5, 2, P.k3);
+      else B.de(22, 30, 13, 5, P.k3).de(18, 28, 5, 2, P.s1);
+      B.d(7, 33, 4, 1, C[2]).hot('feat', 5, 16, 35, 19).hot('colour', 4, 21, 37, 20);
+    },
+    mug(B, a, C, P) {
+      const n = a.count, x0 = Math.round(28 - (17 * (n - 1) + 17) / 2);
+      for (let i = 0; i < n; i++) {
+        const x = x0 + i * 17;
+        B.sh(x + 7, 40, 8).group().r(x + 12, 26, 4, 8, C[1]).r(x, 23, 13, 16, C[1])
+          .d(x + 13, 28, 2, 4, P.p3).d(x, 23, 13, 2, C[0]).d(x + 1, 23, 11, 1, P.k3).d(x + 2, 26, 2, 10, C[2]).d(x, 37, 13, 2, C[0]);
+      }
+      B.hot('count', 1, 20, 54, 22).hot('colour', 1, 20, 54, 22);
+    },
+    lamp(B, a, C, P) {
+      for (let i = 0; i < a.count; i++) {
+        const x = (a.count === 1 ? 16 : 3) + i * 26;
+        B.sh(x + 7, 40, 8).group().e(x + 7, 38, 7, 2, C[1]).ln(x + 6, 36, x + 9, 24, 2, P.s3).ln(x + 9, 24, x + 16, 15, 2, P.s3).r(x + 13, 10, 9, 6, C[1]).r(x + 12, 15, 11, 3, C[1])
+          .d(x + 9, 23, 2, 2, P.k2).d(x + 14, 18, 7, 2, P.a4).d(x + 14, 11, 5, 1, C[2]).d(x + 2, 37, 6, 1, C[2]);
+      }
+      B.hot('count', 2, 7, 52, 36).hot('colour', 2, 7, 52, 36);
+    },
+    bed(B, a, C, P) {
+      const rx = { S: 12, M: 15, L: 19 }[a.size], ry = { S: 5, M: 6, L: 7 }[a.size];
+      B.sh(28, 41, rx + 2).group().e(28, 34, rx, ry + 1, C[0]).e(28, 31, rx, ry, C[1])
+        .de(28, 31, rx - 4, ry - 2, P.p2).de(28, 32, rx - 5, Math.max(1, ry - 3), P.p1).d(28 - rx + 3, 29, 4, 1, C[2])
+        .tag(25, 35, 7, a.size).hot('colour', 27 - rx, 22, rx * 2 + 3, 21);
+    },
+    bag(B, a, C, P) {
+      B.sh(28, 41, 14).group().r(24, 4, 8, 4, P.k2).e(28, 12, 12, 5, C[1]).r(16, 12, 25, 28, C[1])
+        .d(26, 5, 4, 2, P.p3).d(16, 12, 2, 27, C[0]).d(39, 12, 2, 27, C[0]).d(20, 9, 16, 1, C[2]).d(18, 16, 21, 1, C[0]).d(35, 15, 2, 3, P.s5);
+      for (const [x, w] of a.count === 1 ? [[20, 17]] : [[18, 10], [29, 10]]) B.d(x, 22, w, 14, P.k1).d(x + 1, 23, w - 2, 12, C[0]).d(x + 1, 23, w - 2, 3, C[2]).d(x + (w >> 1) - 1, 26, 2, 2, P.s5);
+      B.hot('count', 15, 19, 27, 20).hot('colour', 12, 2, 33, 40);
+    },
+    kettle(B, a, C, P) { // a jug kettle on its power base, handle on the side
+      B.sh(29, 42, 17).group().r(11, 37, 30, 3, P.k2).r(38, 13, 10, 3, P.k2).r(45, 13, 3, 22, P.k2).r(38, 32, 10, 3, P.k2)
+        .ln(17, 15, 10, 9, 3, C[1]).r(16, 13, 21, 8, C[1]).r(14, 21, 25, 8, C[1]).r(13, 29, 27, 8, C[1]).r(17, 10, 19, 3, C[0]).r(24, 8, 5, 2, P.k2)
+        .d(16, 16, 2, 18, C[2]).d(13, 35, 27, 2, C[0]).d(11, 9, 2, 2, C[2]);
+      if (a.feat) B.d(28, 17, 6, 17, P.k1).d(29, 18, 4, 15, P.s5).d(29, 26, 4, 7, P.t4).d(29, 26, 4, 1, P.t5);
+      B.hot('feat', 25, 14, 12, 23).hot('colour', 8, 5, 42, 37);
+    },
+    brella(B, a, C, P) {
+      B.sh(28, 42, 8).group().r(27, 6, 2, 4, P.k2).u(28, 23, 23, 13, C[1]).r(27, 23, 2, 14, P.k2).r(27, 36, 2, 3, P.d3).r(29, 38, 4, 2, P.d3).r(32, 35, 2, 4, P.d3);
+      if (a.feat) B.st(28, 23, 23, 13, P.p4, 5);
+      else for (const x of [13, 21, 35, 43]) B.d(x, 23 - Math.round(13 * Math.sqrt(1 - ((x - 28) / 24) ** 2)) + 2, 1, Math.round(13 * Math.sqrt(1 - ((x - 28) / 24) ** 2)) - 2, C[0]);
+      B.d(12, 15, 8, 1, C[2]).d(10, 17, 4, 1, C[2]).hot('feat', 3, 8, 50, 18).hot('colour', 3, 8, 50, 18);
+    },
+    shoes(B, a, C, P) {
+      for (const [x, y] of [[18, 16], [6, 25]]) {
+        B.sh(x + 12, y + 14, 12).group().r(x + 13, y, 10, 6, C[1]).r(x + 1, y + 4, 22, 6, C[1]).e(x + 6, y + 7, 6, 3, C[1]).r(x, y + 10, 25, 3, P.p4)
+          .d(x + 21, y, 2, 5, C[0]).d(x + 6, y + 6, 10, 2, C[2]).d(x + 9, y + 3, 2, 1, P.p4).d(x + 12, y + 3, 2, 1, P.p4).d(x, y + 12, 25, 1, P.p1).d(x + 2, y + 5, 4, 1, C[2]);
+      }
+      B.d(40, 15, 1, 1, P.k1).d(41, 14, 2, 1, P.k1).tag(43, 9, 11, a.size).hot('colour', 4, 14, 41, 26);
+    }
+  };
+  const PRICES = ['$9.99', '$12.50', '$14.99', '$19.99', '$24.00', '$29.99', '$34.50', '$39.99', '$49.00'];
+  const cap = s => s[0].toUpperCase() + s.slice(1);
+
+  return {
+    title: 'Catalog Check',
+    how: 'Does the text match the photo? Approve it, or flag it.',
+    keys: '→ or Y approve · ← or N flag',
+    pace: 2.0,
+    create(api) {
+      const { P } = api, R = (x, y, w, h, c) => api.rect(x, y, w, h, c), inside = (r, x, y) => x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h;
+      const H = api.level < .5 ? 1.3 - .6 * api.level : 1 - .7 * (api.level - .5);
+      const CX = 34, CY = 40, CW = 252, CH = 80, BTN = [{ x: CX + 8, y: 128, w: 110, h: 22 }, { x: CX + CW - 118, y: 128, w: 110, h: 22 }];
+      const SR = ['...o...', '..ooo..', 'ooooooo', '.ooooo.', '..ooo..', '.oo.oo.', '.o...o.'], STAR = api.art(SR, { o: P.a1 }), DIM = api.art(SR, { o: P.p1 });
+      const TICK = api.art(['....o', '...oo', 'o.oo.', 'ooo..', '.o...'], { o: P.t2 }), CROSS = api.art(['o...o', '.o.o.', '..o..', '.o.o.', 'o...o'], { o: P.e2 });
+      let cur = null, out = null, last = null, beat = -1, press = [0, 0], nOk = 0, nFlag = 0;
+      const limit = () => 3.2 * H * (1.12 - .3 * api.progress); // seconds to decide; shrinks with level and as the job goes on
+
+      function render(it) { // the product photo, drawn once into its own 56×48 canvas
+        const c = document.createElement('canvas'); c.width = 56; c.height = 48;
+        const g = c.getContext('2d'), F = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+        const E = (cx, cy, rx, ry, col, lo = ry) => { for (let dy = -ry; dy <= lo; dy++) { const w = Math.round(rx * Math.sqrt(Math.max(0, 1 - (dy / (ry + .5)) ** 2))); F(cx - w, cy + dy, w * 2 + 1, 1, col); } };
+        F(0, 0, 56, 48, P.p3); F(0, 36, 56, 12, P.p2); F(0, 36, 56, 1, P.p1);
+        const groups = [], tags = [], hot = {}; let grp = null;
+        const B = {
+          group() { grp = { parts: [], det: [] }; groups.push(grp); return B; },
+          r(x, y, w, h, col) { grp.parts.push(['r', x, y, w, h, col]); return B; },
+          e(x, y, rx, ry, col) { grp.parts.push(['e', x, y, rx, ry, col]); return B; },
+          u(x, y, rx, ry, col) { grp.parts.push(['u', x, y, rx, ry, col]); return B; },
+          ln(x0, y0, x1, y1, t, col) { const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)); for (let i = 0; i <= n; i++) grp.parts.push(['r', Math.round(x0 + (x1 - x0) * i / n), Math.round(y0 + (y1 - y0) * i / n), t, t, col]); return B; },
+          d(x, y, w, h, col) { grp.det.push(['r', x, y, w, h, col]); return B; },
+          de(x, y, rx, ry, col) { grp.det.push(['e', x, y, rx, ry, col]); return B; },
+          st(x, y, rx, ry, col, bw) { grp.det.push(['s', x, y, rx, ry, col, bw]); return B; },
+          sh(x, y, rx) { E(x, y, rx, 1, P.p1); return B; },
+          tag(x, y, w, s) { tags.push({ x, y, w, s: String(s) }); hot.size = [x - 2, y - 2, w + 4, 11]; return B; },
+          hot(k, x, y, w, h) { hot[k] = [x, y, w, h]; return B; }
+        };
+        const fill = (p, gr, col) => {
+          const [k, x, y, w, h, c0, bw] = p, cc = col || c0;
+          if (k === 'r') F(x - gr, y - gr, w + 2 * gr, h + 2 * gr, cc);
+          else if (k === 's') { for (let dy = -h; dy <= 0; dy++) { const hw = Math.round(w * Math.sqrt(Math.max(0, 1 - (dy / (h + .5)) ** 2))); for (let xx = x - hw; xx <= x + hw; xx++) if (((xx - x + w) / bw | 0) % 2) F(xx, y + dy, 1, 1, cc); } }
+          else E(x, y, w + gr, h + gr, cc, k === 'u' ? gr : h + gr);
+        };
+        DRAW[it.pr.id](B, it.truth, COL[it.truth.colour].map(k => P[k]), P);
+        for (const gr of groups) { for (const p of gr.parts) fill(p, 1, P.k1); for (const p of gr.parts) fill(p, 0); for (const p of gr.det) fill(p, 0); }
+        for (const t of tags) { F(t.x - 1, t.y - 1, t.w + 2, 9, P.k1); F(t.x, t.y, t.w, 7, P.p4); F(t.x, t.y + 6, t.w, 1, P.p1); }
+        return { img: c, tags, hot };
+      }
+      function next() {
+        const L = api.level, hard = Math.min(1, L * .8 + api.progress * .4), cols = Object.keys(COL);
+        let pr; do pr = api.pick(PROD); while (last && pr === last.pr);
+        const truth = { colour: api.pick(cols), count: pr.counts ? api.pick(pr.counts) : 0, feat: api.chance(.5), size: pr.nums ? api.ri(36, 45) : api.pick(SIZES) };
+        const mention = api.shuffle(pr.attrs).slice(0, api.chance(.2 + hard * .65) ? 2 : 1).sort((a, b) => pr.attrs.indexOf(a) - pr.attrs.indexOf(b));
+        if (mention.includes('feat')) truth.feat = true; // a feature is only ever claimed, never denied
+        const claim = Object.assign({}, truth), mismatch = api.chance(.5), diff = mismatch ? api.pick(mention) : null, subtle = api.chance(hard);
+        if (diff === 'colour') { const near = NEAR[truth.colour]; claim.colour = api.pick(subtle ? near : cols.filter(c => c !== truth.colour && !near.includes(c))); }
+        else if (diff === 'count') { const o = pr.counts.filter(c => c !== truth.count), s = o.filter(c => Math.abs(c - truth.count) === 1); claim.count = api.pick(subtle && s.length ? s : o); }
+        else if (diff === 'feat') truth.feat = false;
+        else if (diff === 'size') {
+          if (pr.nums) claim.size = truth.size + api.pick(subtle ? [-1, 1] : [-4, -3, 3, 4]);
+          else { const i = SIZES.indexOf(truth.size); claim.size = api.pick(SIZES.filter((s, j) => j !== i && (!subtle || Math.abs(j - i) === 1))); }
+        }
+        const text = mention.map(k => k === 'colour' ? 'Colour: ' + cap(claim.colour) : k === 'count' ? pr.cnt(claim.count) : k === 'feat' ? pr.feat[0] : 'Size: ' + (pr.nums ? claim.size : WORD[claim.size]));
+        const why = { colour: "IT'S " + truth.colour.toUpperCase(), count: 'PHOTO SHOWS ' + truth.count, feat: pr.feat && pr.feat[1], size: 'TAG SAYS ' + truth.size }[diff];
+        const T = limit();
+        cur = last = Object.assign({ pr, truth, mention, mismatch, diff, why, text, T, left: T, ph: 'in', t: 0, x: 330, y: CY,
+          price: api.pick(PRICES), stars: api.ri(3, 5), revs: api.ri(12, 980), id: api.ri(10000, 99999) }, render({ pr, truth }));
+      }
+      function answer(v) { // true approve · false flag · null ran out of time
+        if (!cur || cur.ph !== 'judge') return;
+        Object.assign(cur, { ph: 'stamp', t: 0, ans: v, ok: v !== null && v === !cur.mismatch });
+        if (v !== null) press[v ? 1 : 0] = .15;
+        api.sfx('whoosh');
+      }
+      function impact(c) { // the stamp hits the paper
+        const col = c.ans === null ? P.r3 : c.ans ? P.t3 : P.e3;
+        api.sfx('stamp'); api.shake(c.ans === null ? 2 : 3); api.burst(CX + 160, CY + 42, col, 12, 60);
+        if (c.ans) nOk++; else if (c.ans === false) nFlag++;
+        api.item(c.ok, CX + 160, CY + CH + 6, c.ok ? undefined : c.ans === null ? 'TOO SLOW' : c.ans ? c.why : 'IT MATCHED');
+      }
+
+      next(); cur.ph = 'judge'; cur.x = CX; // the first listing is already on screen under the intro card
+
+      // ---------- drawing ----------
+      function corners(x, y, w, h, c) { for (const [a, b] of [[0, 0], [1, 0], [0, 1], [1, 1]]) { const cx = x + a * (w - 4), cy = y + b * (h - 2); R(cx, cy, 4, 2, c); R(x + a * (w - 2), y + b * (h - 4), 2, 4, c); } }
+      function card(c, x, y) {
+        api.frame(x, y, CW, CH, 'paper');
+        R(x + 7, y + 7, 60, 52, P.k1); R(x + 8, y + 8, 58, 50, P.p4); api.sprite(c.img, x + 9, y + 9);
+        for (const t of c.tags) api.text(t.s, x + 9 + t.x + t.w / 2, y + 9 + t.y + 6, { size: 6.5, color: P.k1, align: 'center', bold: true });
+        for (let i = 0; i < 5; i++) api.sprite(i < c.stars ? STAR : DIM, x + 8 + i * 8, y + 62);
+        api.text('(' + c.revs + ')', x + 49, y + 68.5, { size: 6.5, color: P.p0 });
+        api.text('Listing #' + c.id, x + 8, y + 77, { size: 6.5, color: P.p0 });
+        api.text(c.pr.name, x + 76, y + 18, { size: 9, font: 'read', bold: true, color: P.k1, max: CW - 84 });
+        const done = !!c.hit;
+        c.text.forEach((s, i) => {
+          const ly = y + 32 + i * 12, bad = c.mention[i] === c.diff;
+          if (done) api.sprite(bad ? CROSS : TICK, x + 75, ly - 5); else R(x + 77, ly - 3, 2, 2, P.d2);
+          api.text(s, x + 83, ly, { size: 8, font: 'read', color: P.d1 });
+          if (done && bad) R(x + 83, ly + 2, Math.round(api.textW(s, { size: 8, font: 'read' })), 1, P.e2);
+        });
+        api.text(c.price, x + 76, y + 66, { size: 10, bold: true, color: P.r2 });
+        api.text('Free delivery', x + 76, y + 76, { size: 6.5, font: 'read', color: P.p0 });
+        if (done && c.mismatch) { const h = c.hot[c.diff]; if (h) corners(x + 9 + h[0], y + 9 + h[1], h[2], h[3], c.ok ? P.a2 : (api.t * 6 | 0) % 2 ? P.e3 : P.e2); }
+      }
+      function stamp(c, x, y) {
+        const k = Math.min(1, c.t / .1), s = 1 + (1 - k) * 1.8, txt = c.ans === null ? 'TOO SLOW' : c.ans ? 'APPROVED' : 'FLAGGED', col = c.ans === null ? P.r2 : c.ans ? P.t2 : P.e2;
+        const g = api.g, w = Math.round(api.textW(txt, { size: 14, bold: true })) + 14;
+        g.save(); g.translate(Math.round(x + 160), Math.round(y + 42)); g.rotate(-.2); g.scale(s, s);
+        R(-w / 2, -11, w, 2, col); R(-w / 2, 9, w, 2, col); R(-w / 2, -11, 2, 22, col); R(w / 2 - 2, -11, 2, 22, col);
+        api.text(txt, 0, 5, { size: 14, bold: true, color: col, align: 'center' });
+        g.restore();
+      }
+
+      return {
+        tick(dt) {
+          const sp = api.auto ? 4 : 1;
+          press = press.map(p => Math.max(0, p - dt));
+          if (out) { out.o += dt * sp / .3; if (out.o >= 1) out = null; }
+          if (!cur) next();
+          if (cur.ph === 'in') { cur.t += dt * sp / .25; cur.x = CX + (330 - CX) * (1 - api.ease.out(Math.min(1, cur.t))); if (cur.t >= 1) { cur.ph = 'judge'; cur.x = CX; } }
+          else if (cur.ph === 'judge') {
+            if (!api.busy) { // the clock waits for a stalled machine
+              cur.left -= dt;
+              if (cur.left < cur.T * .25 && !api.auto) { const b = Math.ceil(cur.left / .2); if (b !== beat) { beat = b; api.sfx('tick'); } }
+              if (cur.left <= 0) answer(null);
+            }
+          } else if (cur.ph === 'stamp') {
+            cur.t += dt * sp;
+            if (!cur.hit && cur.t >= .1) { cur.hit = true; impact(cur); }
+            if (cur.t >= .55 && api.done < api.units) { out = cur; out.o = 0; next(); }
+          }
+        },
+        draw(g) {
+          const t = api.t;
+          R(0, 18, 320, 148, P.s1); R(0, 18, 320, 12, P.k2); R(0, 30, 320, 1, P.k0);
+          R(6, 22, 4, 4, P.e2); R(12, 22, 4, 4, P.a2); R(18, 22, 4, 4, P.g3);
+          R(28, 20, 170, 8, P.s0); api.text('seller-hub.shop/review-queue', 33, 26.5, { size: 6.5, color: P.s4 });
+          api.text(api.left + ' TO CHECK', 314, 26.5, { size: 6.5, color: api.left > 8 ? P.a3 : P.t4, align: 'right' });
+          for (let i = Math.min(3, api.left - 1); i >= 1; i--) api.frame(CX + i * 2, CY + i * 2, CW, CH, 'paper'); // the pile behind
+          if (out) { const e = api.ease.inOut(Math.min(1, out.o)); card(out, CX - (CW + 60) * e, CY + (out.ans === false ? 30 * e * e : 0)); stamp(out, CX - (CW + 60) * e, CY + (out.ans === false ? 30 * e * e : 0)); }
+          if (cur) {
+            const x = Math.round(cur.x), k = cur.ph === 'judge' ? cur.left / cur.T : cur.ph === 'in' ? 1 : Math.max(0, cur.left / cur.T);
+            api.timerBar(x, CY - 8, CW, k);
+            if (k < .25 && cur.ph === 'judge' && (t * 8 | 0) % 2) R(x - 2, CY - 2, CW + 4, CH + 4, P.e2);
+            card(cur, x, cur.y);
+            if (cur.ph === 'stamp') stamp(cur, x, cur.y);
+          }
+          BTN.forEach((b, i) => { // 0 FLAG · 1 APPROVE
+            const hot = press[i] > 0 || (inside(b, api.mx, api.my) && !api.auto), dy = press[i] > 0 ? 1 : 0;
+            api.frame(b.x, b.y + dy, b.w, b.h, hot ? 'hot' : 'button');
+            api.text(i ? 'APPROVE' : 'FLAG', b.x + b.w / 2, b.y + 11 + dy, { size: 9, bold: true, color: hot ? P.k1 : i ? P.t4 : P.e4, align: 'center' });
+            api.text(i ? '→ or Y' : '← or N', b.x + b.w / 2, b.y + 19 + dy, { size: 6.5, color: hot ? P.d1 : P.s5, align: 'center' });
+          });
+          api.text('FLAGGED ' + nFlag, BTN[0].x + 2, 160, { size: 6.5, color: P.s4 });
+          api.text('APPROVED ' + nOk, BTN[1].x + BTN[1].w - 2, 160, { size: 6.5, color: P.s4, align: 'right' });
+        },
+        down(x, y) { if (inside(BTN[0], x, y)) answer(false); else if (inside(BTN[1], x, y)) answer(true); },
+        key(k) {
+          if (k === 'ArrowRight' || k === 'y' || k === 'Y') { answer(true); return true; }
+          if (k === 'ArrowLeft' || k === 'n' || k === 'N') { answer(false); return true; }
+          return false;
+        },
+        bot() { if (cur && cur.ph === 'judge') answer(api.chance(api.autoErr) ? cur.mismatch : !cur.mismatch); }
+      };
+    }
+  };
+})();
+
+// Receipt Spike (kind 'entry'): key each receipt's TOTAL into the books before it curls up.
+// Coffee on the total? Add up the line items yourself. Done receipts slam onto the spike.
+(() => {
+  const SHOPS = ['CORNER MART', 'QUIK FUEL', 'BEAN THERE', 'HARDWARE HUT', 'PAGE & INK', "MAMA ROSA'S", 'GREEN GROCER', 'COPY SHACK',
+    'TACO TIO', 'BOLT & NUT', 'DAILY BREAD', 'LOT 9 PARKING', 'NOOK CAFE', 'MAPLE PHARMACY', 'OFFICE BARN', 'SUDS LAUNDRY'];
+  const GOODS = [['Coffee', 2, 5], ['Bagel', 1, 4], ['Printer ink', 18, 39], ['Paper ream', 6, 12], ['Stapler', 7, 14], ['Gas', 20, 45],
+    ['Parking', 4, 15], ['Sandwich', 6, 11], ['Tape', 2, 5], ['Pens x12', 4, 9], ['Folders', 3, 8], ['Toner', 29, 55], ['Postage', 1, 9],
+    ['Batteries', 5, 12], ['Lunch', 8, 18], ['Taxi', 9, 27], ['USB cable', 6, 14], ['Envelopes', 2, 7], ['Muffin', 2, 4], ['Tea', 1, 4],
+    ['Salad', 6, 10], ['Light bulbs', 3, 9], ['Notebook', 3, 8], ['Sticky notes', 2, 6]];
+  const HOW = "Type each receipt's TOTAL, then press Enter.";
+  const HOW_SMUDGE = 'Coffee on the TOTAL? Add up the items yourself.';
+
+  MINI.entry = {
+    title: 'Receipt Spike', how: HOW, keys: '0-9  .  Backspace  Enter  · or click the keypad', pace: 3.5,
+    create(api) {
+      const P = api.P, L = api.level, AUTO = api.auto;
+      const LF = L < .5 ? 1.3 - .6 * L : 1 - .7 * (L - .5);          // >1 forgiving, <1 harsh
+      const RW = 100, RCX = 124, SPX = 191, SPB = 153, SX = 209, SY = 24, SW = 102, CELLX = SX + 56;
+      const fmt = c => (c / 100).toFixed(2);
+      const ramp = () => 1 - .3 * api.progress * api.progress;       // the last third gets tight
+      const arrival = () => 3.2 * LF * ramp() / (AUTO ? 8 : 1);
+      let cur = null, queue = Math.max(0, Math.min(api.left - 1, 3 + Math.round(L * 3))), made = 0, arriveT = arrival();
+      let buf = '', scrollT = 1, botQ = null, botT = 0, beat = -1, lastT = null, hint = HOW, impact = 0;
+      const rows = [], falling = [], spiked = [], flyers = [], pressed = {};
+      const KEYS = [['7', 0, 0], ['8', 1, 0], ['9', 2, 0], ['bk', 3, 0], ['4', 0, 1], ['5', 1, 1], ['6', 2, 1], ['en', 3, 1, 1, 3],
+        ['1', 0, 2], ['2', 1, 2], ['3', 2, 2], ['0', 0, 3, 2], ['.', 2, 3]]
+        .map(([id, c, r, cs = 1, rs = 1]) => ({ id, x: 211 + c * 25, y: 101 + r * 16, w: cs * 22 + (cs - 1) * 3, h: rs * 14 + (rs - 1) * 2 }));
+      const icon = (rows, c) => api.art(rows, { x: c });
+      const BK = ['...xxxxxx', '..x.....x', '.x..x.x.x', 'x....x..x', '.x..x.x.x', '..x.....x', '...xxxxxx'];
+      const EN = ['........x', '........x', '..x.....x', '.xx.....x', 'xxxxxxxxx', '.xx......', '..x......'];
+      const CUP = ['.xxxxx..', '.xxxxxyy', '.xxxxx.y', '.xxxxxyy', '..xxx...', 'zzzzzzz.'];
+
+      function price(lo, hi, style) {
+        const c = style === 0 ? (api.chance(.35) ? 50 : 0) : style === 1 ? api.pick([0, 25, 50, 75, 95, 45, 15, 35]) : api.ri(1, 99);
+        return api.ri(lo, hi) * 100 + c;
+      }
+      function makeReceipt(i) {
+        const c = Math.min(1, L * .75 + api.progress * .35);
+        const smudge = L >= .4 && i >= 2 && api.chance(Math.min(.6, .2 + (L - .4) * .35 + api.progress * .25));
+        let n = c < .3 ? 2 : c < .6 ? api.ri(2, 3) : api.ri(3, 4), style = c < .25 ? 0 : c < .55 ? 1 : 2;
+        if (smudge) { n = Math.min(n, L > .8 ? 3 : api.ri(2, 3)); style = Math.min(style, 1); }
+        const items = api.shuffle(GOODS).slice(0, n).map(([name, lo, hi]) => ({ name, p: price(lo, hi, style) }));
+        const total = items.reduce((a, b) => a + b.p, 0), yt = 37 + n * 10 + 7;
+        const blob = []; for (let j = 0; j < 17; j++) { const d = Math.abs(j - 8) / 8.6, w = 56 * Math.sqrt(1 - d * d) + api.ri(-1, 1); blob.push([Math.round((56 - w) / 2 + api.ri(0, 1)), Math.round(w)]); }
+        const hh = api.ri(7, 18), mm = api.ri(0, 59);
+        return { shop: api.pick(SHOPS), sub: `NOV 08  ${hh}:${String(mm).padStart(2, '0')}  #${api.ri(1000, 9999)}`, items, total, n, yt, h: yt + 16,
+          T: 5 * LF * ramp() + (smudge ? 2.5 * Math.max(.8, LF) : 0), e: 0, smudge, blob, tilt: api.pick([-1, 1]), in: 0, drop: 0 };
+      }
+      function setHint(s) { if (s !== hint) { hint = s; api.hint(s); } }
+      function next() {
+        if (api.left <= 0) { cur = null; return; }
+        if (queue > 0) queue--;
+        cur = makeReceipt(made++); buf = ''; botQ = null; beat = -1;
+        api.sfx('flip'); setHint(cur.smudge ? HOW_SMUDGE : HOW);
+      }
+      function nearMiss(t) { let v; do v = t + api.pick([1, -1, 10, -10, 100, -100, 9, -9]); while (v <= 0 || v === t); return v; }
+      const parse = s => /^\d*\.?\d{0,2}$/.test(s) && /\d/.test(s) ? Math.round(parseFloat(s) * 100) : NaN;
+      const stackTop = () => SPB - spiked.length * Math.min(2.5, 62 / Math.max(1, spiked.length));
+      const recX = r => Math.round(RCX - RW / 2 - (1 - api.ease.outBack(r.in)) * 90), recY = r => Math.round(78 - r.h / 2);
+
+      function submit(late) {
+        const r = cur; if (!r) return;
+        const ok = !late && parse(buf) === r.total;
+        rows.push({ shop: r.shop, val: late ? 'LATE' : buf, right: fmt(r.total), ok, t: 0 }); scrollT = 0;
+        flyers.push({ r, ok, t: 0, x: recX(r), y: recY(r), k: 1 - r.e / r.T });
+        if (!ok) api.sfx('whoosh');
+        api.item(ok, late ? RCX : CELLX + 22, late ? recY(r) + r.h / 2 : 76, late ? 'LATE' : undefined);
+        cur = null; buf = ''; next();
+      }
+      function press(id) {
+        pressed[id] = api.t;
+        if (!cur) return;
+        if (id === 'bk') { buf = buf.slice(0, -1); api.sfx('type'); return; }
+        if (id === 'en') { if (buf) submit(false); else api.sfx('click'); return; }
+        const dot = buf.indexOf('.');
+        if (buf.length >= 7 || (id === '.' && dot >= 0) || (dot >= 0 && buf.length - dot > 2)) { api.sfx('blip', -8); return; }
+        buf += id; api.sfx('type');
+      }
+
+      // ---- visual-only animation (runs in every phase, driven by the clock) ----
+      function anim(dt) {
+        const sp = AUTO ? 2.6 : 1;
+        if (cur && cur.in < 1) cur.in = Math.min(1, cur.in + dt * (AUTO ? 12 : 4.5));
+        scrollT = Math.min(1, scrollT + dt * 6); impact = Math.max(0, impact - dt * 5);
+        for (const e of rows) e.t += dt;
+        for (const f of falling) f.t += dt * sp;
+        while (falling.length && falling[0].t >= .4) falling.shift();
+        for (const f of flyers) {
+          f.t += dt * sp;
+          if (f.ok && !f.hit && f.t >= .3) {
+            f.hit = true; spiked.push({ dx: api.ri(-2, 2), w: api.ri(15, 20), c: api.pick([P.p3, P.p2, P.p4]) });
+            api.sfx('stamp'); api.shake(2); impact = 1; api.burst(SPX, stackTop(), P.p4, 7, 45);
+          }
+        }
+        while (flyers.length && flyers[0].t >= (flyers[0].ok ? .36 : .7)) flyers.shift();
+      }
+
+      // ---- drawing ----
+      function desk() {
+        api.rect(0, api.top, api.W, api.bot - api.top, P.d2);
+        for (let y = api.top + 29; y < api.bot; y += 37) api.rect(0, y, api.W, 1, P.d1);
+        for (let i = 0; i < 46; i++) api.rect((i * 71) % 316, api.top + 3 + (i * 41) % 142, 5 + (i % 4) * 3, 1, i % 3 ? P.d3 : P.d1);
+        for (let a = 0; a < 6.28; a += .2) api.rect(Math.round(42 + Math.cos(a) * 11), Math.round(36 + Math.sin(a) * 8), 2, 1, P.d3); // an old mug ring
+      }
+      function tray() {
+        const n = queue, show = Math.min(n, 28), top = 152 - show * 3;
+        api.rect(7, 112, 2, 46, P.s2); api.rect(61, 112, 2, 46, P.s2); api.rect(7, 112, 56, 1, P.s3);
+        for (let i = 0; i < show - falling.length; i++) {
+          const y = 149 - i * 3, x = 12 + ((i * 7) % 5) - 2;
+          api.rect(x, y, 46, 3, i % 4 === 1 ? P.p1 : P.p2); api.rect(x, y, 46, 1, P.p4); api.rect(x + 46, y + 1, 1, 2, P.p0);
+        }
+        falling.forEach((f, j) => {
+          const i = show - falling.length + j, y = 149 - i * 3, k = Math.min(1, f.t / .4);
+          api.rect(12, Math.round(api.top + (y - api.top) * api.ease.outBounce(k)), 46, 3, P.p3);
+        });
+        api.frame(6, 154, 58, 9, 'panel'); api.text('INBOX', 35, 161, { size: 6.5, color: P.s5, align: 'center' });
+        const hot = n >= 7, c = n >= 7 ? ((api.t * 3 | 0) % 2 ? P.e3 : P.e4) : n >= 4 ? P.a3 : P.ink;
+        api.text(n > 28 ? `${n} +` : String(n), 35, top - 4, { size: hot ? 10 : 8, color: c, align: 'center', bold: hot, shadow: true });
+        if (n >= 4) api.text('BEHIND', 35, top - (hot ? 14 : 12), { size: 6.5, color: c, align: 'center', shadow: true });
+      }
+      function spike() {
+        api.rect(SPX - 11, SPB + 2, 22, 4, P.s2); api.rect(SPX - 11, SPB + 2, 22, 1, P.s4); api.rect(SPX - 11, SPB + 5, 22, 1, P.k2);
+        api.rect(SPX - 1, 82, 2, SPB - 80, P.s4); api.rect(SPX - 1, 82, 1, SPB - 80, P.s5); api.rect(SPX - 1, 80, 1, 2, P.s5);
+        const sp = Math.min(2.5, 62 / Math.max(1, spiked.length));
+        spiked.forEach((s, i) => {
+          const y = Math.round(SPB - (i + 1) * sp + (i === spiked.length - 1 ? impact : 0)), x = SPX - Math.round(s.w / 2) + s.dx;
+          api.rect(x, y, s.w, 3, s.c); api.rect(x, y + 2, s.w, 1, P.p0);
+          if (i === spiked.length - 1) { api.rect(SPX - 1, y, 2, 1, P.k1); api.rect(SPX + 1, y + 1, 1, 1, P.p1); }
+        });
+        api.text('DONE', SPX, 163, { size: 6.5, color: P.d5, align: 'center' });
+      }
+      function receipt(r, X, Y, k) {
+        const s = r.tilt, BW = 34; // a pixel-art tilt: each 34px column band sits 1px lower (or higher) than the last
+        const px = (lx) => X + lx, py = (lx, ly) => Y + ly + s * Math.floor(lx / BW) + (s < 0 ? 2 : 0);
+        const R = (lx, ly, w, h, c) => {
+          for (let bx = Math.floor(lx / BW) * BW; bx < lx + w; bx += BW) {
+            const x0 = Math.max(lx, bx), x1 = Math.min(lx + w, bx + BW);
+            if (x1 > x0) api.rect(px(x0), py(x0, ly), x1 - x0, h, c);
+          }
+        };
+        const T = (str, lx, ly, o) => api.text(str, px(lx), py(o.align === 'right' ? lx - 1 : lx, ly), o);
+        R(2, 4, RW, r.h - 2, 'rgba(0,0,0,.35)');
+        R(0, 2, RW, r.h - 2, P.p3); R(0, 2, 1, r.h - 2, P.p4); R(RW - 1, 2, 1, r.h - 2, P.p2); R(0, r.h - 1, RW, 1, P.p1);
+        for (let i = 0; i < RW; i += 4) R(i + 1, 0, 2, 2, P.p3);
+        for (let i = 3; i < RW - 2; i += 3) R(i, 4, 1, 1, P.p1);
+        T(r.shop, RW / 2, 15, { size: 8, bold: true, color: P.k1, align: 'center' });
+        T(r.sub, RW / 2, 23, { size: 6.5, color: P.d3, align: 'center' });
+        const dash = y => { for (let i = 5; i < RW - 5; i += 3) R(i, y, 2, 1, P.p0); };
+        dash(27);
+        r.items.forEach((it, i) => { T(it.name, 6, 37 + i * 10, { size: 8, color: P.d1 }); T(fmt(it.p), RW - 6, 37 + i * 10, { size: 9, color: P.k1, align: 'right' }); });
+        dash(r.yt - 9);
+        T('TOTAL', 6, r.yt, { size: 8, bold: true, color: P.k1 });
+        T('$' + fmt(r.total), RW - 6, r.yt, { size: 9, bold: true, color: P.k1, align: 'right' });
+        if (r.smudge) {
+          const bx = RW - 61, by = r.yt - 12;
+          // a coffee ring: dark rim, a darker inner ring, a pale dried centre, a couple of splashes
+          r.blob.forEach(([o, w], j) => R(bx + o, by + j, w, 1, P.d3));
+          r.blob.forEach(([o, w], j) => { if (j > 0 && j < 16) R(bx + o + 1, by + j, w - 2, 1, P.d4); });
+          r.blob.forEach(([o, w], j) => { if (j > 2 && j < 14) R(bx + o + 3, by + j, w - 6, 1, P.d5); });
+          R(bx + 12, by + 5, 14, 2, P.d4); R(bx + 33, by + 10, 10, 1, P.d4); R(bx + 4, by + 18, 2, 2, P.d4); R(bx + 50, by - 3, 3, 2, P.d4); R(bx + 54, by + 1, 1, 1, P.d3);
+        }
+        T('THANK YOU', RW / 2, r.yt + 11, { size: 6.5, color: P.p0, align: 'center' });
+        if (k < .5) { // the corner curls and flutters as time runs out
+          const f = Math.round(3 + (1 - k / .5) * 4 + Math.sin(api.t * (10 + (1 - k) * 26)) * 1.6);
+          for (let j = 0; j < f; j++) { R(RW - f, r.h - f + j, f - j, 1, j % 2 ? P.p1 : P.p2); R(RW - j, r.h - f + j, j, 1, P.d2); }
+        }
+      }
+      function mini(cx, cy, w, h) {
+        const x = Math.round(cx - w / 2), y = Math.round(cy - h / 2);
+        api.rect(x + 1, y + 1, w, h, 'rgba(0,0,0,.35)'); api.rect(x, y, w, h, P.p3); api.rect(x, y, w, 1, P.p4);
+        for (let ly = y + 3; ly < y + h - 2; ly += 3) api.rect(x + 2, ly, Math.max(1, w - 4 - (ly % 3) * 2), 1, P.p1);
+      }
+      function sheet() {
+        api.frame(206, 21, 108, 72, 'slot'); api.rect(SX, SY, SW, 66, P.t0);
+        api.rect(SX, SY, SW, 8, P.t1); api.rect(SX + 12, SY, 1, 64, P.t1); api.rect(CELLX - 1, SY, 1, 64, P.t1);
+        api.text('#', SX + 6, SY + 6.5, { size: 6.5, color: P.t4, align: 'center' });
+        api.text('VENDOR', SX + 15, SY + 6.5, { size: 6.5, color: P.t4 });
+        api.text('TOTAL', SX + SW - 3, SY + 6.5, { size: 6.5, color: P.t4, align: 'right' });
+        const off = Math.round((1 - api.ease.out(scrollT)) * 11), g = api.g;
+        g.save(); g.beginPath(); g.rect(SX, SY + 8, SW, 44); g.clip();
+        for (let i = 0; i < 5; i++) {
+          const e = rows[rows.length - 1 - i]; if (!e) break;
+          const y = SY + 8 + 44 - 11 * (i + 1) + off, last = i === 0;
+          api.rect(SX, y + 10, SW, 1, P.t1);
+          api.text(String(rows.length - i), SX + 6, y + 8, { size: 6.5, color: P.t2, align: 'center' });
+          api.text(e.shop, SX + 15, y + 8, { size: 6.5, color: P.t3, max: CELLX - SX - 18 });
+          if (last && e.ok && e.t < .6) { api.rect(CELLX, y, SW - 56, 10, (e.t * 10 | 0) % 2 ? P.g3 : P.g4); api.text(e.val, SX + SW - 3, y + 8, { size: 7.5, color: P.k1, align: 'right', bold: true }); }
+          else if (last && !e.ok && e.t < 1.1) {
+            const jx = e.t < .5 ? Math.round(Math.sin(e.t * 70) * 2 * (1 - e.t * 2)) : 0;
+            api.rect(CELLX + jx, y, SW - 56, 10, P.e2); api.text('→' + e.right, SX + SW - 3 + jx, y + 8, { size: 7.5, color: P.p4, align: 'right', bold: true });
+          } else if (e.ok) api.text(e.val, SX + SW - 3, y + 8, { size: 7.5, color: P.t4, align: 'right' });
+          else { const w = api.textW(e.val, { size: 7.5 }); api.text(e.val, SX + SW - 3, y + 8, { size: 7.5, color: P.e3, align: 'right' }); api.rect(SX + SW - 4 - w, y + 5, w + 2, 1, P.e3); }
+        }
+        g.restore();
+        const y = SY + 53; // the live row: vendor filled in, TOTAL waiting for you
+        api.rect(SX, y - 1, SW, 1, P.t2);
+        api.text(String(rows.length + 1), SX + 6, y + 9, { size: 6.5, color: P.t3, align: 'center' });
+        if (cur) api.text(cur.shop, SX + 15, y + 9, { size: 6.5, color: P.a3, max: CELLX - SX - 18 });
+        api.rect(CELLX, y, SW - 56, 12, P.a2); api.rect(CELLX + 1, y + 1, SW - 58, 10, P.k1);
+        api.text(buf, CELLX + 3, y + 9.5, { size: 8.5, color: P.a4 });
+        if (cur && (api.t * 2.5 | 0) % 2 === 0) api.rect(CELLX + 4 + Math.round(api.textW(buf, { size: 8.5 })), y + 2, 1, 8, P.a3);
+      }
+      function keypad() {
+        api.frame(208, 98, 105, 67, 'panel');
+        for (const k of KEYS) {
+          const dn = api.t - (pressed[k.id] ?? -9) < .11, hov = !AUTO && api.mx >= k.x && api.mx < k.x + k.w && api.my >= k.y && api.my < k.y + k.h;
+          const y = k.y + (dn ? 1 : 0), c = dn ? P.k1 : P.ink;
+          api.frame(k.x, y, k.w, k.h - (dn ? 1 : 0), dn ? 'hot' : 'button');
+          if (hov && !dn) api.rect(k.x + 1, y + 1, k.w - 2, 1, P.s5);
+          const cx = k.x + k.w / 2, cy = y + k.h / 2;
+          if (k.id === 'bk' || k.id === 'en') api.sprite(icon(k.id === 'bk' ? BK : EN, c), Math.round(cx - 4.5), Math.round(cy - 3.5));
+          else api.text(k.id, cx, cy + 3, { size: 8, color: c, align: 'center', bold: true });
+        }
+      }
+
+      next();
+      return {
+        tick(dt) {
+          if (api.busy) return; // the machine is catching up: nothing of yours is ticking
+          arriveT -= dt;
+          if (arriveT <= 0) { arriveT += arrival(); if (queue < api.left - 1) { queue++; falling.push({ t: 0 }); api.sfx('flip'); } }
+          if (cur && cur.in >= 1) {
+            cur.e += dt; const rem = cur.T - cur.e, k = rem / cur.T;
+            if (k < .25) { const b = Math.floor(rem * (k < .1 ? 6 : 3)); if (b !== beat) { beat = b; api.sfx('tick'); } }
+            if (rem <= 0) submit(true);
+          }
+        },
+        draw() {
+          const now = api.t; if (lastT !== null) anim(Math.min(.1, now - lastT)); lastT = now;
+          desk(); tray(); spike(); sheet(); keypad();
+          for (const f of flyers) if (!f.ok) { // a wrong or late receipt slides off the desk, behind the next one
+            const k = Math.min(1, f.t / .7);
+            receipt(f.r, f.x + Math.round(k * 10), f.y + Math.round(k * k * 150), f.k);
+            if (k < .5) api.text(f.r.e >= f.r.T ? 'LATE' : 'WRONG', f.x + RW / 2, f.y + f.r.h / 2 + k * k * 150, { size: 12, bold: true, color: P.e2, align: 'center' });
+          }
+          if (cur) {
+            const X = recX(cur), Y = recY(cur), k = cur.in < 1 ? 1 : 1 - cur.e / cur.T;
+            receipt(cur, X, Y, k);
+            if (cur.in >= 1) api.timerBar(X, Y + cur.h + 5, RW, k);
+            if (cur.smudge && cur.in >= 1) {
+              api.sprite(api.art(CUP, { x: P.d4, y: P.s4, z: P.d1 }), X + 2, Y + cur.h + 13);
+              api.text('ADD UP THE ITEMS', X + 13, Y + cur.h + 19, { size: 7, color: P.a3, shadow: true });
+            }
+          }
+          for (const f of flyers) if (f.ok && !f.hit) { // folded up, flown over, slammed down onto the spike
+            const a = Math.min(1, f.t / .18), e = api.ease.out(a), w = 44 + (18 - 44) * e, h = 30 + (8 - 30) * e;
+            const cx = f.x + RW / 2 + (SPX - f.x - RW / 2) * e, top = 70, cy0 = f.y + f.r.h / 2 + (top - f.y - f.r.h / 2) * e;
+            const b = Math.max(0, Math.min(1, (f.t - .18) / .12));
+            mini(cx, cy0 + (stackTop() - 4 - top) * b * b, Math.round(w), Math.round(h));
+          }
+        },
+        down(x, y) { for (const k of KEYS) if (x >= k.x - 1 && x < k.x + k.w + 2 && y >= k.y - 1 && y < k.y + k.h + 2) { press(k.id); return; } },
+        key(k) {
+          if (/^[0-9]$/.test(k)) { press(k); return true; }
+          if (k === '.' || k === ',') { press('.'); return true; }
+          if (k === 'Backspace' || k === 'Delete') { press('bk'); return true; }
+          if (k === 'Enter') { press('en'); return true; }
+          return k === '$';
+        },
+        bot(dt) {
+          if (!cur || cur.in < 1) return;
+          if (!botQ) { botQ = fmt(api.chance(api.autoErr) ? nearMiss(cur.total) : cur.total).split('').concat('en'); botT = -.04; }
+          botT += dt;
+          while (botQ && botQ.length && botT >= .035) { botT -= .035; press(botQ.shift()); }
+        }
+      };
+    }
+  };
+})();
+
+// Tape Deck (kind 'transcribe'): the reel plays, spoken words ride the tape toward the head.
+// Type each one before it reaches the red playhead; static garbles letters, the reel card tells you what they could be.
+(() => {
+  const VOCAB = ['flour', 'barrels', 'kerosene', 'harbor', 'invoice', 'shipment', 'Tuesday', 'March', 'lumber', 'sugar', 'Boston',
+    'cotton', 'freight', 'tonnes', 'schooner', 'dock', 'steamer', 'coal', 'molasses', 'timber', 'crate', 'ledger', 'cargo', 'wharf',
+    'tobacco', 'salt', 'rope', 'canvas', 'bushels', 'oats', 'wheat', 'nails', 'linen', 'ballast', 'manifest', 'customs', 'Halifax',
+    'Monday', 'Friday', 'April', 'ferry', 'pier', 'sacks', 'coffee', 'bales', 'hides', 'iron', 'copper', 'granite', 'spruce', 'anchor',
+    'gale', 'heron', 'creek', 'frost', 'birch'];
+
+  MINI.transcribe = {
+    title: 'Tape Deck', how: 'Type each word before it hits the red line.', keys: 'Type the letters · Backspace', pace: 2.5,
+    create(api) {
+      const P = api.P, L = api.level, AUTO = api.auto, PH = 90, TOP = 77, WY = 103, TAG = { size: 8, bold: true };
+      const LF = L < .5 ? 1.3 - .6 * L : 1 - .7 * (L - .5);
+      const ramp = () => 1 - .25 * api.progress * api.progress;
+      const speed = () => 232 / (3.2 * LF * ramp()) * (AUTO ? 4 : 1);             // px/s: 3.2 s from the right edge to the head
+      const interval = () => 2.5 * LF * ramp() * (.7 + api.rand() * .6) / (AUTO ? 8 : 1);
+      const lo = L < .35 ? 3 : L < .7 ? 4 : 5, hi = L < .35 ? 6 : 8;
+      const LIST = api.shuffle(VOCAB.filter(w => w.length >= lo && w.length <= hi)).slice(0, 10);
+      const words = [], script = [];
+      let s = 0, spawned = 0, spawnT = .35, botT = 0, beat = -1, aL = 0, aR = 1, vu = 0, squeal = 0, bad = null, lastT = null, lines = 1;
+      const hash = u => { const v = Math.sin(u * 12.9898 + 4.1) * 43758.5453; return v - Math.floor(v); };
+      const current = () => words.find(w => w.st === 'live');
+
+      function garble(w) { // hide 1–2 letters, but only where the reel card still pins the word down
+        const lw = w.toLowerCase(), n = L > .75 && w.length >= 7 ? 2 : 1;
+        for (let k = 0; k < 12; k++) {
+          const pos = api.shuffle([...Array(w.length - 1).keys()].map(i => i + 1)).slice(0, n);
+          const fair = LIST.every(o => { const ol = o.toLowerCase(); return ol === lw || ol.length !== lw.length || [...ol].some((ch, i) => !pos.includes(i) && ch !== lw[i]); });
+          if (fair) return [...w].map((ch, i) => pos.includes(i) ? '?' : ch).join('');
+        }
+        return w;
+      }
+      function spawn() {
+        const prev = words[words.length - 1]; let w;
+        do w = api.pick(LIST); while (prev && prev.src === w);
+        const gp = L >= .45 ? Math.min(.75, .25 + (L - .45) * .5 + api.progress * .25) : L >= .3 && api.progress > .6 ? .15 : 0;
+        const disp = spawned >= 2 && api.chance(gp) ? garble(w) : w, lw = Math.ceil(api.textW(disp, TAG)) + 8;
+        words.push({ src: w, w: w.toLowerCase(), disp, x: 322, lw, u0: 322 + s, typed: 0, st: 'live', t: 0, syl: 1 + Math.floor(w.length / 3) });
+        spawned++;
+      }
+      function layout() {
+        let x = 10, line = 0;
+        for (const e of script) { const w = api.textW(e.text, { size: 7.5 }); if (x + w > 310) { x = 10; line++; } e.lx = x; e.line = line; x += w + 5; }
+        lines = line + 1;
+      }
+      function accept(c) {
+        c.st = 'done'; beat = -1;
+        script.push({ text: c.src, ok: true, t: 0, fx: c.x + 4, fy: 89 }); layout();
+        api.item(true, c.x + c.lw / 2, 86);
+      }
+      function miss(c) {
+        c.st = 'miss'; beat = -1; bad = null; squeal = 1;
+        script.push({ text: c.src, ok: false, t: 0, fx: PH, fy: 89 }); layout();
+        api.sfx('whoosh'); api.sfx('blip', -12); api.burst(PH, 86, P.e3, 12, 70);
+        api.item(false, PH + 16, 92, 'MISSED');
+      }
+      function typeCh(ch) {
+        const c = current(); if (!c || c.x >= 316 || c.x <= PH) return;
+        if (ch === c.w[c.typed]) { c.typed++; bad = null; api.sfx('type'); if (c.typed >= c.w.length) accept(c); }
+        else { bad = { ch, t: 0, w: c }; api.sfx('blip', -8); }
+      }
+
+      // ---- pixel helpers ----
+      const disc = (cx, cy, r, c) => { for (let dy = -r; dy <= r; dy++) { const h = Math.floor(Math.sqrt(r * r - dy * dy) + .3); api.rect(cx - h, cy + dy, h * 2 + 1, 1, c); } };
+      const ray = (cx, cy, a, r0, r1, c, w = 2) => { for (let r = r0; r <= r1; r++) api.rect(Math.round(cx + Math.cos(a) * r - w / 2), Math.round(cy + Math.sin(a) * r - w / 2), w, w, c); };
+      function reel(cx, cy, pack, a) {
+        disc(cx, cy, 22, P.s4); disc(cx, cy, 21, P.s2); disc(cx, cy, 19, P.k2);
+        disc(cx, cy, pack, P.d1); disc(cx, cy, pack - 1, P.d2); if (pack > 9) disc(cx, cy, pack - 5, P.d1), disc(cx, cy, pack - 6, P.d2);
+        for (let i = 0; i < 3; i++) ray(cx, cy, a + i * 2.094, 4, 20, P.s4, 3);
+        for (let i = 0; i < 3; i++) ray(cx, cy, a + i * 2.094 - .12, 5, 19, P.s5, 1);
+        disc(cx, cy, 5, P.s5); disc(cx, cy, 2, P.k1);
+      }
+      function amp(u) { // the loudness of the tape at world position u, and whose word it is
+        for (const w of words) if (u >= w.u0 && u < w.u0 + w.lw) {
+          const k = (u - w.u0) / w.lw;
+          return [(Math.pow(Math.sin(Math.PI * k), .6) * (.55 + .45 * Math.abs(Math.sin(k * Math.PI * w.syl))) * 7 + hash(u) * 2.4), w];
+        }
+        return [hash(u) * 1.6, null];
+      }
+
+      function deck(jx) {
+        api.frame(4 + jx, 21, 226, 52, 'panel');
+        api.rect(5 + jx, 22, 7, 50, P.d3); api.rect(5 + jx, 22, 7, 1, P.d4); api.rect(222 + jx, 22, 7, 50, P.d3); api.rect(222 + jx, 22, 7, 1, P.d4);
+        api.rect(12 + jx, 22, 210, 50, P.s1); api.rect(12 + jx, 22, 210, 1, P.s3);
+        const pl = Math.round(7 + 12 * api.progress), pr = Math.round(19 - 12 * api.progress);
+        // tape path: supply reel (right) → guide → head → guide → take-up reel (left)
+        api.rect(68 + jx, 66, 98, 1, P.d1); api.rect(40 + jx, 47 + pl, 28, 1, P.d1); api.rect(166 + jx, 47 + pr, 28, 1, P.d1);
+        reel(40 + jx, 47, pl, aL); reel(194 + jx, 47, pr, aR);
+        disc(68 + jx, 66, 3, P.s4); disc(166 + jx, 66, 3, P.s4); disc(68 + jx, 66, 1, P.k1); disc(166 + jx, 66, 1, P.k1);
+        api.rect(106 + jx, 61, 22, 9, P.s3); api.rect(106 + jx, 61, 22, 1, P.s5); api.rect(116 + jx, 63, 2, 7, P.k1);
+        // VU meter: paper face, red zone, the needle swings with whatever is passing the head
+        api.rect(71 + jx, 25, 36, 22, P.k0); api.rect(72 + jx, 26, 34, 20, P.p3);
+        for (let i = 0; i <= 8; i++) { const a = -2.5 + i * .125 * 1.8; api.rect(Math.round(89 + jx + Math.cos(a) * 14), Math.round(44 + Math.sin(a) * 14), 1, 1, i > 6 ? P.e2 : P.d2); }
+        ray(89 + jx, 44, -2.5 + Math.min(1, vu) * 1.8 + (squeal ? Math.sin(api.t * 60) * .2 : 0), 1, 15, P.k1, 1);
+        api.text('VU', 74 + jx, 45, { size: 6.5, color: P.d3 });
+        // the counter counts what you've typed
+        api.rect(114 + jx, 27, 32, 13, P.k0);
+        String(api.done % 1000).padStart(3, '0').split('').forEach((d, i) => { api.rect(115 + jx + i * 10, 28, 9, 11, P.k2); api.text(d, 119.5 + jx + i * 10, 37, { size: 8, color: P.p4, align: 'center' }); });
+        const on = squeal ? (api.t * 20 | 0) % 2 : 1;
+        api.rect(114 + jx, 43, 5, 5, P.k0); api.rect(115 + jx, 44, 3, 3, on ? P.e3 : P.e0); api.text('PLAY', 122 + jx, 48.5, { size: 6.5, color: P.s5 });
+      }
+      function card() {
+        api.frame(234, 21, 82, 53, 'paper');
+        api.text('ON THIS REEL', 275, 29, { size: 6.5, color: P.d2, align: 'center', bold: true });
+        api.rect(238, 31, 74, 1, P.p1);
+        LIST.forEach((w, i) => api.text(w, 239 + (i % 2) * 38, 39 + Math.floor(i / 2) * 7.4, { size: 6.5, color: P.k1 }));
+      }
+      function strip(c) {
+        api.frame(2, TOP, 316, 47, 'slot'); api.rect(3, TOP + 1, 314, 45, P.k1);
+        const off = s % 2;
+        for (let x = 3 - off; x < 318; x += 2) {
+          const u = Math.round(x + s), [a, w] = amp(u), h = Math.max(1, Math.round(a));
+          const col = !w ? P.t1 : w.st === 'done' ? P.t1 : w.st === 'miss' ? P.e1 : w === c ? P.a2 : x < PH ? P.t2 : P.t3;
+          api.rect(x, WY - h, 1, h * 2, col);
+        }
+        api.rect(3, TOP + 1, PH - 3, 45, 'rgba(0,0,0,.3)');
+        for (const w of words) {
+          const x = Math.round(w.x); if (w.st === 'done' || x > 318) continue;
+          const cur = w === c, near = cur && (w.x - PH) / speed() < .8;
+          if (w.st === 'miss') { if (w.x + w.lw > PH - 30) api.frame(x, 81, w.lw, 11, 'warn'), api.text(w.disp, x + 4, 89.5, { ...TAG, color: P.e4 }); continue; }
+          api.frame(x, 81, w.lw, 11, cur ? (near && (api.t * 8 | 0) % 2 ? 'warn' : 'hot') : 'paper');
+          let cx = x + 4;
+          [...w.disp].forEach((ch, i) => {
+            const st = ch === '?';
+            api.text(ch, cx, 89.5, { ...TAG, color: st ? P.e2 : cur && i < w.typed ? P.g1 : P.k1 });
+            if (st) for (let k = 0; k < 3; k++) api.rect(cx + Math.floor(api.rand() * 5), 82 + Math.floor(api.rand() * 9), 1, 1, api.rand() < .5 ? P.s5 : P.t4);
+            cx += api.textW(ch, TAG);
+          });
+          if (cur) { // what you've typed so far, under the word
+            let tx = x + 4;
+            [...w.w].forEach((ch, i) => { api.text(i < w.typed ? ch : '_', tx, 120, { size: 8, bold: true, color: i < w.typed ? P.a3 : P.s4 }); tx += api.textW(w.disp[i] || ch, TAG); });
+            if (bad && bad.w === w && bad.t < .4) {
+              let bx = x + 4; for (let i = 0; i < w.typed; i++) bx += api.textW(w.disp[i], TAG);
+              api.rect(bx - 1, 112, api.textW(bad.ch, TAG) + 2, 10, P.e1); api.text(bad.ch, bx + Math.round(Math.sin(bad.t * 80)), 120, { size: 8, bold: true, color: P.e4 });
+            }
+          }
+        }
+        api.rect(PH, TOP + 1, 2, 45, P.e3); api.rect(PH - 2, TOP + 1, 6, 2, P.e3); api.rect(PH - 1, TOP + 3, 4, 1, P.e3); api.rect(PH + 1, TOP + 1, 1, 45, P.e4);
+      }
+      function sheet() {
+        api.frame(4, 128, 312, 37, 'paper');
+        for (let i = 0; i < 3; i++) api.rect(8, 140 + i * 10, 304, 1, P.p1);
+        const first = Math.max(0, lines - 3);
+        for (const e of script) {
+          if (e.line < first) continue;
+          const y = 138 + (e.line - first) * 10, k = Math.min(1, e.t / .3), q = api.ease.out(k);
+          const x = e.lx + (1 - q) * (e.fx - e.lx), yy = y + (1 - q) * (e.fy - y);
+          api.text(e.text, x, yy, { size: 7.5, color: e.ok ? (k < 1 ? P.a1 : P.k1) : P.e2, bold: k < 1 });
+          if (!e.ok) api.rect(Math.round(x) - 1, Math.round(yy) - 3, Math.ceil(api.textW(e.text, { size: 7.5, bold: k < 1 })) + 2, 1, P.e2);
+        }
+      }
+
+      return {
+        tick(dt) {
+          const v = speed() * (api.busy ? (AUTO ? 0 : .15) : 1), d = v * dt; // a slow machine drags the tape; for you it still creeps
+          s += d; for (const w of words) w.x -= d;
+          const pl = 7 + 12 * api.progress, pr = 19 - 12 * api.progress;
+          aL -= d / (pl * 3); aR -= d / (pr * 3);
+          if (api.busy) return;
+          spawnT -= dt;
+          const last = words[words.length - 1];
+          if (spawnT <= 0 && words.filter(w => w.st === 'live').length < api.left && (!last || last.x + last.lw + 16 <= 322)) { spawn(); spawnT = interval(); }
+          let c = current();
+          while (c && c.x <= PH) { miss(c); c = current(); }
+          if (c && c.x < 318) { const tt = (c.x - PH) / speed(); if (tt < .8) { const b = Math.floor(tt * 5); if (b !== beat) { beat = b; api.sfx('tick'); } } }
+          while (words.length && words[0].st !== 'live' && words[0].x + words[0].lw < -10) words.shift();
+        },
+        draw() {
+          const now = api.t, dt = lastT === null ? 0 : Math.min(.1, now - lastT); lastT = now;
+          for (const e of script) { const was = e.t; e.t += dt * (AUTO ? 2 : 1); if (was < .3 && e.t >= .3 && e.ok) { api.sfx('type'); api.burst(e.lx + 6, 136 + (e.line - Math.max(0, lines - 3)) * 10, P.d2, 3, 20); } }
+          if (bad) bad.t += dt;
+          squeal = Math.max(0, squeal - dt * 2.5);
+          const [a] = amp(Math.round(PH + s)); vu += (a / 8.5 - vu) * Math.min(1, dt * 14);
+          api.rect(0, api.top, api.W, api.bot - api.top, P.k2);
+          for (let y = api.top + 2; y < api.bot; y += 4) api.rect(0, y, api.W, 1, P.k3);
+          const c = current();
+          deck(squeal > .3 ? Math.round(Math.sin(api.t * 90) * squeal * 2) : 0); card(); strip(c); sheet();
+        },
+        key(k) {
+          if (/^[a-z]$/i.test(k)) { typeCh(k.toLowerCase()); return true; }
+          if (k === 'Backspace') { const c = current(); if (c && c.typed > 0) { c.typed--; api.sfx('click'); } bad = null; return true; }
+          return k === ' ';
+        },
+        bot(dt) {
+          const c = current(); if (!c || c.x >= 316) return;
+          if (c.botSkip === undefined) c.botSkip = api.chance(api.autoErr);
+          if (c.botSkip) return; // the agent fumbles this one and lets it go by
+          botT += dt;
+          while (botT >= .015 && current() === c && c.st === 'live') { botT -= .015; typeCh(c.w[c.typed]); }
+        }
+      };
+    }
+  };
+})();
+
+// Red Pen (kind 'proofread'): the draft scrolls up like a teleprompter toward the deadline line.
+// Circle every misspelled word before it scrolls past; the correctly spelled tricky words are traps.
+(() => {
+  const PAIRS = { receive: 'recieve', definitely: 'definately', separate: 'seperate', which: 'wich', tomorrow: 'tommorow',
+    accommodate: 'accomodate', government: 'goverment', occurred: 'occured', patience: 'paitence', library: 'libary', until: 'untill',
+    address: 'adress', business: 'buisness', calendar: 'calender', environment: 'enviroment', existence: 'existance', foreign: 'foriegn',
+    independent: 'independant', maintenance: 'maintainance', necessary: 'neccessary', pursue: 'persue', recommend: 'reccomend',
+    rhythm: 'rythm', successful: 'succesful', weird: 'wierd' };
+  const TEMPL = ['We will {receive} the funds in May.', 'The board meets {tomorrow} at noon.', 'Keep the two budgets {separate}.',
+    'This is {definitely} our best year.', 'The {library} needs a new roof.', 'Our {business} plan is attached.',
+    'Send replies to the {address} below.', 'The {government} pays half the cost.', 'Mark the {calendar} for June 4.',
+    'A safer {environment} for every child.', 'The gym can {accommodate} 90 people.', 'The flood {occurred} last spring.',
+    'Thank you for your {patience} with us.', 'Please wait {until} the bell rings.', 'Its {existence} keeps the clinic open.',
+    'We host two {foreign} exchange students.', 'An {independent} audit is planned.', 'Roof {maintenance} will cost $4,000.',
+    'Receipts are {necessary} for refunds.', 'We hope to {pursue} new partners.', 'We {recommend} signing up early.',
+    'The band kept a steady {rhythm}.', 'Last year was very {successful}.', 'Spirit week gets {weird} fast.',
+    'Tell us {which} day works best.', 'We {definitely} need more tutors.', 'Choir practice runs {until} 4:30.',
+    'Bring a coat {tomorrow} for the trip.', 'Every gift is {necessary} this year.', 'Our {business} office opens at 8.'];
+  const PLAIN = ['Lunch starts at 11:30 sharp.', 'Parents are welcome to join us.', 'Please read the attached notes.',
+    'Budget details are on page 3.', 'Thanks to all of our volunteers.', 'Bus routes will not change.', 'The fair runs from 9 to 3.',
+    'We serve 400 families each week.', 'Questions? Call the front office.', 'Our staff of six works full time.',
+    'The new playground opens soon.', 'Funds go straight to the program.', 'Picture day is next Thursday.', 'We are grateful for your support.'];
+  const PEN = ['......kk', '.....kee', '....eeek', '...eeek.', '..eeek..', '.seek...', 'sss.....', 's.......'];
+
+  MINI.proofread = {
+    title: 'Red Pen', how: 'Circle each typo before it scrolls away.', keys: 'Click a misspelled word', pace: 2.0,
+    create(api) {
+      const P = api.P, L = api.level, AUTO = api.auto, LF = L < .5 ? 1.3 - .6 * L : 1 - .7 * (L - .5);
+      const PX = 58, PW = 204, PY0 = 24, PY1 = 162, DL = 37, LH = 12, X0 = 66, MAXW = 188, RD = { font: 'read', size: 8 };
+      const speed = () => 10 / LF * (1 + .5 * api.progress * api.progress) * (AUTO ? 8 : 1);
+      const lines = [];
+      let nextY = 70, para = api.ri(2, 4), botT = 0, beat = -1, flashTop = 0, lastT = null, caught = 0, slips = 0, recent = [];
+      const SP = Math.max(2.5, api.textW(' ', RD));
+      const penImg = api.art(PEN, { k: P.k1, e: P.e2, s: P.s5 });
+
+      function addLine() {
+        const r = api.rand(), pt = .5 + .15 * api.progress, pd = .2 + .2 * L;
+        let text, kind = 'word', slot = null;
+        if (r < pt + pd) {
+          let tp; do tp = api.pick(TEMPL); while (recent.includes(tp)); recent = [tp, ...recent].slice(0, 6);
+          const m = tp.match(/\{(\w+)\}/); slot = m[1]; kind = r < pt ? 'typo' : 'decoy';
+          text = tp.replace(m[0], '\u0001' + (kind === 'typo' ? PAIRS[slot] : slot));
+        } else { do text = api.pick(PLAIN); while (recent.includes(text)); recent = [text, ...recent].slice(0, 6); }
+        let x = X0; const toks = [];
+        for (const raw of text.split(' ')) {
+          const special = raw[0] === '\u0001', s = special ? raw.slice(1) : raw, w = api.textW(s, RD);
+          if (x + w > X0 + MAXW && toks.length) { lines.push({ y: nextY, toks: toks.splice(0) }); nextY += LH; x = X0; }
+          toks.push({ s, x, w, kind: special ? kind : 'word', st: null, t: 0 }); x += w + SP;
+        }
+        lines.push({ y: nextY, toks }); nextY += LH;
+        if (--para <= 0) { nextY += 6; para = api.ri(3, 5); }
+      }
+      while (nextY < PY1 + LH) addLine();
+
+      function click(ln, t) {
+        const cx = t.x + t.w / 2, cy = ln.y + 6; t.t = 0;
+        if (t.kind === 'typo') { t.st = 'caught'; t.seed = api.rand(); t.scr = 0; caught++; api.item(true, cx, cy); }
+        else { t.st = 'wrong'; slips++; api.item(false, cx, cy, 'IT WAS RIGHT'); }
+      }
+      function hit(x, y) {
+        if (y < DL || y > PY1) return null;
+        let best = null;
+        for (const ln of lines) {
+          if (y < ln.y - 1 || y >= ln.y + LH + 1) continue;
+          for (const t of ln.toks) {
+            if (t.st) continue;
+            const pad = t.kind === 'typo' ? 4 : 1;
+            if (x >= t.x - pad && x < t.x + t.w + pad && (!best || t.kind === 'typo')) best = [ln, t];
+          }
+        }
+        return best;
+      }
+      function ring(cx, cy, rx, ry, k, seed) { // a hand-drawn red loop, drawn pixel by pixel as the pen moves
+        const a0 = -2.4 + seed, span = (Math.PI * 2 + .55) * k, n = Math.ceil((rx + ry) * 3.6 * k) + 1;
+        let end = [cx, cy];
+        for (let i = 0; i <= n; i++) {
+          const a = a0 + span * i / n, wob = 1 + .05 * Math.sin(a * 3 + seed * 6) + (a - a0) * .014;
+          const x = Math.round(cx + Math.cos(a) * rx * wob), y = Math.round(cy + Math.sin(a) * ry * wob);
+          api.rect(x, y, Math.abs(Math.sin(a)) > .6 ? 2 : 1, Math.abs(Math.cos(a)) > .8 ? 2 : 1, P.e2); end = [x, y];
+        }
+        return end;
+      }
+
+      function sides() {
+        // left: your tally and the pen cup
+        api.frame(6, 24, 42, 40, 'paper');
+        api.text('CAUGHT', 27, 33, { size: 6.5, color: P.d2, align: 'center' });
+        api.text(String(caught), 27, 49, { size: 13, color: P.e2, align: 'center', bold: true });
+        if (slips) api.text(`${slips} SLIPPED`, 27, 60, { size: 6.5, color: P.e2, align: 'center' });
+        const inUse = lines.some(ln => ln.toks.some(t => t.st === 'caught' && t.t < .3));
+        api.rect(19, 100, 3, 26, P.a2); api.rect(19, 98, 3, 2, P.p3); api.rect(20, 96, 1, 2, P.k2);
+        api.rect(31, 104, 3, 22, P.g3); api.rect(31, 102, 3, 2, P.p2);
+        if (!inUse) { api.rect(25, 92, 4, 34, P.e2); api.rect(25, 92, 1, 34, P.e4); api.rect(25, 90, 4, 3, P.k1); }
+        api.frame(14, 122, 26, 32, 'panel'); api.rect(15, 123, 24, 2, P.s3); api.rect(15, 130, 24, 1, P.s3);
+        api.rect(40, 128, 4, 2, P.s2); api.rect(43, 130, 2, 12, P.s2); api.rect(40, 142, 4, 2, P.s2);
+        // right: the pages still to proof — the pile you are racing
+        const n = api.left, show = Math.min(n, 40);
+        for (let i = 0; i < show; i++) { const x = 274 + ((i * 5) % 3); api.rect(x, 152 - i * 2, 38, 2, i % 2 ? P.p2 : P.p3); api.rect(x, 152 - i * 2, 38, 1, P.p4); }
+        api.frame(276, 155, 34, 9, 'panel'); api.text('TO GO', 293, 162, { size: 6.5, color: P.s5, align: 'center' });
+        api.text(String(n), 293, 148 - show * 2, { size: 9, color: n <= 3 ? P.t4 : P.a3, align: 'center', bold: true, shadow: true });
+      }
+
+      return {
+        tick(dt) {
+          const d = speed() * (api.busy ? .15 : 1) * dt;
+          for (const ln of lines) ln.y -= d;
+          nextY -= d;
+          while (lines.length && lines[0].y + LH < PY0 - 2) lines.shift();
+          while (nextY < PY1 + LH) addLine();
+          if (api.busy) return;
+          let soon = Infinity;
+          for (const ln of lines) for (const t of ln.toks) {
+            if (t.kind !== 'typo' || t.st) continue;
+            const cy = ln.y + 6;
+            if (cy < DL) { t.st = 'missed'; t.t = 0; flashTop = 1; slips++; api.sfx('alarm'); api.miss(t.x + t.w / 2, DL + 9); }
+            else soon = Math.min(soon, (cy - DL) / speed());
+          }
+          if (soon < 1.2) { const b = Math.floor(soon * 3); if (b !== beat) { beat = b; api.sfx('tick'); } } else beat = -1;
+        },
+        draw() {
+          const now = api.t, dt = lastT === null ? 0 : Math.min(.1, now - lastT); lastT = now;
+          flashTop = Math.max(0, flashTop - dt * 1.8);
+          api.rect(0, api.top, api.W, api.bot - api.top, P.d2);
+          for (let y = api.top + 25; y < api.bot; y += 37) api.rect(0, y, api.W, 1, P.d1);
+          for (let i = 0; i < 30; i++) api.rect((i * 89) % 316, api.top + 4 + (i * 53) % 140, 4 + (i % 3) * 3, 1, P.d3);
+          api.frame(52, 20, 216, 146, 'panel'); api.rect(53, 21, 214, 144, P.d4); api.rect(53, 21, 214, 1, P.d5); api.rect(56, 23, PW + 4, 141, P.d1);
+          api.rect(PX, PY0, PW, PY1 - PY0 + 2, P.p3); api.rect(PX, PY0, PW, 1, P.p4);
+          const g = api.g; g.save(); g.beginPath(); g.rect(PX, PY0, PW, PY1 - PY0 + 2); g.clip();
+          for (let y = PY0 + 6; y < PY1; y += 4) api.rect(PX + 3, y, 1, 1, P.p2);
+          const sp = Math.max(2.5, api.textW(' ', RD));
+          for (const ln of lines) {
+            const y = Math.round(ln.y), past = y + 6 < DL;
+            let lx = X0; // re-measured every frame, so hit boxes always match the font actually drawn
+            for (const t of ln.toks) { t.w = api.textW(t.s, RD); t.x = lx; lx += t.w + sp; }
+            for (const t of ln.toks) {
+              t.t += dt;
+              if (t.st === 'wrong' && t.t < 1.2) { api.rect(Math.round(t.x) - 1, y, Math.ceil(t.w) + 2, LH - 1, P.g4); }
+              if (t.st === 'missed') api.rect(Math.round(t.x) - 2, y - 1, Math.ceil(t.w) + 4, LH + 1, t.t < .6 && (t.t * 12 | 0) % 2 ? P.e3 : P.e4);
+              if (!AUTO && !t.st && !past && api.my >= y && api.my < y + LH && api.mx >= t.x - 1 && api.mx < t.x + t.w + 1) api.rect(Math.round(t.x), y + 10, Math.ceil(t.w), 1, P.p0);
+              api.text(t.s, t.x, y + 9, { ...RD, color: past && t.st !== 'missed' ? P.p0 : P.k1 });
+              if (t.st === 'wrong') { api.rect(Math.round(t.x), y + 10, Math.ceil(t.w), 1, P.g2); if (t.t < 1.2) api.text('OK', t.x + t.w + 2, y + 6, { size: 6.5, color: P.g2, bold: true }); }
+              if (t.st === 'caught') {
+                const k = Math.min(1, t.t / (AUTO ? .12 : .24));
+                const [ex, ey] = ring(t.x + t.w / 2, y + 5.5, t.w / 2 + 4, 7, api.ease.out(k), t.seed);
+                if (k < 1) { api.sprite(penImg, ex, ey - 7); const sc = Math.floor(t.t / .045); if (sc !== t.scr) { t.scr = sc; api.sfx('type'); } }
+              }
+            }
+          }
+          api.rect(PX, PY0, PW, DL - PY0, 'rgba(61,15,12,.18)');
+          if (flashTop > 0) { g.globalAlpha = flashTop * .7; api.rect(PX, PY0, PW, DL - PY0, P.e3); g.globalAlpha = 1; }
+          g.restore();
+          const dlc = flashTop > 0 && (api.t * 14 | 0) % 2 ? P.e4 : P.e3;
+          api.rect(PX - 2, DL, PW + 4, 1, dlc); api.rect(PX - 2, DL + 1, PW + 4, 1, flashTop > 0 ? P.e3 : P.e1);
+          api.rect(PX + PW - 40, DL - 8, 38, 8, P.p3); api.text('DEADLINE', PX + PW - 3, DL - 2, { size: 6.5, color: P.e2, align: 'right', bold: true });
+          sides();
+        },
+        down(x, y) { const h = hit(x, y); if (h) click(h[0], h[1]); },
+        bot(dt) {
+          botT += dt; if (botT < .07) return;
+          const vis = [];
+          for (const ln of lines) if (ln.y > DL + 1 && ln.y + LH < PY1) for (const t of ln.toks) if (!t.st) vis.push([ln, t]);
+          const typos = vis.filter(v => v[1].kind === 'typo').sort((a, b) => a[0].y - b[0].y);
+          if (!typos.length) return;
+          botT = 0;
+          if (api.chance(api.autoErr)) { // the agent "fixes" a word that was fine
+            const d = vis.filter(v => v[1].kind === 'decoy'), o = d.length ? d : vis.filter(v => v[1].kind === 'word' && v[1].w > 16);
+            if (o.length) { const v = api.pick(o); click(v[0], v[1]); return; }
+          }
+          click(typos[0][0], typos[0][1]);
+        }
+      };
+    }
+  };
+})();
+
+// Sum It (kind 'macro'): the client's SUM formula is broken. Find any block of cells that adds up to the target:
+// hold the drag, watch the live sum, let go only when it matches. Broken sheets keep arriving in the tabs below.
+(() => {
+  const COLS = 'ABCDEFG', MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const FILES = ['budget_FINAL_v7.xls', 'Q3 costs (2).xls', 'payroll_fixed.xls', 'grant budget OLD.xls', 'household.xls'];
+  const ARROW = ['k.....', 'kk....', 'kyk...', 'kyyk..', 'kyyyk.', 'kyyyyk', 'kyykkk', 'kk.yk.', 'k..kk.'];
+
+  MINI.macro = {
+    title: 'Sum It', how: 'Drag over cells that add up to the target.', keys: 'Drag · or arrows, Shift+arrows, Enter', pace: 4.0,
+    create(api) {
+      const P = api.P, L = api.level, AUTO = api.auto, SPD = AUTO ? 3 : 1;
+      const LF = L < .5 ? 1.3 - .6 * L : 1 - .3 * (L - .5); // the grid and numbers grow with level too, so the clock eases off
+      const C = L < .35 ? 5 : L < .75 ? 6 : 7, R = L < .35 ? 4 : L < .75 ? 5 : 6;
+      const cw = Math.min(46, Math.floor(288 / C)), ch = Math.min(20, Math.floor(94 / R));
+      const gx = 6 + Math.floor((308 - 12 - C * cw) / 2) + 12, gy = 58;
+      const ramp = () => 1 - .3 * api.progress * api.progress;
+      const arrival = () => 3.8 * LF * ramp() / (AUTO ? 8 : 1);
+      const file = api.pick(FILES), m0 = api.ri(0, 11), ptr = api.art(ARROW, { k: P.k1, y: P.t4 });
+      let grid = [], target = 0, sol = null, T = 1, e = 0, phase = 'roll', pt = 0, pid = 0, beat = -1, res = null, typed = 0;
+      let anchor = [0, 0], cursor = [0, 0], dragging = false, dragPid = -1, hover = null, lastT = null, sheet = 0;
+      let queue = Math.max(0, Math.min(api.left - 1, 2)), arriveT = arrival(), bt = null, bx = 160, by = 100;
+      const clampC = c => Math.max(0, Math.min(C - 1, c)), clampR = r => Math.max(0, Math.min(R - 1, r));
+      const rectOf = (a, b) => ({ c0: Math.min(a[0], b[0]), r0: Math.min(a[1], b[1]), c1: Math.max(a[0], b[0]), r1: Math.max(a[1], b[1]) });
+      const sumOf = q => { let s = 0; for (let r = q.r0; r <= q.r1; r++) for (let c = q.c0; c <= q.c1; c++) s += grid[r][c]; return s; };
+      const ref = (c, r) => COLS[c] + (r + 1);
+      const fx = q => '=SUM(' + ref(q.c0, q.r0) + (q.c0 === q.c1 && q.r0 === q.r1 ? '' : ':' + ref(q.c1, q.r1)) + ')';
+      const cellXY = (c, r) => [gx + c * cw, gy + r * ch];
+      const center = q => [gx + (q.c0 + q.c1 + 1) * cw / 2, gy + (q.r0 + q.r1 + 1) * ch / 2];
+      function cellAt(x, y, clamp) {
+        const c = Math.floor((x - gx) / cw), r = Math.floor((y - gy) / ch);
+        if (clamp) return [clampC(c), clampR(r)];
+        return c >= 0 && c < C && r >= 0 && r < R ? [c, r] : null;
+      }
+
+      function newPuzzle() {
+        pid++; sheet++;
+        const lo = 1 + Math.round(L * 4), hi = Math.round(9 + 24 * L + 8 * api.progress);
+        grid = [...Array(R)].map(() => [...Array(C)].map(() => api.ri(lo, hi)));
+        const maxA = L < .35 ? 4 : L < .75 ? 6 : 9, shapes = [];
+        for (let w = 1; w <= 3; w++) for (let h = 1; h <= 3; h++) if (w * h >= 2 && w * h <= maxA) shapes.push([w, h]);
+        const [w, h] = api.pick(shapes), c0 = api.ri(0, C - w), r0 = api.ri(0, R - h);
+        sol = { c0, r0, c1: c0 + w - 1, r1: r0 + h - 1 }; target = sumOf(sol);
+        T = 7 * LF * ramp() / (AUTO ? 6 : 1); e = 0; beat = -1; phase = 'roll'; pt = 0; res = null; typed = 0;
+        dragging = false; anchor = cursor.slice(); bt = null;
+      }
+      function finish(ok, q, label) {
+        phase = 'done'; pt = 0; dragging = false; bt = null;
+        res = { ok, q, s: q ? sumOf(q) : null }; typed = 0;
+        if (queue > 0) queue--;
+        const [cx, cy] = q ? center(q) : [160, 38];
+        if (ok) { api.sfx('coin'); api.burst(cx, cy, P.g4, 12, 70); } else if (q) api.shake(2);
+        api.item(ok, cx, cy, label);
+      }
+      function changed() {
+        const q = rectOf(anchor, cursor), s = sumOf(q);
+        api.sfx('blip', s === target ? 18 : Math.max(-6, 10 - Math.abs(s - target) / target * 24));
+      }
+      function release() {
+        const q = rectOf(anchor, cursor), s = sumOf(q), single = q.c0 === q.c1 && q.r0 === q.r1;
+        if (single && s !== target) { api.sfx('click'); return; } // a plain click just places the cursor
+        finish(s === target, q, s === target ? undefined : s + ' ≠ ' + target);
+      }
+      function wrongRect() {
+        const opts = [];
+        for (const [dc, dr, gc, gr] of [[1, 0, 0, 0], [-1, 0, 0, 0], [0, 1, 0, 0], [0, -1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1], [0, 0, -1, 0], [0, 0, 0, -1]]) {
+          const q = { c0: sol.c0 + dc, r0: sol.r0 + dr, c1: sol.c1 + dc + gc, r1: sol.r1 + dr + gr };
+          if (q.c0 >= 0 && q.r0 >= 0 && q.c1 < C && q.r1 < R && q.c1 >= q.c0 && q.r1 >= q.r0 && (q.c1 > q.c0 || q.r1 > q.r0) && sumOf(q) !== target) opts.push(q);
+        }
+        return opts.length ? api.pick(opts) : sol;
+      }
+
+      // ---- drawing ----
+      function ants(x, y, w, h) { // marching ants around the selection
+        const ph = Math.floor(api.t * 14), per = 2 * (w + h);
+        for (let i = 0; i < per; i++) {
+          const [px, py] = i < w ? [x + i, y] : i < w + h ? [x + w - 1, y + i - w] : i < 2 * w + h ? [x + w - 1 - (i - w - h), y + h - 1] : [x, y + h - 1 - (i - 2 * w - h)];
+          api.rect(px, py, 1, 1, ((i + ph) >> 2) % 2 ? P.a3 : P.k0);
+        }
+      }
+      function dashed(q, col) {
+        const [x, y] = cellXY(q.c0, q.r0), w = (q.c1 - q.c0 + 1) * cw, h = (q.r1 - q.r0 + 1) * ch;
+        for (let i = 0; i < w; i += 4) { api.rect(x + i - 1, y - 1, 2, 2, col); api.rect(x + i - 1, y + h - 1, 2, 2, col); }
+        for (let i = 0; i < h; i += 4) { api.rect(x - 1, y + i - 1, 2, 2, col); api.rect(x + w - 2, y + i - 1, 2, 2, col); }
+      }
+      function tabs() {
+        api.rect(8, 151, 304, 11, P.s0);
+        let x = 10;
+        const n = Math.min(queue, 8);
+        for (let i = -1; i < n; i++) {
+          const name = MONTHS[(m0 + sheet + i) % 12], w = 25, cur = i === -1;
+          api.rect(x, 152, w, 9, cur ? P.t2 : P.s2); api.rect(x, 152, w, 1, cur ? P.t3 : P.s3);
+          api.text(name, x + (cur ? w / 2 : 10), 159, { size: 6.5, color: cur ? P.t5 : P.s5, align: 'center' });
+          if (!cur) { api.rect(x + 19, 154, 3, 5, P.e2); api.rect(x + 20, 155, 1, 2, P.p4); api.rect(x + 20, 158, 1, 1, P.p4); }
+          x += w + 2;
+        }
+        if (queue > 8) api.text('+' + (queue - 8), x + 2, 159, { size: 6.5, color: P.e3 });
+        const hot = queue >= 5;
+        api.text(queue ? `${queue} MORE BROKEN` : 'ALL CAUGHT UP', 309, 159, { size: 6.5, color: hot ? ((api.t * 3 | 0) % 2 ? P.e3 : P.e4) : queue ? P.a3 : P.t4, align: 'right', bold: hot });
+      }
+
+      newPuzzle(); phase = 'roll';
+      return {
+        tick(dt) {
+          if (phase === 'done') { pt += dt * SPD; if (pt >= .6) newPuzzle(); return; }
+          if (phase === 'roll') { pt += dt * SPD; if (pt >= .3) phase = 'play'; return; }
+          if (api.busy) return; // a loading machine doesn't eat your seconds
+          arriveT -= dt;
+          if (arriveT <= 0) { arriveT += arrival(); if (queue < api.left - 1) { queue++; api.sfx('flip'); } }
+          e += dt; const rem = T - e, k = rem / T;
+          if (k < .25) { const b = Math.floor(rem * (k < .1 ? 6 : 3)); if (b !== beat) { beat = b; api.sfx('tick'); } }
+          if (rem <= 0) { api.sfx('alarm'); finish(false, null, 'TIME'); }
+        },
+        draw() {
+          const now = api.t, dt = lastT === null ? 0 : Math.min(.1, now - lastT); lastT = now;
+          if (phase === 'done' && res.ok) typed = Math.min(fx(res.q).length, typed + dt * 60 * SPD);
+          api.rect(0, api.top, api.W, api.bot - api.top, P.k2);
+          api.frame(6, 20, 308, 144, 'panel');
+          api.rect(7, 21, 306, 9, P.s3); api.text(file, 11, 28, { size: 6.5, color: P.k1 });
+          for (let i = 0; i < 3; i++) api.rect(290 + i * 7, 23, 5, 5, i === 2 ? P.e2 : P.s5);
+          // formula bar
+          api.rect(9, 32, 302, 12, P.k1); api.rect(9, 32, 16, 12, P.s2); api.text('fx', 17, 41, { size: 7, color: P.s5, align: 'center', bold: true });
+          const q = rectOf(anchor, cursor), multi = q.c0 !== q.c1 || q.r0 !== q.r1, live = phase === 'play' && (dragging || multi);
+          let ftxt = '=SUM( ? )', fcol = P.s4;
+          if (live) { ftxt = fx(q); fcol = P.t4; }
+          if (phase === 'done') {
+            if (res.ok) { ftxt = fx(res.q).slice(0, Math.ceil(typed)); fcol = P.g4; if (typed >= fx(res.q).length) ftxt += '  ✓'; }
+            else { ftxt = res.q ? fx(res.q) + ' = ' + res.s : '=SUM( ? )   #TIME!'; fcol = P.e3; }
+          }
+          api.text(ftxt, 29, 41, { size: 8, color: fcol });
+          if (phase === 'done' && res.ok && typed < fx(res.q).length && (api.t * 8 | 0) % 2) api.rect(30 + api.textW(ftxt, { size: 8 }), 34, 1, 8, P.g4);
+          const tc = phase === 'done' && !res.ok ? ((api.t * 10 | 0) % 2 ? P.e3 : P.e4) : P.a3;
+          api.text('MUST EQUAL', 262, 40, { size: 6.5, color: P.t3, align: 'right' });
+          api.text(String(target), 307, 41.5, { size: 10, color: tc, align: 'right', bold: true });
+          api.timerBar(9, 46, 302, phase === 'play' ? 1 - e / T : phase === 'roll' ? 1 : res && res.ok ? 1 - e / T : 0);
+          // the grid: headers, cells, numbers
+          api.rect(gx - 13, gy - 9, C * cw + 13, R * ch + 9, P.k1);
+          const sel = phase === 'done' ? res.q : (live || dragging) ? q : null, hs = sel || (phase === 'play' ? q : null);
+          for (let c = 0; c < C; c++) {
+            const on = hs && c >= hs.c0 && c <= hs.c1;
+            api.rect(gx + c * cw, gy - 8, cw - 1, 7, on ? P.t2 : P.t1); api.text(COLS[c], gx + c * cw + cw / 2, gy - 2, { size: 6.5, color: on ? P.t5 : P.t4, align: 'center' });
+          }
+          for (let r = 0; r < R; r++) {
+            const on = hs && r >= hs.r0 && r <= hs.r1;
+            api.rect(gx - 12, gy + r * ch, 11, ch - 1, on ? P.t2 : P.t1); api.text(String(r + 1), gx - 6.5, gy + r * ch + ch / 2 + 2.5, { size: 6.5, color: on ? P.t5 : P.t4, align: 'center' });
+          }
+          for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+            const [x, y] = cellXY(c, r), inS = sel && c >= sel.c0 && c <= sel.c1 && r >= sel.r0 && r <= sel.r1;
+            let bg = P.t0, fg = P.t5, jx = 0;
+            if (hover && !AUTO && phase === 'play' && hover[0] === c && hover[1] === r) bg = P.t1;
+            if (inS && phase === 'play') { bg = P.a0; fg = P.a4; }
+            if (inS && phase === 'done') {
+              if (res.ok) { bg = (pt * 12 | 0) % 2 ? P.g3 : P.g4; fg = P.k1; }
+              else { bg = P.e1; fg = P.p4; jx = pt < .35 ? Math.round(Math.sin(pt * 90) * 2) : 0; }
+            }
+            api.rect(x, y, cw - 1, ch - 1, bg);
+            const k = (c + r) / (C + R - 2 || 1), shown = phase !== 'roll' || pt > k * .22;
+            const v = shown ? grid[r][c] : api.ri(10, 99);
+            api.text(String(v), x + cw - 4 + jx, y + ch / 2 + 3, { size: ch >= 18 ? 9 : 8, color: shown ? fg : P.t2, align: 'right' });
+          }
+          if (sel && phase === 'play') { const [x, y] = cellXY(sel.c0, sel.r0); ants(x - 1, y - 1, (sel.c1 - sel.c0 + 1) * cw + 1, (sel.r1 - sel.r0 + 1) * ch + 1); }
+          if (!sel && phase === 'play' && !AUTO) { const [x, y] = cellXY(cursor[0], cursor[1]); api.rect(x - 1, y - 1, cw + 1, 1, P.a2); api.rect(x - 1, y + ch - 2, cw + 1, 1, P.a2); api.rect(x - 1, y - 1, 1, ch, P.a2); api.rect(x + cw - 2, y - 1, 1, ch, P.a2); }
+          if (phase === 'done' && !res.ok && (pt * 6 | 0) % 2 === 0) dashed(sol, P.t4); // where an answer was
+          // the live sum, beside the selection
+          if (sel) {
+            const s = phase === 'done' ? res.s : sumOf(sel), d = s - target, ok = d === 0;
+            const label = String(s), sub = ok ? '= ✓' : (d > 0 ? '+' : '−') + Math.abs(d);
+            const w = Math.max(api.textW(label, { size: 9, bold: true }), api.textW(sub, { size: 6.5 })) + 8, h = 20;
+            const [x1] = cellXY(sel.c1 + 1, 0), [x0] = cellXY(sel.c0, 0), [, yy] = cellXY(0, sel.r0);
+            const tx = x1 + w + 4 < 312 ? x1 + 3 : x0 - w - 4, ty = Math.max(gy, Math.min(gy + R * ch - h, yy + ((sel.r1 - sel.r0 + 1) * ch - h) / 2));
+            api.frame(tx, ty, w, h, ok ? 'screen' : 'slot');
+            api.text(label, tx + w / 2, ty + 10, { size: 9, bold: true, color: ok ? P.g4 : P.p4, align: 'center' });
+            api.text(sub, tx + w / 2, ty + 17.5, { size: 6.5, color: ok ? P.g4 : d > 0 ? P.e3 : P.a3, align: 'center' });
+          }
+          tabs();
+          if (AUTO) api.sprite(ptr, Math.round(bx), Math.round(by));
+        },
+        down(x, y) {
+          if (phase !== 'play') return;
+          const c = cellAt(x, y, false); if (!c) return;
+          anchor = c; cursor = c.slice(); dragging = true; dragPid = pid; changed();
+        },
+        move(x, y, drag) {
+          hover = cellAt(x, y, false);
+          if (!dragging || !drag || phase !== 'play' || dragPid !== pid || api.busy) return;
+          const c = cellAt(x, y, true);
+          if (c[0] !== cursor[0] || c[1] !== cursor[1]) { cursor = c; changed(); }
+        },
+        up() {
+          if (!dragging) return; dragging = false;
+          if (phase === 'play' && dragPid === pid && !api.busy) release();
+        },
+        key(k, ev) {
+          const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[k];
+          if (!d && k !== 'Enter') return false;
+          if (phase !== 'play') return true;
+          if (d) { cursor = [clampC(cursor[0] + d[0]), clampR(cursor[1] + d[1])]; if (!(ev && ev.shiftKey)) anchor = cursor.slice(); changed(); return true; }
+          release(); return true;
+        },
+        bot(dt) {
+          if (phase !== 'play') return;
+          if (!bt) bt = { q: api.chance(api.autoErr) ? wrongRect() : sol, t: 0, x0: bx, y0: by };
+          bt.t += dt;
+          const [sx, sy] = cellXY(bt.q.c0, bt.q.r0), [ex, ey] = cellXY(bt.q.c1, bt.q.r1);
+          const a = [sx + cw / 2, sy + ch / 2], b = [ex + cw / 2, ey + ch / 2];
+          if (bt.t < .07) { const k = api.ease.out(bt.t / .07); bx = bt.x0 + (a[0] - bt.x0) * k; by = bt.y0 + (a[1] - bt.y0) * k; return; }
+          if (!bt.down) { bt.down = true; anchor = [bt.q.c0, bt.q.r0]; cursor = anchor.slice(); dragging = true; dragPid = pid; changed(); }
+          const k = Math.min(1, (bt.t - .07) / .13); bx = a[0] + (b[0] - a[0]) * k; by = a[1] + (b[1] - a[1]) * k;
+          const c = cellAt(bx, by, true); if (c[0] !== cursor[0] || c[1] !== cursor[1]) { cursor = c; changed(); }
+          if (k >= 1) { cursor = [bt.q.c1, bt.q.r1]; dragging = false; release(); bt = null; }
+        }
+      };
+    }
+  };
+})();
+
+// Menu Memory: translating a café menu, played as a memory game. Every round the cards are dealt face up
+// for a short peek, then flipped. Pair each Portuguese word with its English twin before the round timer
+// runs out; matched pairs slide onto the chalkboard menu, unmatched ones are lost when time is up.
+MINI.translate = {
+  title: 'Menu Memory', how: 'Match each Portuguese word to its English twin.',
+  keys: 'Click two cards', pace: 2.0,
+  create(api) {
+    const { P } = api, L = api.level, F = L < .5 ? 1.3 - .6 * L : 1 - .7 * (L - .5); // time allowance
+    const WORDS = [['frango', 'chicken', 'leg'], ['peixe', 'fish', 'fish'], ['pão', 'bread', 'bread'], ['queijo', 'cheese', 'cheese'],
+      ['sopa', 'soup', 'soup'], ['vinho', 'wine', 'wine'], ['arroz', 'rice', 'rice'], ['ovo', 'egg', 'egg'], ['leite', 'milk', 'milk'],
+      ['café', 'coffee', 'cup'], ['bolo', 'cake', 'cake'], ['maçã', 'apple', 'apple'], ['sal', 'salt', 'salt'], ['água', 'water', 'drop'],
+      ['manteiga', 'butter', 'butter'], ['carne', 'meat', 'meat'], ['batata', 'potato', 'potato'], ['cenoura', 'carrot', 'carrot']];
+    // 8×8 food pictures, the same on both cards of a pair, so the meaning is visible even without Portuguese
+    const ICON = {
+      leg: '....ooo.|...onnno|..onnnno|..onnnno|..oonno.|.wwoo...|ww.w....|.w......',
+      fish: '........|..SSS..S|.SsssSSS|SksssSS.|SssssSS.|.SsssSSS|..SSS..S|........',
+      bread: '........|........|..oooo..|.oBBBBo.|oBaBaBao|oBBBBBBo|obbbbbbo|.oooooo.',
+      cheese: '........|......AA|....AAyA|..AAyyyA|AAyyyyyA|AyyAyyyA|AyyyyAyA|AAAAAAAA',
+      soup: '.s..s...|..s..s..|.s..s...|onnnnnno|owwwwwwo|.owwwwo.|..oooo..|........',
+      wine: '.S....S.|.S....S.|.SRRRRS.|..SRRS..|...SS...|...SS...|..SSSS..|........',
+      rice: '........|..wwww..|.wwcwww.|wwcwwwcw|RRRRRRRR|.RrrrrR.|..RRRR..|........',
+      egg: '...ss...|..swws..|.swwwws.|.swwwws.|swwwwwws|swwwwwws|.swwwws.|..ssss..',
+      milk: '...TT...|..sTTs..|..swws..|.swwwws.|.sTTTTs.|.swwwws.|.swwwws.|.ssssss.',
+      cup: '..s.s...|...s.s..|........|obbbbo..|owwwwooo|owwwwo.o|owwwwooo|.oooo...',
+      cake: '...r....|...rg...|wwwwwwww|bbbbbbbb|wwwwwwww|bbbbbbbb|BBBBBBBB|........',
+      apple: '....G...|...Gg...|.rrGrrr.|rrrrrwrr|rrrrrrrr|rrrrrrRr|.rrrrRR.|..RRRR..',
+      salt: '..SSSS..|.SkSkSS.|.SSSSSS.|.swwwws.|.swwwws.|.swwwws.|.swwwws.|.ssssss.',
+      drop: '...TT...|...TT...|..TttT..|..TttT..|.TttttT.|.TwtttT.|.TttttT.|..TTTT..',
+      butter: '........|..YYYYYY|.YYYYYYa|yyyyyyaa|yyyyyyaa|yyyyyya.|ssssssss|.SSSSSS.',
+      meat: '........|..RRRR..|.RrrrrR.|RrrwrrrR|RrrrwrrR|RrrrrrR.|.RRRRR..|........',
+      potato: '........|..bbbb..|.bBBBBb.|bBBoBBBb|bBBBBoBb|.bBBBBb.|..bbbb..|........',
+      carrot: '......gg|.....gg.|....nng.|...nnnn.|..nnnn..|.nnnn...|nnn.....|n.......'
+    };
+    const IMAP = { o: P.d1, b: P.d3, B: P.d5, n: P.r4, w: P.p4, c: P.p2, y: P.a3, Y: P.a4, a: P.a2, A: P.a1, r: P.e3, R: P.e2,
+      g: P.g3, G: P.g2, s: P.s4, S: P.s2, t: P.t4, T: P.t2, k: P.k1 };
+    const icon = (k, map) => api.art(ICON[k].split('|'), map || IMAP);
+    const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+    const PR = L < .34 ? 4 : L < .67 ? 6 : 8, ROWS = PR / 2;           // 4×2 easy · 4×3 · 4×4 hard
+    const CW = 48, CH = [0, 0, 52, 36, 28][ROWS], GAP = ROWS === 4 ? 5 : 6, GX = 12, GW = 4 * CW + 18;
+    const BX = 234, BY = 21, BW = 82, BH = 141, MAXL = 10, lineY = i => BY + 37 + i * 9.5;
+    const DX = 110, DY = 188;                                          // the deck sits just below the table
+    const BACK = backCanvas();
+    let cards = [], phase = 'deal', pt = 0, peek = 1, peekMax = 1, timer = 1, tmax = 1, open = [], wait = 0, beat = 99;
+    let last = [], menu = [], botT = 0, banner = 0;
+    const skip = new Set();                                            // pairs the agent fumbled this round
+
+    function backCanvas() {                                            // café card back: rust lattice, amber rule, a cup
+      const c = document.createElement('canvas'); c.width = CW; c.height = CH;
+      const b = c.getContext('2d'), R = (x, y, w, h, col) => { b.fillStyle = col; b.fillRect(x, y, w, h); };
+      R(0, 0, CW, CH, P.r1);
+      for (let y = 1; y < CH - 1; y++) for (let x = 1; x < CW - 1; x++) if ((x + y) % 5 === 0 || (x - y + 500) % 5 === 0) R(x, y, 1, 1, P.r2);
+      R(0, 0, CW, 1, P.r3); R(0, 0, 1, CH, P.r3); R(0, CH - 1, CW, 1, P.r0); R(CW - 1, 0, 1, CH, P.r0);
+      R(3, 3, CW - 6, 1, P.a1); R(3, CH - 4, CW - 6, 1, P.a1); R(3, 3, 1, CH - 6, P.a1); R(CW - 4, 3, 1, CH - 6, P.a1);
+      const ex = (CW >> 1) - 7, ey = (CH >> 1) - 6;
+      R(ex - 1, ey - 1, 16, 14, P.a1); R(ex, ey, 14, 12, P.r0);
+      b.drawImage(icon('cup', { o: P.p2, b: P.d2, w: P.p3, s: P.p1 }), ex + 3, ey + 2);
+      return c;
+    }
+
+    function deal() {
+      const n = Math.min(PR, api.left); if (n <= 0) return;
+      const pool = api.shuffle(WORDS.filter(w => !last.includes(w))).slice(0, n), slots = api.shuffle([...Array(n * 2).keys()]);
+      const rows = Math.ceil(n / 2), y0 = 29 + Math.round((133 - rows * CH - (rows - 1) * GAP) / 2);
+      last = pool; cards = []; open = []; wait = 0; skip.clear(); banner = 0; phase = 'deal'; pt = 0;
+      pool.forEach((w, i) => [0, 1].forEach(lang => {
+        const s = slots[i * 2 + lang], r = s >> 2, inRow = Math.min(4, n * 2 - r * 4);
+        const hx = GX + Math.round((GW - inRow * CW - (inRow - 1) * 6) / 2) + (s & 3) * (CW + 6), hy = y0 + r * (CH + GAP);
+        cards.push({ w, lang, pair: i, hx, hy, x: DX, y: DY, f: 0, want: 0, d: s * .035, shake: 0, fly: -1, bad: 0, vy: 0 });
+      }));
+      const k = 1 - .2 * api.progress;                                 // the last third: shorter peeks, tighter clocks
+      peek = peekMax = (1 + .2 * n) * F * k;
+      timer = tmax = 2.2 * n * F * (1 - .15 * api.progress);
+      api.sfx('whoosh');
+    }
+
+    function flipCard(c) {
+      if (wait > 0) { open.forEach(o => o.want = 0); open = []; wait = 0; }   // don't make a fast player wait
+      c.want = 1; open.push(c); api.sfx('flip');
+      if (open.length < 2) return;
+      const [a, b] = open;
+      if (a.pair === b.pair) { open = []; match(a, b); }
+      else { wait = .74; a.shake = b.shake = .55; api.sfx('blip', -9); }
+    }
+
+    function match(a, b) {
+      a.matched = b.matched = true;
+      const e = { en: a.w[1], pt: a.w[0], ok: true, t: -1 }; menu.push(e);
+      const slot = Math.min(menu.length, MAXL) - 1;
+      [a, b].forEach((c, i) => Object.assign(c, { fly: 0, delay: .26 + i * .07, fx: c.x, fy: c.y, tx: BX + 6, ty: lineY(slot) - 7, entry: e, writes: i === 1 }));
+      api.item(true, (a.x + b.x + CW) / 2, Math.min(a.y, b.y) + 8);
+      api.burst(a.x + CW / 2, a.y + CH / 2, P.a3, 6, 40); api.burst(b.x + CW / 2, b.y + CH / 2, P.a3, 6, 40);
+    }
+
+    function timeUp() {
+      open = []; wait = 0; phase = 'clear'; pt = -.85; banner = 1;
+      const seen = new Set();
+      for (const c of cards) if (!c.matched) {
+        c.want = 1; c.bad = 1;
+        if (seen.has(c.pair)) continue;
+        seen.add(c.pair); menu.push({ en: c.w[1], pt: c.w[0], ok: false, t: 0 });
+        api.item(false, c.x + CW / 2, c.y + CH / 2, 'TIME');
+      }
+    }
+
+    const over = (c, x, y) => x >= c.x - 1 && x < c.x + CW + 1 && y >= c.y - 1 && y < c.y + CH + 1;
+    const hover = c => phase === 'play' && !api.auto && c.want === 0 && !c.matched && api.mx != null && over(c, api.mx, api.my);
+
+    function drawCard(c) {
+      if (c.gone) return;
+      let x = c.x, y = c.y, w = CW, h = CH;
+      if (c.fly > 0) {
+        const k = api.ease.inOut(c.fly), s = 1 - .8 * k;
+        x = c.fx + (c.tx - c.fx) * k; y = c.fy + (c.ty - c.fy) * k - Math.sin(k * Math.PI) * 14; w = Math.max(5, CW * s); h = Math.max(4, CH * s);
+      }
+      if (c.shake > 0 && c.shake < .42) x += Math.sin(c.shake * 75) * 2;
+      x = Math.round(x); y = Math.round(y); w = Math.round(w); h = Math.round(h);
+      const sq = Math.abs(Math.cos(c.f * Math.PI)), face = c.f > .5, ww = Math.max(1, Math.round(w * sq)), xx = x + Math.round((w - ww) / 2);
+      const ring = c.bad ? P.e3 : c.matched ? P.a3 : open.includes(c) ? P.a2 : hover(c) ? P.a3 : null;
+      api.rect(xx + 2, y + 2, ww, h, 'rgba(0,0,0,.45)');
+      if (ring) api.rect(xx - 2, y - 2, ww + 4, h + 4, ring);
+      api.rect(xx - 1, y - 1, ww + 2, h + 2, P.k0);
+      if (ww < w || c.fly > 0) {                                       // edge-on or flying: no room for detail
+        api.rect(xx, y, ww, h, face ? P.p3 : P.r1);
+        if (face && h > 6) api.rect(xx, y, ww, 3, c.lang ? P.t2 : P.r2); else if (!face) api.rect(xx, y, ww, 1, P.r3);
+        return;
+      }
+      if (!face) { api.sprite(BACK, x, y); return; }
+      api.rect(x, y, w, h, c.bad ? P.p2 : P.p3); api.rect(x, y, w, 1, P.p4); api.rect(x, y + h - 1, w, 1, P.p1); api.rect(x + w - 1, y, 1, h, P.p1);
+      api.rect(x + 2, y + 2, 13, 8, c.lang ? P.t2 : P.r2);
+      api.text(c.lang ? 'EN' : 'PT', x + 8.5, y + 8.5, { size: 6.5, color: c.lang ? P.t5 : P.p4, align: 'center' });
+      const big = CH > 30;
+      api.sprite(icon(c.w[2]), big ? x + w / 2 - 8 : x + w - 11, big ? y + (CH > 40 ? 6 : 3) : y + 2, big ? 2 : 1);
+      api.text(c.w[c.lang], x + w / 2, y + h - (CH > 40 ? 9 : 5), { size: CH > 40 ? 9 : 8, color: c.bad ? P.e1 : P.k1, align: 'center', bold: true, max: w - 3 });
+      if (c.bad) { api.rect(x + w - 10, y + 2, 8, 8, P.e2); api.text('✗', x + w - 6, y + 9, { size: 7, color: P.p4, align: 'center' }); }
+    }
+
+    function board() {                                                 // the chalkboard menu fills with translated dishes
+      api.rect(BX - 1, BY - 1, BW + 2, BH + 2, P.k0); api.rect(BX, BY, BW, BH, P.d3); api.rect(BX, BY, BW, 1, P.d5);
+      api.rect(BX + 3, BY + 3, BW - 6, BH - 6, P.w1); api.rect(BX + 3, BY + 3, BW - 6, 1, P.k2);
+      for (let i = 0; i < 9; i++) api.rect(BX + 8 + (i * 29) % 64, BY + 34 + (i * 47) % 96, 1 + i % 2, 1, P.w3); // chalk dust
+      api.text('MENU', BX + BW / 2, BY + 15, { size: 9, color: P.p3, align: 'center', bold: true });
+      api.rect(BX + 22, BY + 19, BW - 44, 1, P.p1);
+      api.text('PT → EN', BX + BW / 2, BY + 27, { size: 6.5, color: P.mute, align: 'center' });
+      menu.slice(-MAXL).forEach((e, i) => {
+        if (e.t < 0) return;
+        const y = lineY(i), n = Math.floor(e.t * 40);
+        if (e.ok) {
+          api.text(e.en.slice(0, n), BX + 7, y, { size: 7, color: P.p3, max: 38 });
+          api.text(e.pt.slice(0, Math.max(0, n - 3)), BX + BW - 7, y, { size: 6.5, color: P.mute, align: 'right', max: 34 });
+        } else {
+          api.text(e.pt, BX + 7, y, { size: 7, color: P.e3, max: 38 });
+          api.rect(BX + 6, y - 3, Math.min(39, api.textW(e.pt, { size: 7 }) + 2), 1, P.e3);
+          api.text('TIME', BX + BW - 7, y, { size: 6.5, color: P.e3, align: 'right' });
+        }
+      });
+      api.rect(BX + 3, BY + BH - 16, BW - 6, 1, P.w2);
+      api.text(api.left + ' TO GO', BX + BW / 2, BY + BH - 6, { size: 7, color: P.a2, align: 'center', bold: true });
+    }
+
+    deal();
+    return {
+      tick(dt) {
+        const sp = api.auto ? 4 : 1;
+        for (const c of cards) {
+          const d = c.want - c.f; c.f += Math.sign(d) * Math.min(Math.abs(d), dt * sp / .13);
+          if (c.shake > 0) c.shake -= dt;
+          if (c.fly >= 0 && !c.gone) {
+            if (c.delay > 0) c.delay -= dt * sp; else c.fly = Math.min(1, c.fly + dt * sp / .45);
+            if (c.fly >= 1) { c.gone = true; if (c.writes) { c.entry.t = 0; api.burst(BX + 24, c.ty + 5, P.p3, 8, 30); api.sfx('blip', 7); } }
+          }
+        }
+        for (const e of menu) if (e.t >= 0) e.t += dt;
+        if (phase === 'deal') {
+          pt += dt * sp;
+          cards.forEach((c, i) => {
+            const k = api.ease.out(clamp((pt - c.d) / .28, 0, 1));
+            c.x = DX + (c.hx - DX) * k; c.y = DY + (c.hy - DY) * k;
+            if (k >= 1 && !c.landed) { c.landed = 1; if (i % 3 === 0) api.sfx('flip'); }
+          });
+          if (pt > cards.length * .035 + .32) { phase = 'peek'; cards.forEach(c => c.want = 1); api.sfx('flip'); }
+        } else if (phase === 'peek') {
+          if (!api.busy) peek -= dt * sp;
+          if (peek <= 0) { phase = 'play'; beat = 99; cards.forEach(c => c.want = 0); api.sfx('whoosh'); }
+        } else if (phase === 'play') {
+          if (wait > 0 && (wait -= dt * sp) <= 0) { open.forEach(c => c.want = 0); open = []; }
+          const stuck = api.auto && cards.every(c => c.matched || skip.has(c.pair)); // agent gave up on the rest
+          if (!api.busy) timer -= dt * (stuck ? 15 : 1);
+          if (timer < tmax * .25 && timer > 0) { const b = Math.ceil(timer / .5); if (b < beat) { beat = b; api.sfx('tick'); } }
+          if (cards.every(c => c.matched)) { phase = 'clear'; pt = 0; }
+          else if (timer <= 0) timeUp();
+        } else if (phase === 'clear') {
+          pt += dt * sp;
+          if (pt > .25) for (const c of cards) if (c.bad) { c.vy += 700 * dt * sp; c.y += c.vy * dt * sp; }
+          if (pt > .7 && !cards.some(c => c.fly >= 0 && !c.gone)) deal();
+        }
+      },
+      draw(g) {
+        api.rect(0, api.top, api.W, api.bot - api.top, P.d2);           // the café table
+        for (let y = api.top + 11; y < api.bot; y += 15) { api.rect(0, y, BX - 3, 1, P.d1); api.rect(0, y + 1, BX - 3, 1, P.d3); }
+        for (let i = 0; i < 16; i++) api.rect((i * 53 + 7) % 222, api.top + 5 + (i * 37) % 140, 5 + (i % 3) * 5, 1, P.d3);
+        api.rect(BX - 3, api.top, 3, api.bot - api.top, P.d1);
+        const hurry = phase === 'play' && timer < tmax * .25;
+        const lab = phase === 'peek' ? ['MEMORIZE', P.a3] : phase === 'play' ? (hurry ? ['HURRY!', (api.t * 5 | 0) % 2 ? P.e3 : P.e4] : ['TIME', P.p2]) : banner ? ['TIME UP', P.e3] : ['DEALING', P.p1];
+        api.text(lab[0], GX, 27, { size: 7, color: lab[1], bold: true });
+        api.timerBar(GX + 48, 22, GW - 48, phase === 'peek' ? peek / peekMax : phase === 'play' ? timer / tmax : banner ? 0 : 1);
+        for (const c of cards) if (c.fly < 0 || c.delay > 0) drawCard(c);
+        board();
+        for (const c of cards) if (c.fly >= 0 && !(c.delay > 0)) drawCard(c);
+        if (banner && phase === 'clear') {
+          api.frame(GX + GW / 2 - 38, api.mid - 12, 76, 20, 'warn');
+          api.text("TIME'S UP", GX + GW / 2, api.mid + 2, { size: 10, color: P.p4, align: 'center', bold: true, shadow: true });
+        }
+      },
+      down(x, y) {
+        if (phase !== 'play') return;
+        const c = cards.find(c => !c.matched && over(c, x, y));
+        if (c && c.want === 0) flipCard(c);
+      },
+      bot(dt) {
+        if (phase === 'peek') { peek = Math.min(peek, .1); return; }
+        if (phase !== 'play' || (botT -= dt) > 0) return;
+        botT = .05;
+        if (wait > 0) { open.forEach(o => o.want = 0); open = []; wait = 0; return; }
+        const live = cards.filter(c => !c.matched);
+        if (!open.length) { const c = live.find(c => !skip.has(c.pair)); if (c) flipCard(c); return; }
+        const a = open[0], wrong = live.find(c => c.pair !== a.pair);
+        if (wrong && api.chance(api.autoErr)) { skip.add(a.pair); flipCard(wrong); return; }
+        flipCard(live.find(c => c !== a && c.pair === a.pair));
+      }
+    };
+  }
+};
+
+// Blemish: retouching photos in an editor. Dust, red spots, scratches and lens flares appear on each photo
+// and slowly grow. Click each one to heal it; a clean photo is exported to the filmstrip with a flash.
+// A blemish that grows past its limit ruins the photo, and so do three smudges from clicking clean areas.
+MINI.retouch = {
+  title: 'Blemish', how: 'Click each blemish to heal it before it grows too big.',
+  keys: 'Click the blemishes · not the photo', pace: 1.8,
+  create(api) {
+    const { P } = api, L = api.level, F = L < .5 ? 1.3 - .6 * L : 1 - .7 * (L - .5);
+    const PX = 26, PY = 30, PW = 200, PH = 106, FY = 142, TW = 28, TH = 15, K = api.auto ? 9 : 1;
+    const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+    const cache = new Map();
+    let ph = null, fx = [], film = [], filmOff = 0, dabs = [], next = null, recent = [], beat = 0, botCur = null, serial = 4100 + api.ri(0, 800);
+
+    // ---- the photos: painted once into offscreen canvases with rectangles and pixel ellipses ----
+    function paint(id, v, flip) {
+      const key = id + ':' + v + ':' + flip; let c = cache.get(key); if (c) return c;
+      c = document.createElement('canvas'); c.width = PW; c.height = PH;
+      const x = c.getContext('2d');
+      const R = (a, b, w, h, col) => { x.fillStyle = col; x.fillRect(Math.round(a), Math.round(b), Math.round(w), Math.round(h)); };
+      const E = (cx, cy, rx, ry, col) => { for (let dy = -ry; dy <= ry; dy++) { const hw = Math.round(rx * Math.sqrt(Math.max(0, 1 - (dy / ry) ** 2))); R(cx - hw, cy + dy, hw * 2 + 1, 1, col); } };
+      const O = (cx, cy, rx, ry, t, col, top) => { // an elliptical ring, optionally only its top half
+        for (let dy = -ry; dy <= (top ? 0 : ry); dy++) {
+          const ow = Math.round(rx * Math.sqrt(Math.max(0, 1 - (dy / ry) ** 2))), iy = ry - t, iw = Math.abs(dy) < iy ? Math.round((rx - t) * Math.sqrt(1 - (dy / iy) ** 2)) : -1;
+          if (iw < 0) R(cx - ow, cy + dy, ow * 2 + 1, 1, col); else { R(cx - ow, cy + dy, ow - iw, 1, col); R(cx + iw + 1, cy + dy, ow - iw, 1, col); }
+        }
+      };
+      SCENES[id](R, E, O, v);
+      if (flip) { const m = document.createElement('canvas'); m.width = PW; m.height = PH; const mx = m.getContext('2d'); mx.translate(PW, 0); mx.scale(-1, 1); mx.drawImage(c, 0, 0); c = m; }
+      cache.set(key, c); return c;
+    }
+    const SCENES = [
+      (R, E, O) => { // a couple under a flowered arch
+        R(0, 0, PW, PH, P.p3); R(0, 0, PW, 12, P.p2); for (let x = 0; x < PW; x += 2) R(x + (x >> 1) % 2, 12, 1, 1, P.p2);
+        E(28, 84, 56, 14, P.g2); E(172, 86, 64, 16, P.g2);
+        R(0, 82, PW, 24, P.g3); for (let y = 86; y < PH; y += 5) R(0, y, PW, 1, P.g2);
+        for (let y = 82; y < PH; y++) { const w = 12 + (y - 82) * 2.2; R(100 - w / 2, y, w, 1, P.p2); }
+        for (const px of [58, 135]) { R(px, 32, 7, 52, P.p4); R(px + 5, 32, 2, 52, P.p1); R(px - 2, 82, 11, 3, P.p1); R(px - 1, 30, 9, 3, P.p1); }
+        O(100, 34, 46, 30, 8, P.g2, true);
+        for (let i = 0; i <= 36; i++) { const a = Math.PI * i / 36; R(100 + Math.cos(a) * 41 - 1, 34 - Math.sin(a) * 26 - 1, 3, 3, [P.e4, P.p4, P.a3, P.g3][i % 4]); }
+        E(90, 42, 5, 5, P.d2); E(90, 44, 4, 4, P.h3); R(84, 40, 3, 30, P.p4);                       // the bride
+        R(86, 50, 9, 10, P.p4); R(84, 51, 2, 8, P.h3);
+        for (let y = 60; y < 92; y++) { const w = 10 + (y - 60) * .8; R(90.5 - w / 2, y, w, 1, P.p4); R(90.5 + w / 2 - 2, y, 2, 1, P.p2); }
+        E(94, 61, 4, 3, P.e4); R(92, 58, 2, 2, P.g3);
+        E(109, 41, 5, 4, P.d1); E(109, 44, 4, 4, P.h2); R(103, 50, 13, 23, P.k2); R(108, 50, 3, 7, P.p4); R(108, 51, 3, 2, P.k1); // the groom
+        R(104, 73, 5, 18, P.k1); R(110, 73, 5, 18, P.k1); R(103, 90, 6, 2, P.k0); R(110, 90, 6, 2, P.k0); R(99, 55, 5, 3, P.k2);
+      },
+      (R, E) => { // a face, close up
+        R(0, 0, PW, PH, P.s2); E(100, 53, 104, 64, P.s3); E(100, 53, 78, 50, P.s4);
+        E(100, 56, 46, 52, P.d1); E(100, 122, 74, 30, P.r2); R(88, 78, 24, 24, P.h2); E(100, 100, 13, 5, P.h2);
+        E(100, 50, 31, 37, P.h3); E(84, 60, 7, 5, P.h4); E(116, 60, 7, 5, P.h4);
+        E(100, 16, 34, 12, P.d1); R(66, 14, 8, 46, P.d1); R(126, 14, 8, 46, P.d1);
+        R(80, 39, 13, 2, P.d0); R(107, 39, 13, 2, P.d0);
+        for (const ex of [81, 108]) { R(ex, 44, 11, 5, P.p4); R(ex + 3, 44, 5, 5, P.d3); R(ex + 4, 45, 3, 3, P.k1); R(ex + 4, 45, 1, 1, P.p4); R(ex, 43, 11, 1, P.k1); }
+        R(99, 49, 2, 12, P.h2); R(96, 60, 8, 2, P.h2);
+        R(91, 69, 18, 2, P.r2); R(93, 71, 14, 2, P.r3); R(89, 68, 2, 1, P.r2); R(109, 68, 2, 1, P.r2);
+        R(67, 62, 2, 3, P.a3); R(131, 62, 2, 3, P.a3);
+      },
+      (R, E) => { // the wedding cake
+        R(0, 0, PW, PH, P.r1); for (let x = 0; x < PW; x += 16) { R(x, 0, 6, PH, P.r0); R(x + 6, 0, 2, PH, P.r2); }
+        R(0, 80, PW, 26, P.p2); R(0, 80, PW, 2, P.p4); for (let x = 6; x < PW; x += 22) R(x, 84, 2, 22, P.p1);
+        R(64, 76, 72, 4, P.s4); R(64, 76, 72, 1, P.s5); R(95, 80, 10, 5, P.s3);
+        [[70, 52, 60, 24], [80, 34, 40, 18], [89, 20, 22, 14]].forEach(([x, y, w, h]) => {
+          R(x, y, w, h, P.p4); R(x, y + h - 4, w, 4, P.p2); R(x + w - 5, y, 5, h, P.p2);
+          for (let i = x + 1; i < x + w - 1; i += 3) R(i, y, 2, 2, P.a3);
+        });
+        for (let i = 0; i < 9; i++) E(73 + i * 3 + (i % 2) * 2, 29 + i * 5, 2, 2, i % 2 ? P.e3 : P.e4);
+        R(99, 12, 2, 8, P.a2); E(100, 10, 3, 2, P.e3); R(96, 9, 2, 2, P.e3); R(102, 9, 2, 2, P.e3);
+      },
+      (R, E, O, col) => { // a product shot: sneakers on a seamless backdrop
+        R(0, 0, PW, PH, P.p3); R(0, 62, PW, PH - 62, P.p2); for (let x = 0; x < PW; x += 2) R(x + (x >> 1) % 2, 61, 1, 1, P.p2);
+        E(68, 92, 38, 5, P.p1); E(134, 96, 38, 5, P.p1);
+        const shoe = (x, y) => {
+          R(x + 2, y + 4, 18, 18, col); R(x + 18, y + 9, 24, 13, col); E(x + 48, y + 16, 15, 7, col);
+          R(x, y + 21, 66, 5, P.p4); R(x, y + 25, 66, 2, P.s4); E(x + 57, y + 19, 7, 3, P.p4);
+          R(x + 2, y + 2, 14, 3, P.k2); R(x, y + 6, 3, 12, P.p4);
+          for (let i = 0; i < 4; i++) R(x + 21 + i * 5, y + 9, 3, 2, P.p4);
+          for (let i = 0; i < 12; i++) R(x + 14 + i * 2, y + 19 - i, 3, 2, P.p4);
+        };
+        shoe(34, 64); shoe(98, 68);
+      },
+      (R, E, O) => { // the rings on a velvet cushion
+        R(0, 0, PW, PH, P.d0); E(100, 56, 96, 50, P.d1); E(100, 58, 70, 36, P.d2);
+        E(100, 72, 60, 22, P.r0); E(100, 68, 56, 19, P.r2); E(96, 64, 40, 12, P.r3);
+        R(40, 66, 3, 9, P.a1); R(157, 66, 3, 9, P.a1);
+        O(88, 55, 14, 10, 3, P.a1); O(88, 54, 14, 10, 2, P.a2); R(75, 52, 1, 3, P.a4);
+        O(113, 59, 14, 10, 3, P.a1); O(113, 58, 14, 10, 2, P.a3); R(100, 56, 1, 3, P.a4);
+        R(84, 41, 8, 4, P.p4); R(86, 40, 4, 1, P.t5); R(85, 45, 6, 1, P.s5);
+      }
+    ];
+    const NAMES = ['arch', 'face', 'cake', 'shoes', 'rings'];
+    const SHOE = [P.e2, P.a1, P.s2, P.g2, P.r2];
+
+    function pickScene() {
+      let id = api.ri(0, SCENES.length - 1); while (recent.includes(id)) id = (id + 1) % SCENES.length; recent = [id, recent[0]];
+      const v = id === 3 ? api.ri(0, SHOE.length - 1) : 0, flip = api.chance(.5);
+      return { id, can: paint(id, id === 3 ? SHOE[v] : 0, flip), name: 'IMG_' + (serial++) + '.CR2' };
+    }
+    function newPhoto() {
+      const s = next || pickScene(); next = pickScene();
+      const n = clamp(3 + Math.round(L * 2 + api.progress * 1.2 + api.rand() * .8 - .4), 3, 6);
+      ph = Object.assign(s, { n, blem: [], smudges: [], t: 0, at: .12, spawned: 0, st: 'in', s: 0, fail: api.auto && api.chance(api.autoErr) });
+    }
+    const G = () => 2.5 * F * (1 - .25 * api.progress);                // seconds from speck to ruin
+    const gap = () => 1.3 * F * (1 - .2 * api.progress);               // spawn window for one photo
+    const rOf = b => { const k = clamp(b.age / G(), 0, 1); return b.type === 'scratch' ? Math.round(6 + k * 26) : Math.round((b.type === 'flare' ? 2 : 1) + k * (b.type === 'flare' ? 8 : b.type === 'spot' ? 5 : 4)); };
+    function spawn() {
+      const types = ['dust', 'spot', 'spot', 'dust', 'scratch'].concat(ph.blem.some(b => b.type === 'flare') ? [] : ['flare']);
+      let x = 0, y = 0;
+      for (let i = 0; i < 20; i++) {
+        x = api.ri(14, PW - 14); y = api.ri(12, PH - 12);
+        if (![...ph.blem.filter(b => !b.heal), ...ph.smudges].some(b => Math.hypot(b.x - x, b.y - y) < 22)) break;
+      }
+      const d = ph.can.getContext('2d').getImageData(x, y, 1, 1).data;   // dust and scratches show dark on light, light on dark
+      ph.blem.push({ type: api.pick(types), x, y, age: 0, heal: 0, ang: api.rand() * Math.PI, seed: api.ri(0, 9), lite: d[0] * .3 + d[1] * .59 + d[2] * .11 < 120 });
+      ph.spawned++; ph.at = ph.t + gap() / Math.max(1, ph.n - 1) * (.7 + api.rand() * .6);
+      if (!api.auto) api.sfx('click');
+    }
+    function distTo(b, x, y) {
+      if (b.type !== 'scratch') return Math.hypot(b.x - x, b.y - y) / Math.max(8, rOf(b) + 4);
+      const c = Math.cos(b.ang), s = Math.sin(b.ang), dx = x - b.x, dy = y - b.y, h = rOf(b) / 2;
+      const u = clamp(dx * c + dy * s, -h, h); return Math.hypot(dx - u * c, dy - u * s) / 7;
+    }
+    function heal(b) {
+      b.heal = .001; api.sfx('blip', 9);
+      api.burst(PX + b.x, PY + b.y, P.p4, 6, 35); api.burst(PX + b.x, PY + b.y, P.t4, 3, 25);
+      dabs.push({ x: PX + b.x, y: PY + b.y, t: 0 }); botCur = [PX + b.x, PY + b.y];
+    }
+    function finish(ok, label, at) {
+      const cx = at ? at[0] : PX + PW / 2, cy = at ? at[1] : PY + PH / 2 - 16;
+      if (ok) { api.flash(P.p4, .45); api.sfx('click'); api.sfx('whoosh'); fx.push({ ph, ok, s: 0 }); api.item(true, cx, cy); }
+      else { api.sfx('stamp'); api.shake(3); fx.push({ ph, ok, s: 0 }); film.push({ ok: false }); filmOff = TW + 4; api.item(false, cx, cy, label); }
+      newPhoto();
+    }
+
+    // ---- drawing helpers ----
+    const disc = (x, y, r, c) => { for (let dy = -r; dy <= r; dy++) { const hw = Math.round(Math.sqrt(Math.max(0, r * r - dy * dy))); api.rect(x - hw, y + dy, hw * 2 + 1, 1, c); } };
+    const RP = {};
+    function circ(x, y, r, c) {
+      if (!RP[r]) { const o = []; let a = r, b = 0, e = 1 - r; while (a >= b) { o.push([a, b], [b, a], [-b, a], [-a, b], [-a, -b], [-b, -a], [b, -a], [a, -b]); b++; if (e < 0) e += 2 * b + 1; else { a--; e += 2 * (b - a) + 1; } } RP[r] = o; }
+      for (const [dx, dy] of RP[r]) api.rect(x + dx, y + dy, 1, 1, c);
+    }
+    function drawBlem(g, b, ox, oy) {
+      if (b.heal > .25) return;
+      const k = clamp(b.age / G(), 0, 1), x = Math.round(ox + b.x), y = Math.round(oy + b.y), r = rOf(b);
+      g.globalAlpha = b.heal ? Math.max(0, 1 - b.heal / .25) : 1;
+      if (b.type === 'dust') {
+        const c0 = b.lite ? P.p1 : P.s1, c1 = b.lite ? P.p4 : P.k2;
+        disc(x, y, r, c0); if (r > 2) disc(x, y, r - 2, c1);
+        for (let i = 0; i < 2 + r; i++) api.rect(x + (i * 7 + b.seed) % (2 * r + 7) - r - 3, y + (i * 5 + b.seed * 3) % (2 * r + 7) - r - 3, 1, 1, c1);
+      } else if (b.type === 'spot') {
+        disc(x, y, r, P.e1); disc(x, y, r - 1, P.e2); if (r > 2) disc(x - 1, y - 1, r - 3, P.e3); api.rect(x - Math.ceil(r / 2), y - Math.ceil(r / 2), 1, 1, P.e4);
+      } else if (b.type === 'scratch') {
+        const c = Math.cos(b.ang), s = Math.sin(b.ang);
+        for (let i = -r / 2; i <= r / 2; i++) { api.rect(x + c * i, y + s * i + 1, 1, 1, b.lite ? P.s2 : P.p4); api.rect(x + c * i, y + s * i, 1, 1, b.lite ? P.p4 : P.k2); }
+      } else {
+        g.globalAlpha *= .85; circ(x, y, r, P.a4); disc(x, y, Math.max(1, r >> 1), P.a3);
+        api.rect(x - r * 2, y, r * 4 + 1, 1, P.a4); api.rect(x, y - r - 2, 1, r * 2 + 5, P.a3); api.rect(x + r * 2 + 4, y + 3, 3, 3, P.a3);
+      }
+      g.globalAlpha = 1;
+      if (!b.heal && k > .62 && (api.t * (k > .85 ? 12 : 6) | 0) % 2) circ(x, y, (b.type === 'scratch' ? Math.round(r / 2) : r) + 3, P.e3);
+    }
+    function drawPhoto(g, p, x, y, w, h) {
+      if (w === PW && h === PH) {
+        api.sprite(p.can, x, y);
+        for (const s of p.smudges) { g.globalAlpha = .6; disc(x + s.x, y + s.y, 5, P.p0); disc(x + s.x + 3, y + s.y + 1, 4, P.p1); disc(x + s.x - 2, y + s.y + 2, 3, P.s4); g.globalAlpha = 1; }
+        for (const b of p.blem) drawBlem(g, b, x, y);
+      } else g.drawImage(p.can, Math.round(x), Math.round(y), Math.max(1, Math.round(w)), Math.max(1, Math.round(h)));
+    }
+    const TOOL = {
+      heal: '..ssss..|.s....s.|s......s|s..aa..s|s..aa..s|s......s|.s....s.|..ssss..',
+      stamp: '...ss...|..ssss..|...ss...|...ss...|.ssssss.|ssssssss|ssssssss|........',
+      lasso: '.sssss..|s.....s.|s......s|.s.....s|..sssss.|...s....|..s.....|..ss....',
+      zoom: '..sss...|.s...s..|s.....s.|s.....s.|s.....s.|.s...s..|..ssss..|......ss'
+    };
+
+    newPhoto();
+    return {
+      tick(dt) {
+        const sp = api.auto ? 4 : 1;
+        filmOff = Math.max(0, filmOff - dt * 160);
+        for (const d of dabs) d.t += dt; dabs = dabs.filter(d => d.t < .3);
+        for (const f of fx) {
+          f.s += dt * sp / (f.ok ? .42 : .75);
+          if (f.s >= 1 && !f.landed) { f.landed = 1; if (f.ok) { film.push({ ok: true, can: f.ph.can }); filmOff = TW + 4; api.sfx('flip'); } }
+        }
+        fx = fx.filter(f => f.s < 1);
+        if (!ph) return;
+        for (const b of ph.blem) if (b.heal) b.heal += dt;
+        if (ph.st === 'in') { ph.s += dt * sp / .22; if (ph.s >= 1) ph.st = 'edit'; return; }
+        if (api.busy) return;                                           // the machine stutters: nothing grows meanwhile
+        ph.t += dt * K;
+        const live = ph.blem.filter(b => !b.heal);
+        if (ph.spawned < ph.n && !live.length && ph.at - ph.t > .18) ph.at = ph.t + .18; // a clean photo doesn't make you wait
+        while (ph.spawned < ph.n && ph.t >= ph.at) spawn();
+        let worst = 0, culprit = null;
+        for (const b of ph.blem) if (!b.heal) { b.age += dt * K; if (b.age / G() > worst) { worst = b.age / G(); culprit = b; } }
+        if (worst >= 1) { finish(false, 'TOO BIG', [PX + culprit.x, PY + culprit.y]); return; }
+        if (worst > .8 && !api.auto) { const bt = Math.floor(ph.t / .22); if (bt !== beat) { beat = bt; api.sfx('tick'); } }
+        if (ph.spawned >= ph.n && ph.blem.every(b => b.heal)) finish(true);
+      },
+      draw(g) {
+        const T = api.top;
+        api.rect(0, T, api.W, api.bot - T, P.k2);
+        api.rect(0, T, api.W, 10, P.s0); api.rect(0, T + 10, api.W, 1, P.k0);           // the editor's menu bar
+        api.text('HEAL BRUSH', 4, T + 8, { size: 6.5, color: P.a2 });
+        if (ph) api.text(ph.name + '  ·  100%', PX + 32, T + 8, { size: 6.5, color: P.s4 });
+        const sm = ph ? ph.smudges.length : 0;
+        api.text('SMUDGES', 268, T + 8, { size: 6.5, color: sm ? P.a3 : P.s4, align: 'right' });
+        for (let i = 0; i < 3; i++) { api.rect(272 + i * 8, T + 3, 6, 5, P.k0); api.rect(273 + i * 8, T + 4, 4, 3, i < sm ? P.e3 : P.s1); }
+        api.rect(2, PY, 20, PH, P.k1);                                   // tools
+        Object.keys(TOOL).forEach((k, i) => {
+          const y = PY + 4 + i * 18, on = i === 0;
+          api.rect(5, y, 14, 14, on ? P.a0 : P.s0); if (on) { api.rect(5, y, 14, 1, P.a2); }
+          api.sprite(api.art(TOOL[k].split('|'), { s: on ? P.a4 : P.s4, a: on ? P.a3 : P.s3 }), 8, y + 3);
+        });
+        api.rect(PX - 1, PY - 1, PW + 2, PH + 2, P.k0);                  // the canvas, transparent until a photo lands
+        for (let y = 0; y < PH; y += 8) for (let x = 0; x < PW; x += 8) api.rect(PX + x, PY + y, 8, Math.min(8, PH - y), ((x + y) / 8) % 2 ? P.s1 : P.s0);
+        g.save(); g.beginPath(); g.rect(PX, PY, PW, PH); g.clip();
+        if (ph) drawPhoto(g, ph, PX + (ph.st === 'in' ? Math.round((1 - api.ease.out(clamp(ph.s, 0, 1))) * (PW + 20)) : 0), PY, PW, PH);
+        g.restore();
+        for (const d of dabs) circ(d.x, d.y, 6 + Math.round(d.t * 30), d.t < .15 ? P.p4 : P.t4);
+        // the queue: prints still waiting for you
+        api.frame(232, PY, 84, PH, 'slot');
+        api.text('QUEUE', 274, PY + 9, { size: 6.5, color: P.s4, align: 'center' });
+        const q = Math.min(6, Math.max(0, api.left - 1));
+        for (let j = q - 1; j >= 0; j--) {
+          const x = 247 + (j % 2) * 3 - j, y = PY + 16 + j * 5;
+          api.rect(x + 1, y + 1, 54, 32, 'rgba(0,0,0,.5)'); api.rect(x - 1, y - 1, 54, 32, P.k0); api.rect(x, y, 52, 30, P.p4);
+          if (j === 0 && next) g.drawImage(next.can, x + 2, y + 2, 48, 26); else api.rect(x + 2, y + 2, 48, 26, P.p1);
+        }
+        api.text(String(Math.max(0, api.left - (ph ? 1 : 0))), 274, PY + 88, { size: 14, color: api.left > 10 ? P.a3 : P.a2, align: 'center', bold: true });
+        api.text('TO GO', 274, PY + 98, { size: 6.5, color: P.s4, align: 'center' });
+        // the filmstrip of exported photos
+        api.rect(0, FY, api.W, 22, P.k1);
+        for (let x = 2; x < api.W; x += 8) { api.rect(x, FY + 1, 4, 2, P.k0); api.rect(x, FY + 19, 4, 2, P.k0); }
+        for (let i = 0; i < 11; i++) {
+          const e = film[film.length - 1 - i], x = 286 - i * (TW + 4) + Math.round(filmOff), y = FY + 4;
+          api.rect(x - 1, y - 1, TW + 2, TH + 2, P.k0);
+          if (!e) api.rect(x, y, TW, TH, P.d0);
+          else if (e.ok) g.drawImage(e.can, x, y, TW, TH);
+          else { api.rect(x, y, TW, TH, P.e0); api.text('✗', x + TW / 2, y + 11, { size: 9, color: P.e3, align: 'center', bold: true }); }
+        }
+        for (const f of fx) {                                            // exports fly to the strip, ruined prints drop
+          if (f.ok) {
+            const k = api.ease.inOut(clamp(f.s, 0, 1)), tx = 286 + Math.round(filmOff), ty = FY + 4;
+            const x = PX + (tx - PX) * k, y = PY + (ty - PY) * k, w = PW + (TW - PW) * k, h = PH + (TH - PH) * k;
+            api.rect(x - 2, y - 2, w + 4, h + 4, P.p4); drawPhoto(g, f.ph, x, y, w, h);
+          } else {
+            const k = clamp(f.s, 0, 1), drop = k < .35 ? 0 : ((k - .35) / .65) ** 2 * 150;
+            drawPhoto(g, f.ph, PX, PY + drop, PW, PH);
+            const s = 1 + Math.max(0, .2 - k) * 6;
+            g.save(); g.translate(PX + PW / 2, PY + PH / 2 + drop); g.scale(s, s);
+            api.frame(-36, -11, 72, 20, 'warn'); api.text(f.ph.smudges.length >= 3 ? 'SMUDGED' : 'RUINED', 0, 4, { size: 11, color: P.p4, align: 'center', bold: true, shadow: true });
+            g.restore();
+          }
+        }
+        if (!api.auto && api.mx >= PX && api.mx < PX + PW && api.my >= PY && api.my < PY + PH) { // the brush
+          const x = Math.round(api.mx), y = Math.round(api.my); circ(x, y, 8, P.k0); circ(x, y, 7, P.p4); api.rect(x, y, 1, 1, P.a3);
+        }
+        if (api.auto && botCur) circ(Math.round(botCur[0]), Math.round(botCur[1]), 7, P.t4);
+      },
+      down(x, y) {
+        if (!ph || ph.st !== 'edit' || x < PX || y < PY || x >= PX + PW || y >= PY + PH) return;
+        const lx = x - PX, ly = y - PY;
+        let best = null, bd = 1;
+        for (const b of ph.blem) if (!b.heal) { const d = distTo(b, lx, ly); if (d < bd) { bd = d; best = b; } }
+        if (best) { heal(best); return; }
+        ph.smudges.push({ x: lx, y: ly }); api.sfx('blip', -7); api.shake(1);
+        if (ph.smudges.length < 3) api.pop(x, Math.max(y - 6, PY + 12), 'SMUDGE ' + ph.smudges.length + '/3', P.a3, 7);
+        if (ph.smudges.length >= 3) finish(false, '3 SMUDGES', [x, y]);
+      },
+      bot() {
+        if (!ph || ph.st !== 'edit') return;
+        for (const b of ph.blem) if (!b.heal && !(ph.fail && b === ph.blem[0])) heal(b); // a careless agent lets one grow
+      }
+    };
+  }
+};
+
+// Thermal: rendering a product spin on a GPU that runs hot. Each frame renders bucket by bucket while the
+// GPU heats up. Hold SPACE or the mouse to run the fan: it cools, but the render slows while it runs.
+// Fastest in the green band (70–88 °C); under 60 the GPU idles; over 95 it shuts down and the frame is lost.
+MINI.render = {
+  title: 'Thermal', how: 'Hold the fan to keep the GPU in the green band.',
+  keys: 'Hold SPACE or the mouse · fan', pace: 2.6,
+  create(api) {
+    const { P } = api, L = api.level, F = L < .5 ? 1.3 - .6 * L : 1 - .7 * (L - .5);
+    const GPU = Math.max(.25, api.gpu), K = api.auto ? 10 : 1, HEAT = 10 / F, FAN = 23, WORK = 2.2;
+    const VX = 6, VY = 20, VW = 220, VH = 116, IX = VX + 1, IY = VY + 10, IW = VW - 2, IH = VH - 11, FY = 141, GX = 232;
+    const STEP = Math.PI * 2 / Math.max(8, api.units), TS = 12, CX = IX + IW / 2, CY = IY + 76;
+    const SPIKES = ['SHADER COMPILE', '4K TEXTURES', 'RAY BOUNCES ×8', 'VOLUMETRIC FOG'];
+    const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+    let T = 60, prog = 0, frame = 0, fanKey = false, fanMouse = false, fanOn = false, botFan = false, reboot = 0, fail = false;
+    let warn = 0, spike = 0, spikeA = 0, spikeName = '', nextSpike = 4, banner = 0, ang = 0, angT = 0, blade = 0, beat = 0;
+    let film = [], puffs = [], fly = [], hintNow = '';
+
+    // ---- the product: a voxel chair, turned and projected so every frame is a real view ----
+    const VOX = [], OCC = new Set(), id = (x, y, z) => x + ',' + y + ',' + z;
+    const box = (x0, x1, y0, y1, z0, z1, m) => { for (let x = x0; x <= x1; x++) for (let y = y0; y <= y1; y++) for (let z = z0; z <= z1; z++) if (!OCC.has(id(x, y, z))) { OCC.add(id(x, y, z)); VOX.push({ x, y, z, m }); } };
+    [[1, 1], [8, 1], [1, 8], [8, 8]].forEach(([x, z]) => box(x, x, 0, 6, z, z, 0));                   // legs
+    box(0, 9, 7, 7, 0, 9, 0); box(1, 8, 8, 8, 1, 7, 1);                                               // seat and cushion
+    box(1, 1, 8, 17, 8, 9, 0); box(8, 8, 8, 17, 8, 9, 0); box(2, 7, 16, 17, 9, 9, 0);                 // back posts, top rail
+    box(3, 3, 9, 15, 9, 9, 0); box(6, 6, 9, 15, 9, 9, 0); box(2, 7, 11, 11, 9, 9, 0);                 // slats
+    for (const v of VOX) { v.top = !OCC.has(id(v.x, v.y + 1, v.z)); v.sides = [[1, 0], [-1, 0], [0, 1], [0, -1]].filter(([a, b]) => !OCC.has(id(v.x + a, v.y, v.z + b))); }
+    const CT = Math.cos(.42), ST = Math.sin(.42), SH = [[P.d2, P.d3, P.d4, P.d5], [P.r1, P.r2, P.r3, P.r4]];
+    let projA = null, proj = null;
+    function project(a) {
+      if (projA === a) return proj;
+      const c = Math.cos(a), s = Math.sin(a);
+      proj = VOX.map(v => {
+        const dx = v.x - 4.5, dz = v.z - 4.5, rx = dx * c - dz * s, rz = dx * s + dz * c;
+        let best = 0, lit = 1;
+        for (const [nx, nz] of v.sides) { const fx = nx * c - nz * s, fz = nx * s + nz * c; if (-fz > best) { best = -fz; lit = fx < -.3 ? 2 : fx > .45 ? 0 : 1; } }
+        return { rx, rz, y: v.y, m: v.m, top: v.top, lit, d: rz * CT - v.y * ST };
+      }).sort((p, q) => q.d - p.d);
+      projA = a; return proj;
+    }
+    function drawChair(R, cx, cy, a, S, sil) {
+      const sz = Math.max(1, Math.round(S + .6)), th = Math.max(1, Math.round(S * .45));
+      for (const p of project(a)) {
+        const x = cx + p.rx * S - S / 2, y = cy - p.y * S * CT - p.rz * S * ST - S / 2;
+        if (sil) { R(x, y, sz, sz, sil); continue; }
+        R(x, y, sz, sz, SH[p.m][p.lit]); if (p.top) R(x, y, sz, th, SH[p.m][3]);
+      }
+    }
+    const R = (x, y, w, h, c) => api.rect(x, y, w, h, c);
+    const disc = (x, y, r, c) => { for (let dy = -r; dy <= r; dy++) { const hw = Math.round(Math.sqrt(Math.max(0, r * r - dy * dy))); api.rect(x - hw, y + dy, hw * 2 + 1, 1, c); } };
+    function studio(Rf, x, y, w, h, cx, cy, s) {                        // a photo studio: backdrop, floor, soft shadow
+      Rf(x, y, w, h, P.s1); Rf(x, y + h * .62, w, h * .38, P.s2); Rf(x, y + h * .62, w, 1, P.s3);
+      for (let dy = -3; dy <= 3; dy++) { const hw = Math.round(30 * s * Math.sqrt(1 - (dy / 3.5) ** 2)); Rf(cx - hw, cy + 2 * s + dy * s, hw * 2, Math.max(1, s), P.s0); }
+    }
+    const thumbs = new Map();
+    function thumb(a) {                                                 // finished frames, cached for the filmstrip
+      const k = a.toFixed(3); let c = thumbs.get(k); if (c) return c;
+      c = document.createElement('canvas'); c.width = 22; c.height = 17;
+      const x = c.getContext('2d'), Rf = (a1, b, w, h, col) => { x.fillStyle = col; x.fillRect(Math.round(a1), Math.round(b), Math.max(1, Math.round(w)), Math.max(1, Math.round(h))); };
+      studio(Rf, 0, 0, 22, 17, 11, 13, .25); drawChair(Rf, 11, 14, a, .7);
+      thumbs.set(k, c); return c;
+    }
+    // render buckets, centre first, like a real renderer
+    const TILES = [];
+    for (let y = IY; y < IY + IH; y += TS) for (let x = IX; x < IX + IW; x += TS) TILES.push({ x, y, w: Math.min(TS, IX + IW - x), h: Math.min(TS, IY + IH - y), d: Math.hypot(x + 6 - CX, (y + 6 - CY + 30) * 1.6) + api.rand() * 9 });
+    TILES.sort((a, b) => a.d - b.d);
+
+    // ---- the heat ----
+    const speedAt = t => t < 60 ? .3 : t < 70 ? .6 : t <= 88 ? 1 : .6;
+    const zone = t => reboot > 0 ? ['REBOOT', P.e3] : t < 60 ? ['IDLE', P.t4] : t < 70 ? ['WARMING', P.a3] : t <= 88 ? ['OPTIMAL', P.g4] : t < 92 ? ['THROTTLE', P.a2] : ['DANGER', P.e3];
+    const spikeI = () => L * .8 + api.progress * .6;                   // spikes come with harder clients and late in the job
+    const schedule = () => { const I = spikeI(); nextSpike = I < .3 ? 2 : (8.5 - 3.8 * I) * (.8 + api.rand() * .4); };
+    function nextFrame() { frame++; angT = frame * STEP; prog = 0; fail = api.auto && api.chance(api.autoErr); }
+    function frameDone() { fly.push({ t: 0, a: angT }); api.item(true, CX, IY + 22); api.sfx('flip'); nextFrame(); }
+    function shutdown() {
+      api.item(false, CX, IY + 40, 'FRAME LOST'); api.sfx('alarm'); api.sfx('crash'); api.shake(6); api.flash(P.e2, .3);
+      for (let i = 0; i < 16; i++) puffs.push({ x: (i % 2 ? GX + 30 : CX) + (api.rand() - .5) * 30, y: i % 2 ? VY + 30 + api.rand() * 50 : IY + IH - 10, vx: (api.rand() - .5) * 20, vy: -20 - api.rand() * 25, t: 0, life: .9 + api.rand() * .6 });
+      film.push({ ok: false }); banner = 1.7; reboot = .9; T = 60; warn = spike = 0; nextFrame();
+    }
+    function step(h) {
+      if (reboot > 0) { reboot -= h; T = 60; return; }
+      if (warn > 0) { if ((warn -= h) <= 0) { spike = .6; api.sfx('whoosh'); } }
+      else if (spike > 0) spike -= h;
+      else if ((nextSpike -= h) <= 0) {
+        if (spikeI() >= .3) { warn = .5; spikeA = Math.round(9 + 6 * L + 3 * api.progress); spikeName = api.pick(SPIKES); api.sfx('blip', 14); }
+        schedule();
+      }
+      if (api.auto) {                                                   // the agent rides the band perfectly (or cooks a frame)
+        const hot = warn > 0 || spike > 0;
+        if (fail) botFan = false; else if (botFan) { if (T < 75 && !hot) botFan = false; } else if (T > 83 || (hot && T > 71)) botFan = true;
+      }
+      fanOn = api.auto ? botFan : fanKey || fanMouse;
+      const heat = HEAT * (1 + .25 * api.progress) + (spike > 0 ? spikeA / .6 : 0) + (fail ? 25 : 0);
+      T = Math.max(38, T + (heat - (fanOn ? FAN : 0) - (T - 40) * .08) * h);
+      if (T >= 95) { shutdown(); return; }
+      prog += speedAt(T) * (fanOn ? .5 : 1) * GPU * h / WORK;
+      if (prog >= 1) frameDone();
+    }
+    function say(s) { if (s !== hintNow) { hintNow = s; api.hint(s); } }
+
+    const onKeyUp = e => { if (e.key === ' ' || e.key === 'Spacebar') fanKey = false; };
+    const onUp = () => { fanMouse = false; }, onBlur = () => { fanKey = fanMouse = false; };
+    addEventListener('keyup', onKeyUp); addEventListener('pointerup', onUp); addEventListener('blur', onBlur);
+    schedule();
+
+    return {
+      tick(dt) {
+        const sp = api.auto ? 3 : 1;
+        blade += dt * (fanOn ? 26 : 3);
+        ang += (angT - ang) * Math.min(1, dt * sp * 9); if (Math.abs(angT - ang) < .002) ang = angT;
+        banner = Math.max(0, banner - dt * sp);
+        for (const p of puffs) { p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; } puffs = puffs.filter(p => p.t < p.life);
+        for (const f of fly) { f.t += dt * sp / .4; if (f.t >= 1) film.push({ ok: true, a: f.a }); } fly = fly.filter(f => f.t < 1);
+        if (!api.auto) say(reboot > 0 ? 'Thermal shutdown. The frame is lost.' : T > 90 ? 'Too hot! Hold SPACE to run the fan!' : T < 62 && fanOn ? 'Too cold: let go of the fan.' : MINI.render.how);
+        if (api.busy) return;                                           // a stalled machine neither heats nor renders
+        let left = dt * K;
+        while (left > 1e-6 && !api.busy && api.left > 0) { const h = Math.min(.02, left); step(h); left -= h; }
+        if (T > 90 && reboot <= 0) { const b = Math.floor(api.t / Math.max(.1, .45 - (T - 90) * .07)); if (b !== beat) { beat = b; api.sfx('tick'); } }
+      },
+      draw(g) {
+        api.rect(0, api.top, api.W, api.bot - api.top, P.k2);
+        // the render window
+        const hot = T > 90 && reboot <= 0 && (api.t * 6 | 0) % 2;
+        api.frame(VX, VY, VW, VH, 'screen'); if (hot) { R(VX - 1, VY - 1, VW + 2, 1, P.e3); R(VX - 1, VY + VH, VW + 2, 1, P.e3); }
+        R(VX, VY, VW, 10, P.k1);
+        api.text('RENDER', VX + 4, VY + 8, { size: 6.5, color: P.a2, bold: true });
+        api.text('chair_spin · frame ' + String(Math.min(frame + 1, api.units)).padStart(2, '0') + '/' + api.units, VX + 36, VY + 8, { size: 6.5, color: P.t4 });
+        const z = zone(T), spd = reboot > 0 ? 0 : speedAt(T) * (fanOn ? .5 : 1);
+        api.text((fanOn && reboot <= 0 ? 'FAN · ' : '') + '×' + spd.toFixed(1), VX + VW - 4, VY + 8, { size: 6.5, color: fanOn ? P.t4 : z[1], align: 'right' });
+        R(IX, IY, IW, IH, P.k1);
+        for (let x = IX; x < IX + IW; x += TS) R(x, IY, 1, IH, P.k2);
+        for (let y = IY; y < IY + IH; y += TS) R(IX, y, IW, 1, P.k2);
+        drawChair(R, CX, CY, ang, 4, P.s0);                              // the clay preview
+        const done = Math.floor(clamp(prog, 0, 1) * TILES.length);
+        if (done > 0) {
+          g.save(); g.beginPath(); for (let i = 0; i < done; i++) { const t = TILES[i]; g.rect(t.x, t.y, t.w, t.h); } g.clip();
+          studio(R, IX, IY, IW, IH, CX, CY, 4); drawChair(R, CX, CY, ang, 4); g.restore();
+        }
+        if (reboot <= 0) for (let i = done; i < Math.min(TILES.length, done + 4); i++) {   // the buckets at work
+          const t = TILES[i], c = (api.t * 8 + i) % 2 < 1 ? P.a3 : P.a2;
+          for (let n = 0; n < 6; n++) R(t.x + 1 + api.ri(0, t.w - 3), t.y + 1 + api.ri(0, t.h - 3), 1, 1, P.s2);
+          R(t.x, t.y, 3, 1, c); R(t.x, t.y, 1, 3, c); R(t.x + t.w - 3, t.y, 3, 1, c); R(t.x + t.w - 1, t.y, 1, 3, c);
+          R(t.x, t.y + t.h - 1, 3, 1, c); R(t.x, t.y + t.h - 3, 1, 3, c); R(t.x + t.w - 3, t.y + t.h - 1, 3, 1, c); R(t.x + t.w - 1, t.y + t.h - 3, 1, 3, c);
+        }
+        R(IX, IY + IH - 2, IW, 2, P.k0); R(IX, IY + IH - 2, Math.round(IW * clamp(prog, 0, 1)), 2, P.a2);
+        api.text(Math.floor(clamp(prog, 0, 1) * 100) + '%', IX + IW - 3, IY + IH - 5, { size: 6.5, color: P.a3, align: 'right', shadow: true });
+        if (warn > 0 || spike > 0) {                                     // a heat spike, telegraphed
+          const blink = warn > 0 && (api.t * 10 | 0) % 2;
+          api.frame(IX + 4, IY + 4, 104, 13, blink ? 'hot' : 'warn');
+          api.text('⚠ ' + spikeName + ' +' + spikeA + '°', IX + 56, IY + 13, { size: 6.5, color: blink ? P.k1 : P.p4, align: 'center', bold: true, max: 100 });
+        }
+        if (banner > 0) {
+          api.frame(CX - 62, IY + 34, 124, 34, 'warn');
+          api.text('THERMAL SHUTDOWN', CX, IY + 47, { size: 9, color: P.p4, align: 'center', bold: true, shadow: true });
+          api.text(reboot > 0 ? 'frame lost · rebooting' : 'back to 60°C', CX, IY + 59, { size: 6.5, color: P.a4, align: 'center', font: 'read' });
+          if (reboot > 0) { R(CX - 40, IY + 62, 80, 2, P.e0); R(CX - 40, IY + 62, Math.round(80 * (1 - reboot / .9)), 2, P.a3); }
+        }
+        // the filmstrip of finished frames
+        R(VX, FY, VW, 23, P.k1);
+        for (let x = VX + 2; x < VX + VW - 2; x += 7) { R(x, FY + 1, 4, 2, P.k0); R(x, FY + 20, 4, 2, P.k0); }
+        for (let i = 0; i < 9; i++) {
+          const e = film[film.length - 1 - i], x = VX + VW - 26 - i * 24, y = FY + 3;
+          R(x - 1, y - 1, 24, 19, P.k0);
+          if (!e) R(x, y, 22, 17, P.d0);
+          else if (e.ok) api.sprite(thumb(e.a), x, y);
+          else { R(x, y, 22, 17, P.e0); for (let n = 0; n < 10; n++) R(x + (n * 7) % 21, y + (n * 5) % 16, 2, 1, P.e1); api.text('✗', x + 11, y + 12, { size: 9, color: P.e3, align: 'center', bold: true }); }
+        }
+        for (const f of fly) {                                           // a finished frame pops into the strip
+          const k = api.ease.inOut(f.t), tx = VX + VW - 26, ty = FY + 3;
+          const x = IX + (tx - IX) * k, y = IY + (ty - IY) * k, w = IW + (22 - IW) * k, h = IH + (17 - IH) * k, s = 4 + (.7 - 4) * k;
+          R(x - 2, y - 2, w + 4, h + 4, P.p4); studio(R, x, y, w, h, x + w / 2, y + h * .73, s); drawChair(R, x + w / 2, y + h * .76, f.a, s);
+        }
+        // the gauge
+        api.frame(GX, VY, 84, 144, 'panel');
+        api.text('GPU TEMP', GX + 5, VY + 9, { size: 6.5, color: P.s5 });
+        const tc = T < 60 ? P.t4 : T < 70 ? P.a3 : T <= 88 ? P.g4 : T < 92 ? P.a2 : P.e3;
+        api.text(Math.round(T) + '°C', GX + 79, VY + 21, { size: 11, color: T > 90 && (api.t * 6 | 0) % 2 ? P.e4 : tc, align: 'right', bold: true });
+        const tx = GX + 22, ty0 = VY + 28, ty1 = VY + 118, py = t => Math.round(ty1 - (clamp(t, 40, 100) - 40) / 60 * (ty1 - ty0));
+        R(tx - 1, ty0 - 1, 10, ty1 - ty0 + 2, P.k0); R(tx, ty0, 8, ty1 - ty0, P.k1);
+        R(tx, py(88), 8, py(70) - py(88), P.g0); R(tx, ty0, 8, py(95) - ty0, P.e0);
+        R(tx + 10, py(88), 3, py(70) - py(88), P.g3); R(tx + 10, ty0, 3, py(95) - ty0, P.e2); R(tx + 10, py(60), 3, ty1 - py(60), P.t2);
+        if (warn > 0 || spike > 0) { const add = spike > 0 ? spikeA * spike / .6 : spikeA; for (let y = py(T + add); y < py(T); y++) if (y % 2) R(tx + 2, y, 4, 1, P.e3); }
+        R(tx + 2, py(T), 4, ty1 - py(T) + 3, tc); R(tx + 2, py(T), 1, ty1 - py(T) + 3, P.p4);
+        disc(tx + 4, ty1 + 7, 6, P.k0); disc(tx + 4, ty1 + 7, 5, tc); R(tx + 2, ty1 + 4, 1, 2, P.p4);
+        for (const [t, c] of [[95, P.e3], [88, P.g4], [70, P.g4], [60, P.t4]]) { R(tx - 4, py(t), 3, 1, c); api.text(String(t), tx - 6, py(t) + 2.5, { size: 6.5, color: c, align: 'right' }); }
+        const ny = py(T); R(tx + 15, ny, 1, 1, P.a3); R(tx + 16, ny - 1, 1, 3, P.a3); R(tx + 17, ny - 2, 2, 5, P.a3); R(tx + 14, ny, 1, 1, P.k0);
+        api.text('FAST', tx + 22, Math.round((py(88) + py(70)) / 2) + 2, { size: 6.5, color: P.g4 });
+        R(GX + 46, VY + 49, 32, 1, P.s1);
+        api.text(z[0], GX + 62, VY + 38, { size: 6.5, color: z[1], align: 'center', bold: true });
+        api.text('×' + spd.toFixed(1), GX + 62, VY + 46, { size: 7, color: fanOn ? P.t4 : P.s5, align: 'center' });
+        // the fan: blades drawn pixel by pixel, spinning with the fan
+        const fx = GX + 62, fyc = VY + 107, br = 12;
+        disc(fx, fyc, br + 2, P.k0); disc(fx, fyc, br + 1, P.s0); disc(fx, fyc, br, P.k1);
+        for (let dy = -br; dy <= br; dy++) for (let dx = -br; dx <= br; dx++) {
+          const r = Math.hypot(dx, dy); if (r < 3 || r > br - .5) continue;
+          const a = ((Math.atan2(dy, dx) - blade + r * .07) % (Math.PI / 2) + Math.PI * 2) % (Math.PI / 2);
+          if (a < (fanOn ? .95 : .6)) R(fx + dx, fyc + dy, 1, 1, fanOn ? (a < .3 ? P.s5 : P.s3) : a < .2 ? P.s5 : P.s4);
+        }
+        disc(fx, fyc, 3, P.s2); R(fx, fyc, 1, 1, P.s5);
+        if (fanOn) for (let i = 0; i < 3; i++) { const ax = GX + 45 - ((api.t * 60 + i * 9) % 18); R(ax, fyc - 8 + i * 8, 4, 1, P.t4); }
+        api.frame(fx - 15, VY + 126, 30, 10, fanOn ? 'hot' : 'button');
+        api.text('SPACE', fx, VY + 133.5, { size: 6.5, color: fanOn ? P.k1 : P.ink, align: 'center' });
+        api.text(fanOn ? 'FAN ON' : 'FAN', fx, VY + 88, { size: 6.5, color: fanOn ? P.t4 : P.s4, align: 'center', bold: fanOn });
+        for (const p of puffs) { g.globalAlpha = Math.max(0, .85 * (1 - p.t / p.life)); disc(Math.round(p.x), Math.round(p.y), 2 + Math.round(p.t * 6), p.t < .3 ? P.p3 : P.s5); }
+        g.globalAlpha = 1;
+      },
+      down() { fanMouse = true; },
+      up() { fanMouse = false; },
+      move(x, y, dragging, e) { if (!dragging && e && e.buttons != null) fanMouse = (e.buttons & 1) === 1; }, // pressed while the PC stalled
+      key(k) { if (k === ' ' || k === 'Spacebar') { fanKey = true; return true; } return false; },
+      bot() {},                                                         // the agent drives the fan inside step()
+      destroy() { removeEventListener('keyup', onKeyUp); removeEventListener('pointerup', onUp); removeEventListener('blur', onBlur); }
+    };
+  }
+};
+
+// Walkthrough: setting up a camera path for an architectural render. Each shot is a floor plan (a maze of
+// rooms and corridors). Press on the camera at START and drag its path to the SHOT frame without touching a
+// wall, then let go there. A wall is a crash; the shot timer runs out; arrow keys move one room at a time.
+MINI.model3d = {
+  title: 'Walkthrough', how: 'Drag the camera to SHOT and let go. Don’t touch a wall.',
+  keys: 'Drag from the camera · or arrow keys', pace: 3.0,
+  create(api) {
+    const { P } = api, L = api.level, F = L < .5 ? 1.3 - .6 * L : 1 - .7 * (L - .5);
+    const [CS, COLS, ROWS] = L < .34 ? [18, 13, 7] : L < .67 ? [16, 16, 8] : [13, 20, 10];  // smaller cells, bigger plans
+    const WT = CS >= 16 ? 4 : 3, HR = 1, MW = COLS * CS, MH = ROWS * CS, N = COLS * ROWS;
+    const X0 = Math.round((api.W - MW) / 2), Y0 = 29 + Math.round((134 - MH) / 2);
+    const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+    const cx = c => X0 + (c % COLS) * CS + CS / 2, cy = c => Y0 + Math.floor(c / COLS) * CS + CS / 2;
+    const CAM = api.art(['.aa.....', 'aaaaaaa.', 'akkkaaaa', 'ak4kaaaa', 'akkkaaaa', 'aaaaaaa.'], { a: P.a2, k: P.k1, 4: P.a4 });
+    let wE, wS, room, walls = [], start = 0, goal = 0, sol = [], st = 'draw', stT = 0, tm = 1, tmax = 1, beat = 99;
+    let path = null, ghost = null, crashAt = null, bot = null, shotN = 0, tag = null;
+
+    function gen() {                                                   // a recursive backtracker, then rooms and a few doors
+      wE = new Uint8Array(N).fill(1); wS = new Uint8Array(N).fill(1); room = new Uint8Array(N);
+      const seen = new Uint8Array(N), stack = [api.ri(0, N - 1)]; seen[stack[0]] = 1;
+      while (stack.length) {
+        const c = stack[stack.length - 1], x = c % COLS, y = (c / COLS) | 0, nb = [];
+        if (x > 0 && !seen[c - 1]) nb.push(c - 1); if (x < COLS - 1 && !seen[c + 1]) nb.push(c + 1);
+        if (y > 0 && !seen[c - COLS]) nb.push(c - COLS); if (y < ROWS - 1 && !seen[c + COLS]) nb.push(c + COLS);
+        if (!nb.length) { stack.pop(); continue; }
+        const n = api.pick(nb); openWall(c, n); seen[n] = 1; stack.push(n);
+      }
+      const rooms = 3 + api.ri(0, 2) + (COLS > 16 ? 2 : 0);
+      for (let k = 1; k <= rooms; k++) {
+        const rw = api.ri(2, 3), rh = api.ri(2, 3), rx = api.ri(0, COLS - rw), ry = api.ri(0, ROWS - rh);
+        for (let y = ry; y < ry + rh; y++) for (let x = rx; x < rx + rw; x++) {
+          const c = y * COLS + x; room[c] = k; if (x < rx + rw - 1) wE[c] = 0; if (y < ry + rh - 1) wS[c] = 0;
+        }
+      }
+      for (let k = 0; k < N * .04; k++) { const c = api.ri(0, N - 1); if (api.chance(.5)) { if (c % COLS < COLS - 1) wE[c] = 0; } else if (c < N - COLS) wS[c] = 0; }
+      walls = []; const h = WT / 2;
+      for (let y = 0; y <= ROWS; y++) for (let x = 0; x < COLS; x++) if (y === 0 || y === ROWS || wS[(y - 1) * COLS + x]) walls.push([X0 + x * CS - h, Y0 + y * CS - h, CS + WT, WT]);
+      for (let x = 0; x <= COLS; x++) for (let y = 0; y < ROWS; y++) if (x === 0 || x === COLS || wE[y * COLS + x - 1]) walls.push([X0 + x * CS - h, Y0 + y * CS - h, WT, CS + WT]);
+      // START on the left wall; the SHOT a set walk away, preferably over on the right
+      start = api.ri(0, ROWS - 1) * COLS;
+      const dist = new Int16Array(N).fill(-1), prev = new Int32Array(N).fill(-1), q = [start]; dist[start] = 0;
+      for (let i = 0; i < q.length; i++) for (const n of nbrs(q[i])) if (dist[n] < 0) { dist[n] = dist[q[i]] + 1; prev[n] = q[i]; q.push(n); }
+      const want = Math.round(15 * 16 / CS + api.progress * 4), cand = [];
+      for (let c = 0; c < N; c++) if (Math.abs(dist[c] - want) <= 2) cand.push(c);
+      cand.sort((a, b) => (b % COLS) - (a % COLS));
+      goal = cand.length ? api.pick(cand.slice(0, Math.max(1, cand.length >> 1))) : q[q.length - 1];
+      sol = []; for (let c = goal; c >= 0; c = prev[c]) sol.unshift(c);
+      tm = tmax = (1.2 + (sol.length - 1) * .25) * F * (1 - .12 * api.progress);
+      tag = null; let bd = 1e9; const gc = goal % COLS, gr = Math.floor(goal / COLS);   // the SHOT label goes on open floor, never over a wall
+      for (let y = Math.max(0, gr - 2); y <= Math.min(ROWS - 1, gr + 2); y++) for (let x = Math.max(1, gc - 2); x <= Math.min(COLS - 1, gc + 3); x++) {
+        const bx = X0 + x * CS, by = Y0 + y * CS + CS / 2, r = [bx - 12, by - 4, 24, 9], d = Math.hypot(bx - cx(goal), by - cy(goal));
+        if (d >= bd || (y === gr && Math.abs(bx - cx(goal)) < CS) || walls.some(w => r[0] < w[0] + w[2] + 1 && r[0] + r[2] > w[0] - 1 && r[1] < w[1] + w[3] + 1 && r[1] + r[3] > w[1] - 1)) continue;
+        bd = d; tag = r;
+      }
+    }
+    function openWall(a, b) { if (b === a + 1) wE[a] = 0; else if (b === a - 1) wE[b] = 0; else if (b === a + COLS) wS[a] = 0; else wS[b] = 0; }
+    function nbrs(c) {
+      const x = c % COLS, o = [];
+      if (x < COLS - 1 && !wE[c]) o.push(c + 1); if (x > 0 && !wE[c - 1]) o.push(c - 1);
+      if (c + COLS < N && !wS[c]) o.push(c + COLS); if (c - COLS >= 0 && !wS[c - COLS]) o.push(c - COLS);
+      return o;
+    }
+    const hit = (x, y) => x < X0 || y < Y0 || x > X0 + MW || y > Y0 + MH || walls.some(w => x >= w[0] - HR && x <= w[0] + w[2] + HR && y >= w[1] - HR && y <= w[1] + w[3] + HR);
+    const cellAt = (x, y) => clamp(Math.floor((x - X0) / CS), 0, COLS - 1) + clamp(Math.floor((y - Y0) / CS), 0, ROWS - 1) * COLS;
+    const inGoal = (x, y) => Math.abs(x - cx(goal)) < CS / 2 - 1 && Math.abs(y - cy(goal)) < CS / 2 - 1;
+
+    function newPlan() { gen(); st = 'draw'; stT = 0; path = null; bot = null; crashAt = null; beat = 99; shotN++; api.sfx('whoosh'); }
+    function moveHead(x, y) {                                          // walk the head toward (x, y); any wall on the way is a crash
+      const dx = x - path.hx, dy = y - path.hy, n = Math.max(1, Math.ceil(Math.hypot(dx, dy) / 1.2));
+      for (let i = 1; i <= n; i++) {
+        const px = path.hx + dx * i / n, py = path.hy + dy * i / n;
+        if (hit(px, py)) { crash(px, py); return false; }
+        const l = path.pts[path.pts.length - 1]; if (Math.hypot(px - l[0], py - l[1]) >= 1.5) path.pts.push([px, py]);
+      }
+      path.hx = x; path.hy = y;
+      const c = cellAt(x, y); if (c !== path.cell) { path.cell = c; if (path.drag) api.sfx('type'); }
+      return true;
+    }
+    function crash(x, y) {
+      crashAt = [x, y]; st = 'crash'; stT = 0; ghost = null;
+      api.item(false, x, Math.max(y, api.top + 24), 'CRASH'); api.sfx('crash'); api.sfx('zap'); api.shake(5);
+    }
+    function shot() {
+      st = 'shot'; stT = 0;
+      api.item(true, cx(goal), Math.max(cy(goal) - 6, api.top + 24)); api.flash(P.p4, .55); api.sfx('click'); api.sfx('whoosh');
+      api.burst(cx(goal), cy(goal), P.a3, 14, 70);
+    }
+    function begin(drag) { path = { pts: [[cx(start), cy(start)]], hx: cx(start), hy: cy(start), cell: start, drag }; ghost = null; }
+    gen(); st = 'draw';
+
+    return {
+      tick(dt) {
+        const sp = api.auto ? 6 : 1;
+        stT += dt * sp;
+        if (st === 'draw' && stT > .3) { st = 'plan'; stT = 0; }
+        else if ((st === 'crash' && stT > .75) || (st === 'shot' && stT > .55)) { if (api.left > 0) newPlan(); }
+        if (ghost && (ghost.t += dt) > .5) ghost = null;
+        if (st !== 'plan') return;
+        if (api.busy) { if (path && path.drag) { ghost = { pts: path.pts, t: 0 }; path = null; } return; } // a stall drops the path
+        tm -= dt;
+        if (tm < Math.min(1.6, tmax * .3) && tm > 0) { const b = Math.ceil(tm / .25); if (b < beat) { beat = b; api.sfx('tick'); } }
+        if (tm <= 0) { const x = path ? path.hx : cx(start), y = path ? path.hy : cy(start); st = 'crash'; stT = 0; crashAt = null; ghost = path ? { pts: path.pts, t: 0 } : null; path = null; api.item(false, x, Math.max(y, api.top + 24), 'TIME'); }
+      },
+      draw(g) {
+        const T = api.top;
+        api.rect(0, T, api.W, api.bot - T, P.k2);
+        for (let x = 4; x < api.W; x += 8) for (let y = T + 4; y < api.bot; y += 8) api.rect(x, y, 1, 1, P.k3);
+        // the floor plan on the CAD screen
+        api.rect(X0 - 4, Y0 - 4, MW + 8, MH + 8, P.k0);
+        api.rect(X0 - 3, Y0 - 3, MW + 6, MH + 6, P.t0);
+        const wipe = st === 'draw' ? X0 - 4 + (MW + 8) * api.ease.out(clamp(stT / .3, 0, 1)) : 1e4;
+        g.save(); g.beginPath(); g.rect(0, T, wipe, api.bot - T); g.clip();
+        for (let c = 0; c < N; c++) if (room[c]) api.rect(X0 + (c % COLS) * CS, Y0 + Math.floor(c / COLS) * CS, CS, CS, room[c] % 2 ? P.t1 : P.w1);
+        for (let x = X0 + CS / 2; x < X0 + MW; x += CS) for (let y = Y0 + CS / 2; y < Y0 + MH; y += CS) api.rect(x, y, 1, 1, P.t2);
+        for (const w of walls) api.rect(w[0] - 1, w[1] - 1, w[2] + 2, w[3] + 2, P.k0);
+        for (const w of walls) { api.rect(w[0], w[1], w[2], w[3], P.p2); api.rect(w[0], w[1], w[2], 1, P.p4); }
+        // the SHOT frame and the START camera
+        const gx = cx(goal), gy = cy(goal), s2 = Math.round(CS / 2 - 2), near = path && inGoal(path.hx, path.hy);
+        const fc = near ? ((api.t * 8 | 0) % 2 ? P.a4 : P.t4) : P.a4;
+        for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { api.rect(gx + sx * s2 - (sx > 0 ? 3 : 0), gy + sy * s2 - (sy > 0 ? 0 : 0), 4, 1, fc); api.rect(gx + sx * s2 - (sx > 0 ? 0 : 0), gy + sy * s2 - (sy > 0 ? 3 : 0), 1, 4, fc); }
+        api.rect(gx - 1, gy - 1, 3, 3, near ? P.t4 : P.a1);
+        const tr = tag || [gx - 12, Math.floor(goal / COLS) === 0 ? gy + CS / 2 + 2 : gy - CS / 2 - 10, 24, 9];
+        if (!tag) g.globalAlpha = .7;                                    // no free floor nearby: see-through, so no wall hides
+        api.rect(tr[0], tr[1], 24, 9, near ? P.t2 : P.a1); api.rect(tr[0], tr[1], 24, 1, near ? P.t4 : P.a3);
+        api.text(near ? 'LET GO' : 'SHOT', tr[0] + 12, tr[1] + 7, { size: 6.5, color: P.k1, align: 'center', bold: true });
+        g.globalAlpha = 1;
+        const sx0 = cx(start), sy0 = cy(start), idle = st === 'plan' && !path && !api.auto;
+        if (idle && (api.t * 3 | 0) % 2) { api.rect(sx0 - CS / 2 + 2, sy0 - CS / 2 + 2, CS - 4, 1, P.a3); api.rect(sx0 - CS / 2 + 2, sy0 + CS / 2 - 3, CS - 4, 1, P.a3); api.rect(sx0 - CS / 2 + 2, sy0 - CS / 2 + 2, 1, CS - 4, P.a3); api.rect(sx0 + CS / 2 - 3, sy0 - CS / 2 + 2, 1, CS - 4, P.a3); }
+        api.sprite(CAM, sx0 - 4, sy0 - 3);
+        g.restore();
+        api.text('START', X0 - 6, sy0 + 2.5, { size: 6.5, color: idle ? P.a3 : P.a1, align: 'right', bold: true });
+        // the camera path, the ghost of a dropped one, the crash
+        if (ghost) { g.globalAlpha = 1 - ghost.t / .5; for (const p of ghost.pts) api.rect(p[0] - 1, p[1] - 1, 2, 2, P.s3); g.globalAlpha = 1; }
+        if (path) {
+          for (const p of path.pts) api.rect(p[0], p[1], 2, 2, P.a0);
+          for (const p of path.pts) api.rect(p[0] - 1, p[1] - 1, 2, 2, P.a2);
+          api.rect(path.hx - 2, path.hy - 2, 5, 5, P.k0); api.rect(path.hx - 1, path.hy - 1, 3, 3, P.a4);
+        }
+        if (st === 'crash') {                                            // static burst over the plan
+          const k = clamp(1 - stT / .75, 0, 1);
+          for (let i = 0; i < 260 * k; i++) api.rect(X0 + api.ri(0, MW - 2), Y0 + api.ri(0, MH - 2), 2, 1, api.pick([P.k0, P.s2, P.s4, P.p2, P.k1]));
+          if (crashAt) { const [x, y] = crashAt; api.rect(x - 4, y - 4, 2, 2, P.e3); api.rect(x - 2, y - 2, 2, 2, P.e3); api.rect(x, y, 2, 2, P.e4); api.rect(x + 2, y + 2, 2, 2, P.e3); api.rect(x - 4, y + 2, 2, 2, P.e3); api.rect(x + 2, y - 4, 2, 2, P.e3); }
+          api.frame(api.W / 2 - 34, api.mid - 10, 68, 18, 'warn');
+          api.text(crashAt ? 'CRASH' : "TIME'S UP", api.W / 2, api.mid + 3, { size: 9, color: P.p4, align: 'center', bold: true, shadow: true });
+        }
+        if (st === 'shot') {                                             // the viewfinder opens up from the shot to the plan
+          const k = api.ease.out(clamp(stT / .5, 0, 1)), w = CS + (MW - CS) * k, h = CS + (MH - CS) * k;
+          const x = gx + (X0 + MW / 2 - gx) * k - w / 2, y = gy + (Y0 + MH / 2 - gy) * k - h / 2;
+          for (const [a, b, c, d] of [[x, y, 8, 2], [x, y, 2, 8], [x + w - 8, y, 8, 2], [x + w - 2, y, 2, 8], [x, y + h - 2, 8, 2], [x, y + h - 8, 2, 8], [x + w - 8, y + h - 2, 8, 2], [x + w - 2, y + h - 8, 2, 8]]) api.rect(a, b, c, d, P.a4);
+        }
+        // the shot clock, and the shots still to set up
+        api.timerBar(X0, 21, MW, st === 'plan' ? tm / tmax : st === 'draw' ? 1 : 0, .3);
+        const left = Math.max(0, api.left - (st === 'plan' || st === 'draw' ? 1 : 0)), rx = X0 + MW + 8;
+        for (let i = 0; i < Math.min(8, left); i++) { api.rect(rx, Y0 + i * 9, 14, 7, P.k0); api.rect(rx + 1, Y0 + i * 9 + 1, 12, 5, i % 2 ? P.s2 : P.s1); }
+        if (rx + 14 < api.W) api.text(String(left), rx + 7, Y0 + Math.min(8, left) * 9 + 8, { size: 7, color: P.a3, align: 'center', bold: true });
+      },
+      down(x, y) {
+        if (st !== 'plan' || path) return;
+        if (Math.abs(x - cx(start)) > CS / 2 + 3 || Math.abs(y - cy(start)) > CS / 2 + 3) return;
+        begin(true); api.sfx('click');                                    // the head starts on the camera, then follows you
+        if (Math.abs(x - cx(start)) < CS / 2 && Math.abs(y - cy(start)) < CS / 2 && !hit(x, y)) moveHead(x, y);
+      },
+      move(x, y, dragging) { if (dragging && path && path.drag && st === 'plan' && !api.busy) moveHead(x, y); },
+      up(x, y) {
+        if (!path || !path.drag || st !== 'plan') return;
+        if (inGoal(path.hx, path.hy)) shot();
+        else { ghost = { pts: path.pts, t: 0 }; path = null; api.sfx('blip', -6); api.pop(cx(start), cy(start) - 10, 'FROM START', P.a3, 7); }
+      },
+      key(k) {
+        const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[k];
+        if (!d) return false;
+        if (st !== 'plan' || (path && path.drag)) return true;
+        if (!path) begin(false);
+        const c = path.cell, x = c % COLS + d[0], y = Math.floor(c / COLS) + d[1], n = y * COLS + x;
+        if (x < 0 || y < 0 || x >= COLS || y >= ROWS || !nbrs(c).includes(n)) { moveHead(cx(c) + d[0] * CS / 2, cy(c) + d[1] * CS / 2); return true; } // bump: crash
+        moveHead(cx(n), cy(n)); api.sfx('blip', 3);
+        if (n === goal) shot();
+        return true;
+      },
+      bot(dt) {
+        if (st !== 'plan') return;
+        if (!bot) { begin(false); bot = { i: 0, f: 0, fail: api.chance(api.autoErr) ? api.ri(1, Math.max(1, sol.length - 2)) : -1 }; }
+        bot.f += dt * 90;                                               // rooms per second
+        while (bot.f >= 1 && st === 'plan') {
+          bot.f -= 1;
+          if (bot.i === bot.fail) {                                     // steer into a wall
+            const c = sol[bot.i], d = [[1, 0], [-1, 0], [0, 1], [0, -1]].find(([a, b]) => !nbrs(c).includes(c + a + b * COLS)) || [0, -ROWS];
+            moveHead(cx(c) + d[0] * CS, cy(c) + d[1] * CS); return;
+          }
+          if (bot.i >= sol.length - 1) { shot(); return; }
+          bot.i++; moveHead(cx(sol[bot.i]), cy(sol[bot.i]));
+        }
+      }
+    };
+  }
+};
+// ================= end of the games =================
 
 // ================= rendering: the apartment, the office, the street =================
 // One 320×180 pixel scene in the shared palette (PAL: the mini-games and the UI use it too). The static art is

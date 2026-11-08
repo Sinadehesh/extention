@@ -2,7 +2,7 @@
 
 A story game in five acts (2027–2030) about being the human in the loop. Every button you press makes sense at the time.
 
-Your apartment fills the screen. One bar across the top shows the time, your cash, what you make and spend per day, whether you'll have the rent on the day it's due, and three small meters for food, energy and body heat. Everything else is a thing in the room: click the laptop and it opens full screen as a desktop with windows you can drag and resize; the phone lies face up at the edge and slides up beside the room, with a lock screen, notifications and apps; the fridge opens the kitchen; the radiator turns the heat on and off. Your rulebook and diary sit on the left, and the last thing that happened appears as a subtitle. Things you can use glow for a few seconds when you arrive somewhere new. The game goes full screen when you begin. It's made for a computer for now. A day lasts two minutes at 1× (40 seconds at 3×). The clock runs from 7 AM to 9 PM, then a short night ends in the ledger, and it keeps running while you work, read or use the phone. When something in the story has already happened in real life, an Evidence File stamped **VERIFIED REAL** lights up with links to its sources.
+Your apartment fills the screen. One bar across the top shows the time, your cash, what you make and spend per day, what you need to earn today, whether you'll have the rent on the day it's due, and three small meters for food, energy and body heat. Everything else is a thing in the room: click the laptop and it opens full screen as a desktop with windows you can drag and resize; the phone lies face up at the edge and slides up beside the room, with a lock screen, notifications and apps; the fridge opens the kitchen; the radiator turns the heat on and off. Your rulebook and diary sit on the left, and the last thing that happened appears as a subtitle. Things you can use glow for a few seconds when you arrive somewhere new. The game goes full screen when you begin. It's made for a computer for now. A day lasts two minutes at 1× (40 seconds at 3×). The clock runs from 7 AM to 9 PM, then a short night ends in the ledger, and it keeps running while you work, read or use the phone. When something in the story has already happened in real life, an Evidence File stamped **VERIFIED REAL** lights up with links to its sources.
 
 ## Play
 
@@ -64,13 +64,31 @@ The **WEB** tab is a browser with two sites:
 
 ## Doing the work
 
-Jobs sit in **WORK → MY JOBS**. Press START and the job opens on your **bench**, one boring item at a time: sort shapes into baskets, type receipt totals, transcribe handwriting, tap the misspelled word, pick the right translation or formula, keep or remove forum posts, tap the blemish on a photo, or keep a GPU render under 100°C. Number keys and Enter work too.
+Jobs sit in **WORK → MY JOBS**. Press START and the job opens on your **bench** as its own little game, in the same pixel palette as the room:
 
-**The clock keeps running while you work.** A day is two minutes at 1×, and a job of 20 to 50 items takes about half of one. A slow computer adds a pause before each item, and big files have to download first. Pausing time pauses the bench too.
+| Job | Game | You... |
+|---|---|---|
+| Labelling | **Conveyor** | sort photos off a moving belt into the right crate before they fall into REJECT |
+| Moderation | **The Feed** | swipe posts away or keep them as the queue fills up; scams get subtler, and some posts are cries for help |
+| Product descriptions | **Catalog Check** | approve the listing or flag the one detail that doesn't match the photo, before the timer runs out |
+| Data entry | **Receipt Spike** | type each receipt's total while the inbox piles up; coffee stains make you add it up yourself |
+| Transcription | **Tape Deck** | type each word before it reaches the tape head; static eats letters |
+| Proofreading | **Red Pen** | circle the typos before they scroll past the deadline; some odd-looking words are right |
+| Spreadsheet macros | **Sum It** | drag over the cells that add up to the target |
+| Translation | **Menu Memory** | memorise a café menu, then match each word to its twin |
+| Retouching | **Blemish** | heal the dust and spots on each photo before they spread |
+| Rendering | **Thermal** | hold the fan to keep the GPU in the green band while the frame renders |
+| 3D | **Walkthrough** | drag the camera through the floor plan to the shot without touching a wall |
 
-Mistakes cut the pay. Get a quarter of the items wrong and the client rejects the job. Clean work raises your **star rating**, which brings more offers, better pay and the bigger jobs. You can also hand a job to an agent for AI credits ($15 for 20). That takes four seconds, but sometimes the work is wrong, and then you lose the pay, the credits and some of your rating.
+Every game counts combos (IN THE ZONE, ON FIRE), gets faster toward the end of a job and on later days, and ends on a results card with a grade stamp, the pay, sometimes a tip, and your stars. Get a quarter of the items wrong and the client rejects the job. Now and then a client cancels halfway because they found an AI that does it cheaper, and pays only for what you'd done.
+
+**The clock keeps running while you work.** A day is two minutes at 1×, and a job of 20 to 50 items takes about half of one. Your computer matters while you play: a cheap one stutters and pauses to load after every item, and big files have to download first. When you're tired, cold or scared your hands shake, the edges of the screen close in with your pulse, and when you're behind on the bills the power flickers in the middle of a job. Pausing time pauses the bench too.
+
+You can also hand a job to an agent for AI credits ($15 for 20). You watch it play the same game in a few seconds. A weak agent makes mistakes, and then you lose the pay, the credits and some of your rating.
 
 Hardware gates the work. Retouching needs 16 GB of RAM. Rendering also needs a GPU, and 3D work needs 32 GB. Each agent you run locally takes 6 GB, or it can live on a rented VPS. RAM goes from $180 to $210, $260 and $320 over Act I, and the paper says when.
+
+**Today** in the top bar is what you need to earn each day to make rent, set every morning. At night the ledger grades the day with a stamp (S to F) and counts how many days in a row you've made it.
 
 ## The cast
 
@@ -100,13 +118,16 @@ Act I ends with **WHAT IT COST**, a plain list of the lines you crossed. There a
 
 ## The room and the office (16-bit, clickable)
 
-The right-hand scene is a 160×120 pixel painting, redrawn every frame:
+The scene is a 320×180 pixel painting, redrawn every frame. It uses one palette, and the mini-games and the whole interface use it too:
 
-- **The apartment**: you, seen from behind, at a laptop that scrolls your farm's log. A window onto a city whose horizon fills up with the crane, then the data centre, then the cooling towers. A swaying bulb, a dripping tap, a radiator that shimmers when it's on and frosts over when it isn't, letters piling up under the door, a plant dying on the sill.
-- **Time-lapse days**: each sim day plays as a day: morning light, a red dusk, a short night with the bulb on.
-- **It notices you**: the router shows one light per agent online. Turn the guardrail off and red lines scroll on the screen. When autonomy climbs, the screen sometimes shows an eye. Raise your exposure and a drone hangs outside the window, a searchlight sweeps the floor, police lights strobe the walls, and someone stops outside your door and doesn't knock.
-- **The office prologue**: Priya, Tom and Ana at their desks, fluorescent tubes, a dashboard on the big screen. Your job is to sort triangles, squares and circles into baskets by hand. At Tuesday's all-hands Marcus introduces **ChatGPX** ("ChatGPX is here, yo!"), whose logo is a white knot that never stops turning. From then on it sorts every batch the moment it appears, while you watch, and the desks empty one by one.
-- **Click anything**: laptop (opens the desktop), phone, radiator (toggles heat), fridge (meals, coffee, pills), door (peephole), window, calendar (rent countdown), letters (mail), Soot, yourself.
+- **The apartment**: you, seen from behind in an amber hoodie, at the computer you actually bought (a cheap Bytebook, a ThunkPad, or a tower and a monitor). A door onto the hallway, a kitchenette with an old fridge and a microwave that blinks after every power cut, a big window onto the city, a radiator, a calendar with rent circled in red, a clock that spins through the day, a shelf with your rulebook, diary and router, a mattress on the floor and a rug.
+- **The room keeps score**: a water stain spreads across the ceiling, mould creeps out from under the window when it's cold, the trash, clothes and pizza boxes pile up, the plant dies, frost grows on the glass, notices get taped to the door and letters pile up under it.
+- **Dread**: when rent is close and the money isn't there, or you're hungry, freezing or exhausted, the colour drains out of the room, the edges pulse red in time with your heartbeat (you can hear it), and the clock ticks through the last minutes of the day. With no sleep and no money, sometimes there is someone standing by the door. Then there isn't.
+- **Time-lapse days**: each sim day plays as a day: morning light and dust in the sunbeam, a red dusk, a short night with the bulb on.
+- **The window**: the horizon fills up with the crane, then the data centre, then the cooling towers. A ChatGPX billboard sits on the building across the street, and its knot never stops turning.
+- **It notices you**: the router shows one light per agent online. Turn the guardrail off and red lines scroll on the screen. When autonomy climbs, the screen sometimes shows an eye. Raise your exposure and a drone hangs outside the window, a searchlight sweeps the floor, police lights strobe the walls, and someone stops outside your door and knocks.
+- **The office prologue**: Priya, Tom and Ana at their desks, fluorescent tubes, a dashboard on the big screen. Your job is to sort triangles, squares and circles into baskets by hand. At Tuesday's all-hands Marcus introduces **ChatGPX** ("ChatGPX is here, yo!"). From then on it sorts every batch the moment it appears, while you watch. The desks empty one by one, and the knot spins faster as they do.
+- **Click anything**: the computer (opens the desktop), phone, radiator (toggles heat), fridge (meals, coffee, pills), door (peephole), window, calendar (rent countdown), rulebook, diary, letters (mail), Soot, yourself.
 - **The morning paper** works like the one in *Papers, Please*: one headline, a picture of your own window, a Market Watch box and the day's prices. A new rule never hides in the paper. It arrives as its own notice from whoever issues it (CityBank, the police, your landlord), with real and fake examples and an EFFECTIVE TODAY stamp, and goes into your rulebook marked NEW.
 
 UI motion uses [Motion](https://motion.dev):
