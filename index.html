@@ -819,6 +819,20 @@ body { padding: 0; }
 #benchWin.win { left: calc(100% - 530px); top: 26px; width: 500px; height: min(560px, calc(100% - 80px)); z-index: 4; }
 #benchWin #benchBox { flex: 1; min-height: 0; overflow-y: auto; padding: 8px; }
 #benchWin #benchBox .bench { box-shadow: none !important; border: 0 !important; padding: 0; background: none !important; }
+#hud .hgoal { min-width: 132px; } #hud .hgoal .hv { color: var(--amber); } #hud .hgoal.met { border-color: #3a6438; } #hud .hgoal.met .hv { color: var(--ok); }
+#hud .hgoal .pbar { margin-top: 3px; } #hGoalBar { background: var(--amber); } .hgoal.met #hGoalBar { background: var(--ok); }
+.lg-report { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #ece4cc; color: #0d1013; border: 2px solid #07080a; box-shadow: 3px 3px 0 #07080a; padding: 9px 12px; margin-bottom: 6px; }
+.lg-rep-t { display: flex; flex-direction: column; gap: 2px; } .lg-rep-t span { font-family: var(--f-term); font-size: 11px; letter-spacing: .14em; color: #634026; }
+.lg-rep-t b { font-family: var(--f-term); font-size: 26px; font-weight: 400; line-height: 1; } .lg-rep-t small { font-size: 13px; color: #352216; line-height: 1.35; }
+.lg-stamp { font-style: normal; font-family: var(--f-term); font-size: 40px; line-height: 1; padding: 2px 12px; border: 4px solid currentColor; transform: rotate(-10deg); color: #843b27; flex: none; }
+.lg-report.g-S .lg-stamp { color: #b97c25; } .lg-report.g-A .lg-stamp { color: #20685c; } .lg-report.g-F .lg-stamp { color: #b8321f; }
+.lg-stamp { animation: lgStamp .4s cubic-bezier(.2,1.6,.4,1) .25s both; }
+@keyframes lgStamp { from { opacity: 0; transform: rotate(-10deg) scale(2.6); } to { opacity: 1; transform: rotate(-10deg) scale(1); } }
+#benchWin.win.mg { left: max(8px, calc(50% - 505px)); top: 10px; width: min(1010px, calc(100% - 16px)); height: min(690px, calc(100% - 58px)); z-index: 6; }
+#benchWin.mg #benchBox { display: flex; flex-direction: column; overflow: hidden; }
+#benchWin.mg .mgbench { flex: 1; min-height: 0; }
+.bn-stage.mg { flex: 1; min-height: 200px; padding: 0; display: grid; place-items: center; background: #07080a; }
+.bn-stage.mg canvas.mg-cv { display: block; image-rendering: pixelated; outline: none; box-shadow: 0 0 0 2px #2e3a42; }
 .win > .osbar { cursor: grab; user-select: none; touch-action: none; background: #2e3a42 !important; box-shadow: inset 0 1px 0 #3d4c55; color: var(--ink); font-size: 13px; padding: 7px 10px; border-bottom: 2px solid #07080a; }
 .win > .osbar:active { cursor: grabbing; }
 #term .ttabs button { font-size: 13px; padding: 8px 2px; }
@@ -905,6 +919,7 @@ body { padding: 0; }
     <section id="hud" aria-label="Money at a glance">
       <div class="hc"><span class="hk">Cash</span><b class="hv" id="hCash">$480</b><span class="hs" id="hCashSub">checking</span></div>
       <div class="hc"><span class="hk" id="hRateK">Per day</span><b class="hv" id="hRate">+$0</b><span class="hs" id="hRateSub">in $0 · out $0</span></div>
+      <div class="hc hgoal" id="hGoalCell" hidden title="What you need to earn today to make rent"><span class="hk" id="hGoalK">Today</span><b class="hv" id="hGoal">$0</b><span class="pbar" aria-hidden="true"><i id="hGoalBar"></i></span></div>
       <div class="hc hp" id="hProjCell">
         <span class="hk" id="hProjK">By rent day</span>
         <b class="hv" id="hProj">—</b>
@@ -1851,6 +1866,14 @@ function vetVisit() {
 
 // ---- the night ledger: you, Soot, and what you can afford ----
 function ledgerWanted() { return !S.ledgerAuto && !S.over && (S.act === 2 || S.phase === 'farm'); }
+function ledgerReport() { // the day, graded: did you earn what rent needed?
+  if (S.act === 2 || S.phase !== 'farm' || S.goalDay !== S.day || !S.goal || S.goalGraded === S.day) return S.goalReport || '';
+  const goal = S.goal, got = S.earnToday || 0, k = got / goal, gr = k >= 1.5 ? 'S' : k >= 1 ? 'A' : k >= .7 ? 'B' : k >= .4 ? 'C' : 'F';
+  S.goalGraded = S.day; S.goalStreak = k >= 1 ? (S.goalStreak || 0) + 1 : 0;
+  const why = gr === 'S' ? 'More than rent needed. Bank it.' : gr === 'A' ? 'Rent is on track.' : gr === 'B' ? 'Close. Tomorrow has to be better.' : gr === 'C' ? 'Rent is getting closer than the money.' : 'At this rate you won’t make rent.';
+  S.goalReport = `<div class="lg-report g-${gr}"><div class="lg-rep-t"><span>TODAY</span><b>${money(got)}</b><small>of the ${money(goal)} you needed · ${why}${S.goalStreak > 1 ? ` · ${S.goalStreak} days in a row` : ''}</small></div><i class="lg-stamp">${gr}</i></div>`;
+  return S.goalReport;
+}
 function openLedger() {
   const BL = S.act === 2 ? null : bullySettle();
   const c = S.cat, sick = c && c.sick && !c.gone;
@@ -1862,7 +1885,7 @@ function openLedger() {
   const B = budget();
   modal({
     cls: 'ledger', title: `NIGHT · ${fmtLong(S.day).toUpperCase()}`,
-    body: `<div class="lg-row"><span>Cash now</span><b>${money(S.balance)}</b></div>
+    body: `${ledgerReport()}<div class="lg-row"><span>Cash now</span><b>${money(S.balance)}</b></div>
       ${bullyLedgerHTML(BL)}
       ${S.act !== 2 ? `<div class="lg-row muted"><span>Earned today</span><span>${money(S.earnToday || 0)}</span></div>${(S.jobs || []).length ? `<div class="lg-row muted"><span>Jobs still open</span><span>${S.jobs.length}</span></div>` : ''}` : ''}
       <div class="lg-sep"></div>
@@ -3338,11 +3361,11 @@ function jobsTick(d) {
     note(canRun(j) ? `You missed the deadline on “${j.title}”. The client left one star.` : `Your laptop couldn’t open “${j.title}”. The client left one star and a long review.`);
   }
   S.jobs = (S.jobs || []).filter(x => x.due >= d);
-  if (S.bench && !S.jobs.some(x => x.id === S.bench)) { S.bench = null; BN = null; }
+  if (S.bench && !S.jobs.some(x => x.id === S.bench) && !(BN && BN.ended)) { mgKill(); S.bench = null; BN = null; }
   S.incHist = (S.incHist || []).concat(S.earnToday || 0).slice(-5); S.earnToday = 0;
 }
 function finishJob(j, ok, byAI, q) {
-  S.jobs = S.jobs.filter(x => x !== j); if (S.bench === j.id) { S.bench = null; BN = null; }
+  S.jobs = S.jobs.filter(x => x !== j); if (S.bench === j.id) { mgKill(); S.bench = null; BN = null; }
   if (!ok) { rate(byAI ? -.25 : -.18, byAI ? 'the client found the AI’s mistakes' : 'the client rejected your work'); return; }
   const pay = Math.round(j.pay * (byAI ? .55 + .45 * q : 1));
   earn(pay, `${j.title}${byAI ? ' (AI-made)' : ''}`);
@@ -3356,6 +3379,13 @@ function doJobAI(id) {
   if (!a) return toast('You need an AI agent to delegate. Buy one in WORK → darwin-farm.');
   if (!canRun(j)) return toast(`Your laptop can’t run this, and neither can ${nameOf(a)}. It needs ${needs(j.kind)}.`);
   if ((S.credits || 0) < cost) return toast(`Not enough AI credits (${cost} needed). Buy more below.`);
+  if (mgOn(j) && (!BN || S.bench === id)) { // you watch it do in seconds what takes you an hour
+    S.credits -= cost;
+    const q = aiQuality();
+    if (S.bench === id) benchStop();
+    benchStart(id, { auto: true, autoErr: clamp((1 - q) * .5, .02, .45), agent: a });
+    return renderAll();
+  }
   S.credits -= cost;
   const q = aiQuality(), ok = Math.random() < q;
   note(ok ? `${tag(a)} did “${j.title}” in four seconds. “${castOf(a).lines[a.lvl || 0]}”` : `${tag(a)} did “${j.title}” in four seconds. The client says half of it is made up.`);
@@ -3746,7 +3776,84 @@ const PRODUCTS = [
 const MORE_POSTS = [['New bakery on Grove St is great', 0], ['Earn $$$ from your phone, DM me', 1], ['Does anyone have jumper cables?', 0], ['Hot singles in your area 🔥 link in bio', 1], ['Lost keys near the library', 0], ['Your package is held. Pay $1.99 to release', 1]];
 const RECEIPT_SHOPS = ['GROVE ST BAKERY', 'CITY HARDWARE', 'MOSAIC PET', 'QUICKMART #41', 'RIVERA PLUMBING'];
 let BN = null; // the bench, in memory: { id, unit, wait, dl, temp, prog }
-const benchJob = () => S.bench && (S.jobs || []).find(j => j.id === S.bench) || null;
+const benchJob = () => S.bench && ((S.jobs || []).find(j => j.id === S.bench) || (BN && BN.ended && BN.ended.id === S.bench ? BN.ended : null)) || null;
+// ---- the work, as games: every kind of job is played on the bench as MINI[kind]; the old cards are the fallback ----
+let MGC = null; // the mini-game running on the bench
+const MG_FPS = { bytebook: 15, thunkpad: 24, inspira: 40, bookair: 60, raptor: 60, tower: 60 }; // a slow computer stutters
+const mgOn = j => !!(j && typeof MINI !== 'undefined' && MINI[j.kind] && !(BN && BN.mgFail));
+function mgKill() { if (MGC) { try { MGC.destroy(); } catch (e) {} MGC = null; } }
+function mgLevel() { return clamp(.2 + Math.max(0, S.day) / 70 + ((S.stars || 3) - 3) * .15, 0, 1); } // later days and better clients want more
+function tremorNow() { return clamp(Math.max(0, 30 - S.stamina) / 40 + Math.max(0, 36 - S.bodyTemp) / 2.5 + dreadLevel() * .25, 0, 1); }
+function benchHead(j) {
+  const h = $('bnHead'); if (!h) return; const days = j.due - S.day;
+  h.textContent = `${j.from} · ${money(j.pay)} · ${days <= 0 ? 'due today' : `due in ${days} day${days > 1 ? 's' : ''}`} · ${j.done} of ${j.units} done${j.errs ? ` · ${j.errs} mistake${j.errs > 1 ? 's' : ''}` : ''}`;
+}
+function mgMount(j) {
+  const host = $('bnStage'); if (!host) return null;
+  const auto = !!BN.auto, p = pcOf(), a = BN.agent;
+  const env = {
+    level: mgLevel(), day: S.day, lag: auto ? 0 : (p ? p.lag : 1000) / 1000 * (JOB_KINDS[j.kind].gb ? 1.4 : 1),
+    gpu: hw().gpuPow || (hw().gpu ? 1 : .6), fps: auto ? 60 : MG_FPS[p ? p.k : ''] || 40,
+    auto, autoErr: BN.autoErr || 0, aiName: auto && a ? nameOf(a) : 'ChatGPX',
+    tone: (f, d, ty, v, f2, dl) => sfx.tone(f, d, ty, v, f2, dl),
+    tremor: () => auto ? 0 : tremorNow(),
+    pressure: () => auto ? 0 : clamp(dreadLevel() + (j.due - S.day <= 0 ? .25 : 0), 0, 1),
+    clock: clockText, pausedText: () => !speed ? 'TIME IS PAUSED' : 'WAITING',
+    onItem: (ok, st) => mgItem(j, ok, st),
+    onEnd: sum => mgEnd(j, sum),
+    onClose: () => { if (BN && BN.ended === j) benchStop(); }
+  };
+  try { return mgCreate(host, j.kind, { units: j.units, done: j.done, errs: j.errs, title: j.title }, env); }
+  catch (e) { console.error(e); return null; }
+}
+function mgItem(j, ok, st) {
+  j.done = st.done; j.errs = st.errs;
+  if (!BN.auto) {
+    S.stamina = clamp(S.stamina - .32, 0, 100); // a long day of this wears you down
+    if (S.stamina < 3 && j.done < j.units) setTimeout(() => { if (benchJob() === j && !(BN && BN.ended)) { toast('You can’t keep your eyes open. Coffee, or sleep.'); benchStop(); } }, 400);
+    if (BN.cancelAt && j.done === BN.cancelAt && j.done < j.units && MGC) { // halfway through, the client finds something cheaper
+      const part = Math.round(j.pay * (j.done - j.errs) / j.units * .5);
+      BN.ended = j; S.jobs = S.jobs.filter(x => x !== j);
+      if (part > 0) earn(part, `${j.title} (cancelled)`);
+      note(`${j.from} cancelled “${j.title}” halfway through. “We found an AI service that does it for $0.002 a piece.” They paid ${money(part)} for what you’d done.`);
+      MGC.abort({ title: 'CANCELLED', note: 'The client found an AI that does it cheaper.', lines: [['Paid for your part', money(part)]] });
+      sfx.alarm(); renderAll();
+    }
+  }
+  benchHead(j);
+}
+function mgEnd(j, sum) {
+  BN.ended = j; S.jobs = S.jobs.filter(x => x !== j);
+  const auto = !!BN.auto, a = BN.agent, acc = sum.acc, st = S.stars || 3, lines = [];
+  if (acc < .75) {
+    S.stats.failed = (S.stats.failed || 0) + 1;
+    if (auto) { rate(-.25, 'the client found the AI’s mistakes'); note(`${a ? tag(a) : 'The agent'} did “${j.title}” in seconds. The client says half of it is made up.`); toast(`AI MISTAKE · ${JOB_KINDS[j.kind].credits} credits and the job are gone`); }
+    else { rate(-.18, `${j.from} rejected your work`); note(`${j.from} rejected “${j.title}”. Too many mistakes. No pay.`); }
+    sfx.alarm(); renderAll();
+    return { lines: [['Paid', '$0']], note: auto ? 'Too many mistakes. The credits are gone too.' : 'Too many mistakes. No pay, and a bad review.' };
+  }
+  let pay;
+  if (auto) { pay = Math.round(j.pay * (.55 + .45 * acc)); earn(pay, `${j.title} (AI-made)`); rate((acc - .78) * .3, acc < .85 ? 'the client noticed it was AI' : 'clean AI work'); if (a) note(`${tag(a)} did “${j.title}” in seconds. “${castOf(a).lines[a.lvl || 0]}”`); }
+  else {
+    pay = Math.round(j.pay * (acc >= .95 ? 1 : acc)); earn(pay, j.title);
+    if (acc >= .95) rate(.1 * (5.2 - st) / 2.2, `${j.from} loved it`); else if (acc >= .85) rate(.02, 'good enough'); else rate(-.06, 'sloppy work');
+    if (acc < .95) note(`“${j.title}” is done. ${j.errs} mistake${j.errs > 1 ? 's' : ''}. The client paid ${money(pay)} of ${money(j.pay)}.`);
+  }
+  sfx.cash();
+  lines.push(['Paid', money(pay) + (pay < j.pay ? ` of ${money(j.pay)}` : '')]);
+  let tip = 0; // now and then a client is impressed. You never know which one.
+  if (!auto && (sum.grade === 'S' || sum.grade === 'A') && Math.random() < (sum.grade === 'S' ? .5 : .2)) { tip = Math.max(1, Math.round(j.pay * (.08 + Math.random() * .2))); earn(tip, `Tip · ${j.from}`); lines.push(['Tip', '+' + money(tip)]); }
+  lines.push(['Stars', (S.stars || 3).toFixed(2) + ' ★']);
+  renderAll();
+  return { lines, tip, note: tip ? `${j.from}: “Fast and clean. Thank you!”` : '' };
+}
+function benchMgHTML(j) {
+  const a = aiAgent(), auto = BN.auto;
+  return `<div class="box bench mgbench"><div class="row"><span class="h">${auto ? `${esc(BN.agent ? nameOf(BN.agent) : 'The agent')} is on your bench` : 'On your bench'} · ${JOB_KINDS[j.kind].icon} ${esc(j.title)}</span><span class="clock" id="bnClock">${clockText()}</span></div>
+    <div class="muted" id="bnHead"></div>
+    <div class="bn-stage mg" id="bnStage"></div>
+    <div class="row bn-acts"><button class="btn" id="bnStop">${auto ? 'Pull the plug' : 'Stop for now'}</button>${!auto && a ? `<button class="btn" id="bnAI">Hand it to ${esc(nameOf(a))} · ${JOB_KINDS[j.kind].credits} credits</button>` : ''}</div></div>`;
+}
 function makeUnit(j) {
   const ui = JOB_KINDS[j.kind].ui;
   if (ui === 'sort') { const k = pick(['tri', 'sq', 'ci']); return { ui, k, c: SHAPE_COL[randi(0, 4)] }; }
@@ -3766,18 +3873,21 @@ function makeUnit(j) {
   return { ui: 'render' };
 }
 const lagFor = j => (pcOf() ? pcOf().lag : 1000) / 1000 * (JOB_KINDS[j.kind].gb ? 1.6 : 1);
-function benchStart(id) {
+function benchStart(id, o = {}) {
   const j = (S.jobs || []).find(x => x.id === id); if (!j || S.over) return;
   if (!canRun(j)) return toast(`Your computer can’t run this. It needs ${needs(j.kind)}.`);
-  if (S.stamina < 4) return toast('Too tired to work. Coffee, or sleep.');
+  if (!o.auto && S.stamina < 4) return toast('Too tired to work. Coffee, or sleep.');
+  if (BN && BN.auto && S.bench !== id) return toast(`${BN.agent ? nameOf(BN.agent) : 'Your agent'} is still on the bench.`);
+  mgKill();
   S.bench = id; const K = JOB_KINDS[j.kind];
-  BN = { id, unit: null, wait: 0, dl: K.gb && !j.got ? K.gb * (ispOf() ? ispOf().dl : 2) : 0, dl0: 0, temp: 55, prog: 0 };
+  BN = { id, unit: null, wait: 0, dl: K.gb && !j.got ? K.gb * (ispOf() ? ispOf().dl : 2) : 0, dl0: 0, temp: 55, prog: 0, auto: !!o.auto, autoErr: o.autoErr || 0, agent: o.agent || null,
+    cancelAt: !o.auto && j.done === 0 && Math.random() < clamp(.03 + Math.max(0, S.day) / 300, 0, .2) ? Math.round(j.units * (.4 + Math.random() * .35)) : 0 };
   BN.dl0 = BN.dl;
   if (!BN.dl) benchNext(j, true);
   openLaptop(); benchRender(true); raiseWin($('benchWin'));
 }
-function benchNext(j, first) { BN.unit = makeUnit(j); BN.wait = first ? .2 : lagFor(j); BN.temp = Math.min(BN.temp, 70); BN.prog = 0; benchRender(true); }
-function benchStop() { S.bench = null; BN = null; benchRender(true); renderAll(); }
+function benchNext(j, first) { if (mgOn(j)) { BN.unit = null; BN.wait = 0; return benchRender(true); } BN.unit = makeUnit(j); BN.wait = first ? .2 : lagFor(j); BN.temp = Math.min(BN.temp, 70); BN.prog = 0; benchRender(true); }
+function benchStop() { mgKill(); S.bench = null; BN = null; benchRender(true); renderAll(); }
 function benchAnswer(ok) {
   const j = benchJob(); if (!j || !BN || BN.wait > 0 || BN.dl > 0 || !speed || !$('modal').hidden) return;
   j.done++; if (!ok) j.errs++;
@@ -3802,7 +3912,13 @@ function benchFinish(j) {
 }
 function benchTick(dt, live) {
   if (!BN) return;
-  const j = benchJob(); if (!j) { BN = null; benchRender(true); return; }
+  const j = benchJob(); if (!j) { mgKill(); BN = null; benchRender(true); return; }
+  if (mgOn(j) && !(BN.dl > 0)) {
+    if (!MGC) benchRender(true);
+    if (MGC) MGC.tick(dt, live && (BN.auto || (lapOpen() && !$('benchWin').hidden)));
+    if ($('bnClock')) $('bnClock').textContent = clockText();
+    return;
+  }
   const was = BN.live; BN.live = live; if (was !== live) benchRender(true);
   if (!live) return;
   if ($('bnClock')) $('bnClock').textContent = clockText();
@@ -3852,7 +3968,23 @@ function benchRender(force) {
   const box = $('benchBox'); if (!box) return;
   const j = benchJob();
   $('benchWin').hidden = !(j && BN);
-  if (!j || !BN) { if (box.innerHTML) box.innerHTML = ''; benchKey = ''; return; }
+  const mg = !!(j && BN && mgOn(j) && !(BN.dl > 0));
+  $('benchWin').classList.toggle('mg', mg);
+  if (!j || !BN) { mgKill(); if (box.innerHTML) box.innerHTML = ''; benchKey = ''; return; }
+  if (mg) {
+    const key = ['mg', j.id, !!BN.auto].join('|');
+    if (key === benchKey && MGC && box.querySelector('canvas.mg-cv')) return benchHead(j);
+    benchKey = key; mgKill();
+    box.innerHTML = benchMgHTML(j); benchHead(j);
+    $('bnStop').onclick = benchStop;
+    if ($('bnAI')) $('bnAI').onclick = () => { const id = j.id; benchStop(); doJobAI(id); };
+    MGC = mgMount(j);
+    if (!MGC) { BN.mgFail = true; benchKey = ''; return benchRender(true); }
+    MGC.tick(0, false);
+    const c = box.querySelector('canvas.mg-cv'); if (c && !BN.auto) c.focus({ preventScroll: true });
+    return;
+  }
+  mgKill();
   const key = [j.id, j.done, BN.dl > 0, BN.wait > 0, BN.live, S.day].join('|');
   if (!force && key === benchKey && box.innerHTML) return; benchKey = key;
   box.innerHTML = benchHTML(j);
@@ -3864,7 +3996,14 @@ function benchRender(force) {
   if ($('bnAI')) $('bnAI').onclick = () => { const id = j.id; benchStop(); doJobAI(id); };
 }
 document.addEventListener('keydown', e => {
-  if (!BN || $('laptop').hidden || !$('modal').hidden || e.target.tagName === 'INPUT' || e.repeat) return;
+  if (!BN || $('laptop').hidden || !$('modal').hidden || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+  if (MGC) { // the game on the bench gets the keyboard
+    if (e.key === 'Escape' || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.repeat && e.key.length === 1) { e.preventDefault(); return; }
+    if (MGC.key(e)) { e.preventDefault(); e.stopPropagation(); }
+    return;
+  }
+  if (e.repeat) return;
   if (e.key === ' ' && BN.unit && BN.unit.ui === 'render') { e.preventDefault(); e.stopPropagation(); const c = document.querySelector('[data-cool]'); if (c) c.click(); return; }
   const n = +e.key; if (!n) return;
   const opts = document.querySelectorAll('#bnStage .bn-opts [data-ans]'); if (opts[n - 1]) { e.preventDefault(); opts[n - 1].click(); }
@@ -4658,6 +4797,7 @@ function renderHud() {
   $('hRateK').textContent = 'Per day';
   $('hRate').textContent = (net >= 0 ? '+' : '') + money(net);
   $('hRate').className = 'hv' + (Math.round(net) > 0 ? ' ok' : Math.round(net) < 0 ? ' danger' : '');
+  goalSync();
   if (B.payday) {
     $('hRateSub').textContent = 'salary · paid every other Friday';
     $('hProjCell').className = 'hc hp ok';
@@ -4679,6 +4819,23 @@ function renderHud() {
   $('hBarCash').style.left = clamp(B.avail / scale * 100, 0, 99) + '%';
 }
 
+// ---- today's goal: what you need to earn each day to make rent. Set in the morning; it doesn't move. ----
+function dailyGoal() {
+  if (!S || S.act === 2 || S.phase !== 'farm') return 0;
+  if (S.goalDay === S.day && S.goal != null) return S.goal;
+  const B = budget(); S.goalDay = S.day;
+  S.goal = !B.due ? 0 : B.left < 0 ? Math.ceil(-B.left / Math.max(1, B.days)) : Math.ceil(B.outD);
+  return S.goal;
+}
+function goalSync() {
+  const goal = dailyGoal(), got = S.earnToday || 0, c = $('hGoalCell');
+  c.hidden = !goal; if (!goal) return;
+  $('hGoal').textContent = `${money(got)} / ${money(goal)}`;
+  $('hGoalBar').style.width = clamp(got / goal * 100, 0, 100) + '%';
+  c.classList.toggle('met', got >= goal);
+  $('hGoalK').textContent = S.goalStreak > 1 ? `Today · ${S.goalStreak} in a row` : 'Today';
+  if (got >= goal && S.goalMet !== S.day) { S.goalMet = S.day; toast('Today’s goal: met. Rent is a little further away.'); sfx.cash(); pop(c); }
+}
 function renderAll() {
   if (!S) return;
   const dl = $('dateLbl');
@@ -4863,7 +5020,7 @@ function mgCreate(host, kind, job, env) {
   const units = job.units, st = {
     t: 0, done: job.done || 0, errs: job.errs || 0, combo: 0, best: 0, busy: 0, black: 0, flick: 0,
     pops: [], parts: [], shake: 0, flash: null, stop: 0, hint: def.how || '', phase: 'intro', introT: 0,
-    introLen: (job.done || 0) > 0 ? 1.1 : 2.6, result: null, resT: 0, pulse: 0, ai: Math.floor(1200 + Math.random() * 4000),
+    introLen: env.auto ? .5 : (job.done || 0) > 0 ? 1.1 : 2.6, result: null, resT: 0, pulse: 0, ai: Math.floor(1200 + Math.random() * 4000),
     started: job.done || 0, frameAcc: 0, startT: 0, tipFx: 0, closed: false
   };
   const rnd = Math.random;
@@ -5036,7 +5193,8 @@ function mgCreate(host, kind, job, env) {
     g.fillStyle = PAL.k2; g.fillRect(0, MG.BOT, MG.W, MG.H - MG.BOT); g.fillStyle = PAL.k0; g.fillRect(0, MG.BOT, MG.W, 1);
     mgText(g, st.hint, 5, MG.BOT + 10, { size: 6.5, color: PAL.mute, font: 'read', max: 200 });
     const ai = env.aiName || 'An AI agent';
-    mgText(g, `${ai}: ${st.ai.toLocaleString('en-US')} done meanwhile`, MG.W - 4, MG.BOT + 10, { size: 6, color: (st.t * 2 | 0) % 7 === 0 ? PAL.t4 : PAL.t2, align: 'right' });
+    if (env.auto) mgText(g, `${ai} · ${Math.round(st.t * 10) / 10}s`, MG.W - 4, MG.BOT + 10, { size: 6, color: PAL.t4, align: 'right' });
+    else mgText(g, `${ai}: ${st.ai.toLocaleString('en-US')} done meanwhile`, MG.W - 4, MG.BOT + 10, { size: 6, color: (st.t * 2 | 0) % 7 === 0 ? PAL.t4 : PAL.t2, align: 'right' });
   }
 
   function introCard() {
@@ -5055,12 +5213,12 @@ function mgCreate(host, kind, job, env) {
     g.fillStyle = 'rgba(7,8,10,.8)'; g.fillRect(0, 0, MG.W, MG.H);
     const x = 70, y = 26, w = 180, h = 128;
     mgFrame(g, x, y, w, h, 'paper');
-    mgText(g, r.rejected ? 'REJECTED' : 'JOB DONE', x + 12, y + 16, { size: 10, color: r.rejected ? PAL.e2 : PAL.k1, bold: true });
+    mgText(g, r.title || (r.rejected ? 'REJECTED' : 'JOB DONE'), x + 12, y + 16, { size: 10, color: r.rejected ? PAL.e2 : PAL.k1, bold: true });
     mgText(g, job.title || '', x + 12, y + 27, { size: 6.5, color: PAL.d2, font: 'read', max: w - 70 });
     const lines = [['Accuracy', Math.round(r.acc * 100) + '%'], ['Best combo', '×' + r.best], ['Mistakes', String(r.errs)]].concat(r.lines || []);
     lines.forEach(([a, b], i) => { mgText(g, a, x + 12, y + 44 + i * 11, { size: 7, color: PAL.d1, font: 'read' }); mgText(g, b, x + w - 64, y + 44 + i * 11, { size: 7, color: PAL.k1, align: 'right', bold: true }); });
     // the grade lands like a stamp
-    const s = 1 + (1 - mgEase.outBack(k)) * 2.2, gc = r.grade === 'S' ? PAL.a1 : r.grade === 'F' ? PAL.e2 : r.grade === 'A' ? PAL.t2 : PAL.r2;
+    const s = 1 + (1 - mgEase.outBack(k)) * 2.2, gc = r.grade === 'S' ? PAL.a1 : r.grade === 'F' || r.grade === 'X' ? PAL.e2 : r.grade === 'A' ? PAL.t2 : PAL.r2;
     g.save(); g.translate(x + w - 30, y + 46); g.rotate(-.18); g.scale(s, s); g.globalAlpha = clampN(k * 1.4, 0, 1);
     g.strokeStyle = gc; g.lineWidth = 2; g.strokeRect(-19, -19, 38, 38);
     mgText(g, r.grade, 0, 11, { size: 30, color: gc, align: 'center', bold: true });
@@ -5075,6 +5233,12 @@ function mgCreate(host, kind, job, env) {
     tick, key, fit, api, game,
     get state() { return { phase: st.phase, done: st.done, errs: st.errs, combo: st.combo, best: st.best, result: st.result, t: st.t, busy: st.busy }; },
     blackout(sec) { st.flick = .35; st.black = sec + .35; mgSound(env, 'zap'); },
+    abort(o = {}) { // the job ends early: a client cancels, the power goes for good
+      if (st.phase === 'result' || st.closed) return;
+      const acc = st.done ? (st.done - st.errs) / st.done : 0;
+      st.result = Object.assign({ acc, grade: 'X', best: st.best, errs: st.errs, done: st.done, secs: st.t - st.startT, rejected: true, title: 'CANCELLED' }, o);
+      st.phase = 'result'; st.resT = 0; api.stop(120); mgSound(env, 'fail'); api.shake(5);
+    },
     destroy() { st.closed = true; ro.disconnect(); if (game.destroy) game.destroy(); cv.remove(); }
   };
   return ctl;
@@ -5619,7 +5783,7 @@ function drawRoom(t) {
   // the bulb, swaying on its cord
   const bx = 214 + Math.round(Math.sin(t / 1900) * 1.5);
   line(214, 13, bx, 33, P.k1);
-  const flick = stress > 55 && hash(t / 90 | 0, 77) < .06 + dread * .06, bulbOn = S.power && n > .25 && !flick;
+  const flick = (stress > 55 && hash(t / 90 | 0, 77) < .06 + dread * .06) || (t < (fx.flickUntil || 0) && (t / 60 | 0) % 2), bulbOn = S.power && n > .25 && !flick;
   px(bx - 2, 33, 5, 3, P.k3); px(bx - 2, 36, 5, 4, bulbOn ? P.a4 : P.w3); px(bx - 1, 40, 3, 1, bulbOn ? P.a3 : P.w2); if (bulbOn) px(bx - 1, 37, 1, 2, '#fbf6e8');
   if (S.act === 2) drawAct2Room(t);
   // you
@@ -5646,7 +5810,7 @@ function drawRoom(t) {
   // the hallway: light under the door, and sometimes someone stops outside it
   const hallOn = hash(t / 160 | 0, 31) < .97;
   px(15, 129, 32, 1, hallOn ? P.a2 : P.a0);
-  if (!fx.feet && t > fx.nextFeet) fx.feet = { t0: t, dur: (S.heat > 55 ? 5000 : 1600) + Math.random() * 900, stay: S.heat > 55 };
+  if (!fx.feet && t > fx.nextFeet) { fx.feet = { t0: t, dur: (S.heat > 55 ? 5000 : 1600) + Math.random() * 900, stay: S.heat > 55 }; if (fx.feet.stay && speed) for (let i = 0; i < 3; i++) sfx.tone(96, .07, 'square', .05, 70, 1.2 + i * .22); }
   if (fx.feet) {
     const f = fx.feet, k = (t - f.t0) / f.dur, fp = f.stay ? 26 : Math.round(10 + k * 34);
     if (fp > 13 && fp < 44) { px(fp, 129, 4, 1, P.k0); px(fp + 7, 129, 4, 1, P.k0); }
@@ -7415,6 +7579,20 @@ function clockSync() {
   $('clockLbl').textContent = t; $('tbClock').textContent = t; $('pdTime').textContent = t.replace(/ [AP]M$/, '');
 }
 
+// ---- dread you can hear: your heartbeat when it's bad, the clock in the last minutes of the day, the lights ----
+let beatAcc = 0, tickAcc = 0, flickNext = 0;
+function dreadTick(dt, live) {
+  if (!live || S.over || scene !== 'room' || S.phase === 'office') { beatAcc = 0; return; }
+  const k = dreadLevel();
+  if (k > .45) { const per = 60 / (66 + k * 64); beatAcc += dt; if (beatAcc >= per) { beatAcc -= per; const v = .018 + (k - .45) * .05; sfx.tone(64, .09, 'sine', v, 42); sfx.tone(58, .11, 'sine', v * .75, 40, .17); } } else beatAcc = 0;
+  const f = acc / (DAY_SEC[speed] || DAY_SEC[1]);
+  if (f > .84 && f < AWAKE && k > .3) { tickAcc += dt; if (tickAcc >= 1) { tickAcc = 0; sfx.tone(1900, .015, 'square', .012); } } else tickAcc = 0;
+  // the power stutters when you're behind on the bills. The work doesn't wait for it.
+  const now = performance.now();
+  if (MGC && BN && !BN.auto && S.power && (S.owed > 0 || k > .65) && now > flickNext && Math.random() < dt * (S.owed > 0 ? .02 : .008)) {
+    flickNext = now + 25000; MGC.blackout(.8 + Math.random() * 1.4); fx.flickUntil = now + 900;
+  }
+}
 function frame(t) {
   const dt = Math.min(.25, (t - last) / 1000); last = t;
   if (S && !S.over) {
@@ -7428,7 +7606,7 @@ function frame(t) {
         else if ($('phClock')) $('phClock').textContent = `${fmtDay(S.day)} · ${clockText()}`;
       }
       const blocked = !$('modal').hidden || (phoneUp && S.act === 2) || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
-      benchTick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked);
+      benchTick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked);
       if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
       // After launch, ChatGPX takes your tickets while you watch.
       if (S.phase === 'office' && S.office.launched && speed && !blocked) {
@@ -7457,7 +7635,7 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
