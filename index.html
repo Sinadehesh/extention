@@ -467,6 +467,8 @@ body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-in
 .tray { border-style: dashed !important; border-width: 3px !important; box-shadow: none; }
 /* screens: flat and dark, not glossy */
 .screen, #desk { background: var(--bg) !important; }
+#titleScreen { background: radial-gradient(ellipse 70% 85% at 50% 42%, rgba(7,8,10,.96) 0 46%, rgba(7,8,10,.8) 74%, rgba(7,8,10,.7) 100%) !important; } /* the office glows behind the title */
+body:has(#titleScreen:not([hidden])) :is(#top, #railL, #railR, #subtitle, #toasts) { visibility: hidden; }
 #troubleScreen { background: linear-gradient(#3a1913 0 34%, var(--bg) 34%) !important; }
 .modal { background: rgba(0,0,0,.8) !important; }
 .card.alarm { box-shadow: 0 0 0 2px #07080a, 6px 6px 0 #3d0f0c !important; }
