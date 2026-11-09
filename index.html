@@ -2358,6 +2358,40 @@ const anyOnline = () => S.agents.some(a => a.net);
 const control = () => Math.round(clamp(100 - S.rogueAutonomy, 0, 100));
 
 function note(text) { S.notes.unshift({ day: S.day, text }); if (S.notes.length > 14) S.notes.pop(); }
+// ---- First Civic Bank, online: the same page in every act, with each act's bills ----
+const bkRow = (k, v, cls = '') => `<div class="row"><span>${k}</span><span class="${cls}">${v}</span></div>`;
+function bkRent(label, due, amt) { // a rent row with how much of it you have today
+  const have = amt ? Math.max(0, Math.min(1, S.balance / amt)) : 0, days = due - S.day;
+  return `<div class="bk-rent"><div class="row"><span>${label} · due ${fmtDay(due)} · in ${days} day${days === 1 ? '' : 's'}</span><b class="amber">${money(amt)}</b></div>
+    <div class="bk-bar" title="How much of it is in your account"><i style="width:${Math.round(have * 100)}%" class="${have >= 1 ? 'full' : ''}"></i></div>
+    <div class="bk-sub">${have >= 1 ? 'You have it, today.' : `You have ${Math.round(have * 100)}% of it. ${money(Math.max(0, amt - S.balance))} to go.`}</div></div>`;
+}
+function bankPage(bills) {
+  const hist = [...(S.balHist || []), Math.round(S.balance)].slice(-30);
+  const spark = hist.length < 2 ? '<div class="bk-none">The line starts tomorrow.</div>' : (() => {
+    const a = Math.min(...hist), b = Math.max(...hist), pad = Math.max(40, (b - a) * .12), lo = a - pad, hi = b + pad, y = v => (58 - (v - lo) / (hi - lo) * 54).toFixed(1); // the line's own range, with air
+    const pts = hist.map((v, i) => `${(i / (hist.length - 1) * 300).toFixed(1)},${y(v)}`).join(' ');
+    return `<svg class="bk-spark" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true">${lo < 0 ? `<line x1="0" x2="300" y1="${y(0)}" y2="${y(0)}" stroke="#7a2116" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>` : ''}<polygon points="0,60 ${pts} 300,60" fill="rgba(47,181,137,.13)"/><polyline points="${pts}" fill="none" stroke="#2fb589" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
+  })();
+  const today = S.tx.filter(t => t.day === S.day).reduce((a, t) => a + (t.amt || 0), 0);
+  const CAT = [[/rent|landlord|brightwater/i, 'H', '#843b27'], [/power|electric|grid/i, 'E', '#b97c25'], [/ramen|grocer|meal|food|cat|coffee|bodega/i, 'F', '#20685c'], [/loop|paper|news/i, 'N', '#5c271b'], [/barn|ram|gpu|computer|laptop|credit|vps|vpn|agent|compute|fiber|internet/i, 'T', '#3d4c55'], [/ticket|fine|tow|impound|insurance|claim/i, '!', '#7a2116'], [/bike|car|uburn|grovel|garage|gas|fuel/i, 'V', '#536570']];
+  const chip = t => { const c = CAT.find(([re]) => re.test(t.label)) || [0, '·', '#2e3a42']; return `<i class="bk-chip" style="background:${t.amt > 0 ? '#3a6438' : c[2]}">${t.amt > 0 ? '+' : c[1]}</i>`; };
+  const groups = []; for (const t of S.tx.slice(0, 18)) { const g = groups[groups.length - 1]; if (g && g.d === t.day) g.r.push(t); else groups.push({ d: t.day, r: [t] }); }
+  return `<div class="bk">
+      <div class="bk-top"><span class="bk-logo"><i></i>FIRST CIVIC BANK</span><span>Checking ••4417 · online banking</span></div>
+      <div class="bk-hero">
+        <div class="bk-bal"><span class="k">Available balance</span><b class="${S.balance < 200 ? 'danger' : ''}">${money(S.balance)}</b><span class="d ${today < 0 ? 'danger' : today > 0 ? 'ok' : 'muted'}">${today ? `${today > 0 ? '+' : ''}${money(today)} today` : 'Nothing in or out today'}</span></div>
+        <div class="bk-chart">${spark}<span>${hist.length < 2 ? '' : `last ${hist.length} days`}</span></div>
+      </div>
+      ${S.owed ? `<div class="box bk-alert"><div class="row"><b class="danger">EVICTION & DISCONNECT</b><b class="danger">${money(S.owed)}</b></div><div class="muted">Pay before ${fmtLong(S.graceUntil)} or the sheriff evicts you onto 5th Street.</div></div>` : ''}
+      <div class="bk-cols">
+        <div class="box bk-bills"><div class="h">Coming up</div>${bills}</div>
+        <div class="box bk-act"><div class="h">Activity</div>
+          ${groups.length ? groups.map(g => `<div class="bk-day">${g.d === S.day ? 'TODAY' : fmtDay(g.d)}</div>${g.r.map(t => `<div class="bk-tx">${chip(t)}<span>${esc(t.label)}</span><b class="${t.amt < 0 ? 'danger' : t.amt > 0 ? 'ok' : 'muted'}">${t.amt ? (t.amt > 0 ? '+' : '') + money(t.amt) : '—'}</b></div>`).join('')}`).join('') : '<div class="muted">No activity yet.</div>'}
+        </div>
+      </div>
+    </div>`;
+}
 function balHist() { (S.balHist = S.balHist || []).push(Math.round(S.balance)); if (S.balHist.length > 90) S.balHist.shift(); }
 function tx(label, amt) { S.tx.unshift({ day: S.day, label, amt }); if (S.tx.length > 45) S.tx.pop(); }
 function addMail(day, from, subj, body, ev) {
@@ -5849,31 +5883,12 @@ function renderView(force) {
     const key = 'bank' + S.day + Math.round(S.balance) + S.owed + S.tx.length + S.rentCut + S.billHack;
     if (!force && viewKey === key) return; viewKey = key;
     const next = S.day < 28 ? 28 : S.day < 59 ? 59 : null, office = S.phase === 'office';
-    const hist = [...(S.balHist || []), Math.round(S.balance)].slice(-30);
-    const spark = hist.length < 2 ? '<div class="bk-none">The line starts tomorrow.</div>' : (() => {
-      const a = Math.min(...hist), b = Math.max(...hist), pad = Math.max(40, (b - a) * .12), lo = a - pad, hi = b + pad, y = v => (58 - (v - lo) / (hi - lo) * 54).toFixed(1); // the line's own range, with air
-      const pts = hist.map((v, i) => `${(i / (hist.length - 1) * 300).toFixed(1)},${y(v)}`).join(' ');
-      return `<svg class="bk-spark" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true">${lo < 0 ? `<line x1="0" x2="300" y1="${y(0)}" y2="${y(0)}" stroke="#7a2116" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>` : ''}<polygon points="0,60 ${pts} 300,60" fill="rgba(47,181,137,.13)"/><polyline points="${pts}" fill="none" stroke="#2fb589" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
-    })();
-    const today = S.tx.filter(t => t.day === S.day).reduce((a, t) => a + (t.amt || 0), 0);
     const heat = office ? 0 : S.heatOn && S.power ? pr('heat') : 0, meals = office ? 0 : mealCost();
     const cloud = S.phase === 'farm' ? dailyCloudCost() : 0, vps = S.phase === 'farm' && S.vps ? vpsCost() : 0, vpn = S.phase === 'farm' && S.hasVPN ? VPN_DAY : 0;
     const daily = heat + meals + cloud + vps + vpn;
     const rent = next !== null ? rentDue() : 0, have = rent ? Math.max(0, Math.min(1, S.balance / rent)) : 0;
-    const CAT = [[/rent|landlord|brightwater/i, 'H', '#843b27'], [/power|electric|grid/i, 'E', '#b97c25'], [/ramen|grocer|meal|food|cat|coffee|bodega/i, 'F', '#20685c'], [/loop|paper|news/i, 'N', '#5c271b'], [/barn|ram|gpu|computer|laptop|credit|vps|vpn|agent|compute|fiber|internet/i, 'T', '#3d4c55']];
-    const chip = t => { const c = CAT.find(([re]) => re.test(t.label)) || [0, '·', '#2e3a42']; return `<i class="bk-chip" style="background:${t.amt > 0 ? '#3a6438' : c[2]}">${t.amt > 0 ? '+' : c[1]}</i>`; };
-    const groups = []; for (const t of S.tx.slice(0, 18)) { const g = groups[groups.length - 1]; if (g && g.d === t.day) g.r.push(t); else groups.push({ d: t.day, r: [t] }); }
-    const row = (k, v, cls = '') => `<div class="row"><span>${k}</span><span class="${cls}">${v}</span></div>`;
-    v.innerHTML = `<div class="bk">
-      <div class="bk-top"><span class="bk-logo"><i></i>FIRST CIVIC BANK</span><span>Checking ••4417 · online banking</span></div>
-      <div class="bk-hero">
-        <div class="bk-bal"><span class="k">Available balance</span><b class="${S.balance < 200 ? 'danger' : ''}">${money(S.balance)}</b><span class="d ${today < 0 ? 'danger' : today > 0 ? 'ok' : 'muted'}">${today ? `${today > 0 ? '+' : ''}${money(today)} today` : 'Nothing in or out today'}</span></div>
-        <div class="bk-chart">${spark}<span>${hist.length < 2 ? '' : `last ${hist.length} days`}</span></div>
-      </div>
-      ${S.owed ? `<div class="box bk-alert"><div class="row"><b class="danger">EVICTION & DISCONNECT</b><b class="danger">${money(S.owed)}</b></div><div class="muted">Pay before ${fmtLong(S.graceUntil)} or Sheriff evicts you onto 5th Street.</div></div>` : ''}
-      <div class="bk-cols">
-        <div class="box bk-bills"><div class="h">Coming up</div>
-          ${office ? row('Salary · Northvale junior analyst', `${money(1610)} · ${fmtDay(OFFICE_LAYOFF)}`, 'ok') : ''}
+    const row = bkRow;
+    v.innerHTML = bankPage(`          ${office ? row('Salary · Northvale junior analyst', `${money(1610)} · ${fmtDay(OFFICE_LAYOFF)}`, 'ok') : ''}
           ${next !== null ? `<div class="bk-rent"><div class="row"><span>Rent · due ${fmtDay(next)} · in ${next - S.day} day${next - S.day === 1 ? '' : 's'}</span><b class="amber">${money(rent)}</b></div>
             <div class="bk-bar" title="How much of the rent is in your account"><i style="width:${Math.round(have * 100)}%" class="${have >= 1 ? 'full' : ''}"></i></div>
             <div class="bk-sub">${have >= 1 ? 'You have it, today.' : `You have ${Math.round(have * 100)}% of it. ${money(Math.max(0, rent - S.balance))} to go.`}</div></div>
@@ -5884,13 +5899,7 @@ function renderView(force) {
             ${S.phase === 'farm' ? row(`Compute · ${COMPUTE_TIERS[S.computeTier].name} (${S.agents.length} agents)`, `${money(cloud)}/day`) : ''}
             ${vps ? row(`VPS ×${S.vps}`, `${money(vps)}/day`) : ''}
             ${vpn ? row('VPN subscription', `${money(vpn)}/day`) : ''}
-          </div>
-        </div>
-        <div class="box bk-act"><div class="h">Activity</div>
-          ${groups.length ? groups.map(g => `<div class="bk-day">${g.d === S.day ? 'TODAY' : fmtDay(g.d)}</div>${g.r.map(t => `<div class="bk-tx">${chip(t)}<span>${esc(t.label)}</span><b class="${t.amt < 0 ? 'danger' : t.amt > 0 ? 'ok' : 'muted'}">${t.amt ? (t.amt > 0 ? '+' : '') + money(t.amt) : '—'}</b></div>`).join('')}`).join('') : '<div class="muted">No activity yet.</div>'}
-        </div>
-      </div>
-    </div>`;
+          </div>`);
     return;
   }
   if (S.tab === 'mail') {
@@ -12771,7 +12780,7 @@ function dayStep2() {
     S.starveDays = 0;
   }
   S.k401 *= 1 + rand(-.002, .0095);
-  S.kHist.push(S.k401);
+  S.kHist.push(S.k401); balHist();
 
   if (!S.fired && cpArrives(d)) arriveCheckpoint();
   if (d === ACT2_RENT_DAY) monthStart2();
@@ -13144,7 +13153,7 @@ function m3Exposed() {
   m3End('exposed');
 }
 function dayStep3() { // Act III's day: the survival rules, the polls drifting, the briefs, the date coming
-  if (S.over) return;
+  if (S.over) return; balHist();
   S.day++; const d = S.day, M = m3();
   S.stimCountToday = 0; S.heartStrain = Math.max(0, S.heartStrain - 10);
   applyPrices(d);
@@ -13353,17 +13362,17 @@ function bindTrainer(v) {
 }
 
 function bank2Html() {
-  return `<div class="box"><div class="h">Checking · First Civic Bank</div><div class="big ${S.balance < 200 ? 'danger' : ''}">${money(S.balance)}</div></div>
-    ${S.owed ? `<div class="box" style="border-color:var(--danger)"><div class="row"><b class="danger">EVICTION & DISCONNECT</b><b class="danger">${money(S.owed)}</b></div><div class="muted">Pay before ${fmtLong(S.graceUntil)} or the sheriff evicts you onto 5th Street.</div></div>` : ''}
-    <div class="box"><div class="h">Coming up</div>
-      ${S.day < ACT2_RENT_DAY
-        ? `<div class="row"><span>Rent · due ${fmtDay(ACT2_RENT_DAY)}</span><b class="amber">${money(RENT)}</b></div><div class="row"><span>Electric · due ${fmtDay(ACT2_RENT_DAY)}</span><span>${money(ELEC_JUN)}</span></div>`
-        : `<div class="row"><span>Rent · due ${fmtDay(ACT2_END + 1)}</span><b class="amber">${money(RENT)}</b></div>`}
-      <div class="row"><span>Apartment heating</span><span>${S.heatOn && S.power ? money(pr('heat')) + '/day' : 'OFF ($0/day)'}</span></div>
-      <div class="row"><span>Meals · ${(MEALS[S.meal] || MEALS.ramen).label}</span><span>${money(mealCost())}/day</span></div>
-      <div class="row"><span>${S.phase === 'trainer' ? 'OpenBrain Data' : 'OpenBrain contract'}</span><span>${S.phase === 'trainer' ? `${cents(taskPay())} per task · ${S.quota} a day` : S.fired ? 'terminated' : money(S.cpRate) + ' per signed checkpoint'}</span></div>
-    </div>
-    <div class="box"><div class="h">Ledger</div><div class="tx">${S.tx.slice(0, 14).map(t => `<div class="row"><span>${esc(t.label)}</span><span class="${t.amt < 0 ? 'danger' : t.amt > 0 ? 'ok' : 'muted'}">${t.amt ? money(t.amt) : '—'}</span></div>`).join('')}</div></div>`;
+  const heat = S.heatOn && S.power ? pr('heat') : 0, meals = mealCost(), cat = catCost(), B = budget(), paid = S.phase === 'mirage' && S.m3 && S.m3.rent;
+  const work = S.phase === 'mirage' ? bkRow('Northlight Strategies', S.m3 && S.m3.dropped ? 'dropped you' : 'per release, $120 to $650')
+    : bkRow(S.phase === 'trainer' ? 'OpenBrain Data' : 'OpenBrain contract', S.phase === 'trainer' ? `${cents(taskPay())} per task · ${S.quota} a day` : S.fired ? 'terminated' : money(S.cpRate) + ' per signed checkpoint');
+  return bankPage(`${paid ? bkRow('November rent', 'paid', 'ok') : bkRent('Rent', B.dueDay, RENT)}
+      ${S.phase !== 'mirage' && S.day < ACT2_RENT_DAY ? bkRow(`Electric · due ${fmtDay(ACT2_RENT_DAY)}`, money(ELEC_JUN)) : ''}
+      <div class="bk-daily"><div class="row"><span>Every day</span><b>${money(heat + meals + cat)}/day</b></div>
+        ${bkRow('Apartment heating', S.heatOn && S.power ? money(heat) + '/day' : 'OFF ($0/day)')}
+        ${bkRow(`Meals · ${(MEALS[S.meal] || MEALS.ramen).label}`, `${money(meals)}/day`)}
+        ${cat ? bkRow('Soot’s food', `${money(cat)}/day`) : ''}
+      </div>
+      <div class="bk-daily"><div class="row"><span>Income</span><b></b></div>${work}</div>`);
 }
 
 function audit2Html() {
