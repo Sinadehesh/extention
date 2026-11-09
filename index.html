@@ -1654,8 +1654,8 @@ html.uikit .t-cta .cta#startBtn.alt:hover { border-image-source: var(--fr-btnHi)
 <div id="tut" hidden><div id="tutHole"></div><div id="tutCard"><div id="tutK"></div><div id="tutT"></div><p id="tutS"></p><div class="tut-b"><button class="btn" id="tutSkip">Skip the tutorial</button><button class="btn primary" id="tutOk">Got it · Enter</button></div></div></div>
 <div id="pauseMenu" hidden><div class="pm-card"><div class="pm-k" id="pmK">PAUSED</div><div class="pm-t">The clock has stopped.</div>
   <button class="btn primary" id="pmResume">Resume · Esc</button><button class="btn" id="pmTut"></button><button class="btn" id="pmSound"></button>
-  <button class="btn" id="pmRestart"></button><button class="btn danger" id="pmTitle">Quit to the title screen</button>
-  <p class="pm-f">Progress inside an act isn’t saved. Endings, evidence and the tutorial are.</p></div></div>
+  <button class="btn" id="pmRestart"></button><button class="btn danger" id="pmTitle">Save and quit to the title screen</button>
+  <p class="pm-f">Your run is saved as you play. CONTINUE on the title screen picks it up where you left it.</p></div></div>
 <div id="actCard" hidden><div class="ac-in"><div class="ac-k" id="acK"></div><div class="ac-n" id="acN"></div><div class="ac-t" id="acT"></div><div class="ac-d" id="acD"></div><p class="ac-l" id="acL"></p><div class="ac-go">click or press any key</div></div></div>
 <div id="shiftModal" hidden><div class="shift-top"><b id="shTitle"></b><span id="shInfo"></span><button class="btn" id="shQuit">End the shift</button></div><div class="shift-stage" id="shStage"></div></div>
 <div class="modal" id="evModal" hidden>
@@ -13750,8 +13750,8 @@ function pmArm(b, sure, go) {
   for (const o of document.querySelectorAll('#pauseMenu [data-armed]')) { delete o.dataset.armed; o.textContent = o.dataset.was; }
   b.dataset.was = b.textContent; b.dataset.armed = '1'; b.textContent = sure; sfx.tone(220, .07, 'square', .02);
 }
-$('pmRestart').onclick = e => pmArm(e.currentTarget, 'Sure? Click again to restart', () => { const a3 = S.phase === 'mirage', a2 = S.act === 2, office = S.phase === 'office'; $('pauseMenu').hidden = true; if (a3) startAct3(); else if (a2) startAct2(); else startAct1(!office); });
-$('pmTitle').onclick = e => pmArm(e.currentTarget, 'Sure? This act’s progress is lost', () => { $('pauseMenu').hidden = true; closeLaptop(); closePhone(); setSpeed(0); renderActList(); renderTutBtn(); $('titleScreen').hidden = false; $('titleScreen').scrollTop = 0; });
+$('pmRestart').onclick = e => pmArm(e.currentTarget, 'Sure? This replaces your saved run', () => { const a3 = S.phase === 'mirage', a2 = S.act === 2, office = S.phase === 'office'; $('pauseMenu').hidden = true; if (a3) startAct3(); else if (a2) startAct2(); else startAct1(!office); });
+$('pmTitle').onclick = () => { runSave(); $('pauseMenu').hidden = true; closeLaptop(); closePhone(); setSpeed(0); renderActList(); renderTutBtn(); $('titleScreen').hidden = false; $('titleScreen').scrollTop = 0; }; // the run is kept, so this needs no second click
 $('gateClose').onclick = () => { S.gateOpen = false; gateSync(); };
 
 // ---- kept in step with the game every render, and the clock every frame ----
