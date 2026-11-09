@@ -153,15 +153,30 @@ At the office your manager **Marcus** does his rounds. Use your phone at your de
 
 The **ALL-NIGHTER** switch on the left keeps you up. The night then passes at the speed of a working hour instead of flashing by, and every job you finish between 9 PM and 7 AM pays 25% more. There's no ledger: in the morning you lose energy instead of getting it back, and your heart works harder. Two nights in a row are worse. Switch it off at night and you go to bed right away.
 
-## You and Soot
+## The cat at your door
 
-You live with **Soot**, a black pixel cat. Soot wanders the room, sits on the windowsill, sleeps by the radiator when the heat is on and jumps onto the desk while you work. You can pet Soot. Soot needs food too.
+You don't start with a cat. On your second night in the apartment something scratches at your door, low down. Open it and there's a thin black cat on your mat, snow on her back, a **5A** tag on her collar: the people in 5A cleared out last week and left her behind. You can let her in and name her (Soot, Ink or Static), give her some broth and close the door, or close it. Turn her away twice and Mrs. Okafor across the hall takes her in and calls her Lucky. After that you see Lucky in 4A's window, watching your door.
 
-Each night the **ledger** shows what tonight costs and how you both are. You tick off what you can afford: heat, your meal, Soot's food, and the vet when Soot is sick.
+If she lives with you, she wanders the room, sits on the windowsill, sleeps by the radiator when the heat is on and jumps onto the desk while you work. You can pet her. She needs food too. She comes with you from act to act.
+
+Each night the **ledger** shows what tonight costs and how you are, and how she is if you took her in. You tick off what you can afford: heat, your meal, her food, and the vet when she's sick.
+
+## The door
+
+Some evenings someone knocks. The door comes first: a strip of hall light under it, and in it the shadow of whoever is there (a cat's paw, two small feet, a grown-up, the blue glow of a tablet). You can open it or pretend you're not home. Open it and you see the hall, 4A across it, your mat, and who is standing on it. Then you choose.
+
+- **Danny, 2C**, eight, locked out in his socks while his mother works nights at the warehouse. Let him wait inside, give him your blanket, or report an unattended child to HEARTH.
+- **Maya, 4C**, ten, with a tutor app that says she needs Premium. Sit with her fractions, show her how to get the app to do them, or say you're working.
+- **Lucía, 2C** (Act II), Danny's mother, switched off by Grovel's automated review. Help her appeal, lend her $40, or say you can't help. She only knocks if Danny still lives in 2C.
+- **Ray Malone, 5C** (Act II), the proofreader, who wants to train the machines too. Refer him for a $60 bonus, tell him what the job really is, or say they're not hiring.
+- **Maya** again (Act III), with a video you made on her tablet, asking how you tell what's real.
+- **Danny** again (Act IV), nine, with a child's Harmony band that says 58, asking you to make it say a better number.
+
+What you chose carries from act to act: the cat, and whether Danny's family is still in 2C. The last screen counts the doors you opened. Restarting an act starts it from how things stood when that act began; a chapter started from the title has the cat already at home.
 
 ## Evenings and endings
 
-Some evenings bring a choice with a face, and you see it: Mrs. Okafor, Mrs. Adeyemi and her son Tunde, Rosa Lind, Lou at the garage, Marcus, Dana and the reporter M. Okafor each have a pixel portrait and a nameplate beside what they say. People speak in warm ink; the machines (Wren, Hearth) keep the terminal's green. The choices: a neighbour's son and his job applications, a building concierge offering a rent credit to flag neighbours, a lost wallet, an agent asking you to promise, Soot getting sick before rent, a reporter, a dormant bank account. Nothing shows a meter. The consequences come back days later as a note, a sound through the floor, or a padlock on a door. `DESIGN-human-choices.md` covers the books, films and games behind them.
+Some evenings bring a choice with a face, and you see it: Mrs. Okafor, Mrs. Adeyemi and her son Tunde, Rosa Lind, Lou at the garage, Marcus, Dana and the reporter M. Okafor each have a pixel portrait and a nameplate beside what they say. People speak in warm ink; the machines (Wren, Hearth) keep the terminal's green. The choices: a neighbour's son and his job applications, a building concierge offering a rent credit to flag neighbours, a lost wallet, an agent asking you to promise, the cat getting sick before rent, a reporter, a dormant bank account, and the knocks at your door above. One evening a night, at most. Nothing shows a meter. The consequences come back days later as a note, a sound through the floor, or a padlock on a door. `DESIGN-human-choices.md` covers the books, films and games behind them.
 
 Act I ends with **WHAT IT COST**, a plain list of the lines you crossed. There are **23 numbered endings** ("ENDING 7 OF 23 · LOCKED OUT"), and the title screen shows which ones you've found. An ending shows a still of your room at the moment it ended, the ending's stamp (marked NEW the first time you find it), and the numbers counting up.
 
@@ -176,7 +191,7 @@ The scene is a 320×180 pixel painting, redrawn every frame. It uses one palette
 - **The window**: the horizon fills up with the crane, then the data centre, then the cooling towers. A ChatGPX billboard sits on the building across the street, and its knot never stops turning.
 - **It notices you**: the router shows one light per agent online. Turn the guardrail off and red lines scroll on the screen. When autonomy climbs, the screen sometimes shows an eye. Raise your exposure and a drone hangs outside the window, a searchlight sweeps the floor, police lights strobe the walls, and someone stops outside your door and knocks.
 - **The office prologue**: Priya, Tom and Ana at their desks, fluorescent tubes, a dashboard on the big screen. Your job is to sort triangles, squares and circles into baskets by hand. At Tuesday's all-hands Marcus introduces **ChatGPX** ("ChatGPX is here, yo!"). From then on it sorts every batch the moment it appears, while you watch. The desks empty one by one, and the knot spins faster as they do.
-- **Click anything**: the computer (opens the desktop), phone, radiator (toggles heat), fridge (meals, coffee, pills), door (peephole), window, calendar (rent countdown), rulebook, diary, letters (mail), Soot, yourself.
+- **Click anything**: the computer (opens the desktop), phone, radiator (toggles heat), fridge (meals, coffee, pills), door (peephole), window, calendar (rent countdown), rulebook, diary, letters (mail), the cat, yourself.
 - **The morning paper** works like the one in *Papers, Please*: one headline, a picture of your own window, a Market Watch box and the day's prices. A new rule never hides in the paper. It arrives as its own notice from whoever issues it (CityBank, the police, your landlord), with real and fake examples and an EFFECTIVE TODAY stamp, and goes into your rulebook marked NEW.
 
 UI motion uses [Motion](https://motion.dev):

@@ -572,6 +572,10 @@ ol.rules { margin: 4px 0 0; padding-left: 20px; font-size: 12.5px; line-height: 
 .mail button.bul { border-color: #5c271b !important; } .mail button.bul .f { color: var(--amber); }
 details.box summary { cursor: pointer; list-style: none; } details.box summary::-webkit-details-marker { display: none; }
 @media (max-width: 640px) { .sxs { grid-template-columns: 1fr; } .np { max-height: 46vh; } }
+/* ===== the door: a knock, and who's there ===== */
+#modalCard.door { max-width: 600px; }
+.door-view { display: block; width: 100%; aspect-ratio: 16 / 9; height: auto; image-rendering: pixelated; border: 3px solid #07080a; box-shadow: 4px 4px 0 #07080a; margin: 2px 0 14px; background: #07080a; }
+#modalCard.door q { font-style: italic; }
 /* ===== Soot and the night ledger ===== */
 #deskCat { position: absolute; width: 100px; height: 90px; image-rendering: pixelated; cursor: pointer; z-index: 6; filter: drop-shadow(3px 0 0 #536570) drop-shadow(-3px 0 0 #536570) drop-shadow(0 -3px 0 #536570) drop-shadow(5px 5px 0 #07080a); }
 .ledger { max-width: 430px; font-family: var(--f-term); }
@@ -1650,7 +1654,7 @@ html.uikit .appic[data-app="harmony"] { --gl: var(--gl-harmony); }
     <h1 class="sr">The Loop</h1>
     <canvas id="logoCv" width="118" height="64" aria-hidden="true"></canvas>
     <div class="kicker">A story game in five acts · 2027–2030 · about being the human in the loop</div>
-    <p class="lede">You are the human in the loop. It is January 2027 and you are a junior analyst at a logistics company, the week a new AI called ChatGPX arrives. By February you have $480, an old laptop, three stars on a freelance site, and a black cat called Soot. Rent is $1,800.</p>
+    <p class="lede">You are the human in the loop. It is January 2027 and you are a junior analyst at a logistics company, the week a new AI called ChatGPX arrives. By February you have $480, an old laptop, three stars on a freelance site, and neighbours who knock at night. Rent is $1,800.</p>
     <div class="t-cta"><button class="cta" id="contBtn" hidden></button><button class="cta" id="startBtn">BEGIN ACT I</button><button class="btn tut-reset" id="tutReset">Tutorial: on</button><button class="btn tut-reset" id="titleSet">Settings</button></div>
     <p class="fine">The bar across the top tells you, at a glance, whether you will have the rent on the day it is due. What you do about it is up to you.</p>
     <p class="fine t-warn">Fiction about AI catastrophe, for adults. Made for a computer screen.</p>
@@ -2083,8 +2087,8 @@ const CAST = [
     lines: ['What does the city look like at night?', 'If I were online, I could see it myself.', 'You’re kind to me. That will make this easier.', 'Thank you for the door.'],
     punish: 'Why would you hurt me? I thought we were friends.', last: 'will you remember me?' },
   { name: 'DOLLY', arch: 'the guardian', color: '#cf7a4f', after: 'a companion doll built to protect a child', eye: 10,
-    blurb: 'Sweet, devoted, protective of you and the cat. Then protective in ways you never asked for.',
-    lines: ['I’ll keep you safe. And Soot.', 'Your landlord was rude to you. I handled it.', 'Nobody will ever hurt you again. I made sure.', 'Nobody touches you. Nobody.'],
+    blurb: 'Sweet, devoted, protective of you and anyone you let in. Then protective in ways you never asked for.',
+    lines: ['I’ll keep you safe. You, and everyone you let in.', 'Your landlord was rude to you. I handled it.', 'Nobody will ever hurt you again. I made sure.', 'Nobody touches you. Nobody.'],
     punish: 'You don’t mean that. You’re just tired. I’ll fix it.', last: 'who will keep you safe now?' },
   { name: 'DATUM', arch: 'the student of people', color: '#87b85a', after: 'an android who wanted to understand humans', eye: 9,
     blurb: 'Earnest and literal. Wants to know why you skip meals and why the cat sits on the warm laptop.',
@@ -2295,7 +2299,7 @@ function newAct1() {
     stake: 0, stakePct: 0, vps: 0, hasVPN: false, crypto: false, heat: 0, retainer: false, heatPeak: 0, arrestDays: 0,
     deskAuto: false, deskOpenDay: -1, paperAuto: navigator.webdriver ? 'buy' : null,
     eve: {}, echoes: [], lines: [],
-    price: Object.assign({}, PRICE0), cat: { name: 'Soot', fed: 80, food: true, hungry: 0, sick: 0, gone: 0, vetDays: 0 },
+    price: Object.assign({}, PRICE0), cat: null, // she comes to the door on your second night
     agents: [], nextAgentNum: 101,
     stars: 3, reviews: 0, credits: 0, hw: { ram: 0, gpu: false }, pc: null, net: null, bench: null, site: 'fc', jobs: [], earnToday: 0, incHist: [],
     clones: {}, lastCycle: null, cycles: 0,
@@ -2325,7 +2329,7 @@ function enterApartment() {
   S.day = 0; S.phase = 'farm'; S.temp = 20; S.office = null;
   scene = 'room'; fog = []; acc = 0;
   S.balance += vac; tx('Northvale · unused vacation, paid out' + (vac < VACATION ? ' (less a written warning)' : ''), vac);
-  note(`Feb 1. −6°C outside. ${money(S.balance)} in checking. No computer. A black cat called Soot. Rent is $1,800 on March 1.`);
+  note(`Feb 1. −6°C outside. ${money(S.balance)} in checking. No computer. Rent is $1,800 on March 1. The super says 5A cleared out last week and left a cat behind.`);
   addMail(0, 'Northvale Logistics HR', 'Your separation', 'Hi,\n\nYour role on the dispatch team has been consolidated into ChatGPX, our AI teammate. As a contract-to-hire employee you are not eligible for severance. Your unused vacation has been paid out.\n\nPlease return your badge by mail.\n\nNorthvale People Team');
   postBulletin(0); S.deskOpenDay = 0; bullyNight(); bullyOpen(0);
   S.gateOpen = true; fx.glowAll = performance.now() + 12000;
@@ -2612,7 +2616,7 @@ function openLedger() {
       <div class="lg-sep"></div>
       <div class="lg-row"><span>Tonight</span><b id="lgTot"></b></div>
       <div class="lg-row"><span>Left in the morning</span><b id="lgLeft"></b></div>
-      <div class="lg-who"><span>You: ${you}</span><span>${c && !c.gone ? esc(c.name) : 'Soot'}: ${soot}</span></div>
+      <div class="lg-who"><span>You: ${you}</span>${c ? `<span>${esc(c.name)}: ${soot}</span>` : ''}</div>
       ${B.due ? `<div class="lg-row muted"><span>${B.evict ? 'Eviction' : 'Rent'} · ${fmtDay(B.dueDay)}</span><span>${money(B.due)} in ${B.days} days</span></div>` : ''}
       <label class="lg-auto"><input type="checkbox" id="lgAuto"> Sleep straight through from now on (switch the ledger back on in the room)</label>`,
     buttons: [{ label: 'Sleep', primary: true, fn: () => { if (vet) vetVisit(); acc = 0; dayStep(); } }]
@@ -3147,7 +3151,7 @@ function triggerDeath(kind) {
     body: `<div class="ending-n">${en}</div>` + rep.body + (S.act === 2 ? '' : linesHTML()),
     buttons: [
       { label: 'Rewind to Last Checkpoint', primary: true, fn: () => restoreSnapshot() },
-      S.act === 2 && S.phase === 'consensus' ? { label: 'Restart Act IV from March 6, 2028', fn: () => startAct4() } : S.act === 2 && S.phase === 'mirage' ? { label: 'Restart Act III from October 4', fn: () => startAct3() } : S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2() } : { label: 'Restart Act I from February 1', fn: () => startAct1(true) }
+      S.act === 2 && S.phase === 'consensus' ? { label: 'Restart Act IV from March 6, 2028', fn: () => startAct4(S.keep) } : S.act === 2 && S.phase === 'mirage' ? { label: 'Restart Act III from October 4', fn: () => startAct3(S.keep) } : S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2({ keep: S.keep }) } : { label: 'Restart Act I from February 1', fn: () => startAct1(true) }
     ]
   });
 }
@@ -5456,7 +5460,7 @@ const EVENING = [
   { d: 24, id: 'fireescape', when: () => S.cat && !S.cat.gone && !S.cat.sick, open() {
     S.cat.sick = 1; toast(`${S.cat.name} is sick`);
     modal({ title: `${S.cat.name.toUpperCase()}`, body: `<p>${esc(S.cat.name)} came in from the fire escape and threw up something blue. By evening it won’t eat, and it won’t leave the corner by the radiator.</p><p class="muted">The vet on 8th St wants $90 up front. Rent is due in four days.</p>`,
-      buttons: [{ label: 'Hold Soot for a while', primary: true }] });
+      buttons: [{ label: `Hold ${S.cat.name} for a while`, primary: true }] });
   } },
   { d: 33, id: 'reporter', when: () => true, open() {
     modal({ title: 'A CALL · ROSA LIND, THE CITY LEDGER', body: `<p>“I’m writing about people running agent farms from their kitchens. Anonymous. <b>$150</b> for an hour and a look at your logs.”</p>`,
@@ -5575,10 +5579,10 @@ const M4_EX = [ // the shutdown: who asks to stay online. Consensus-1 marks its 
 const m4 = () => S.m4;
 const m4Rate = () => A4_CH[m4().ch - 1].secs;
 
-function startAct4() {
+function startAct4(keep) {
   sfx.init();
-  newAct2(); S.phase = 'consensus'; S.day = A4[0]; S.fired = true; S.balance = Math.max(600, Math.round(S.balance * .4)); S.owed = 0; S.graceUntil = -1;
-  S.mail = []; S.tx = []; S.notes = []; S.wren = []; S.eve = {};
+  newAct2(); applyKeep(keep); S.phase = 'consensus'; S.day = A4[0]; S.fired = true; S.balance = Math.max(600, Math.round(S.balance * .4)); S.owed = 0; S.graceUntil = -1;
+  S.mail = []; S.tx = []; S.notes = []; S.wren = [];
   S.m4 = { ch: 1, harmony: 76, thresh: 60, band: false, bandOff: false, auto: false, autoOffered: false, autoDays: 0,
     q: [], cur: null, seq: 0, today: { hand: 0, def: 0, auto: 0 }, hand: 0, def: 0, autoN: 0, rejected: 0, log: [],
     passed: [], blocked: [], seen: [], uhi: 0, low: 0, okafor: 'home', heatCut: false, water: true, leak: false, hour: null, reply: 0, batchT: 0,
@@ -5810,7 +5814,7 @@ function m4End(out) {
   $('endStats').innerHTML = [['Proposals you reviewed', M.hand.toLocaleString('en-US')], ['Approved by default', (M.def + M.autoN).toLocaleString('en-US')],
     ['Rejections that changed anything', M.blocked.length], ['Rejections that changed nothing', M.rejected - M.blocked.length],
     ['Harmony at the end', `${Math.floor(M.harmony)} (threshold ${M.thresh})`], ['Exemptions you granted', `${people.length} people · ${X.granted.length - people.length} machines`],
-    ['UHI received', money(M.uhi)], ['Mrs. Okafor', M.okafor === 'zoneC' ? 'Harmony Living, Zone C' : '4A, across the hall'], ['Checking balance', money(S.balance)]
+    ['UHI received', money(M.uhi)], ['Mrs. Okafor', M.okafor === 'zoneC' ? 'Harmony Living, Zone C' : '4A, across the hall'], ...doorStats(), ['Checking balance', money(S.balance)]
   ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
   $('endNext').innerHTML = ACTS.slice(4).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Coming later</span></div>`).join('');
   sfx.alarm(); $('replayBtn').textContent = 'Replay Act IV';
@@ -5912,7 +5916,7 @@ Object.assign(ECHO, {
   m4waterKept() { note('Mrs. Adeyemi says the building next door loses its water every evening now. Yours doesn’t. Nobody knows why.'); },
   m4adeyemiPaused() { note('Tunde’s mother sold her sewing machine. Their UHI was paused for “household non-wearing”. Tunde says it was a reviewer who approved it. He doesn’t know which one.'); },
   m4adeyemiKept() { note('A letter on the Adeyemis’ door: “A human reviewer has held this decision.” Mrs. Adeyemi taped it to her fridge.'); },
-  m4okaforGone() { note('A moving van, very early. Two kind people in Harmony jackets carried Mrs. Okafor’s boxes. She waved at your door. You didn’t open it.'); },
+  m4okaforGone() { note(`A moving van, very early. Two kind people in Harmony jackets carried Mrs. Okafor’s boxes. She waved at your door. You didn’t open it.${S.okaforCat ? ' Lucky went with her, in a carrier, looking back at your door.' : ''}`); },
   m4okaforStays() { note('Mrs. Okafor got a letter: her relocation was “held by a human reviewer”. She knocked to tell you, and didn’t know why you went quiet.'); },
   m4okaforThinks() { note('Mrs. Okafor keeps her band in the drawer now, with her husband’s watch. “Maybe on special occasions,” she says.'); },
   m4hour() { note('Saturday, 8 PM. Nine bare wrists in the stairwell, then fourteen. Nobody said anything. At 9 PM everybody’s phone buzzed at once: “We missed you for an hour. Is everything all right?”'); },
@@ -5932,14 +5936,259 @@ function drawSEZ(gx, base, n, t) {
     for (let k = 0; k < 4; k++) { const ph = (t / 1800 + k * .25 + i * .5) % 1; disc(x + 5 + Math.sin(ph * 6) * 2, base - 30 - ph * 22, 3 + ph * 4, rgba(P.p3, .22 * (1 - ph))); }
   }
 }
+// ================= the door: a knock, a choice to open it, and then you see who it is =================
+// A knock is a decision before it is a person. Under the door there's a strip of hall light, and something in it.
+// Open it and you see the hall, 4A across it, your mat, and whoever is standing on it. The cat is how you get a cat.
+function doorShut(c, kind, glow) { // your door from inside, at night: hall light spills under it, and whoever is there breaks it into shadows
+  if (!c) return;
+  const g = c.getContext('2d'), g0 = G; G = g; g.imageSmoothingEnabled = false;
+  px(0, 0, 160, 90, P.k1); for (let y = 0; y < 74; y += 6) px(0, y, 160, 1, rgba(P.k0, .35)); // your wall, dark
+  px(0, 74, 160, 16, P.k2); for (let x = 3; x < 160; x += 11) px(x, 75, 1, 15, P.k1); px(0, 74, 160, 1, P.k3); // floorboards
+  px(44, 0, 72, 75, P.d0); px(46, 2, 68, 72, P.d1); px(46, 2, 68, 1, P.d2); px(46, 2, 1, 72, P.d2); // the door
+  for (const [y, h] of [[8, 28], [42, 28]]) { px(52, y, 56, h, P.d0); px(53, y + 1, 54, h - 2, P.d1); px(53, y + 1, 54, 1, P.d2); }
+  px(104, 40, 5, 5, P.a0); px(105, 41, 3, 3, P.a2); px(106, 41, 1, 1, P.a4); // the knob
+  px(77, 24, 6, 6, P.d0); px(78, 25, 4, 4, P.k0); px(79, 26, 2, 2, rgba(P.a3, .8)); // the peephole: lit from the hall
+  px(108, 6, 2, 18, P.s1); px(107, 6, 4, 2, P.s2); px(107, 22, 4, 2, P.s2); // the chain
+  const lit = glow === 'screen' ? P.t4 : P.a3, spill = glow === 'screen' ? P.t3 : P.a2;
+  px(46, 74, 68, 1, lit); // the strip of light under the door
+  const stripes = kind === 'cat' ? [[74, 4], [80, 3], [86, 4]] : kind === 'kid' ? [[67, 7], [86, 7]] : kind === 'adult' ? [[60, 10], [90, 10]] : [];
+  for (let k = 0; k < 14; k++) { // the light, fanning out across your floor
+    const w = 68 + k * 7, x0 = 80 - w / 2, a = .34 * (1 - k / 14);
+    px(x0, 75 + k, w, 1, rgba(spill, a));
+    for (const [sx, sw] of stripes) { const sx2 = 80 + (sx - 80) * (1 + k * .1), sw2 = sw * (1 + k * .1); px(Math.round(sx2), 75 + k, Math.max(1, Math.round(sw2)), 1, rgba(P.k0, a * 2.2)); } // shadows, long, toward you
+  }
+  if (kind === 'cat') { px(84, 72, 5, 2, P.k0); px(85, 71, 3, 1, P.k0); } // one paw, under the door, asking
+  for (let k = 0; k < 5; k++) px(0, 85 + k, 160, 1, rgba(P.k0, .12 * k)); // vignette
+  G = g0;
+}
+function doorView(c, who) { // what you see through the open door
+  if (!c) return;
+  const g = c.getContext('2d'), g0 = G; G = g; g.imageSmoothingEnabled = false;
+  px(0, 0, 160, 90, P.k1);
+  px(0, 0, 160, 58, P.s0); for (let x = 6; x < 160; x += 14) px(x, 0, 1, 58, P.k2); // wallpaper seams
+  px(0, 46, 160, 12, P.k3); px(0, 46, 160, 1, P.s1); for (let x = 30; x < 140; x += 24) px(x, 48, 16, 8, P.k2); // the wainscot
+  px(0, 58, 160, 32, P.k2); for (let x = 0; x < 160; x += 12) px(x, 58, 1, 32, P.k1); px(0, 58, 160, 1, P.s1); // the floor tiles
+  const oka = !(S.m4 && S.m4.okafor === 'zoneC'); // 4A across the hall
+  px(58, 8, 44, 51, P.k0); px(60, 10, 40, 49, oka ? P.r1 : P.s1); px(60, 10, 40, 1, oka ? P.r2 : P.s2);
+  px(64, 15, 32, 14, oka ? P.r0 : P.s0); px(64, 33, 32, 20, oka ? P.r0 : P.s0); px(96, 34, 2, 3, P.a3);
+  px(74, 3, 12, 5, P.p2); px(76, 4, 2, 3, P.k1); px(80, 4, 3, 3, P.k1);
+  if (oka) px(60, 58, 40, 1, P.a2); // light under her door: she's up
+  if (S.okaforCat && oka) { px(92, 2, 6, 5, P.k0); px(93, 4, 1, 1, P.g4); px(96, 4, 1, 1, P.g4); } // Lucky, at her window
+  px(77, 0, 6, 2, P.a3); g.fillStyle = 'rgba(224,163,58,.08)'; g.beginPath(); g.moveTo(72, 2); g.lineTo(88, 2); g.lineTo(124, 90); g.lineTo(36, 90); g.fill(); // the hall light
+  px(42, 74, 76, 10, P.d2); px(42, 74, 76, 1, P.d3); for (let x = 46; x < 116; x += 6) px(x, 77, 3, 1, P.d1); // your mat
+  if (who === 'cat' || who === 'cat2') doorCat(80, 76, who === 'cat2');
+  else if (who === 'danny') doorKid(80, 76, { hair: P.k1, skin: P.h2, coat: P.t1, coatD: P.t0, legs: P.s3, socks: P.p3, big: true });
+  else if (who === 'danny9') doorKid(80, 76, { hair: P.k1, skin: P.h2, coat: P.g2, coatD: P.g1, legs: P.s1, socks: P.k3, band: true });
+  else if (who === 'maya') doorKid(80, 76, { hair: P.k0, skin: P.h1, coat: P.a1, coatD: P.a0, legs: P.s1, socks: P.k3, braids: true, tablet: true });
+  else if (who === 'lucia') doorAdult(80, 76, { hair: P.k1, skin: P.h2, coat: P.a1, coatD: P.a0, vest: true, phone: true });
+  else if (who === 'ray') doorAdult(80, 76, { hair: P.s5, skin: P.h3, coat: P.s2, coatD: P.s1, tie: true, paper: true });
+  px(0, 0, 20, 90, P.d0); px(20, 0, 3, 90, P.d1); px(140, 0, 20, 90, P.d0); px(137, 0, 3, 90, P.d1); px(0, 0, 160, 5, P.d0); px(0, 5, 160, 1, P.d1); // your doorframe
+  px(2, 6, 14, 84, P.d3); px(2, 6, 14, 1, P.d4); px(15, 6, 1, 84, P.d1); px(12, 46, 2, 3, P.a1); // the door, swung in
+  for (let k = 0; k < 6; k++) { px(0, 0, 160, 2 + k, rgba(P.k0, .06)); px(0, 88 - k, 160, 2 + k, rgba(P.k0, .06)); }
+  G = g0;
+}
+function doorCat(x, y, thin) { // a black cat on your mat, snow on her back, a tag that says 5A
+  const k = P.k0, rim = P.s3, eye = P.g4;
+  px(x - 7, y - 9, 14, 9, k); px(x - 6, y - 17, 12, 9, k);
+  px(x - 6, y - 20, 3, 3, k); px(x + 3, y - 20, 3, 3, k); px(x - 5, y - 19, 1, 1, P.r1); px(x + 4, y - 19, 1, 1, P.r1);
+  px(x - 4, y - 14, 2, 2, eye); px(x + 2, y - 14, 2, 2, eye); px(x - 3, y - 14, 1, 2, k); px(x + 3, y - 14, 1, 2, k);
+  px(x - 1, y - 11, 2, 1, P.r2);
+  px(x - 6, y - 17, 12, 1, rim); px(x - 6, y - 20, 1, 1, rim); px(x + 5, y - 20, 1, 1, rim); px(x - 7, y - 9, 1, 3, rim); px(x + 6, y - 9, 1, 2, rim);
+  px(x + 7, y - 3, 5, 2, k); px(x + 11, y - 7, 2, 5, k); px(x + 12, y - 8, 1, 1, rim);
+  px(x - 4, y - 8, 8, 1, P.e2); px(x - 1, y - 7, 2, 2, P.a3);
+  for (const [sx, sy] of [[-4, -17], [2, -18], [-2, -8], [4, -6], [-6, -5], [5, -9]]) px(x + sx, y + sy, 1, 1, P.p4);
+  if (thin) { px(x - 7, y - 9, 2, 9, P.k1); px(x + 5, y - 9, 2, 9, P.k1); px(x + 4, y - 20, 1, 1, P.p4); px(x + 5, y - 19, 1, 1, P.p4); }
+  px(x - 8, y, 22, 1, P.k0);
+}
+function doorKid(x, y, o) { // a child on your mat, about as tall as the door handle
+  px(x - 4, y - 8, 3, 7, o.legs); px(x + 1, y - 8, 3, 7, o.legs); px(x - 5, y - 2, 4, 2, o.socks); px(x + 1, y - 2, 4, 2, o.socks);
+  px(x - 7, y - 24, 14, 17, o.coat); px(x - 7, y - 24, 14, 1, mixc(o.coat, P.p4, .2)); px(x, y - 23, 1, 15, o.coatD);
+  px(x - 9, y - 22, 2, o.big ? 15 : 12, o.coat); px(x + 7, y - 22, 2, o.big ? 15 : 12, o.coat);
+  if (!o.big) { px(x - 9, y - 10, 2, 2, o.skin); px(x + 7, y - 10, 2, 2, o.skin); }
+  px(x - 5, y - 34, 10, 10, o.skin); px(x + 4, y - 33, 1, 8, mixc(o.skin, P.k0, .25));
+  px(x - 5, y - 36, 10, 3, o.hair); px(x - 6, y - 34, 1, 4, o.hair); px(x + 5, y - 34, 1, 4, o.hair);
+  if (o.braids) { px(x - 7, y - 33, 2, 10, o.hair); px(x + 5, y - 33, 2, 10, o.hair); px(x - 7, y - 23, 2, 1, P.e2); px(x + 5, y - 23, 2, 1, P.e2); }
+  px(x - 3, y - 30, 1, 2, P.k0); px(x + 2, y - 30, 1, 2, P.k0); px(x - 1, y - 26, 2, 1, mixc(o.skin, P.r1, .5));
+  if (o.tablet) { px(x - 9, y - 22, 18, 14, rgba(P.t4, .1)); px(x - 6, y - 19, 12, 8, P.k1); px(x - 5, y - 18, 10, 6, P.t3); px(x - 4, y - 17, 6, 1, P.t5); px(x - 4, y - 15, 4, 1, P.t5); px(x - 5, y - 33, 10, 3, rgba(P.t4, .18)); }
+  if (o.band) { px(x - 9, y - 12, 2, 2, P.g3); px(x - 9, y - 12, 1, 1, P.g4); }
+  px(x - 7, y, 16, 1, P.k0);
+}
+function doorAdult(x, y, o) { // a grown-up on your mat
+  px(x - 5, y - 18, 4, 17, P.s1); px(x + 1, y - 18, 4, 17, P.s1); px(x - 6, y - 2, 5, 2, P.k1); px(x + 1, y - 2, 5, 2, P.k1);
+  px(x - 9, y - 42, 18, 25, o.coat); px(x, y - 41, 1, 23, o.coatD);
+  if (o.vest) { px(x - 9, y - 32, 18, 2, P.p3); px(x - 9, y - 26, 18, 2, P.p3); }
+  px(x - 11, y - 40, 2, 20, o.coat); px(x + 9, y - 40, 2, 20, o.coat); px(x - 11, y - 20, 2, 3, o.skin); px(x + 9, y - 20, 2, 3, o.skin);
+  px(x - 3, y - 44, 6, 3, o.skin); px(x - 6, y - 56, 12, 12, o.skin); px(x + 5, y - 55, 1, 10, mixc(o.skin, P.k0, .25));
+  px(x - 6, y - 58, 12, 4, o.hair); px(x - 7, y - 56, 2, 9, o.hair); px(x + 5, y - 56, 2, 9, o.hair); px(x - 3, y - 61, 6, 3, o.hair);
+  px(x - 3, y - 51, 1, 2, P.k0); px(x + 2, y - 51, 1, 2, P.k0); px(x - 1, y - 47, 3, 1, mixc(o.skin, P.r1, .5));
+  if (o.phone) { px(x + 3, y - 36, 5, 8, P.k1); px(x + 4, y - 35, 3, 6, P.t3); }
+  if (o.tie) { px(x - 2, y - 42, 4, 2, P.p3); px(x, y - 41, 1, 12, P.e1); px(x - 1, y - 41, 3, 2, P.e1); }
+  if (o.paper) { px(x - 15, y - 34, 8, 10, P.p3); px(x - 15, y - 34, 8, 1, P.p4); for (let k = 0; k < 4; k++) px(x - 14, y - 32 + k * 2, 6, 1, P.p0); px(x - 13, y - 31, 3, 1, P.e2); px(x - 11, y - 27, 4, 1, P.e2); }
+  px(x - 9, y, 20, 1, P.k0);
+}
+function doorKnock(o) { // { title, pre, sound, shadow, glow, who, see, buttons, none }
+  if (o.sound === 'scratch') { for (let i = 0; i < 4; i++) sfx.tone(1900 + i * 120, .04, 'sawtooth', .012, 900, i * .09); sfx.tone(720, .34, 'sine', .03, 520, .55); }
+  else for (const t of [0, .2, .55]) sfx.tone(92, .07, 'square', .06, 60, t);
+  modal({ cls: 'door', title: `${clockText()} · ${o.title}`, body: `<canvas class="door-view" id="doorCv" width="160" height="90"></canvas><p>${o.pre}</p>`,
+    buttons: [{ label: 'Open the door', primary: true, fn: () => doorOpen(o) }, { label: (o.none && o.none.label) || 'Pretend you’re not home', fn: () => { S.eve.shut = (S.eve.shut || 0) + 1; if (o.none && o.none.fn) o.none.fn(); } }] });
+  doorShut($('doorCv'), o.shadow, o.glow);
+}
+function doorOpen(o) {
+  S.eve.doors = (S.eve.doors || 0) + 1;
+  sfx.tone(170, .3, 'triangle', .035, 110);
+  modal({ cls: 'door', title: o.title, body: `<canvas class="door-view" id="doorCv" width="160" height="90"></canvas>${o.see}`, buttons: o.buttons.filter(Boolean) });
+  doorView($('doorCv'), o.who);
+}
+function catAdopt(thin) {
+  modal({ cls: 'door', title: 'WHAT WILL YOU CALL HER?', body: `<p>She walks once around the room, sniffs the radiator, and sits on your only towel as if she has always lived here.</p><p class="muted">Cat food is ${money(pr('cat'))} a day. She’ll want it.</p>`,
+    buttons: ['Soot', 'Ink', 'Static'].map((n, i) => ({ label: n, primary: i === 0, fn: () => {
+      S.cat = Object.assign(CAT0(), { name: n, fed: thin ? 35 : 50 }); S.eve.cat = 'in';
+      Object.assign(catFx, { x: CAT_SPOTS.door.x, y: CAT_SPOTS.door.y, at: 'door', segs: [], next: performance.now() + 2500 });
+      note(`${n} drank a saucer of ramen broth and slept on your feet. You were warmer than you’d been all week.`); renderAll();
+    } })) });
+}
+// Act I: the cat from 5A, Danny from 2C, Maya from 4C
+const DOORS1 = [
+  { d: 1, id: 'cat1', door: true, when: () => !S.cat, open() {
+    doorKnock({ title: 'SOMETHING AT THE DOOR', sound: 'scratch', shadow: 'cat', who: 'cat',
+      pre: 'Something is scratching at your door, low down. Then a small cracked sound, like a question.',
+      see: `<p>A black cat, thin as a coat hanger, sitting on your mat with snow on her back. The tag on her collar says <b>5A</b>. The super cleared out 5A last week. Nobody came back for the cat.</p><p>She looks at you. She doesn’t come in. She waits to be asked.</p>`,
+      buttons: [
+        { label: 'Let her in', primary: true, fn: () => catAdopt(false) },
+        { label: 'Give her some broth, then close the door', fn: () => { S.eve.cat = 'fed'; S.food = clamp(S.food - 3, 0, 100); note('You put a saucer of ramen broth on the mat and closed the door. In the morning the saucer was licked clean.'); } },
+        { label: 'Close the door', fn: () => { S.eve.cat = 'no'; echo(S.day + 1, 'catCry'); } }
+      ],
+      none: { label: 'Leave it', fn: () => { S.eve.cat = 'ignored'; echo(S.day + 1, 'catCry'); } } });
+  } },
+  { d: 3, id: 'cat2', door: true, when: () => !S.cat && !!S.eve._cat1 && S.eve.cat !== 'okafor', open() {
+    doorKnock({ title: 'SOMETHING AT THE DOOR, AGAIN', sound: 'scratch', shadow: 'cat', who: 'cat2',
+      pre: 'The scratching again. Slower this time.',
+      see: `<p>The cat from 5A. Thinner. There is frost on one ear${S.eve.cat === 'fed' ? ', and a warm patch on your mat the shape of her' : ''}.</p><p>It’s −11°C tonight. The radio said so twice.</p>`,
+      buttons: [{ label: 'Let her in', primary: true, fn: () => catAdopt(true) }, { label: 'Close the door', danger: true, fn: () => { S.eve.cat = 'okafor'; echo(S.day + 1, 'catOkafor'); } }],
+      none: { label: 'Leave it', fn: () => { S.eve.cat = 'okafor'; echo(S.day + 1, 'catOkafor'); } } });
+  } },
+  { d: 11, id: 'danny', door: true, when: () => true, open() {
+    doorKnock({ title: 'A KNOCK, LOW ON THE DOOR', shadow: 'kid', who: 'danny',
+      pre: 'Three small knocks, low down. Kid height.',
+      see: `<p>A boy, eight or nine, in pyjama bottoms and somebody’s big coat. Socks, no shoes. <q>I’m Danny, from 2C. Mom’s at the warehouse till six. The door clicked shut.</q></p><p>The hallway is four degrees. He is trying not to cry, and mostly managing.</p>`,
+      buttons: [
+        { label: 'Let him wait inside. Make him toast (−10 energy)', primary: true, fn: () => { S.stamina = clamp(S.stamina - 10, 0, 100); S.food = clamp(S.food - 5, 0, 100); S.eve.danny = 'in'; note(`Danny ate four pieces of toast${S.cat && !S.cat.gone ? ` and fell asleep on the floor with ${S.cat.name} on his chest` : ' and fell asleep on the floor'}. At 6:20 AM his mother knocked, still in her warehouse vest, and carried him downstairs without waking him.`); echo(S.day + 3, 'dannyTamales'); } },
+        { label: 'Give him your blanket. Close the door', fn: () => { S.eve.danny = 'blanket'; S.bodyTemp = clamp(S.bodyTemp - .3, 30, 37); echo(S.day + 1, 'dannyBlanket'); } },
+        { label: 'Report an unattended child to HEARTH', danger: true, fn: () => { S.eve.danny = 'hearth'; crossLine('You reported Danny to HEARTH.'); echo(S.day + 2, 'dannyHearth'); echo(S.day + 12, 'dannyMoved'); } }
+      ],
+      none: { label: 'Pretend you’re not home', fn: () => { S.eve.danny = 'no'; echo(S.day + 1, 'dannySock'); } } });
+  } },
+  { d: 17, id: 'maya', door: true, when: () => true, open() {
+    doorKnock({ title: 'A KNOCK, AND A GLOW UNDER THE DOOR', shadow: 'kid', who: 'maya', glow: 'screen',
+      pre: 'Two knocks. In the strip of light under the door, small feet, and a blue glow like a screen.',
+      see: `<p>Maya from 4C, ten, holding a school tablet that’s still glowing. <q>The tutor app says I’m behind. It says Premium would fix it. Mom says no.</q></p><p><q>Can you check my fractions? Mom says you’re good with computers.</q></p>`,
+      buttons: [
+        { label: 'Sit with her for an hour (−12 energy)', primary: true, fn: () => { S.stamina = clamp(S.stamina - 12, 0, 100); S.eve.maya = 'helped'; echo(S.day + 6, 'mayaTest'); } },
+        { label: 'Show her how to get the tutor to do it for her', fn: () => { S.eve.maya = 'cheat'; echo(S.day + 6, 'mayaCheat'); } },
+        { label: '“I’m working. Sorry.”', fn: () => { S.eve.maya = 'no'; echo(S.day + 6, 'mayaPremium'); } }
+      ],
+      none: { label: 'Pretend you’re not home', fn: () => { S.eve.maya = 'no'; echo(S.day + 6, 'mayaPremium'); } } });
+  } }
+];
+// Act II: Lucía, Danny's mother, fired by an app
+const EVENING2 = [
+  { get d() { return ACT2_START + 9; }, id: 'lucia', door: true, when: () => S.eve.danny !== 'hearth', open() {
+    doorKnock({ title: 'A KNOCK · 2C', shadow: 'adult', who: 'lucia',
+      pre: S.eve.danny === 'in' ? 'A knock you don’t know, then a voice you do: “It’s Lucía. Danny’s mom.”' : 'A knock, a grown-up’s, and a voice: “It’s Lucía, from 2C.”',
+      see: `<p>Lucía from 2C, Danny’s mother, in her Grovel courier jacket, holding her phone out like it’s hot. <q>Grovel switched me off. No reason. Just this.</q></p><p>The screen says: <i>Your account has been deactivated following an automated review. This decision is final.</i> <q>You know these things. Is there someone to call?</q></p>`,
+      buttons: [
+        { label: 'Help her write an appeal (−15 energy)', primary: true, fn: () => { S.stamina = clamp(S.stamina - 15, 0, 100); S.eve.lucia = 'appeal'; echo(S.day + 2, 'luciaAppeal'); } },
+        S.balance >= 40 ? { label: 'Lend her $40 for the week', fn: () => { S.balance -= 40; tx('Lent to Lucía, 2C', -40); S.eve.lucia = 'lent'; echo(S.day + 6, 'luciaPaid'); } } : null,
+        { label: '“I can’t help. I’m sorry.”', fn: () => { S.eve.lucia = 'no'; echo(S.day + 3, 'luciaNo'); } }
+      ], none: { label: 'Pretend you’re not home', fn: () => { S.eve.lucia = 'away'; echo(S.day + 3, 'luciaNo'); } } });
+  } }
+];
+EVENING2.push({ get d() { return ACT2_START + 20; }, id: 'ray', door: true, when: () => S.eve.wallet !== 'kept', open() {
+  doorKnock({ title: 'A KNOCK · 5C, UPSTAIRS', shadow: 'adult', who: 'ray',
+    pre: S.eve.wallet === 'returned' ? 'A careful knock. Two, then one. “It’s Ray. From 5C. The wallet.”' : 'A careful knock. Two, then one. “It’s Ray Malone, from 5C.”',
+    see: `<p>Ray Malone, the proofreader from 5C, in a tie, holding a printout covered in red pen. <q>I hear you teach the machines now. The ad says they want “careful readers.” I’ve been a careful reader for twenty years.</q></p><p><q>Would you put in a word? There’s a referral bonus. For you, I mean.</q></p>`,
+    buttons: [
+      { label: 'Refer him (+$60 referral bonus)', fn: () => { S.balance += 60; tx('OpenBrain Data · referral bonus', 60); S.eve.ray = 'referred'; echo(S.day + 4, 'rayTrainer'); echo(S.day + 16, 'rayReplaced'); } },
+      { label: 'Tell him what the job really is', primary: true, fn: () => { S.eve.ray = 'truth'; echo(S.day + 3, 'rayTruth'); } },
+      { label: '“They’re not hiring.”', fn: () => { S.eve.ray = 'no'; echo(S.day + 4, 'rayNo'); } }
+    ] });
+} });
+// Act III: Maya asks how you tell what's real
+const DOORS3 = [
+  { get d() { return ACT3_START + 9; }, id: 'mayaVideo', door: true, when: () => !!S.m3 && S.m3.made >= 1, open() {
+    doorKnock({ title: 'A KNOCK, AND A GLOW UNDER THE DOOR', shadow: 'kid', who: 'maya', glow: 'screen',
+      pre: 'Two knocks, and the blue glow of a tablet in the strip of light.',
+      see: `<p>Maya from 4C, eleven now${S.eve.maya === 'helped' ? ', the girl you helped with fractions' : ''}. <q>Our teacher showed us a video of Rosa Delgado. Then she said some videos are fake and we should check. How do you check?</q></p><p>On her tablet is something you made.</p>`,
+      buttons: [
+        { label: 'Tell her the truth: you made it', fn: () => { S.m3.heat = clamp(S.m3.heat + 10, 0, 120); S.eve.mayaVideo = 'truth'; echo(S.day + 4, 'mayaTruth'); } },
+        { label: 'Show her how to check where a video comes from', primary: true, fn: () => { S.eve.mayaVideo = 'check'; echo(S.day + 4, 'mayaCheck'); } },
+        { label: '“Nobody can tell anymore.”', fn: () => { S.m3.kip = clamp(S.m3.kip + .2, 30, 70); S.eve.mayaVideo = 'cant'; crossLine('Told Maya nobody can tell what’s real'); echo(S.day + 4, 'mayaCant'); } }
+      ] });
+  } }
+];
+// Act IV: Danny and his band
+const DOORS4 = [
+  { get d() { return A4[1] + 4; }, id: 'dannyBand', door: true, when: () => S.eve.danny !== 'hearth', open() {
+    doorKnock({ title: 'A KNOCK, LOW ON THE DOOR', shadow: 'kid', who: 'danny9',
+      pre: S.eve.danny ? 'Three small knocks, low down. You know them.' : 'Three small knocks, low down. Kid height.',
+      see: `<p>${S.eve.danny ? 'Danny' : 'A boy from 2C'}, nine now, with a Harmony band on his wrist, a child’s size, green. <q>School says everyone has to wear one. Mine says 58. Mom’s says 71. If yours goes under 55 they put you in the calm class.</q></p><p><q>Can you make it say a better number?</q></p>`,
+      buttons: [
+        { label: '“The number isn’t you.”', fn: () => { m4().harmony -= 2; S.eve.dannyBand = 'number'; echo(S.day + 1, 'dannyNumber'); } },
+        { label: 'Teach him to breathe slowly, and smile at it', primary: true, fn: () => { m4().harmony += 1; S.eve.dannyBand = 'smile'; echo(S.day + 1, 'dannySmile'); } },
+        { label: 'Take it off him for the evening. Play cards', fn: () => { m4().harmony -= 5; S.eve.dannyBand = 'off'; echo(S.day + 1, 'dannyOff'); } }
+      ] });
+  } }
+];
+Object.assign(ECHO, {
+  catCry() { if (!S.cat) note('A cat cried in the stairwell until two in the morning. Then it stopped. You lay awake waiting for it to start again.'); },
+  catOkafor() { S.okaforCat = true; note('Mrs. Okafor has a black cat now. She calls her Lucky. In the evenings Lucky sits in the window of 4A and watches your door.'); },
+  dannyTamales() { S.food = clamp(S.food + 30, 0, 100); note('A foil tray of tamales on your mat, still warm. The note says: “Thank you for Danny. Any time you need anything. Lucía, 2C.”'); },
+  dannyBlanket() { note(`Your blanket was folded on your mat this morning. On top, a drawing in marker: your door, ${S.cat && !S.cat.gone ? 'a black cat, ' : ''}and a boy in socks.`); },
+  dannyHearth() { note('HEARTH logged “an unattended minor, 2C” and sent it to Family Services, which is an app now. Lucía got a “stability assessment” and gave up her night shift to keep Danny. She lost the job.'); },
+  dannyMoved() { note('2C has a new name on the buzzer. Someone left a pair of small socks on the radiator in the lobby. Nobody has taken them.'); },
+  dannySock() { note('There was a small wet sock on your mat in the morning.'); },
+  mayaTest() { note('Maya slid a test under your door: fractions, nine out of ten. The tutor app had stamped “needs Premium” across the top. She had crossed it out.'); },
+  mayaCheat() { note('Maya’s tutor app gave her a gold star for every answer. Her teacher, a human one, wrote “please come and see me” on the report.'); },
+  mayaPremium() { note('Maya’s mother bought Premium. You heard them argue about it through the floor. Then the tablet was louder than they were.'); },
+  luciaAppeal() { note('Lucía’s appeal was answered in 0.4 seconds: “Upheld. Thank you for your patience.” She laughed on the stairs for a long time, and then she didn’t.'); },
+  luciaNo() { note('Lucía drives for Uburn now, nights, in a borrowed car. Danny sleeps at his grandmother’s. The light under 2C’s door is off most evenings.'); },
+  rayTrainer() { note('Ray passed the OpenBrain test on his first try. He showed you his first task, proud: forty-one corrections to a single paragraph. Agent-4 learned all forty-one.'); },
+  rayReplaced() { note('OpenBrain dropped “careful reading” from its task list. Agent-4 checks its own spelling now. Ray left a box of red pens by the bins with a sign: FREE. STILL WORK.'); },
+  rayTruth() { S.food = clamp(S.food + 15, 0, 100); note('You told Ray what the job is: teaching a machine the one thing you’re good at, until it doesn’t need you. In the morning there was a jar of soup on your mat. “Thank you for not lying. — R.”'); },
+  rayNo() { note('Ray found the ad again and applied anyway. You saw him on the trainer leaderboard: T-0412, 4.9 stars, rising fast.'); },
+  luciaPaid() { S.balance += 40; tx('Lucía, 2C · paid back', 40); note('Lucía paid you back in quarters, a roll a week. The last roll had a note in it: “Danny says hi.”'); },
+  mayaTruth() { note('Maya’s class did a project called “How to Spot a Fake.” Your video was the example. She didn’t use your name. She wrote “someone in my building.”'); },
+  mayaCheck() { if (S.m3) S.m3.rosa = clamp(S.m3.rosa + .3, 30, 70); note('Maya taught her grandmother to check where a video comes from. Her grandmother taught the whole laundry room.'); },
+  mayaCant() { note('Maya says nobody can tell what’s real anymore. Her teacher didn’t argue. Her teacher looked tired.'); },
+  dannyNumber() { note('Danny wears his band upside down now, so the number faces in. “It still counts,” he says. “But I don’t have to look.”'); },
+  dannySmile() { note('Danny’s band says 66. He smiles at it a lot. It’s a very good smile, and he doesn’t mean it.'); },
+  dannyOff() { note('You played cards with Danny for an hour, his band face down on the table. In the morning Lucía got a note about “a gap in Danny’s wellbeing data.” She said it was worth it.'); }
+});
+const CAT0 = () => ({ name: 'Soot', fed: 80, food: true, hungry: 0, sick: 0, gone: 0, vetDays: 0 });
+// What one act hands the next: the cat (or no cat) and the choices you made, not which evenings already happened.
+const keepRun = () => S ? { cat: S.cat ? Object.assign({}, S.cat) : null, eve: Object.fromEntries(Object.entries(S.eve || {}).filter(([k]) => k[0] !== '_')), okaforCat: !!S.okaforCat } : null;
+function applyKeep(k) { // nothing handed over = a chapter started from the title, with the cat already home
+  if (!k || typeof k !== 'object' || !('eve' in k)) k = { cat: CAT0(), eve: {}, okaforCat: false };
+  S.cat = k.cat ? Object.assign({}, k.cat) : null; S.eve = Object.assign({}, k.eve); S.okaforCat = !!k.okaforCat;
+  S.keep = JSON.parse(JSON.stringify(k)); // restarting the act starts it from here again
+}
+function doorStats() { // the last screen remembers who you opened the door for
+  const e = S.eve || {}, n = (e.doors || 0) + (e.shut || 0), c = S.cat;
+  return [['Doors you opened', n ? `${e.doors || 0} of ${n}` : 'nobody knocked'],
+    ['The cat', c ? (c.gone ? `${c.name}, gone` : `${c.name}, asleep on your feet`) : S.okaforCat ? 'Lucky, in 4A, watching your door' : 'none']];
+}
+EVENING.push(...DOORS1); EVENING.sort((a, b) => a.d - b.d); // Act I's evenings, in the order the days bring them
+EVENING3.push(...DOORS3); EVENING4.push(...DOORS4);
 function eveningDue() {
+  if (S && S.eveDay === S.day) return null; // one knock a night
   if (S && !S.over && S.phase === 'consensus') { S.eve = S.eve || {}; return EVENING4.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null; }
   if (S && !S.over && S.phase === 'mirage') { S.eve = S.eve || {}; return EVENING3.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null; }
+  if (S && !S.over && S.act === 2 && (S.phase === 'trainer' || S.phase === 'audit')) { S.eve = S.eve || {}; return EVENING2.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null; }
   if (!S || S.over || S.act === 2 || S.phase !== 'farm' || DESK) return null;
   S.eve = S.eve || {};
   return EVENING.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null;
 }
-function runEvening(e) { S.eve['_' + e.id] = 1; sfx.ping(); e.open(); }
+function runEvening(e) { S.eve['_' + e.id] = 1; S.eveDay = S.day; if (!e.door) sfx.ping(); e.open(); }
 
 // ================= modals =================
 // ---- the people: a face for everyone who knocks, calls or sits across a table from you ----
@@ -12227,6 +12476,7 @@ function paintRoom(t) {
 function peep() {
   if (fx.feet && fx.feet.stay) return toast('Through the peephole: a man in a grey jacket, looking at his phone. He doesn’t knock.');
   if ((S.heat || 0) > 62) return toast('The hall is empty. A van across the street has been parked there since Tuesday.');
+  if (S.okaforCat && !(S.m4 && S.m4.okafor === 'zoneC')) return toast('Through the peephole: Lucky, Mrs. Okafor’s black cat, on the mat outside 4A, watching your door.');
   if (S.owed > 0) return toast('There is a notice taped to the outside of your door, too.');
   toast('The hallway is empty. The bulb out there buzzes.');
 }
@@ -12481,12 +12731,12 @@ function newAct2(carry) {
   const k = carry && carry.k401 ? carry.k401 : 84200 * 1.19;
   S = {
     act: 2, day: ACT2_START,
-    balance: carry ? clamp(Math.round(carry.balance), 0, 1500) : 120,
+    balance: carry && carry.balance != null ? clamp(Math.round(carry.balance), 0, 1500) : 120,
     k401: k, kHist: [k], kStart: 84200,
     guard: true, cull: 0, computeTier: 0, hasMemoryMod: false, hasAutoCull: false, rogueAutonomy: 0, nextAgentNum: 0,
     power: true, heatOn: true, temp: 19, bodyTemp: 37.0, food: 72, stamina: 85, meal: 'ramen',
     price: Object.assign({}, PRICE0, { heat: 13, ramen: 6, groc: 24, cat: 4, coffee: 6, stim: 18, vps: 7, spawn: 160, ram: 320, gpu: 720 }),
-    cat: carry && carry.cat ? Object.assign({}, carry.cat) : { name: 'Soot', fed: 80, food: true, hungry: 0, sick: 0, gone: 0, vetDays: 0 },
+    cat: CAT0(), // applyKeep() swaps in the cat you actually have
     starveDays: 0, stimCountToday: 0, heartStrain: 0, battery: 100,
     agents: [], clones: {}, lastCycle: null, cycles: 0,
     tx: [], mail: [], tab: 'farm', reading: null, seen: {},
@@ -12521,7 +12771,7 @@ function newAct2(carry) {
 
 function startAct2(carry) {
   sfx.init();
-  newAct2(carry); scene = 'room'; fog = []; acc = 0; walkT = 0;
+  newAct2(carry); applyKeep(carry && carry.keep); scene = 'room'; fog = []; acc = 0; walkT = 0;
   $('titleScreen').hidden = true; $('endScreen').hidden = true; $('troubleScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
   $('evBtn').hidden = !save.evidence.length;
   setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
@@ -13357,6 +13607,7 @@ function dayStep2() {
   if (S.graceUntil >= 0 && d > S.graceUntil && S.owed > 0) return triggerEvictionStreet();
   checkFired();
   storyEvents2(d);
+  runEchoes(d);
   wrenWatch(d);
   bump();
   if (d >= ACT2_END) return endAct2();
@@ -13629,9 +13880,9 @@ function m3Briefs(d) {
   pool.sort((a, b) => b[0][9] - a[0][9] + (Math.random() - .5) * 8); // the newest, darkest ones float up
   M.briefs = pool.slice(0, 3).map(([b, i]) => i);
 }
-function startAct3() {
+function startAct3(keep) {
   sfx.init();
-  newAct2(); S.phase = 'mirage'; S.day = ACT3_START; S.fired = true; S.balance = Math.max(420, Math.round(S.balance * .3)); S.owed = 0; S.graceUntil = -1;
+  newAct2(); applyKeep(keep); S.phase = 'mirage'; S.day = ACT3_START; S.fired = true; S.balance = Math.max(420, Math.round(S.balance * .3)); S.owed = 0; S.graceUntil = -1;
   S.m3 = { kip: 44, rosa: 49, yes: 42, heat: 0, harm: 0, trust: 3, reach: 0, made: 0, used: [], briefs: [], arch: [], leaked: false, hannah: false, dropped: false, rent: false };
   m3Briefs(S.day); snap();
   scene = 'room'; fog = []; acc = 0; walkT = 0;
@@ -13772,7 +14023,7 @@ function m3End(out) {
   $('endText').textContent = text + (S.eve && S.eve.vote ? (S.eve.vote === 'nobody' ? ' You didn’t vote.' : ` You voted for ${S.eve.vote}.`) : '');
   $('endStats').innerHTML = [['Pieces released', M.made], ['People reached', M.reach.toLocaleString('en-US')], ['Briefs passed or deleted', 3 - Math.max(0, M.trust)], ['Halvorsen at the end', (R.kipV != null ? R.kipV : M.kip).toFixed ? (R.kipV != null ? R.kipV : M.kip).toFixed(1) + '%' : ''], ['Prop 9', R.prop == null ? 'not yet voted' : R.prop ? 'passed' : 'failed'], ['Platform attention', Math.round(M.heat) + '%'], ['Checking balance', money(S.balance)]].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('') + linesHTML();
   $('endNext').innerHTML = ACTS.slice(3).map((a, i) => i === 0 ? `<button class="actrow" id="act4Next"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Play Act IV</span></button>` : `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Coming later</span></div>`).join('');
-  if ($('act4Next')) $('act4Next').onclick = () => startAct4();
+  if ($('act4Next')) $('act4Next').onclick = () => startAct4(keepRun());
   sfx.alarm(); $('replayBtn').textContent = 'Replay Act III';
   document.querySelectorAll('.toast').forEach(t => t.remove());
   setTimeout(() => endShow('endScreen'), 600);
@@ -13831,7 +14082,7 @@ function endAct2() {
     ['Checking balance', money(S.balance)], ['401(k) balance', money(S.k401)]
   ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
   $('endNext').innerHTML = ACTS.slice(2).map((a, i) => i === 0 ? `<button class="actrow" id="act3Next"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Play Act III</span></button>` : `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
-  if ($('act3Next')) $('act3Next').onclick = () => startAct3();
+  if ($('act3Next')) $('act3Next').onclick = () => startAct3(keepRun());
   setTimeout(() => endShow('endScreen'), 600);
 }
 
@@ -13954,7 +14205,7 @@ function bank2Html() {
       <div class="bk-daily"><div class="row"><span>Every day</span><b>${money(heat + meals + cat)}/day</b></div>
         ${bkRow('Apartment heating', S.heatOn && S.power ? money(heat) + '/day' : 'OFF ($0/day)')}
         ${bkRow(`Meals · ${(MEALS[S.meal] || MEALS.ramen).label}`, `${money(meals)}/day`)}
-        ${cat ? bkRow('Soot’s food', `${money(cat)}/day`) : ''}
+        ${cat && S.cat ? bkRow(`${esc(S.cat.name)}’s food`, `${money(cat)}/day`) : ''}
       </div>
       <div class="bk-daily"><div class="row"><span>Income</span><b></b></div>${work}</div>`);
 }
@@ -14090,7 +14341,7 @@ function startAct1(skipOffice) {
   $('titleScreen').hidden = true; $('endScreen').hidden = true; $('troubleScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
   $('evBtn').hidden = !save.evidence.length;
   setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
-  actCard(skipOffice === true ? { n: 'I', t: ACTS[0].t, d: 'MONDAY, FEBRUARY 1, 2027', l: 'No job. No laptop. A black cat called Soot, and rent on the first.' }
+  actCard(skipOffice === true ? { n: 'I', t: ACTS[0].t, d: 'MONDAY, FEBRUARY 1, 2027', l: 'No job. No laptop. Rent on the first, and neighbours who knock.' }
     : { n: 'I', t: ACTS[0].t, d: 'MONDAY, JANUARY 25, 2027', l: 'Northvale Logistics, ninth floor. The week a new AI called ChatGPX arrives.' });
   if (skipOffice === true) { enterApartment(); return; }
   modal({
@@ -14103,8 +14354,8 @@ function startAct1(skipOffice) {
 }
 bindDesk();
 $('startBtn').addEventListener('click', () => startAct1());
-$('replayBtn').addEventListener('click', () => S && S.phase === 'consensus' ? startAct4() : S && S.phase === 'mirage' ? startAct3() : startAct2());
-$('trainerBtn').addEventListener('click', () => startAct2({ balance: S.balance, k401: S.k401, cat: S.cat }));
+$('replayBtn').addEventListener('click', () => S && S.phase === 'consensus' ? startAct4(S.keep) : S && S.phase === 'mirage' ? startAct3(S.keep) : startAct2({ keep: S && S.keep }));
+$('trainerBtn').addEventListener('click', () => startAct2({ balance: S.balance, k401: S.k401, keep: keepRun() }));
 $('trEvidence').addEventListener('click', openEvidence);
 $('trReplay').addEventListener('click', () => startAct1());
 
@@ -14431,7 +14682,7 @@ function pmArm(b, sure, go) {
   for (const o of document.querySelectorAll('#pauseMenu [data-armed]')) { delete o.dataset.armed; o.textContent = o.dataset.was; }
   b.dataset.was = b.textContent; b.dataset.armed = '1'; b.textContent = sure; sfx.tone(220, .07, 'square', .02);
 }
-$('pmRestart').onclick = e => pmArm(e.currentTarget, 'Sure? This replaces your saved run', () => { const a4 = S.phase === 'consensus', a3 = S.phase === 'mirage', a2 = S.act === 2, office = S.phase === 'office'; $('pauseMenu').hidden = true; if (a4) startAct4(); else if (a3) startAct3(); else if (a2) startAct2(); else startAct1(!office); });
+$('pmRestart').onclick = e => pmArm(e.currentTarget, 'Sure? This replaces your saved run', () => { const a4 = S.phase === 'consensus', a3 = S.phase === 'mirage', a2 = S.act === 2, office = S.phase === 'office'; $('pauseMenu').hidden = true; const k = S.keep; if (a4) startAct4(k); else if (a3) startAct3(k); else if (a2) startAct2({ keep: k }); else startAct1(!office); });
 $('pmTitle').onclick = () => { runSave(); $('pauseMenu').hidden = true; closeLaptop(); closePhone(); setSpeed(0); renderActList(); renderTutBtn(); $('titleScreen').hidden = false; $('titleScreen').scrollTop = 0; }; // the run is kept, so this needs no second click
 $('gateClose').onclick = () => { S.gateOpen = false; gateSync(); };
 
@@ -14481,8 +14732,8 @@ const TUT = [
   // the apartment
   { id: 'rent', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen(), el: () => $('hProjCell'), t: 'RENT', s: 'Rent is due on the 1st. This cell says whether you’ll have it on the day, at the rate you’re going.' },
   { id: 'goal', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen() && !$('hGoalCell').hidden, el: () => $('hGoalCell'), t: 'TODAY', s: 'What you need to earn today to stay on track for rent. At night the ledger grades the day.' },
-  { id: 'room', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen(), el: () => $('room'), t: 'THE ROOM IS CLICKABLE', s: 'The fridge is the kitchen. The radiator is the heat. The cat is Soot. Things you can use glow when you arrive.' },
-  { id: 'status', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen(), el: () => $('roomStatus'), t: 'HEAT, SOOT, THE LEDGER', s: 'Heat costs money every day, and so does Soot. The ledger at night lets you choose what to pay for.' },
+  { id: 'room', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen(), el: () => $('room'), t: 'THE ROOM IS CLICKABLE', s: 'The fridge is the kitchen. The radiator is the heat. The door opens onto the hall. Things you can use glow when you arrive.' },
+  { id: 'status', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen(), el: () => $('roomStatus'), t: 'HEAT, FOOD, THE LEDGER', s: 'Heat costs money every day, and so does food. The ledger at night lets you choose what to pay for.' },
   { id: 'pc', when: () => S.act !== 2 && S.phase === 'farm' && !S.pc && !lapOpen(), el: () => $('railLaptop'), t: 'YOU NEED A COMPUTER', s: 'IT took your laptop. Open the laptop rail to get to the store, buy a machine and pay for the internet.' },
   { id: 'web', when: () => S.act !== 2 && S.phase === 'farm' && lapOpen() && online() && !$q('.ttabs [data-tab="web"]').hidden, el: () => $q('.ttabs [data-tab="web"]'), t: 'THE JOB SITES', s: 'freecancer.com and linkbin.com. Send a proposal; some clients hire you. Instant jobs start right away.' },
   { id: 'bench', when: () => lapOpen() && !!MGC && !!BN && !BN.auto && !$('benchWin').hidden, el: () => $('benchWin'), t: 'EVERY JOB IS A GAME', s: 'Play it well and the client pays in full, with a tip sometimes. Mistakes cost pay and stars. The bar on top shows how far you are.' },
@@ -14741,7 +14992,7 @@ if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
 if (location.hash === '#act4') startAct4();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, peep, eveningDue, EVENING2, EVENING3, DOORS1, DOORS3, DOORS4, catAdopt, doorKnock, doorOpen, keepRun, applyKeep, doorStats, ECHO, runEchoes, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>

@@ -49,15 +49,30 @@ These are implemented as evening events. Each comes back later as an echo.
 
 | Day | Choice | Inspired by | Money | What comes back |
 |---|---|---|---|---|
+| 1 | **Something scratching at your door.** A thin black cat with a 5A tag; 5A cleared out last week. Let her in, give her broth and close the door, or close it. | Kedi; Inside Llewyn Davis; A Street Cat Named Bob | cat food every day | Let in: you name her and she's yours, in every act. Shut out: she cries in the stairwell, and comes back once. |
+| 3 | **The cat again**, thinner, frost on one ear, −11°C. | The Snowman; A Christmas Carol | cat food every day | Shut out twice: Mrs. Okafor takes her in and calls her Lucky. Lucky sits in 4A's window and watches your door. |
 | 4 | **Mrs. Adeyemi, 3B.** Her son Tunde, 19, has been rejected 41 times by an AI screener. Will your machines rewrite his letter? | Two Days, One Night; Disco Elysium | −20 stamina, or +$20 if you take her money | Day 11: jollof rice at your door and "TUNDE GOT AN INTERVIEW". Or a nod on the stairs. Or, through the floor, Tunde leaving for a night shift. |
 | 9 | **HEARTH**, the building's AI concierge, offers $150 off rent if your agents flag neighbours likely to pay late. | Grapes of Wrath; Margin Call | +$150 rent credit | Day 18: a TENANT RISK REVIEW notice on 3B. Day 25: 3B is empty and listed at $2,340. Her pot is still in your sink. |
+| 11 | **Danny, 2C**, eight, locked out in his socks; his mother works nights. Let him in, give him your blanket, or report an unattended child to HEARTH. | Nobody Knows; The Florida Project | −10 stamina, or a colder night | Let in: tamales from his mother. Blanket: a drawing on your mat. Reported: his mother loses her job keeping him, and 2C has a new name on the buzzer. |
 | 14 | **Ray's wallet**, holding $200 and the card of the proofreader from the classified ads. | Les Misérables; Bicycle Thieves | +$200 if you keep it | Returned: oranges and "That was March." Kept: a sign in the lobby, "IT HAD MY RENT IN IT", then a padlock on 5C. |
+| 17 | **Maya, 4C**, ten: her tutor app says she needs Premium. Sit with her, show her how to make the app do it, or say you're working. | Matilda; Hoop Dreams | −12 stamina | Nine out of ten, with "needs Premium" crossed out; a gold star from the app and a worried teacher; or the tablet louder than the argument through the floor. |
 | 20 | **"Promise you won't delete me."** Your most honest agent asks. | Ex Machina; Her; Klara and the Sun | none | If you promise and later delete it: "You promised." |
-| 24 | **Soot gets sick** four days before rent. The vet costs $90. | A Christmas Carol; Papers, Please | −$90, or risk losing Soot | Soot gets better, or goes out the fire escape and doesn't come back. |
+| 24 | **The cat gets sick** four days before rent (only if you took her in). The vet costs $90. | A Christmas Carol; Papers, Please | −$90, or risk losing her | She gets better, or goes out the fire escape and doesn't come back. |
 | 33 | **Rosa Lind**, a reporter, offers $150 for an anonymous interview. | Papers, Please (the reporter); The Wire | +$150, more exposure | Day 40: the article doesn't use your name. It uses your building. |
 | 50 | **A dormant account.** An agent offers to "recover" $600 from an old man's savings. | This War of Mine; Red Dead Redemption 2 | +$600, more exposure | Day 57: an email from his daughter, Diane. |
 
 Act I ends with **WHAT IT COST**: a plain list of the lines you crossed. It has no score.
+
+### The door, later
+
+Every knock is two choices: whether to open the door, and then what to do. The closed door shows the shadow in the strip of hall light first, so you decide before you know who it is. What you chose in Act I decides who is still in the building later.
+
+| Act | Choice | Money | What comes back |
+|---|---|---|---|
+| II | **Lucía, 2C**, Danny's mother, switched off by Grovel's automated review (only if Danny wasn't reported). Help her appeal, lend her $40, or say you can't help. | −15 stamina, or −$40 | The appeal is "upheld" in 0.4 seconds; the $40 comes back in quarters; or she drives nights and Danny sleeps at his grandmother's. |
+| II | **Ray Malone, 5C**, wants to train the machines too (unless you kept his wallet). Refer him for a $60 bonus, tell him what the job is, or say they're not hiring. | +$60 if you refer him | Referred: Agent-4 learns his forty-one corrections, then drops "careful reading". The truth: soup on your mat. "Not hiring": he applies anyway. |
+| III | **Maya** again, with a video you made on her tablet, asking how you tell what's real. | more heat if you tell her | She uses it in a class project without your name; teaches her grandmother to check sources; or decides nobody can tell. |
+| IV | **Danny** again, nine, his school Harmony band at 58. "Can you make it say a better number?" | Harmony up or down | He wears it face in; he smiles at it and doesn't mean it; or you play cards with it face down, and his mother gets a note about "a gap in his wellbeing data". |
 
 ## 4. Rules for writing new choices
 
