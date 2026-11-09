@@ -1427,6 +1427,12 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
 html.uikit .t-cta .cta#startBtn.alt { border-image-source: var(--fr-btn) !important; color: var(--ink) !important; background: transparent !important; }
 html.uikit .t-cta .cta#startBtn.alt:hover { border-image-source: var(--fr-btnHi) !important; color: #fbf6e8 !important; }
 .t-cta .cta#startBtn.alt { background: #232c33 !important; color: var(--ink) !important; }
+/* Wren's face in the chat: on the header, and beside the last bubble of each run of messages */
+#phoneModal .app-av { width: 22px; height: 22px; image-rendering: pixelated; border: 2px solid #07080a; vertical-align: -6px; margin-right: 2px; }
+#phoneModal .bub-row { display: flex; align-items: flex-end; gap: 6px; align-self: flex-start; max-width: 92%; }
+#phoneModal .bub-row .bub { margin: 0; }
+#phoneModal .bub-av { flex: none; width: 20px; height: 20px; image-rendering: pixelated; border: 1px solid #07080a; }
+#phoneModal i.bub-av { border-color: transparent; }
 </style>
 </head>
 <body>
@@ -12926,9 +12932,9 @@ function openWren() {
   S.phoneUnread = 0;
   const p = $('phoneScreen');
   const replies = wrenReplies();
-  const msgs = S.wren.slice(-12).map(m => `<div class="bub ${m.w ? 'w' : 'y'}">${esc(m.t)}</div>`).join('') || '<p class="note">No messages yet.</p>';
+  const msgs = S.wren.slice(-12).map((m, i, a) => m.w ? `<div class="bub-row">${!a[i + 1] || !a[i + 1].w ? `<img class="bub-av" src="${faceURL('wren')}" alt="">` : '<i class="bub-av"></i>'}<div class="bub w">${esc(m.t)}</div></div>` : `<div class="bub y">${esc(m.t)}</div>`).join('') || '<p class="note">No messages yet.</p>';
   p.innerHTML = `<div class="bar"><span>${fmtDay(S.day)}</span><span>${S.power ? '' : '⚡ ' + S.battery + '% · '}5G</span></div>
-    <div class="app"><i style="background:var(--cold)"></i>Wren <span class="muted" style="font-size:11px;font-weight:400">· Agent-3-mini</span></div>
+    <div class="app"><img class="app-av" src="${faceURL('wren')}" alt="">Wren <span class="muted" style="font-size:11px;font-weight:400">· Agent-3-mini</span></div>
     <div class="chat" id="chat">${msgs}</div>
     ${replies.map((r, i) => `<button class="btn ${r.primary ? 'primary' : r.danger ? 'danger' : ''}" data-r="${i}">${esc(r.label)}</button>`).join('')}<button class="btn" id="phHome">← Home</button>`;
   $('phoneModal').hidden = false; $('phHome').onclick = () => phone2('home');
