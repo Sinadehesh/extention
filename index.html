@@ -1421,6 +1421,12 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
 .resp-pair .resp i { align-self: flex-start; margin: 0 12px; font-style: normal; font-family: var(--f-term); font-size: 10.5px; letter-spacing: .08em; color: #6e7a80; }
 .resp-pair .resp:hover { border-color: #e0a33a; transform: translateY(-2px); } .resp-pair .resp:hover i { color: #e0a33a; }
 @media (max-width: 1100px) { .resp-pair { grid-template-columns: minmax(0, 1fr); } }
+/* CONTINUE on the title screen, and BEGIN stepping back beside it */
+.t-cta .cta small { display: block; margin-top: 4px; font-size: 11px; letter-spacing: .1em; opacity: .8; }
+.t-cta .cta.alt { animation: none; font-size: 14px !important; padding: 14px 20px !important; }
+html.uikit .t-cta .cta#startBtn.alt { border-image-source: var(--fr-btn) !important; color: var(--ink) !important; background: transparent !important; }
+html.uikit .t-cta .cta#startBtn.alt:hover { border-image-source: var(--fr-btnHi) !important; color: #fbf6e8 !important; }
+.t-cta .cta#startBtn.alt { background: #232c33 !important; color: var(--ink) !important; }
 </style>
 </head>
 <body>
@@ -1566,7 +1572,7 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
     <canvas id="logoCv" width="118" height="64" aria-hidden="true"></canvas>
     <div class="kicker">A story game in five acts · 2027–2030 · about being the human in the loop</div>
     <p class="lede">You are the human in the loop. It is January 2027 and you are a junior analyst at a logistics company, the week a new AI called ChatGPX arrives. By February you have $480, an old laptop, three stars on a freelance site, and a black cat called Soot. Rent is $1,800.</p>
-    <div class="t-cta"><button class="cta" id="startBtn">BEGIN ACT I</button><button class="btn tut-reset" id="tutReset">Tutorial: on</button></div>
+    <div class="t-cta"><button class="cta" id="contBtn" hidden></button><button class="cta" id="startBtn">BEGIN ACT I</button><button class="btn tut-reset" id="tutReset">Tutorial: on</button></div>
     <p class="fine">The bar across the top tells you, at a glance, whether you will have the rent on the day it is due. What you do about it is up to you.</p>
     <p class="fine t-warn">Fiction about AI catastrophe, for adults. Made for a computer screen.</p>
     </div><div class="t-side">
@@ -5278,6 +5284,7 @@ function countUp(root) {
   });
 }
 function endShow(id) {
+  runClear();
   const el = $(id), pre = id === 'endScreen' ? 'end' : 'tr', src = roomStill(), E = lastEnding, st = $(pre + 'Stamp');
   $(pre + 'Still').hidden = !src; if (src) $(pre + 'StillImg').src = src;
   $(pre + 'StillCap').textContent = `${fmtLong(S.day)} · ${clockText()}`;
@@ -13078,7 +13085,7 @@ function startAct3() {
   sfx.init();
   newAct2(); S.phase = 'mirage'; S.day = ACT3_START; S.fired = true; S.balance = Math.max(420, Math.round(S.balance * .3)); S.owed = 0; S.graceUntil = -1;
   S.m3 = { kip: 44, rosa: 49, yes: 42, heat: 0, harm: 0, trust: 3, reach: 0, made: 0, used: [], briefs: [], arch: [], leaked: false, hannah: false, dropped: false, rent: false };
-  m3Briefs(S.day);
+  m3Briefs(S.day); snap();
   scene = 'room'; fog = []; acc = 0; walkT = 0;
   $('titleScreen').hidden = true; $('endScreen').hidden = true; $('troubleScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
   setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
@@ -13168,6 +13175,7 @@ function m3Exposed() {
 }
 function dayStep3() { // Act III's day: the survival rules, the polls drifting, the briefs, the date coming
   if (S.over) return; balHist();
+  if (S.day % 5 === 0 && S.owed === 0 && S.food > 30 && S.bodyTemp > 35.5) snap();
   S.day++; const d = S.day, M = m3();
   S.stimCountToday = 0; S.heartStrain = Math.max(0, S.heartStrain - 10);
   applyPrices(d);
@@ -13492,6 +13500,7 @@ function bindAudit2(v) {
 }
 
 function renderActList() {
+  if ($('contBtn')) contSync();
   const done = save.acts || [];
   $('actList').innerHTML = ACTS.map((a, i) => {
     const open2 = i === 1 && done.includes(1), open3 = i === 2 && done.includes(2);
@@ -13681,8 +13690,46 @@ addEventListener('keydown', e => {
   if (!SHC && $('titleScreen').hidden && $('endScreen').hidden && $('troubleScreen').hidden && $('actCard').hidden && !tutOn() && !S.over) pauseOpen();
 });
 // ---- the pause menu ----
+// ---- your run, kept: saved at calm moments, CONTINUE on the title screen ----
+const RUN_KEY = 'theloop.run.v1';
+function runSave() {
+  if (!S || S.over) return;
+  try { localStorage.setItem(RUN_KEY, JSON.stringify({ v: 1, at: Date.now(), S: Object.assign({}, S, { snapshot: null }) })); } catch (e) {}
+}
+function runLoad() { try { const r = JSON.parse(localStorage.getItem(RUN_KEY) || 'null'); return r && r.v === 1 && r.S && !r.S.over ? r : null; } catch (e) { return null; } }
+function runClear() { try { localStorage.removeItem(RUN_KEY); } catch (e) {} }
+const runCalm = () => !!S && !S.over && $('titleScreen').hidden && $('modal').hidden && !SHC && !$('desk').classList.contains('on') && $('endScreen').hidden && $('troubleScreen').hidden && !tutOn();
+setInterval(() => { if (runCalm()) runSave(); }, 15000);
+document.addEventListener('visibilitychange', () => { if (document.hidden && runCalm()) runSave(); });
+addEventListener('pagehide', () => { if (runCalm()) runSave(); });
+function contSync() {
+  const r = runLoad(), b = $('contBtn'); b.hidden = !r; $('startBtn').classList.toggle('alt', !!r);
+  if (!r) return; const x = r.S;
+  b.innerHTML = `CONTINUE<small>${x.phase === 'mirage' ? 'ACT III' : x.act === 2 ? 'ACT II' : 'ACT I'} · ${fmtDay(x.day)} · ${money(x.balance)}</small>`;
+}
+function runContinue() {
+  const r = runLoad(); if (!r) return contSync();
+  sfx.init();
+  try { if (S) closeLaptop(); } catch (e) {}
+  S = r.S; S.snapshot = null; S.over = false;
+  DESK = null; BN = null; MGC = null; SHC = null; SH = null;
+  scene = 'room'; fog = []; acc = 0; walkT = 0; wallKey = ''; viewKey = ''; iconsKey = '';
+  for (const id of ['titleScreen', 'endScreen', 'troubleScreen', 'modal', 'phoneModal', 'pauseMenu', 'shiftModal', 'laptop']) if ($(id)) $(id).hidden = true;
+  $('desk').classList.remove('on');
+  $('evBtn').hidden = !save.evidence.length;
+  setSpeed(1); setTab(S.tab || 'farm'); renderAll(); fitRoom(); wallSync();
+  toast(`Back where you left it · ${fmtLong(S.day)}`);
+}
+$('contBtn').onclick = () => { goFull(); runContinue(); };
+$('startBtn').addEventListener('click', e => { // beginning again replaces the saved run, so it asks once
+  const b = $('startBtn'); if (!runLoad() || b.dataset.armed || (navigator.webdriver && !window.__runTest)) { delete b.dataset.armed; return; }
+  e.stopImmediatePropagation(); b.dataset.armed = '1'; b.textContent = 'START OVER? CLICK AGAIN';
+  setTimeout(() => { delete b.dataset.armed; b.textContent = 'BEGIN ACT I'; }, 3500);
+}, true);
+contSync();
 let pauseSpeed = 1;
 function pauseOpen() {
+  if (runCalm()) runSave();
   for (const o of document.querySelectorAll('#pauseMenu [data-armed]')) { delete o.dataset.armed; o.textContent = o.dataset.was; }
   pauseSpeed = speed || pauseSpeed || 1; setSpeed(0);
   const a3 = S.phase === 'mirage', a2 = S.act === 2;
@@ -14001,7 +14048,7 @@ requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
