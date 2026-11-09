@@ -106,8 +106,12 @@ Some jobs on the job sites are arcade games on your bench, each one the dull wor
 - **Uploader** (a catcher): catch the files in the bag and keep the malware out.
 - **Shipper** (a launcher): fire packets into a client's moving port, through the wind, and later over a firewall.
 - **Deduper** (a 2048-style board): copies of the same file slide together and merge.
+- **Log Cleaner** (a brick breaker): every brick is a line in a server log. Errors take two hits; drop the ball and a line is lost.
+- **Bot Filter** (an invaders-style shooter): rows of accounts march down. Ban the bots before they reach the line, and leave the people alone. Bots look like everyone else; their eyes flash red now and then.
 
-You can teach an AI to play part of each game. Level 1 costs $35 and level 2 costs $90, once per game, and while it helps it bills AI credits by the item. In Crawler, level 1 (WALL SENSE) turns before a wall and level 2 (FOOD CHASE) goes for the data whenever you let go. In Packer, level 1 (SPREAD) drops each piece over the lowest gap instead of the middle, and level 2 (PLACE) steers it to the best spot while you drop it. The others go the same way: one flipper then both, a magnet then a shield, the arc then the aim, a hint then the moves. The AI's plan is drawn on screen: its path, its target, its arc. Handing the whole job to an agent is level 3.
+With the classic jobs, that's 56 different tasks on the job sites, across 19 different games.
+
+You can teach an AI to play part of each game. Level 1 costs $35 and level 2 costs $90, once per game, and while it helps it bills AI credits by the item. In Crawler, level 1 (WALL SENSE) turns before a wall and level 2 (FOOD CHASE) goes for the data whenever you let go. In Packer, level 1 (SPREAD) drops each piece over the lowest gap instead of the middle, and level 2 (PLACE) steers it to the best spot while you drop it. The others go the same way: one flipper then both, a magnet then a shield, the arc then the aim, a hint then the moves, a paddle that tracks then one that never misses, a scanner that outlines every bot then a hammer that lines itself up. The AI's plan is drawn on screen: its path, its target, its arc. Handing the whole job to an agent is level 3.
 
 ## n9n: workflows
 

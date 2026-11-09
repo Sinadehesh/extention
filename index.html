@@ -3683,9 +3683,11 @@ const JOB_KINDS = {
   rank: { ui: 'arcade', icon: '◎', credits: 4, units: [18, 24], per: 2.1, ram: 8 },
   catch: { ui: 'arcade', icon: '▼', credits: 3, units: [26, 34], per: 1.25, simple: true },
   launch: { ui: 'arcade', icon: '➶', credits: 4, units: [16, 22], per: 2.2 },
-  merge: { ui: 'arcade', icon: '⧉', credits: 3, units: [28, 36], per: 1.05, simple: true }
+  merge: { ui: 'arcade', icon: '⧉', credits: 3, units: [28, 36], per: 1.05, simple: true },
+  clean: { ui: 'arcade', icon: '≣', credits: 3, units: [26, 34], per: 1.3, simple: true },
+  filter: { ui: 'arcade', icon: '⊘', credits: 4, units: [20, 26], per: 1.75, ram: 8 }
 };
-const ARCADE_KINDS = ['crawl', 'stack', 'rank', 'catch', 'launch', 'merge'];
+const ARCADE_KINDS = ['crawl', 'stack', 'rank', 'catch', 'launch', 'merge', 'clean', 'filter'];
 const starMult = () => clamp(.8 + ((S.stars || 3) - 3) * .14, .55, 1.1);
 const OS_RAM = 4, AGENT_RAM = 6;
 function hw() { S.hw = S.hw || { ram: 0, gpu: false }; return S.hw; }
@@ -3940,7 +3942,9 @@ const FC_TITLES = {
   rank: ['Rank search results for a shopping app', 'Order chatbot answers for an eval', 'Rank 300 CVs for an AI recruiter', 'Sort news stories by “engagement”'],
   catch: ['Catch uploads for a photo-sharing app', 'Sort incoming files for a cloud drive', 'Screen attachments for an email service', 'Bag user uploads for an AI art site'],
   launch: ['Ship model weights to a client’s server', 'Deliver API payloads to three ports', 'Push the nightly backups offsite', 'Send data packets to a data broker'],
-  merge: ['Merge duplicate customer records', 'Dedupe a 40,000-name mailing list', 'Merge near-identical product photos', 'Clean the duplicates out of a dataset']
+  merge: ['Merge duplicate customer records', 'Dedupe a 40,000-name mailing list', 'Merge near-identical product photos', 'Clean the duplicates out of a dataset'],
+  clean: ['Clean a week of server logs', 'Strip the errors out of an app log', 'Tidy the logs before an audit', 'Purge debug lines from a chatbot’s logs'],
+  filter: ['Ban the bot accounts on a forum', 'Clean fake followers off an influencer', 'Screen sign-ups for a dating app', 'Filter bots out of a product’s reviews']
 };
 const FC_CLIENTS = ['Harborview Clinic', 'Westbrook Primary', 'Café Lisbon', 'Harlan & Boyd, CPAs', 'Night Owl Forums', 'Kade Furniture', 'Bloom Studio', 'Halden Architects', 'City Library', 'Grove St Bakery', 'Mosaic Pet Supply', 'Quill & Co.', 'Rivera Plumbing', 'Okafor Family Dental', 'Marisol Reyes'];
 const FC_SCAMS = [
@@ -4173,7 +4177,8 @@ function mgMount(j) {
 // Level 1 and 2 help you play. Handing the whole job to an agent (credits) is level 3: it plays without you.
 const ASSIST = {
   crawl: ['WALL SENSE', 'FOOD CHASE'], stack: ['SPREAD', 'PLACE'], rank: ['LEFT HAND', 'BOTH HANDS'],
-  catch: ['MAGNET', 'SHIELD'], launch: ['ARC', 'AIM'], merge: ['HINT', 'AUTO'], spread: ['AUTO-SEED', 'BOT SWARM']
+  catch: ['MAGNET', 'SHIELD'], launch: ['ARC', 'AIM'], merge: ['HINT', 'AUTO'], spread: ['AUTO-SEED', 'BOT SWARM'],
+  clean: ['TRACK', 'RETURN'], filter: ['SCAN', 'AIM']
 };
 const ASSIST_SAY = {
   crawl: ['It turns before a wall. You still steer.', 'It goes for the data whenever you let go of the keys.'],
@@ -4182,7 +4187,9 @@ const ASSIST_SAY = {
   catch: ['It pulls nearby files into the bag.', 'It also knocks malware away from the bag.'],
   launch: ['It shows where each shot will land.', 'It sets the angle. You pick the moment.'],
   merge: ['It shows the best move.', 'It makes the move whenever you pause.'],
-  spread: ['It picks the seed accounts when you don’t.', 'Fake accounts reshare whatever gets fact-checked.']
+  spread: ['It picks the seed accounts when you don’t.', 'Fake accounts reshare whatever gets fact-checked.'],
+  clean: ['It moves the paddle to where the ball will land when you let go.', 'It never misses. You only aim.'],
+  filter: ['It outlines every bot.', 'It lines the hammer up under the next bot. You ban.']
 };
 const ASSIST_COST = [0, 35, 90], ASSIST_EVERY = 8; // credits: one per level, every 8 items it helps with
 const assistOwned = k => (S.assist && S.assist[k]) || 0;
@@ -4221,11 +4228,12 @@ function assistSync() {
 const N9_IO = {
   crawl: { in: null, out: 'raw' }, catch: { in: null, out: 'files' },
   merge: { in: ['raw', 'files'], out: 'clean' }, stack: { in: ['clean', 'raw'], out: 'batch' },
-  launch: { in: ['clean', 'batch'], out: 'sent' }, rank: { in: ['sent', 'batch'], out: 'ranked' }
+  launch: { in: ['clean', 'batch'], out: 'sent' }, rank: { in: ['sent', 'batch'], out: 'ranked' },
+  clean: { in: ['raw'], out: 'clean' }, filter: { in: ['files', 'raw'], out: 'clean' }
 };
 const N9_TYPE = { raw: 'raw pages', files: 'uploads', clean: 'clean records', batch: 'batches', sent: 'deliveries', ranked: 'ranked results' };
 const N9_TCOL = { raw: '#e0a33a', files: '#ddd6c1', clean: '#7fd8c0', batch: '#87b85a', sent: '#cf7a4f', ranked: '#ffe6a6' };
-const N9_GAME = { crawl: 'snake', catch: 'catcher', merge: '2048', stack: 'blocks', launch: 'launcher', rank: 'pinball' };
+const N9_GAME = { crawl: 'snake', catch: 'catcher', merge: '2048', stack: 'blocks', launch: 'launcher', rank: 'pinball', clean: 'brick breaker', filter: 'invaders' };
 const AUTOPILOT = 140, N9_CREDIT_EVERY = 5, N9_MAX = 6, NW = 176, NH = 140;
 const N9_DEALS = [
   { client: 'ShopNow', title: 'A search index for a shopping app', want: 'ranked', n: [26, 36], per: 8.4, hint: 'Crawler → Deduper → Packer → Ranker' },
@@ -9437,6 +9445,199 @@ MINI.merge = {
         if (A >= 1 && A < 3 && hintDir >= 0) api.text('BEST: ' + NAMES[hintDir], 270, 60, { size: 7, color: P.t4, align: 'center' });
       },
       bot() {}
+    };
+  }
+};
+
+// Log Cleaner: a brick breaker where every brick is a line in a server log. Errors take two hits.
+// Assist 1 TRACK moves the paddle to where the ball will land when you let go. 2 RETURN never misses; you aim. 3 plays it all.
+MINI.clean = {
+  title: 'Log Cleaner', how: 'Clear the log, line by line. Don’t drop the ball.',
+  keys: 'Move the mouse, or hold ← →  · the paddle', pace: 1.4,
+  create(api) {
+    const { P } = api, X0 = 24, X1 = 296, TOPY = 24, PY = 150, PW = 38, BW = 26, BH = 7, COLS = 10, ROWS = 5;
+    const KIND = { i: [P.s3, P.s2, 'INFO'], w: [P.a2, P.a1, 'WARN'], e: [P.e3, P.e1, 'ERROR'] };
+    let bricks = [], ball = null, pad = { x: 160, vx: 0, last: 160, tgt: null, tgtFor: 0 }, keyL = false, keyR = false, mouseX = null, idle = 9, serve = 1, wave = 0, speed = 150 + api.level * 40, cleared = 0;
+    function newWall() {
+      bricks = []; wave++;
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+        const k = api.chance(.14 + api.level * .1 + wave * .03) ? 'e' : api.chance(.35) ? 'w' : 'i';
+        bricks.push({ x: X0 + 2 + c * (BW + 1), y: TOPY + 8 + r * (BH + 2), k, hp: k === 'e' ? 2 : 1, f: 0, txt: (r * 7 + c * 3 + wave) % 5 });
+      }
+    }
+    function launch() { const a = -Math.PI / 2 + (api.rand() - .5) * .8; ball = { x: pad.x, y: PY - 6, vx: Math.cos(a) * speed, vy: Math.sin(a) * speed }; api.sfx('whoosh'); }
+    function landX() { // where will the ball cross the paddle line, bouncing off the walls?
+      if (!ball || ball.vy <= 0) return null;
+      let x = ball.x + ball.vx * (PY - 3 - ball.y) / ball.vy; const w = X1 - X0 - 6;
+      let u = ((x - X0 - 3) % (2 * w) + 2 * w) % (2 * w); if (u > w) u = 2 * w - u; return X0 + 3 + u;
+    }
+    const onUp = e => { if (['ArrowLeft', 'a', 'A'].includes(e.key)) keyL = false; if (['ArrowRight', 'd', 'D'].includes(e.key)) keyR = false; };
+    const onBlur = () => { keyL = keyR = false; };
+    addEventListener('keyup', onUp); addEventListener('blur', onBlur);
+    newWall();
+    return {
+      tick(dt) {
+        const A = api.assist; idle += dt;
+        for (const b of bricks) b.f = Math.max(0, b.f - dt);
+        // the paddle: you, the AI, or both
+        let goal = null;
+        const lx = landX();
+        if (A >= 3) { // aim the rebound at the lowest brick it can reach
+          if (lx != null) {
+            if (!pad.tgt || pad.tgt.hp <= 0 || pad.tgtFor !== Math.round(ball.vx)) { const alive = bricks.filter(b => b.hp > 0); pad.tgtFor = Math.round(ball.vx); pad.tgt = alive.sort((p, q) => (q.y - p.y) || Math.abs(p.x - lx) - Math.abs(q.x - lx) + (api.rand() - .5) * 60)[0]; }
+            const tg = pad.tgt; if (tg) { const ad = Math.atan2(tg.y + BH / 2 - PY, tg.x + BW / 2 - lx), k = Math.max(-.85, Math.min(.85, (ad + Math.PI / 2) / 1.05)); goal = lx - k * PW / 2; } else goal = lx;
+            if (api.auto && api.chance(api.autoErr * .02)) goal += 40;
+          } else goal = 160;
+        }
+        else if (A >= 2) { goal = lx != null ? lx + Math.max(-14, Math.min(14, ((mouseX != null && idle < 1 ? mouseX : pad.x) - lx) * .5)) : (mouseX != null ? mouseX : null); }
+        else if (mouseX != null && idle < 1.5) goal = mouseX;
+        else if (A >= 1 && idle > .5 && lx != null) goal = lx;
+        if (keyL || keyR) { pad.vx = (keyR ? 190 : 0) - (keyL ? 190 : 0); goal = null; }
+        else if (goal != null) { const d = goal - pad.x, cap = A === 1 && idle > .5 ? 150 : 260; pad.vx = Math.max(-cap, Math.min(cap, d * 14)); }
+        else pad.vx = 0;
+        pad.x = Math.max(X0 + PW / 2, Math.min(X1 - PW / 2, pad.x + pad.vx * dt));
+        if (!ball) { serve -= dt; if (serve <= 0) launch(); return; }
+        const steps = 3;
+        for (let s = 0; s < steps && ball; s++) {
+          const h = dt / steps; ball.x += ball.vx * h; ball.y += ball.vy * h;
+          if (ball.x < X0 + 3) { ball.x = X0 + 3; ball.vx = Math.abs(ball.vx); api.sfx('tick'); }
+          if (ball.x > X1 - 3) { ball.x = X1 - 3; ball.vx = -Math.abs(ball.vx); api.sfx('tick'); }
+          if (ball.y < TOPY + 3) { ball.y = TOPY + 3; ball.vy = Math.abs(ball.vy); }
+          if (ball.vy > 0 && ball.y > PY - 3 && ball.y < PY + 3 && Math.abs(ball.x - pad.x) < PW / 2 + 2) { // off the paddle, angled by where it hit
+            const k = (ball.x - pad.x) / (PW / 2), a = -Math.PI / 2 + k * 1.05, v = Math.min(260, speed + cleared * 1.2);
+            ball.vx = Math.cos(a) * v; ball.vy = Math.sin(a) * v; ball.y = PY - 3; api.sfx('flip');
+          }
+          for (const b of bricks) {
+            if (b.hp <= 0 || ball.x < b.x - 2 || ball.x > b.x + BW + 2 || ball.y < b.y - 2 || ball.y > b.y + BH + 2) continue;
+            const fromSide = Math.min(Math.abs(ball.x - b.x), Math.abs(ball.x - b.x - BW)) < Math.min(Math.abs(ball.y - b.y), Math.abs(ball.y - b.y - BH));
+            if (fromSide) ball.vx = -ball.vx; else ball.vy = -ball.vy;
+            b.hp--; b.f = .2;
+            if (b.hp <= 0) { cleared++; api.burst(b.x + BW / 2, b.y + BH / 2, KIND[b.k][0], 8, 50); api.item(true, b.x + BW / 2, b.y - 2, b.k === 'e' ? 'ERROR CLEARED' : ''); }
+            else api.sfx('stamp');
+            break;
+          }
+          if (ball.y > 172) { api.item(false, Math.max(40, Math.min(280, ball.x)), 158, 'LOG LOST'); api.shake(4); api.flash(P.e1, .2); ball = null; serve = .9; }
+        }
+        if (!bricks.some(b => b.hp > 0)) { api.pop(160, 70, 'LOG CLEAN', P.t4, 10); api.sfx('milestone'); newWall(); if (ball) { ball.vy = Math.abs(ball.vy); } }
+      },
+      key(k) {
+        if (['ArrowLeft', 'a', 'A'].includes(k)) { keyL = true; idle = 0; return true; }
+        if (['ArrowRight', 'd', 'D'].includes(k)) { keyR = true; idle = 0; return true; }
+        return false;
+      },
+      move(x) { mouseX = x; idle = 0; },
+      down(x) { mouseX = x; idle = 0; },
+      draw(g) {
+        const R = api.rect, t = api.t, A = api.assist;
+        R(X0 - 4, 18, X1 - X0 + 8, 148, P.k0); R(X0, 20, X1 - X0, 146, '#0f1416');
+        api.text(`server-07.log · wave ${wave}`, X0 + 4, 30, { size: 6, color: P.s3 });
+        for (let y = 36; y < 140; y += 6) R(X0 + 2, y, 1, 3, P.k3);
+        for (const b of bricks) {
+          if (b.hp <= 0) continue;
+          const [c, d, lab] = KIND[b.k], fl = b.f > 0 && (t * 30 | 0) % 2;
+          R(b.x, b.y, BW, BH, P.k0); R(b.x + 1, b.y + 1, BW - 2, BH - 2, fl ? P.p4 : b.k === 'e' && b.hp === 1 ? d : c);
+          R(b.x + 2, b.y + 2, 4, 1, 'rgba(0,0,0,.35)'); R(b.x + 8, b.y + 2, 6 + b.txt * 2, 1, 'rgba(0,0,0,.3)'); R(b.x + 8, b.y + 4, 4 + b.txt, 1, 'rgba(0,0,0,.25)');
+          if (b.k === 'e') R(b.x + BW - 5, b.y + 2, 3, 3, P.p4);
+        }
+        const lx = landX();
+        if (lx != null && A >= 1 && A < 3) { for (let x = -3; x <= 3; x++) if ((x + (t * 8 | 0)) % 2 === 0) R(lx + x * 3, PY + 5, 2, 1, P.t4); }
+        R(pad.x - PW / 2, PY, PW, 5, P.k0); R(pad.x - PW / 2 + 1, PY + 1, PW - 2, 3, A >= 2 && A < 3 ? P.t3 : P.a2); R(pad.x - PW / 2 + 1, PY + 1, PW - 2, 1, P.a4);
+        if (ball) { R(ball.x - 2, ball.y - 2, 4, 4, P.p4); R(ball.x - 1, ball.y - 1, 1, 1, '#ffffff'); }
+        else api.text('SERVING', 160, 120, { size: 7, color: (t * 4 | 0) % 2 ? P.a3 : P.a1, align: 'center' });
+        api.text(`${cleared} LINES CLEARED`, X1 - 4, 30, { size: 6, color: P.mute, align: 'right' });
+      },
+      bot() {},
+      destroy() { removeEventListener('keyup', onUp); removeEventListener('blur', onBlur); }
+    };
+  }
+};
+
+// Bot Filter: rows of accounts march down the screen. Ban the bots before they get through. Don't ban the humans.
+// Bots look like people; their eyes give them away. Assist 1 SCAN outlines every bot. 2 AIM lines you up under one. 3 plays it all.
+MINI.filter = {
+  title: 'Bot Filter', how: 'Ban the bots before they reach the line. Leave the humans alone.',
+  keys: '← → move · SPACE ban (or move the mouse and click)', pace: 1.4,
+  create(api) {
+    const { P } = api, X0 = 24, X1 = 296, LINE = 138, GY = 150, COLS = 7, ROWS = 4, SP = 30;
+    const SKIN = [P.h1, P.h2, P.h3, P.h4, P.h0], HAIR = [P.k1, P.d1, P.r1, P.s1, P.a1];
+    let grid = [], gx = 0, gy = 0, dir = 1, stepT = 0, shots = [], gun = { x: 160 }, keyL = false, keyR = false, mouseX = null, cool = 0, wave = 0, aiT = 0, passed = 0, banned = 0;
+    function newWave() {
+      grid = []; wave++; gx = X0 + 14; gy = 38; dir = 1;
+      const bots = .35 + api.level * .15 + Math.min(.15, wave * .03);
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) grid.push({ c, r, bot: api.chance(bots), alive: true, s: api.ri(0, 4), h: api.ri(0, 4), blink: api.rand() * 3, hit: 0 });
+    }
+    const pos = a => [gx + a.c * SP + (a.r % 2 ? SP / 2 : 0), gy + a.r * 22]; // odd rows sit between the even ones
+    function fire() { if (cool > 0) return; cool = .38; shots.push({ x: gun.x, y: GY - 8 }); api.sfx('zap'); }
+    const onUp = e => { if (['ArrowLeft', 'a', 'A'].includes(e.key)) keyL = false; if (['ArrowRight', 'd', 'D'].includes(e.key)) keyR = false; };
+    const onBlur = () => { keyL = keyR = false; };
+    addEventListener('keyup', onUp); addEventListener('blur', onBlur);
+    newWave();
+    function aimAt() { // the lowest bot that isn't hidden behind a human
+      let best = null, bs = -1e9;
+      for (const a of grid) { if (!a.alive || !a.bot) continue; const [x, y] = pos(a); if (grid.some(o => o.alive && !o.bot && o.r > a.r && Math.abs(pos(o)[0] - x) < 9)) continue; const sc = y * 2 - Math.abs(x - gun.x) * .5; if (sc > bs) { bs = sc; best = a; } }
+      return best;
+    }
+    return {
+      tick(dt) {
+        const A = api.assist; cool = Math.max(0, cool - dt);
+        for (const a of grid) { a.blink += dt; a.hit = Math.max(0, a.hit - dt); }
+        // the formation marches: across, then down a step
+        stepT += dt; const period = Math.max(.2, .62 - api.level * .18 - wave * .03 - (1 - grid.filter(a => a.alive).length / (COLS * ROWS)) * .25);
+        if (stepT >= period) {
+          stepT = 0; const alive = grid.filter(a => a.alive); const xs = alive.map(a => pos(a)[0]);
+          if (xs.length && ((dir > 0 && Math.max(...xs) + 8 + 6 > X1) || (dir < 0 && Math.min(...xs) - 8 - 6 < X0))) { dir = -dir; gy += 8; } else gx += dir * 6;
+          api.sfx('tick');
+        }
+        for (const a of grid) if (a.alive && pos(a)[1] + 8 >= LINE) { a.alive = false; if (a.bot) { api.item(false, pos(a)[0], LINE - 6, 'BOT GOT THROUGH'); api.shake(3); } else passed++; }
+        if (!grid.some(a => a.alive && a.bot)) { passed += grid.filter(a => a.alive).length; api.pop(160, 80, 'FEED CLEAN', P.t4, 9); api.sfx('milestone'); newWave(); } // only people left: let them through
+        // the gun: you, or the AI lining up
+        let goal = null; const tgt = A >= 2 ? aimAt() : null;
+        if (tgt) goal = pos(tgt)[0] + (api.auto && api.chance(api.autoErr * .05) ? 18 : 0);
+        else if (mouseX != null) goal = mouseX;
+        if (keyL || keyR) gun.x += ((keyR ? 1 : 0) - (keyL ? 1 : 0)) * 170 * dt;
+        else if (goal != null) gun.x += Math.max(-200 * dt, Math.min(200 * dt, goal - gun.x));
+        gun.x = Math.max(X0 + 8, Math.min(X1 - 8, gun.x));
+        if (A >= 3 && tgt && Math.abs(pos(tgt)[0] - gun.x) < 3) { aiT -= dt; if (aiT <= 0) { aiT = .12; fire(); } }
+        // the bans in flight
+        for (const s of shots) {
+          s.y -= 260 * dt;
+          for (const a of grid) { if (!a.alive) continue; const [x, y] = pos(a); if (Math.abs(s.x - x) < 8 && Math.abs(s.y - y) < 9) { a.alive = false; s.done = true;
+            if (a.bot) { banned++; api.burst(x, y, P.e3, 10, 60); api.item(true, x, y - 10, 'BANNED'); } else { api.burst(x, y, P.p3, 10, 50); api.item(false, x, y - 10, 'THAT WAS A PERSON'); api.shake(4); api.flash(P.e1, .25); }
+            break; } }
+          if (s.y < 20) s.done = true;
+        }
+        shots = shots.filter(s => !s.done);
+      },
+      key(k) {
+        if (['ArrowLeft', 'a', 'A'].includes(k)) { keyL = true; return true; }
+        if (['ArrowRight', 'd', 'D'].includes(k)) { keyR = true; return true; }
+        if (k === ' ' || k === 'ArrowUp' || k === 'w' || k === 'W') { if (api.assist < 3) fire(); return true; }
+        return false;
+      },
+      move(x) { mouseX = x; },
+      down(x) { mouseX = x; if (api.assist < 3) fire(); },
+      draw(g) {
+        const R = api.rect, t = api.t, A = api.assist;
+        R(X0 - 4, 18, X1 - X0 + 8, 148, '#0d1114');
+        api.text(`#general · wave ${wave} · ${banned} banned · ${passed} people through`, X0, 28, { size: 6, color: P.s3 });
+        for (let x = X0; x < X1; x += 6) R(x, LINE, 3, 1, P.e1); api.text('THE LINE', X1, LINE - 3, { size: 5.5, color: P.e2, align: 'right' });
+        for (const a of grid) {
+          if (!a.alive) continue;
+          const [x, y] = pos(a), sk = SKIN[a.s], hr = HAIR[a.h];
+          R(x - 7, y - 8, 14, 16, P.k0); R(x - 6, y - 7, 12, 14, P.s1);
+          R(x - 4, y - 5, 8, 8, sk); R(x - 4, y - 6, 8, 3, hr); R(x - 3, y + 4, 6, 2, P.s3);
+          const eye = a.bot && (a.blink % 2.4 < .5) ? P.e4 : P.k0; // the tell: their eyes flash red now and then
+          R(x - 3, y - 1, 2, 2, eye); R(x + 1, y - 1, 2, 2, eye);
+          R(x - 1, y + 2, 2, 1, a.bot ? P.k1 : P.h0);
+          if (A >= 1 && A < 3 && a.bot) { R(x - 8, y - 9, 16, 1, P.e3); R(x - 8, y + 8, 16, 1, P.e3); R(x - 8, y - 9, 1, 18, P.e3); R(x + 7, y - 9, 1, 18, P.e3); }
+        }
+        for (const s of shots) { R(s.x - 1, s.y - 4, 2, 8, P.a3); R(s.x - 1, s.y - 4, 2, 2, P.a4); }
+        // the gun: a ban hammer
+        const x = Math.round(gun.x); R(x - 9, GY, 18, 6, P.k0); R(x - 8, GY + 1, 16, 4, A >= 2 && A < 3 ? P.t2 : P.s3); R(x - 2, GY - 7, 4, 8, P.k0); R(x - 1, GY - 6, 2, 7, P.a2);
+        if (cool > 0) R(x - 8, GY + 6, Math.round(16 * (1 - cool / .38)), 1, P.a3);
+      },
+      bot() {},
+      destroy() { removeEventListener('keyup', onUp); removeEventListener('blur', onBlur); }
     };
   }
 };
