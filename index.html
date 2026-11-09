@@ -1233,6 +1233,29 @@ html.uikit #tutCard { border: 18px solid transparent; border-image: var(--fr-pap
 .t-warn { color: #ad5536 !important; }
 .t-h { font-family: var(--f-term); font-size: 11px; letter-spacing: .14em; color: #e0a33a; }
 @media (max-width: 1100px) { #titleScreen .title-inner { grid-template-columns: 1fr; max-width: 640px; } #titleScreen .t-hero { position: static; } }
+/* act title cards: the act's number, its name, the date, one line */
+#actCard { position: fixed; inset: 0; z-index: 99; background: #07080a; display: grid; place-items: center; cursor: pointer; animation: acIn .5s ease-out; }
+#actCard[hidden] { display: none; }
+#actCard.out { animation: acOut .6s ease-in forwards; }
+@keyframes acIn { from { opacity: 0; } } @keyframes acOut { to { opacity: 0; } }
+#actCard .ac-in { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 760px; padding: 0 24px; }
+#actCard .ac-in > * { opacity: 0; animation: acRise .7s cubic-bezier(.2,.9,.3,1) forwards; }
+#actCard .ac-k { animation-delay: .2s !important; font-family: var(--f-term); font-size: 13px; letter-spacing: .4em; color: #e0a33a; }
+#actCard .ac-n { animation-delay: .45s !important; font-family: var(--f-term); font-size: 150px; line-height: 1; color: #f2c46a; text-shadow: 6px 6px 0 #7a2116, 12px 12px 0 #3d0f0c; letter-spacing: .06em; }
+#actCard .ac-t { animation-delay: .9s !important; font-family: var(--f-term); font-size: 30px; color: #fbf6e8; text-shadow: 3px 3px 0 #07080a; }
+#actCard .ac-d { animation-delay: 1.2s !important; font-family: var(--f-term); font-size: 13px; letter-spacing: .2em; color: #9aaab1; }
+#actCard .ac-l { animation-delay: 1.6s !important; font-size: 17px; line-height: 1.5; color: #b4aa8c; font-style: italic; margin: 8px 0 0; }
+#actCard .ac-go { animation-delay: 2.6s !important; margin-top: 26px; font-family: var(--f-term); font-size: 11px; letter-spacing: .3em; color: #536570; }
+@keyframes acRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+/* the ticker: a TV news crawl along the bottom of the room */
+.cvwrap { position: relative; }
+#ticker { position: absolute; left: 0; right: 0; bottom: 0; height: 24px; display: flex; align-items: stretch; background: rgba(7,8,10,.86); border-top: 2px solid #b8321f; font-family: var(--f-term); font-size: 12px; pointer-events: none; overflow: hidden; }
+#ticker[hidden] { display: none; }
+#ticker b { flex: none; display: flex; align-items: center; padding: 0 10px; background: #b8321f; color: #fbf6e8; font-weight: 400; letter-spacing: .08em; }
+#ticker .tk-win { flex: 1; min-width: 0; overflow: hidden; position: relative; }
+#ticker .tk-run { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; white-space: nowrap; color: #ece4cc; letter-spacing: .04em; animation: tkRun var(--tkd, 40s) linear infinite; }
+@keyframes tkRun { from { transform: translateX(0); } to { transform: translateX(-50%); } } /* the text is in there twice: a seamless loop */
+body.has-ticker #subtitle { bottom: 46px !important; }
 </style>
 </head>
 <body>
@@ -1296,7 +1319,7 @@ html.uikit #tutCard { border: 18px solid transparent; border-image: var(--fr-pap
     </aside>
 
     <section id="room" aria-label="Your apartment">
-      <div class="cvwrap"><canvas id="roomCv" aria-label="Your apartment. Click the things in it."></canvas></div>
+      <div class="cvwrap"><canvas id="roomCv" aria-label="Your apartment. Click the things in it."></canvas><div id="ticker" hidden aria-hidden="true"><b id="tkBadge">HARBOR NEWS 4 · LIVE</b><span class="tk-win"><span class="tk-run" id="tkRun"></span></span></div></div>
       <div id="subtitle" hidden></div>
       <div id="popKitchen" class="pop" hidden>
         <div class="pop-h"><span>KITCHEN</span><button class="pop-x" id="popKitchenX" aria-label="Close">×</button></div>
@@ -1451,6 +1474,7 @@ html.uikit #tutCard { border: 18px solid transparent; border-image: var(--fr-pap
 <div class="modal" id="modal" hidden><div class="card" id="modalCard"></div></div>
 <div class="modal" id="phoneModal" hidden><div class="phone" id="phoneScreen"></div><div id="bossWarn" hidden>FOOTSTEPS · MARCUS IS COMING</div></div>
 <div id="tut" hidden><div id="tutHole"></div><div id="tutCard"><div id="tutK"></div><div id="tutT"></div><p id="tutS"></p><div class="tut-b"><button class="btn" id="tutSkip">Skip the tutorial</button><button class="btn primary" id="tutOk">Got it · Enter</button></div></div></div>
+<div id="actCard" hidden><div class="ac-in"><div class="ac-k" id="acK"></div><div class="ac-n" id="acN"></div><div class="ac-t" id="acT"></div><div class="ac-d" id="acD"></div><p class="ac-l" id="acL"></p><div class="ac-go">click or press any key</div></div></div>
 <div id="shiftModal" hidden><div class="shift-top"><b id="shTitle"></b><span id="shInfo"></span><button class="btn" id="shQuit">End the shift</button></div><div class="shift-stage" id="shStage"></div></div>
 <div class="modal" id="evModal" hidden>
   <div class="card" style="max-width:520px">
@@ -11520,6 +11544,7 @@ function startAct2(carry) {
   $('titleScreen').hidden = true; $('endScreen').hidden = true; $('troubleScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
   $('evBtn').hidden = !save.evidence.length;
   setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
+  actCard({ n: 'II', t: ACTS[1].t, d: 'SATURDAY, MAY 1, 2027', l: 'OpenBrain Data pays humans to teach its AI what humans prefer. For now.' });
   modal({
     title: 'SATURDAY, MAY 1, 2027',
     body: `<p>Your agents are gone, and so is your money. You have <b>${money(S.balance)}</b>.</p>
@@ -12589,6 +12614,7 @@ function startAct3() {
   $('titleScreen').hidden = true; $('endScreen').hidden = true; $('troubleScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
   setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
   note('Oct 4. You haven’t driven since June. 212 job applications. Two interviews, both with an AI.');
+  actCard({ n: 'III', t: ACTS[2].t, d: 'MONDAY, OCTOBER 4, 2027', l: 'Nobody can tell anymore what is real. That is the job.' });
   modal({ title: 'MONDAY, OCTOBER 4, 2027',
     body: `<p>Northlight Strategies pays <b>$40 an hour</b>, and more for volume. You never meet anyone. A man called N. sends the briefs.</p>
       <p>Their AI studio, <b>Mirage</b>, makes everything: video, voices, photos, whole people. You choose what goes out, and where.</p>
@@ -13020,6 +13046,8 @@ function startAct1(skipOffice) {
   $('titleScreen').hidden = true; $('endScreen').hidden = true; $('troubleScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
   $('evBtn').hidden = !save.evidence.length;
   setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
+  actCard(skipOffice === true ? { n: 'I', t: ACTS[0].t, d: 'MONDAY, FEBRUARY 1, 2027', l: 'No job. No laptop. A black cat called Soot, and rent on the first.' }
+    : { n: 'I', t: ACTS[0].t, d: 'MONDAY, JANUARY 25, 2027', l: 'Northvale Logistics, ninth floor. The week a new AI called ChatGPX arrives.' });
   if (skipOffice === true) { enterApartment(); return; }
   modal({
     title: 'MONDAY, JANUARY 25, 2027',
@@ -13313,6 +13341,47 @@ function logoDraw(t) {
   // the tagline under the word
   g.fillStyle = '#536570'; g.fillRect(6, 60, 106, 1); g.fillStyle = '#e0a33a'; g.fillRect(6, 60, 14, 1);
 }
+// ---- act title cards ----
+const acOff = () => navigator.webdriver && !window.__tutTest;
+function actCard(o, then) {
+  if (acOff()) return then && then();
+  $('acK').textContent = 'ACT'; $('acN').textContent = o.n; $('acT').textContent = o.t; $('acD').textContent = o.d; $('acL').textContent = o.l;
+  const c = $('actCard'); c.classList.remove('out'); c.hidden = false;
+  sfx.init(); sfx.tone(55, 2.4, 'sine', .05, 40); sfx.tone(110, 1.6, 'triangle', .02, 0, .45); sfx.tone(880, .2, 'square', .015, 0, 1.6);
+  let done = false;
+  const go = () => { if (done) return; done = true; removeEventListener('keydown', key, true); c.classList.add('out'); setTimeout(() => { c.hidden = true; c.classList.remove('out'); }, 600); if (then) then(); };
+  const key = e => { e.preventDefault(); e.stopImmediatePropagation(); go(); };
+  c.onclick = go; addEventListener('keydown', key, true);
+}
+// ---- the ticker: what the TV in the corner of your eye is saying ----
+let tickKey = '';
+function tickerSync() {
+  const el = $('ticker'); if (!el) return;
+  const on = !!S && !S.over && scene === 'room' && S.phase !== 'office' && $('titleScreen').hidden;
+  el.hidden = !on; document.body.classList.toggle('has-ticker', on); if (!on) return;
+  const M = S.m3, k = [S.day, S.phase, M ? M.made + ':' + M.leaked + ':' + Math.round(M.kip * 10) : ''].join('|');
+  if (k === tickKey) return; tickKey = k;
+  const h = x => { let v = 0; for (const c of String(x)) v = (v * 31 + c.charCodeAt(0)) | 0; return Math.abs(v); };
+  let lines;
+  if (S.phase === 'mirage') {
+    const say = ['Delgado campaign: “It never happened.”', 'Platforms say they are “reviewing” it', 'Fact-checkers find no evidence', 'Halvorsen: “Let voters decide what’s real.”', 'Shared by a city councilman, then deleted'];
+    lines = [`POLL · Halvorsen ${M.kip.toFixed(1)}% · Delgado ${M.rosa.toFixed(1)}% · Prop 9 yes ${M.yes.toFixed(1)}%`,
+      ...M.arch.slice(0, 3).map(a => `VIRAL · “${a.claim}” · ${Math.round(a.reached / 100) / 10}K views · ${say[h(a.claim) % say.length]}`),
+      ELECTION - S.day > 0 ? `${ELECTION - S.day} DAYS TO ELECTION DAY` : 'ELECTION DAY · polls close at 8 PM',
+      M.leaked ? 'CITY LEDGER · “The Content Farm Behind Halvorsen”' : 'TECH · Mirage valued at $41 billion after new funding round',
+      'ZONE A · robotaxis now carry every ride in the zone', 'PROP 9 · would extend Zone A to the whole city'];
+  } else if (S.act === 2) {
+    lines = ['OPENBRAIN · Agent-4 now writes most of OpenBrain’s own code', 'MARKETS · AI stocks up again; payrolls down again',
+      S.day >= ROBO_START ? `ZONE A · ${Math.round(roboLevel(S.day) * 100)}% of deliveries now made by robots` : 'CITY · autonomous mobility pilot “weeks away”',
+      S.day >= ROBO_BAN ? 'ZONE A · human drivers banned from rideshare and delivery' : 'GIG WORK · Grovel and Uburn report record sign-ups',
+      'JOBS · AI training contracts pay less every week, workers say', `WEATHER · ${S.day < 115 ? 'mild' : 'warm'}, ${S.day % 3 ? 'clear' : 'showers'}`];
+  } else {
+    const heads = NEWS.filter(n => n[0] <= S.day).slice(-4).map(n => n[1]);
+    lines = [...heads.reverse(), `TECH · RAM now ${money(pr('ram'))} at Byte Barn`, 'HOUSING · average Harbor City rent now $1,940', `WEATHER · ${S.day < 35 ? '−6°C, snow' : S.day < 60 ? '1°C, sleet' : '7°C, rain'}`];
+  }
+  const sep = '<i style="color:#b8321f;font-style:normal;padding:0 18px">◆</i>', text = lines.map(l => esc(l)).join(sep) + sep;
+  const run = $('tkRun'); run.innerHTML = `<span style="padding-left:14px">${text}</span><span>${text}</span>`; run.style.setProperty('--tkd', Math.max(30, Math.round(text.length * .09)) + 's');
+}
 function frame(t) {
   const dt = Math.min(.25, (t - last) / 1000); last = t;
   if (S && !S.over) {
@@ -13348,7 +13417,7 @@ function frame(t) {
       }
     }
   }
-  paintRoom(t); logoDraw(t);
+  paintRoom(t); logoDraw(t); if (S && (t | 0) % 4 === 0) tickerSync();
   if (S) { paintBots(t); deskTick(t); clockSync(); }
   requestAnimationFrame(frame);
 }
@@ -13357,7 +13426,7 @@ requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
