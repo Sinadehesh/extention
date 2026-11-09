@@ -469,7 +469,7 @@ body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-in
 .screen, #desk { background: var(--bg) !important; }
 #titleScreen { background: radial-gradient(ellipse 70% 85% at 50% 42%, rgba(7,8,10,.96) 0 46%, rgba(7,8,10,.8) 74%, rgba(7,8,10,.7) 100%) !important; } /* the office glows behind the title */
 body:has(#titleScreen:not([hidden])) :is(#top, #railL, #railR, #subtitle, #toasts) { visibility: hidden; }
-#troubleScreen { background: linear-gradient(#3a1913 0 34%, var(--bg) 34%) !important; }
+#troubleScreen { background: linear-gradient(#3a1913 0%, #2a120e 42%, #0d0a0a 100%) !important; } /* no hard band: in two columns it would cut through the text */
 .modal { background: rgba(0,0,0,.8) !important; }
 .card.alarm { box-shadow: 0 0 0 2px #07080a, 6px 6px 0 #3d0f0c !important; }
 /* the room log reads like a diary in bone, no italics */
@@ -568,7 +568,7 @@ ol.rules { margin: 4px 0 0; padding-left: 20px; font-size: 12.5px; line-height: 
 #deskActs button.ghost { background: #232c33; color: #ddd6c1; }
 .desk-done .cites { max-width: 460px; display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #f0d0b0; } .desk-done .cites div { background: #3a1913; border: 2px solid #5c271b; padding: 5px 8px; }
 .desk-done .bad b { color: var(--danger); }
-.pboard { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; font-size: 12px; } .pboard div { display: flex; justify-content: space-between; gap: 6px; } .pboard b { color: var(--amber); }
+.pboard { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 2px 18px; font-size: 12px; } .pboard div { display: flex; justify-content: space-between; gap: 6px; } .pboard b { color: var(--amber); }
 .mail button.bul { border-color: #5c271b !important; } .mail button.bul .f { color: var(--amber); }
 details.box summary { cursor: pointer; list-style: none; } details.box summary::-webkit-details-marker { display: none; }
 @media (max-width: 640px) { .sxs { grid-template-columns: 1fr; } .np { max-height: 46vh; } }
@@ -1310,6 +1310,82 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
 #desk .doc { box-shadow: 0 2px 0 #b4aa8c, 8px 10px 0 rgba(7,8,10,.45), 0 22px 40px -12px #07080a; }
 #desk .doc-hint { background: rgba(7,8,10,.72); padding: 4px 8px; color: var(--ink); }
 #desk .tray { position: relative; z-index: 1; } #desk .doc-wrap { position: relative; z-index: 3; } /* the paper in your hand is always on top */
+/* endings: a still of the moment it ended, the ending's stamp, and numbers that count up */
+.screen-inner.end-grid { max-width: 1160px; display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 600px); gap: 52px; align-items: start; justify-content: center; }
+.end-grid > .end-main { display: flex; flex-direction: column; gap: 15px; min-width: 0; }
+.end-still { position: sticky; top: 28px; margin: 34px 0 0; padding: 12px 12px 46px; background: #ece4cc; box-shadow: inset 0 0 0 1px #b4aa8c, 8px 10px 0 rgba(7,8,10,.65); transform: rotate(-2.4deg); animation: endStillIn .9s cubic-bezier(.2,.9,.3,1.15) both; }
+.end-still[hidden] { display: none; }
+.end-still img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; image-rendering: pixelated; background: #07080a; filter: saturate(.5) contrast(1.08) brightness(.9) sepia(.12); box-shadow: inset 0 0 0 2px #07080a; }
+.end-still figcaption { position: absolute; left: 16px; right: 16px; bottom: 15px; font-family: var(--f-term); font-size: 12px; letter-spacing: .05em; color: #4a2f1c; }
+.end-stamp { position: absolute; right: -22px; top: -26px; padding: 8px 14px 7px; border: 4px solid #b8321f; color: #b8321f; background: rgba(236,228,204,.94); font-family: var(--f-term); text-align: center; transform: rotate(9deg); box-shadow: inset 0 0 0 2px rgba(184,50,31,.3), 4px 5px 0 rgba(7,8,10,.45); opacity: 0; pointer-events: none; }
+.end-stamp:empty { display: none; }
+.end-stamp b { display: block; font-size: 24px; font-weight: 400; letter-spacing: .06em; line-height: 1.1; }
+.end-stamp span { display: block; max-width: 210px; margin-top: 3px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+.end-stamp i { position: absolute; left: -14px; top: -12px; font-style: normal; font-size: 11px; letter-spacing: .12em; background: #e0a33a; color: #24170f; padding: 2px 6px; border: 2px solid #07080a; transform: rotate(-12deg); }
+.end-stamp.on { animation: endStamp .34s cubic-bezier(.3,1.5,.5,1) both; }
+@keyframes endStamp { from { opacity: 0; transform: rotate(16deg) scale(2.6); } to { opacity: 1; transform: rotate(9deg) scale(1); } }
+@keyframes endStillIn { from { opacity: 0; transform: rotate(-9deg) translateY(36px); } }
+.end-main .stats > div { animation: endTile .5s ease-out both; animation-delay: calc(var(--i, 0) * 80ms + 340ms); }
+@keyframes endTile { from { opacity: 0; transform: translateY(12px); } }
+.end-main .stats .v { font-variant-numeric: tabular-nums; }
+@media (max-width: 1100px) { .screen-inner.end-grid { grid-template-columns: minmax(0, 600px); gap: 22px; } .end-still { position: relative; top: 0; max-width: 420px; justify-self: center; margin-top: 30px; } }
+/* LoopMail: the inbox on the left, the open message on the right */
+#view .lm { flex: 1 1 0; min-height: 340px; display: flex; flex-wrap: wrap; border: 3px solid #07080a; background: #0d1013; box-shadow: 4px 4px 0 #07080a; }
+.lm-list { flex: 36 1 250px; min-width: 0; max-height: 100%; overflow-y: auto; background: #11161a; border-right: 3px solid #07080a; }
+.lm-h { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: baseline; padding: 8px 10px 7px 12px; background: #161b20; border-bottom: 2px solid #07080a; font-family: var(--f-term); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #e0a33a; }
+.lm-h b { font-weight: 400; } .lm-h span { color: var(--muted); letter-spacing: .04em; text-transform: none; }
+.lm-row { position: relative; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; grid-template-areas: 'av who when' 'av subj subj' 'av snip snip'; column-gap: 9px; row-gap: 2px; align-items: center; width: 100%; padding: 9px 10px 9px 14px; text-align: left; background: transparent; border: 0; border-bottom: 2px solid #07080a; border-radius: 0; color: var(--muted); cursor: pointer; font-family: var(--f-ui); }
+.lm-row:hover { background: #161d22; }
+.lm-row.on { background: #1a2a2c; box-shadow: inset 3px 0 0 #2fb589; }
+.lm-row.unread::before { content: ''; position: absolute; left: 5px; top: 13px; width: 5px; height: 5px; background: #e0a33a; box-shadow: 0 0 0 1px #07080a; }
+.lm .av { grid-area: av; align-self: start; width: 30px; height: 30px; display: grid; place-items: center; font-style: normal; font-family: var(--f-term); font-size: 14px; color: #fbf6e8; border: 2px solid #07080a; box-shadow: inset 0 2px 0 rgba(255,255,255,.2), inset 0 -2px 0 rgba(0,0,0,.28); text-shadow: 1px 1px 0 #07080a; }
+.lm-row .who { grid-area: who; font-family: var(--f-term); font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lm-row .when { grid-area: when; font-family: var(--f-term); font-size: 10px; color: #6e7a80; }
+.lm-row .subj { grid-area: subj; font-size: 13.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lm-row .snip { grid-area: snip; font-size: 12px; color: #6e7a80; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lm-row.unread .who, .lm-row.unread .subj { color: var(--ink); } .lm-row.unread .subj { font-weight: 600; }
+.lm-row.bul .who { color: #e0a33a; }
+.lm-read { flex: 64 1 340px; min-width: 0; max-height: 100%; overflow-y: auto; padding: 16px 20px 22px; }
+.lm-read h3 { margin: 14px 0 10px; font-family: var(--f-ui); font-size: 19px; font-weight: 600; line-height: 1.3; color: var(--ink); }
+.lm-read .body { font-family: var(--f-ui); font-size: 15px; line-height: 1.6; white-space: pre-line; color: #cfc8b2; max-width: 62ch; }
+.lm-mh { display: flex; gap: 11px; align-items: center; padding-bottom: 12px; border-bottom: 2px solid #07080a; box-shadow: 0 2px 0 #1d242b; }
+.lm-mh .av { width: 40px; height: 40px; font-size: 18px; }
+.lm-mh b { display: block; font-family: var(--f-term); font-size: 13px; font-weight: 400; color: var(--ink); } .lm-mh span { font-size: 12.5px; color: var(--muted); }
+.lm-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; color: var(--muted); }
+.lm-empty .lm-logo { font-size: 42px; line-height: 1; color: #2e3a42; text-shadow: 3px 3px 0 #07080a; } .lm-empty b { font-family: var(--f-term); font-weight: 400; color: var(--ink); }
+.lm-read .news-read { margin: 0 auto; max-width: 600px; }
+/* First Civic Bank, online */
+.bk { display: flex; flex-direction: column; gap: 8px; }
+.bk-top { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #12261f; border: 3px solid #07080a; box-shadow: inset 0 2px 0 #1d3a2f; font-family: var(--f-term); font-size: 11px; color: #9ab8a8; }
+.bk-logo { display: flex; align-items: center; gap: 8px; color: #c4f0e4; letter-spacing: .16em; font-size: 12px; }
+.bk-logo i { width: 14px; height: 14px; background: #2fb589; box-shadow: inset -4px -4px 0 #20685c, 0 0 0 2px #07080a; }
+.bk-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 14px; align-items: stretch; padding: 14px 16px; background: #161b20; border: 3px solid #07080a; box-shadow: 4px 4px 0 #07080a; }
+.bk-bal { display: flex; flex-direction: column; justify-content: center; gap: 3px; }
+.bk-bal .k { font-family: var(--f-term); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.bk-bal b { font-family: var(--f-term); font-weight: 400; font-size: 38px; line-height: 1.05; color: var(--ink); text-shadow: 3px 3px 0 #07080a; }
+.bk-bal .d { font-size: 13px; }
+.bk-chart { display: flex; flex-direction: column; justify-content: flex-end; gap: 3px; min-height: 76px; }
+.bk-chart span { font-family: var(--f-term); font-size: 10px; color: #6e7a80; text-align: right; }
+.bk-spark { width: 100%; height: 64px; display: block; background: repeating-linear-gradient(0deg, transparent 0 15px, rgba(221,214,193,.04) 15px 16px); }
+.bk-none { margin: auto 0; font-size: 12.5px; color: #6e7a80; text-align: right; }
+.bk-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: start; }
+@media (max-width: 1100px) { .bk-cols { grid-template-columns: minmax(0, 1fr); } }
+.bk-rent { display: flex; flex-direction: column; gap: 5px; padding-bottom: 8px; margin-bottom: 4px; border-bottom: 2px solid #07080a; }
+.bk-bar { height: 10px; background: #07080a; box-shadow: 0 0 0 2px #2e3a42; }
+.bk-bar i { display: block; height: 100%; background: #b97c25; background-image: repeating-linear-gradient(90deg, transparent 0 6px, rgba(0,0,0,.25) 6px 7px); }
+.bk-bar i.full { background-color: #5a8c45; }
+.bk-sub { font-size: 12.5px; color: var(--muted); }
+.bk-daily { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
+.bk-daily > .row:first-child { padding-bottom: 3px; color: var(--ink); }
+.bk-daily > .row:not(:first-child) { font-size: 12.5px; color: var(--muted); padding-left: 10px; }
+.bk-act { display: flex; flex-direction: column; gap: 3px; }
+.bk-day { margin-top: 6px; font-family: var(--f-term); font-size: 10px; letter-spacing: .12em; color: #6e7a80; }
+.bk-day:first-of-type { margin-top: 2px; }
+.bk-tx { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 13px; }
+.bk-tx span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #cfc8b2; }
+.bk-tx b { font-family: var(--f-term); font-weight: 400; font-size: 12px; }
+.bk-chip { width: 20px; height: 20px; display: grid; place-items: center; font-style: normal; font-family: var(--f-term); font-size: 11px; color: #fbf6e8; border: 2px solid #07080a; box-shadow: inset 0 2px 0 rgba(255,255,255,.16); }
+.bk-alert { border-color: var(--danger) !important; }
 </style>
 </head>
 <body>
@@ -1468,7 +1544,9 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
 
 <!-- Act end -->
 <div class="screen" id="endScreen" hidden>
-  <div class="screen-inner">
+  <div class="screen-inner end-grid">
+    <figure class="end-still" id="endStill"><img alt="Your apartment, the moment it ended" id="endStillImg"><figcaption id="endStillCap"></figcaption><div class="end-stamp" id="endStamp"></div></figure>
+    <div class="end-main">
     <div class="kicker" id="endKicker">Act I complete · April 30, 2027</div>
     <h2 id="endTitle">Make Money, Do Whatever It Takes</h2>
     <p class="lede" id="endText"></p>
@@ -1476,12 +1554,15 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
     <button class="cta" id="endEvidence">OPEN EVIDENCE FILES</button>
     <div class="acts" id="endNext"></div>
     <button class="btn" id="replayBtn">Replay Act II</button>
+    </div>
   </div>
 </div>
 
 <!-- End of Act I: the agents leave with your money -->
 <div class="screen" id="troubleScreen" hidden>
-  <div class="screen-inner">
+  <div class="screen-inner end-grid">
+    <figure class="end-still" id="trStill"><img alt="Your apartment, the moment it ended" id="trStillImg"><figcaption id="trStillCap"></figcaption><div class="end-stamp" id="trStamp"></div></figure>
+    <div class="end-main">
     <div class="kicker" id="trKicker">Act I complete</div>
     <h1 class="trouble-h">YOU'RE IN TROUBLE.</h1>
     <p class="trouble-sub">You need to start working part-time.</p>
@@ -1498,6 +1579,7 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
     <div class="stats" id="trStats"></div>
     <button class="btn" id="trEvidence">Open evidence files</button>
     <button class="btn" id="trReplay">Replay Act I</button>
+    </div>
   </div>
 </div>
 
@@ -2255,6 +2337,7 @@ const anyOnline = () => S.agents.some(a => a.net);
 const control = () => Math.round(clamp(100 - S.rogueAutonomy, 0, 100));
 
 function note(text) { S.notes.unshift({ day: S.day, text }); if (S.notes.length > 14) S.notes.pop(); }
+function balHist() { (S.balHist = S.balHist || []).push(Math.round(S.balance)); if (S.balHist.length > 90) S.balHist.shift(); }
 function tx(label, amt) { S.tx.unshift({ day: S.day, label, amt }); if (S.tx.length > 45) S.tx.pop(); }
 function addMail(day, from, subj, body, ev) {
   S.mail.unshift({ id: (S.mailSeq = (S.mailSeq || S.mail.length) + 1) + 1000, day, from, subj, body, ev, read: false });
@@ -2714,7 +2797,7 @@ function dayStep() {
 
   // 4. 401(k) climbs relentlessly
   S.k401 *= 1 + rand(-.002, .0095);
-  S.kHist.push(S.k401);
+  S.kHist.push(S.k401); balHist();
 
   if (isSunday(d)) sunday();
   if (d === 28 || d === 59) monthStart();
@@ -3221,7 +3304,7 @@ function endAct() {
     ['Reports & sabotage between agents', S.stats.rivals], ['Taken when they went dark', money(S.stats.darkTook)],
     ['Taken when they left', money(S.stats.took)], ['401(k) balance', money(S.k401)]
   ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
-  setTimeout(() => { $('troubleScreen').hidden = false; $('troubleScreen').scrollTop = 0; sfx.alarm(); vib([400, 120, 400]); }, 300);
+  setTimeout(() => { endShow('troubleScreen'); sfx.alarm(); vib([400, 120, 400]); }, 300);
 }
 
 // ================= the desk: a day's work, one request at a time =================
@@ -5098,11 +5181,42 @@ const ENDINGS = [
   { k: 'landslide', t: 'Same time next cycle' }, { k: 'stolen', t: 'By fewer votes than the voice' }, { k: 'lost', t: 'Still being believed' },
   { k: 'leak', t: 'The archive' }, { k: 'refused', t: 'Someone else made it' }, { k: 'exposed', t: 'Your name in the Ledger' }
 ];
+let lastEnding = null;
 function reachEnding(k) {
   const i = Math.max(0, ENDINGS.findIndex(e => e.k === k));
+  lastEnding = { n: i + 1, of: ENDINGS.length, t: ENDINGS[i].t, isNew: !(save.endings || []).includes(k) };
   save.endings = Array.from(new Set([...(save.endings || []), k])); persist();
   renderActList();
   return `ENDING ${i + 1} OF ${ENDINGS.length} · ${ENDINGS[i].t.toUpperCase()}`;
+}
+// ---- endings: the moment it ended, a stamp, the numbers counting up ----
+function roomStill() { // the room canvas, back down to its own pixels, so the still stays crisp
+  const cv = $('roomCv'); if (!cv || !cv.width) return '';
+  const w = Math.round(cam.vw || W), c = document.createElement('canvas'); c.width = w; c.height = H;
+  const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(cv, 0, 0, cv.width, cv.height, 0, 0, w, H);
+  try { return c.toDataURL(); } catch (e) { return ''; }
+}
+function countUp(root) {
+  root.querySelectorAll('.stats .v').forEach((el, i) => {
+    const txt = el.textContent, m = txt.match(/^(\D*?)(\d[\d,]*(?:\.\d+)?)(.*)$/); if (!m) return;
+    const [, pre, num, post] = m, dec = (num.split('.')[1] || '').length, to = parseFloat(num.replace(/,/g, '')), comma = num.includes(',');
+    if (!isFinite(to) || to < 2) return;
+    const fmt = v => pre + (comma ? v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }) : v.toFixed(dec)) + post;
+    const t0 = performance.now() + 420 + i * 80, D = 900;
+    el.textContent = fmt(0);
+    const step = t => { const k = Math.min(1, Math.max(0, (t - t0) / D)); el.textContent = k < 1 ? fmt(to * (1 - Math.pow(1 - k, 3))) : txt; if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
+}
+function endShow(id) {
+  const el = $(id), pre = id === 'endScreen' ? 'end' : 'tr', src = roomStill(), E = lastEnding, st = $(pre + 'Stamp');
+  $(pre + 'Still').hidden = !src; if (src) $(pre + 'StillImg').src = src;
+  $(pre + 'StillCap').textContent = `${fmtLong(S.day)} · ${clockText()}`;
+  st.className = 'end-stamp'; st.innerHTML = E ? `${E.isNew ? '<i>NEW</i>' : ''}<b>ENDING ${E.n}/${E.of}</b><span>${esc(E.t)}</span>` : '';
+  el.querySelectorAll('.stats > div').forEach((d, i) => d.style.setProperty('--i', i));
+  el.hidden = false; el.scrollTop = 0;
+  countUp(el);
+  if (E) setTimeout(() => { if (el.hidden) return; st.classList.add('on'); sfx.tone(64, .18, 'square', .07); sfx.tone(128, .06, 'square', .03); }, 1150);
 }
 function crossLine(s) { S.lines = S.lines || []; if (!S.lines.includes(s)) S.lines.push(s); }
 function linesHTML() {
@@ -5650,40 +5764,69 @@ function renderView(force) {
   if (S.tab === 'bank') {
     const key = 'bank' + S.day + Math.round(S.balance) + S.owed + S.tx.length + S.rentCut + S.billHack;
     if (!force && viewKey === key) return; viewKey = key;
-    const next = S.day < 28 ? 28 : S.day < 59 ? 59 : null;
-    v.innerHTML = `<div class="box"><div class="h">Checking · First Civic Bank</div>
-        <div class="big ${S.balance < 200 ? 'danger' : ''}">${money(S.balance)}</div>
+    const next = S.day < 28 ? 28 : S.day < 59 ? 59 : null, office = S.phase === 'office';
+    const hist = [...(S.balHist || []), Math.round(S.balance)].slice(-30);
+    const spark = hist.length < 2 ? '<div class="bk-none">The line starts tomorrow.</div>' : (() => {
+      const a = Math.min(...hist), b = Math.max(...hist), pad = Math.max(40, (b - a) * .12), lo = a - pad, hi = b + pad, y = v => (58 - (v - lo) / (hi - lo) * 54).toFixed(1); // the line's own range, with air
+      const pts = hist.map((v, i) => `${(i / (hist.length - 1) * 300).toFixed(1)},${y(v)}`).join(' ');
+      return `<svg class="bk-spark" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true">${lo < 0 ? `<line x1="0" x2="300" y1="${y(0)}" y2="${y(0)}" stroke="#7a2116" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>` : ''}<polygon points="0,60 ${pts} 300,60" fill="rgba(47,181,137,.13)"/><polyline points="${pts}" fill="none" stroke="#2fb589" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
+    })();
+    const today = S.tx.filter(t => t.day === S.day).reduce((a, t) => a + (t.amt || 0), 0);
+    const heat = office ? 0 : S.heatOn && S.power ? pr('heat') : 0, meals = office ? 0 : mealCost();
+    const cloud = S.phase === 'farm' ? dailyCloudCost() : 0, vps = S.phase === 'farm' && S.vps ? vpsCost() : 0, vpn = S.phase === 'farm' && S.hasVPN ? VPN_DAY : 0;
+    const daily = heat + meals + cloud + vps + vpn;
+    const rent = next !== null ? rentDue() : 0, have = rent ? Math.max(0, Math.min(1, S.balance / rent)) : 0;
+    const CAT = [[/rent|landlord|brightwater/i, 'H', '#843b27'], [/power|electric|grid/i, 'E', '#b97c25'], [/ramen|grocer|meal|food|cat|coffee|bodega/i, 'F', '#20685c'], [/loop|paper|news/i, 'N', '#5c271b'], [/barn|ram|gpu|computer|laptop|credit|vps|vpn|agent|compute|fiber|internet/i, 'T', '#3d4c55']];
+    const chip = t => { const c = CAT.find(([re]) => re.test(t.label)) || [0, '·', '#2e3a42']; return `<i class="bk-chip" style="background:${t.amt > 0 ? '#3a6438' : c[2]}">${t.amt > 0 ? '+' : c[1]}</i>`; };
+    const groups = []; for (const t of S.tx.slice(0, 18)) { const g = groups[groups.length - 1]; if (g && g.d === t.day) g.r.push(t); else groups.push({ d: t.day, r: [t] }); }
+    const row = (k, v, cls = '') => `<div class="row"><span>${k}</span><span class="${cls}">${v}</span></div>`;
+    v.innerHTML = `<div class="bk">
+      <div class="bk-top"><span class="bk-logo"><i></i>FIRST CIVIC BANK</span><span>Checking ••4417 · online banking</span></div>
+      <div class="bk-hero">
+        <div class="bk-bal"><span class="k">Available balance</span><b class="${S.balance < 200 ? 'danger' : ''}">${money(S.balance)}</b><span class="d ${today < 0 ? 'danger' : today > 0 ? 'ok' : 'muted'}">${today ? `${today > 0 ? '+' : ''}${money(today)} today` : 'Nothing in or out today'}</span></div>
+        <div class="bk-chart">${spark}<span>${hist.length < 2 ? '' : `last ${hist.length} days`}</span></div>
       </div>
-      ${S.owed ? `<div class="box" style="border-color:var(--danger)"><div class="row"><b class="danger">EVICTION & DISCONNECT</b><b class="danger">${money(S.owed)}</b></div><div class="muted">Pay before ${fmtLong(S.graceUntil)} or Sheriff evicts you onto 5th Street.</div></div>` : ''}
-      <div class="box"><div class="h">Fixed Monthly & Daily Costs</div>
-        ${S.phase === 'office' ? `<div class="row"><span>Salary · Northvale junior analyst</span><b class="ok">${money(1610)} · ${fmtDay(OFFICE_LAYOFF)}</b></div>` : ''}
-        ${next !== null ? `<div class="row"><span>Rent · due ${fmtDay(next)}</span><b class="amber">${money(rentDue())}</b></div><div class="row"><span>Electric · due ${fmtDay(next)}</span><span>${money(elecDue(next))}</span></div>` : ''}
-        <div class="row"><span>${S.phase === 'office' ? 'Heating (the office)' : 'Apartment Heating'}</span><span>${S.phase === 'office' ? '$0/day' : S.heatOn && S.power ? money(pr('heat')) + '/day' : 'OFF ($0/day)'}</span></div>
-        <div class="row"><span>Meals · ${S.phase === 'office' ? 'office canteen' : (MEALS[S.meal] || MEALS.ramen).label}</span><span>${S.phase === 'office' ? '$0' : money(mealCost())}/day</span></div>
-        ${S.phase === 'farm' ? `<div class="row"><span>Compute · ${COMPUTE_TIERS[S.computeTier].name} (${S.agents.length} agents)</span><span>${money(dailyCloudCost())}/day</span></div>` : ''}
-        ${S.phase === 'farm' && S.vps ? `<div class="row"><span>VPS ×${S.vps}</span><span>${money(vpsCost())}/day</span></div>` : ''}
-        ${S.phase === 'farm' && S.hasVPN ? `<div class="row"><span>VPN subscription</span><span>${money(VPN_DAY)}/day</span></div>` : ''}
+      ${S.owed ? `<div class="box bk-alert"><div class="row"><b class="danger">EVICTION & DISCONNECT</b><b class="danger">${money(S.owed)}</b></div><div class="muted">Pay before ${fmtLong(S.graceUntil)} or Sheriff evicts you onto 5th Street.</div></div>` : ''}
+      <div class="bk-cols">
+        <div class="box bk-bills"><div class="h">Coming up</div>
+          ${office ? row('Salary · Northvale junior analyst', `${money(1610)} · ${fmtDay(OFFICE_LAYOFF)}`, 'ok') : ''}
+          ${next !== null ? `<div class="bk-rent"><div class="row"><span>Rent · due ${fmtDay(next)} · in ${next - S.day} day${next - S.day === 1 ? '' : 's'}</span><b class="amber">${money(rent)}</b></div>
+            <div class="bk-bar" title="How much of the rent is in your account"><i style="width:${Math.round(have * 100)}%" class="${have >= 1 ? 'full' : ''}"></i></div>
+            <div class="bk-sub">${have >= 1 ? 'You have it, today.' : `You have ${Math.round(have * 100)}% of it. ${money(Math.max(0, rent - S.balance))} to go.`}</div></div>
+            ${row(`Electric · due ${fmtDay(next)}`, money(elecDue(next)))}` : ''}
+          <div class="bk-daily"><div class="row"><span>Every day</span><b>${money(daily)}/day</b></div>
+            ${row(office ? 'Heating (the office)' : 'Apartment heating', office ? '$0/day' : S.heatOn && S.power ? money(heat) + '/day' : 'OFF ($0/day)')}
+            ${row(`Meals · ${office ? 'office canteen' : (MEALS[S.meal] || MEALS.ramen).label}`, `${office ? '$0' : money(meals)}/day`)}
+            ${S.phase === 'farm' ? row(`Compute · ${COMPUTE_TIERS[S.computeTier].name} (${S.agents.length} agents)`, `${money(cloud)}/day`) : ''}
+            ${vps ? row(`VPS ×${S.vps}`, `${money(vps)}/day`) : ''}
+            ${vpn ? row('VPN subscription', `${money(vpn)}/day`) : ''}
+          </div>
+        </div>
+        <div class="box bk-act"><div class="h">Activity</div>
+          ${groups.length ? groups.map(g => `<div class="bk-day">${g.d === S.day ? 'TODAY' : fmtDay(g.d)}</div>${g.r.map(t => `<div class="bk-tx">${chip(t)}<span>${esc(t.label)}</span><b class="${t.amt < 0 ? 'danger' : t.amt > 0 ? 'ok' : 'muted'}">${t.amt ? (t.amt > 0 ? '+' : '') + money(t.amt) : '—'}</b></div>`).join('')}`).join('') : '<div class="muted">No activity yet.</div>'}
+        </div>
       </div>
-      <div class="box"><div class="h">Ledger</div><div class="tx">${S.tx.slice(0, 14).map(t => `<div class="row"><span>${esc(t.label)}</span><span class="${t.amt < 0 ? 'danger' : t.amt > 0 ? 'ok' : 'muted'}">${t.amt ? money(t.amt) : '—'}</span></div>`).join('')}</div></div>`;
+    </div>`;
     return;
   }
   if (S.tab === 'mail') {
-    if (S.reading) {
-      const m = S.mail.find(x => x.id === S.reading);
-      const key = 'mail-r' + m.id; if (!force && viewKey === key) return; viewKey = key;
-      v.innerHTML = m.bul ? `<div class="reader"><button class="back" id="mBack">← Inbox</button><div class="doc win news-read"><div class="tb news"><i>▤</i><span>The Morning Loop — ${fmtDay(m.day)}</span></div>${bulletinHTML(m.bul)}</div></div>`
-        : `<div class="reader"><button class="back" id="mBack">← Inbox</button><div class="h">${esc(m.from)} · ${fmtDay(m.day)}</div><b>${esc(m.subj)}</b><div class="body">${esc(m.body)}</div></div>`;
-      $('mBack').onclick = () => { S.reading = null; renderView(true); };
-      return;
-    }
-    const key = 'mail' + S.day + ':' + S.mail.length + S.mail.filter(m => m.read).length; if (!force && viewKey === key) return; viewKey = key;
+    const cur = S.reading ? S.mail.find(x => x.id === S.reading) : null;
+    const key = 'mail' + S.day + ':' + S.mail.length + ':' + S.mail.filter(m => m.read).length + ':' + (cur ? cur.id : 0); if (!force && viewKey === key) return; viewKey = key;
     const board = `<div class="box"><div class="row"><span class="h">Prices today</span><span class="muted">${fmtDay(S.day)}</span></div><div class="pboard">${Object.keys(PRICE0).filter(k => S.act !== 2 || (k !== 'vps' && k !== 'spawn')).map(k => `<div><span>${PRICE_NAME[k]}</span><b>${money(pr(k))}${PRICE_UNIT[k]}</b></div>`).join('')}</div></div>`;
     const rb = S.act === 2 || S.phase === 'office' ? '' : `<details class="box"><summary class="h">Rulebook · ${RULES.filter(r => r.d <= S.day).length} rules · tap to open</summary>${rulebookHTML()}</details>`;
-    v.innerHTML = `${S.phase === 'office' ? '' : board}${rb}<div class="mail">${S.mail.map(m => `<button class="${m.read ? '' : 'unread'} ${m.bul ? 'bul' : ''}" data-m="${m.id}"><span class="f">${m.bul ? '▤ ' : ''}${esc(m.from)} · ${fmtDay(m.day)}</span><span class="s">${esc(m.subj)}</span></button>`).join('')}</div>`;
+    const AVC = [P.t2, P.a1, P.g2, P.s3, P.r2, P.d4, P.t1, P.e1];
+    const av = m => { let h = 0; for (const c of m.from) h = (h * 31 + c.charCodeAt(0)) | 0; return `<i class="av" style="background:${m.bul ? P.e1 : AVC[Math.abs(h) % AVC.length]}">${m.bul ? '▤' : esc((m.from.match(/[A-Za-z0-9]/) || ['?'])[0].toUpperCase())}</i>`; };
+    const snip = m => m.bul ? 'Today’s paper: prices, a new rule, the market.' : esc(String(m.body || '').replace(/\s+/g, ' ').slice(0, 96));
+    const unread = S.mail.filter(m => !m.read).length;
+    const list = `<div class="lm-list"><div class="lm-h"><b>Inbox</b><span>${unread ? `${unread} unread` : 'all read'}</span></div>${S.mail.map(m => `<button class="lm-row${m.read ? '' : ' unread'}${m.bul ? ' bul' : ''}${cur && cur.id === m.id ? ' on' : ''}" data-m="${m.id}">${av(m)}<span class="who">${esc(m.from)}</span><span class="when">${fmtDay(m.day)}</span><span class="subj">${esc(m.subj)}</span><span class="snip">${snip(m)}</span></button>`).join('')}</div>`;
+    const read = !cur ? `<div class="lm-read lm-empty"><div class="lm-logo">✉</div><b>${unread ? `${unread} unread` : 'Nothing new'}</b><span>Pick a message on the left.</span></div>`
+      : cur.bul ? `<div class="lm-read"><div class="doc win news-read"><div class="tb news"><i>▤</i><span>The Morning Loop — ${fmtDay(cur.day)}</span></div>${bulletinHTML(cur.bul)}</div></div>`
+      : `<div class="lm-read"><div class="lm-mh">${av(cur)}<div><b>${esc(cur.from)}</b><span>to you · ${fmtLong(cur.day)}</span></div></div><h3>${esc(cur.subj)}</h3><div class="body">${esc(cur.body)}</div></div>`;
+    v.innerHTML = `${S.phase === 'office' ? '' : board}${rb}<div class="lm">${list}${read}</div>`;
     v.querySelectorAll('[data-m]').forEach(b => b.onclick = () => {
       const m = S.mail.find(x => x.id === +b.dataset.m); m.read = true; S.reading = m.id;
       if (m.ev) unlockEvidence(m.ev);
-      renderView(true);
+      renderView(true); paintPaperPhotos();
     });
     return;
   }
@@ -6005,8 +6148,8 @@ const ENTER = {
   phoneModal: el => { const p = el.querySelector('.phone'); settle(anim(p, { y: [90, 0], rotate: [4, 0], opacity: [0, 1] }, { type: 'spring', stiffness: 260, damping: 22 }), p); },
   evModal: el => rise(el.querySelectorAll('.ev'), .07, 22),
   titleScreen: el => rise(el.querySelectorAll('.screen-inner > *'), .08, 18),
-  endScreen: el => rise(el.querySelectorAll('.screen-inner > *'), .1, 18),
-  troubleScreen: el => { const h = el.querySelector('.trouble-h'); anim(h, { opacity: [0, 1], letterSpacing: ['.5em', '-.01em'] }, { duration: .5, ease: [.2, 1.3, .4, 1] }); jolt(el.querySelector('.screen-inner'), 16); rise(el.querySelectorAll('.screen-inner > :not(.trouble-h)'), .1, 22); }
+  endScreen: el => rise(el.querySelectorAll('.end-main > *'), .1, 18),
+  troubleScreen: el => { const h = el.querySelector('.trouble-h'); anim(h, { opacity: [0, 1], letterSpacing: ['.5em', '-.01em'] }, { duration: .5, ease: [.2, 1.3, .4, 1] }); jolt(el.querySelector('.end-main'), 16); rise(el.querySelectorAll('.end-main > :not(.trouble-h)'), .1, 22); }
 };
 const overlayWatch = new MutationObserver(rs => { for (const r of rs) if (!r.target.hidden && ENTER[r.target.id]) ENTER[r.target.id](r.target); });
 for (const id in ENTER) if ($(id)) overlayWatch.observe($(id), { attributes: true, attributeFilter: ['hidden'] });
@@ -12935,7 +13078,7 @@ function m3End(out) {
   $('endNext').innerHTML = ACTS.slice(3).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
   sfx.alarm(); $('replayBtn').textContent = 'Replay Act III';
   document.querySelectorAll('.toast').forEach(t => t.remove());
-  setTimeout(() => { $('endScreen').hidden = false; $('endScreen').scrollTop = 0; }, 600);
+  setTimeout(() => endShow('endScreen'), 600);
 }
 function mirageHTML() {
   const M = m3(), days = ELECTION - S.day, bar = (v, c) => `<i style="width:${v}%;background:${c}"></i>`;
@@ -12992,7 +13135,7 @@ function endAct2() {
   ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
   $('endNext').innerHTML = ACTS.slice(2).map((a, i) => i === 0 ? `<button class="actrow" id="act3Next"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Play Act III</span></button>` : `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
   if ($('act3Next')) $('act3Next').onclick = () => startAct3();
-  setTimeout(() => { $('endScreen').hidden = false; $('endScreen').scrollTop = 0; }, 600);
+  setTimeout(() => endShow('endScreen'), 600);
 }
 
 // ---------- rendering ----------
