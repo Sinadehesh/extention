@@ -1108,6 +1108,14 @@ html.uikit #roomStatus #nightBtn.on.late { border-image-source: var(--fr-hot) !i
   html.uikit #top :is(#fsBtn, #evBtn)::before { content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; margin: -11px 0 0 -10px; background: var(--ic-fs) center / 20px 20px no-repeat; image-rendering: pixelated; }
   html.uikit #top #evBtn::before { background-image: var(--ic-files); }
 }
+/* the AI assist row on the bench */
+.bn-assist { flex-wrap: wrap; gap: 6px 8px; align-items: center; justify-content: flex-start !important; }
+.bn-assist .h { color: var(--t4, #7fd8c0); }
+.bn-assist .as-seg button { font-size: 11.5px; padding: 2px 8px; }
+.bn-assist .as-cr { font-size: 12px; margin-left: auto; }
+.bn-assist #bnBuyAs { font-size: 12px; }
+html.uikit #benchWin .bn-assist .as-seg button.on { border-image: var(--fr-teal) 3 fill / 6px / 0 stretch !important; border-width: 6px !important; color: #c4f0e4 !important; transform: translateY(2px); }
+html.uikit #benchWin .bn-assist .as-seg button[data-asu="0"].on { border-image-source: var(--fr-btnDown) !important; color: var(--ink) !important; }
 </style>
 </head>
 <body>
@@ -3540,8 +3548,16 @@ const JOB_KINDS = {
   describe: { ui: 'pick', icon: '≡', credits: 2, units: [20, 25], per: 1.4, simple: true, ram: 8 },
   retouch: { ui: 'spot', icon: '◐', credits: 6, units: [25, 30], per: 2.5, ram: 16, gb: 6, minStars: 3.3 },
   render: { ui: 'render', icon: '▲', credits: 8, units: [20, 25], per: 5.6, ram: 16, gpu: true, gb: 2, minStars: 3.6 },
-  model3d: { ui: 'render', icon: '◆', credits: 12, units: [30, 35], per: 7.2, ram: 32, gpu: true, gb: 9, minStars: 4.0 }
+  model3d: { ui: 'render', icon: '◆', credits: 12, units: [30, 35], per: 7.2, ram: 32, gpu: true, gb: 9, minStars: 4.0 },
+  // the arcade work: each one a game, each one something an AI can learn to do in steps
+  crawl: { ui: 'arcade', icon: '§', credits: 3, units: [24, 32], per: 1.45, simple: true },
+  stack: { ui: 'arcade', icon: '▤', credits: 4, units: [16, 22], per: 2.3, ram: 8 },
+  rank: { ui: 'arcade', icon: '◎', credits: 4, units: [18, 24], per: 2.1, ram: 8 },
+  catch: { ui: 'arcade', icon: '▼', credits: 3, units: [26, 34], per: 1.25, simple: true },
+  launch: { ui: 'arcade', icon: '➶', credits: 4, units: [16, 22], per: 2.2 },
+  merge: { ui: 'arcade', icon: '⧉', credits: 3, units: [28, 36], per: 1.05, simple: true }
 };
+const ARCADE_KINDS = ['crawl', 'stack', 'rank', 'catch', 'launch', 'merge'];
 const starMult = () => clamp(.8 + ((S.stars || 3) - 3) * .14, .55, 1.1);
 const OS_RAM = 4, AGENT_RAM = 6;
 function hw() { S.hw = S.hw || { ram: 0, gpu: false }; return S.hw; }
@@ -3790,7 +3806,13 @@ const FC_TITLES = {
   describe: ['Check 300 product descriptions', 'Match product photos to descriptions'],
   retouch: ['Retouch 40 wedding photos', 'Clean up product shots for a shop'],
   render: ['Render a 30-second product spin', 'Render a chair for a catalogue'],
-  model3d: ['Walkthrough render of a lobby', 'Render a flat for an estate agent']
+  model3d: ['Walkthrough render of a lobby', 'Render a flat for an estate agent'],
+  crawl: ['Scrape 40 recipe blogs for a cooking AI', 'Crawl a forum for “training data”', 'Collect public reviews for a sentiment model', 'Scrape job ads for a hiring bot'],
+  stack: ['Pack a dataset into training batches', 'Batch 2,000 support chats for fine-tuning', 'Shard a web crawl into clean rows', 'Pack product photos into batches'],
+  rank: ['Rank search results for a shopping app', 'Order chatbot answers for an eval', 'Rank 300 CVs for an AI recruiter', 'Sort news stories by “engagement”'],
+  catch: ['Catch uploads for a photo-sharing app', 'Sort incoming files for a cloud drive', 'Screen attachments for an email service', 'Bag user uploads for an AI art site'],
+  launch: ['Ship model weights to a client’s server', 'Deliver API payloads to three ports', 'Push the nightly backups offsite', 'Send data packets to a data broker'],
+  merge: ['Merge duplicate customer records', 'Dedupe a 40,000-name mailing list', 'Merge near-identical product photos', 'Clean the duplicates out of a dataset']
 };
 const FC_CLIENTS = ['Harborview Clinic', 'Westbrook Primary', 'Café Lisbon', 'Harlan & Boyd, CPAs', 'Night Owl Forums', 'Kade Furniture', 'Bloom Studio', 'Halden Architects', 'City Library', 'Grove St Bakery', 'Mosaic Pet Supply', 'Quill & Co.', 'Rivera Plumbing', 'Okafor Family Dental', 'Marisol Reyes'];
 const FC_SCAMS = [
@@ -3808,8 +3830,8 @@ function mkListing(kind, o = {}) {
 }
 function webRefresh(d) {
   const st = S.stars || 3, n = 4 + (st >= 4 ? 2 : st >= 3.5 ? 1 : 0), L = [];
-  L.push(mkListing(pick(['label', 'entry', 'moderate']), { instant: true, units: randi(15, 20), mult: .8, props: 0 }));
-  for (let i = 0; i < n; i++) L.push(mkListing(pick(SIMPLE_KINDS)));
+  L.push(mkListing(pick(['label', 'entry', 'moderate', 'crawl', 'catch', 'merge']), { instant: true, units: randi(15, 20), mult: .8, props: 0 }));
+  for (let i = 0; i < n; i++) L.push(mkListing(pick(i % 2 ? ARCADE_KINDS : SIMPLE_KINDS)));
   L.push(mkListing('retouch')); if (st >= 3.8) L.push(mkListing('retouch'));
   if (st >= 3.4 || Math.random() < .3) L.push(mkListing('render'));
   if (st >= 3.9 || Math.random() < .2) L.push(mkListing('model3d'));
@@ -4006,6 +4028,7 @@ function mgMount(j) {
     level: mgLevel(), day: S.day, lag: auto ? 0 : (p ? p.lag : 1000) / 1000 * (JOB_KINDS[j.kind].gb ? 1.4 : 1),
     gpu: hw().gpuPow || (hw().gpu ? 1 : .6), fps: auto ? 60 : MG_FPS[p ? p.k : ''] || 40,
     auto, autoErr: BN.autoErr || 0, aiName: auto && a ? nameOf(a) : 'ChatGPX',
+    assist: 0, assistName: '',
     tone: (f, d, ty, v, f2, dl) => sfx.tone(f, d, ty, v, f2, dl),
     tremor: () => auto ? 0 : tremorNow(),
     pressure: () => auto ? 0 : clamp(dreadLevel() + (j.due - S.day <= 0 ? .25 : 0), 0, 1),
@@ -4014,11 +4037,61 @@ function mgMount(j) {
     onEnd: sum => mgEnd(j, sum),
     onClose: () => { if (BN && BN.ended === j) benchStop(); }
   };
+  BN.env = env; applyAssist();
   try { return mgCreate(host, j.kind, { units: j.units, done: j.done, errs: j.errs, title: j.title }, env); }
   catch (e) { console.error(e); return null; }
 }
+// ---- AI assist: pay once to teach the AI one part of a game, then pay credits while it helps ----
+// Level 1 and 2 help you play. Handing the whole job to an agent (credits) is level 3: it plays without you.
+const ASSIST = {
+  crawl: ['WALL SENSE', 'FOOD CHASE'], stack: ['SPREAD', 'PLACE'], rank: ['LEFT HAND', 'BOTH HANDS'],
+  catch: ['MAGNET', 'SHIELD'], launch: ['ARC', 'AIM'], merge: ['HINT', 'AUTO']
+};
+const ASSIST_SAY = {
+  crawl: ['It turns before a wall. You still steer.', 'It goes for the data whenever you let go of the keys.'],
+  stack: ['It drops each piece over the lowest gap, not the middle.', 'It steers each piece to the best spot. You drop it.'],
+  rank: ['It works the left flipper.', 'It works both flippers, a beat late now and then.'],
+  catch: ['It pulls nearby files into the bag.', 'It also knocks malware away from the bag.'],
+  launch: ['It shows where each shot will land.', 'It sets the angle. You pick the moment.'],
+  merge: ['It shows the best move.', 'It makes the move whenever you pause.']
+};
+const ASSIST_COST = [0, 35, 90], ASSIST_EVERY = 8; // credits: one per level, every 8 items it helps with
+const assistOwned = k => (S.assist && S.assist[k]) || 0;
+const assistUse = k => Math.min(assistOwned(k), S.assistUse && S.assistUse[k] != null ? S.assistUse[k] : 9);
+function buyAssist(k) {
+  const l = assistOwned(k) + 1; if (!ASSIST[k] || l > 2) return;
+  const c = ASSIST_COST[l]; if (S.balance < c) return toast(`You need ${money(c)}.`);
+  S.balance -= c; tx(`AI assist · ${MINI[k].title}: ${ASSIST[k][l - 1]}`, -c);
+  (S.assist = S.assist || {})[k] = l; (S.assistUse = S.assistUse || {})[k] = l;
+  note(`You paid ${money(c)} to teach an AI ${ASSIST[k][l - 1].toLowerCase()} for ${MINI[k].title}. ${ASSIST_SAY[k][l - 1]}`);
+  if (!S.credits) toast('It runs on AI credits. You have none. Buy some on the Work tab.');
+  sfx.cash(); applyAssist(); assistSync();
+}
+function setAssistUse(k, l) { (S.assistUse = S.assistUse || {})[k] = l; applyAssist(); assistSync(); }
+function applyAssist() {
+  if (!BN || !BN.env || BN.auto) return;
+  const j = benchJob(); if (!j || !ASSIST[j.kind]) return;
+  const l = S.credits > 0 ? assistUse(j.kind) : 0;
+  BN.env.assist = l; BN.env.assistName = l ? ASSIST[j.kind][l - 1] : '';
+}
+function assistHTML(j) {
+  const k = j.kind, own = assistOwned(k), use = assistUse(k);
+  return `<span class="h">AI assist</span><span class="seg as-seg"><button data-asu="0" aria-pressed="${use === 0}" class="${use === 0 ? 'on' : ''}">Off</button>${[1, 2].map(l => own >= l ? `<button data-asu="${l}" aria-pressed="${use === l}" class="${use === l ? 'on' : ''}">${ASSIST[k][l - 1]}</button>` : '').join('')}</span>
+    ${own < 2 ? `<button class="btn" id="bnBuyAs" title="${esc(ASSIST_SAY[k][own])}">Teach it ${ASSIST[k][own]} · ${money(ASSIST_COST[own + 1])}</button>` : ''}
+    <span class="as-cr ${use && !S.credits ? 'danger' : 'muted'}">${S.credits} credits${use ? ` · ${use} per ${ASSIST_EVERY} items` : ''}</span>`;
+}
+function assistSync() {
+  const el = $('bnAssist'), j = benchJob(); if (!el || !j || !ASSIST[j.kind]) return;
+  el.innerHTML = assistHTML(j);
+  el.querySelectorAll('[data-asu]').forEach(b => b.onclick = () => setAssistUse(j.kind, +b.dataset.asu));
+  const bb = $('bnBuyAs'); if (bb) bb.onclick = () => buyAssist(j.kind);
+}
 function mgItem(j, ok, st) {
   j.done = st.done; j.errs = st.errs;
+  if (!BN.auto && BN.env && BN.env.assist) { // the assist bills by the item
+    BN.asN = (BN.asN || 0) + 1;
+    if (BN.asN % ASSIST_EVERY === 0) { S.credits = Math.max(0, S.credits - BN.env.assist); if (!S.credits) { BN.env.assist = 0; BN.env.assistName = ''; toast('Out of AI credits. The assist switched itself off.'); } assistSync(); }
+  }
   if (!BN.auto) {
     S.stamina = clamp(S.stamina - .32, 0, 100); // a long day of this wears you down
     if (S.stamina < 3 && j.done < j.units) setTimeout(() => { if (benchJob() === j && !(BN && BN.ended)) { toast('You can’t keep your eyes open. Coffee, or sleep.'); benchStop(); } }, 400);
@@ -4064,6 +4137,7 @@ function benchMgHTML(j) {
   return `<div class="box bench mgbench"><div class="row"><span class="h">${auto ? `${esc(BN.agent ? nameOf(BN.agent) : 'The agent')} is on your bench` : 'On your bench'} · ${JOB_KINDS[j.kind].icon} ${esc(j.title)}</span><span class="clock" id="bnClock">${clockText()}</span></div>
     <div class="muted" id="bnHead"></div>
     <div class="bn-stage mg" id="bnStage"></div>
+    ${!auto && ASSIST[j.kind] ? `<div class="row bn-assist" id="bnAssist">${assistHTML(j)}</div>` : ''}
     <div class="row bn-acts"><button class="btn" id="bnStop">${auto ? 'Pull the plug' : 'Stop for now'}</button>${!auto && a ? `<button class="btn" id="bnAI">Hand it to ${esc(nameOf(a))} · ${JOB_KINDS[j.kind].credits} credits</button>` : ''}</div></div>`;
 }
 function makeUnit(j) {
@@ -4190,7 +4264,7 @@ function benchRender(force) {
     box.innerHTML = benchMgHTML(j); benchHead(j);
     $('bnStop').onclick = benchStop;
     if ($('bnAI')) $('bnAI').onclick = () => { const id = j.id; benchStop(); doJobAI(id); };
-    MGC = mgMount(j);
+    MGC = mgMount(j); assistSync();
     if (!MGC) { BN.mgFail = true; benchKey = ''; return benchRender(true); }
     MGC.tick(0, false);
     const c = box.querySelector('canvas.mg-cv'); if (c && !BN.auto) c.focus({ preventScroll: true });
@@ -5499,7 +5573,7 @@ function mgCreate(host, kind, job, env) {
     g, W: MG.W, H: MG.H, top: MG.TOP, bot: MG.BOT, mid: (MG.TOP + MG.BOT) / 2, P: PAL,
     level: clampN(env.level == null ? .5 : env.level, 0, 1), day: env.day || 0, units, lag: env.lag || 0, gpu: env.gpu == null ? 1 : env.gpu,
     get done() { return st.done; }, get left() { return Math.max(0, units - st.done); }, get busy() { return st.busy > 0 || st.black > 0; },
-    get t() { return st.t; }, get combo() { return st.combo; }, get auto() { return !!env.auto; }, get autoErr() { return env.autoErr || 0; },
+    get t() { return st.t; }, get combo() { return st.combo; }, get auto() { return !!env.auto; }, get autoErr() { return env.autoErr || 0; }, get assist() { return env.auto ? 3 : env.assist || 0; }, // 0 you, 1–2 the AI helps, 3 the AI plays
     get progress() { return units ? st.done / units : 1; },
     opts: env.opts || {}, // per-job options from the game around it
     emit(type, data) { if (env.onEvent) env.onEvent(type, data || {}); }, // tell the game around it: a ticket, a crash...
@@ -5659,13 +5733,17 @@ function mgCreate(host, kind, job, env) {
     mgText(g, st.combo >= 2 ? `COMBO ×${st.combo}` : 'COMBO —', 254, 12, { size: cs, color: cc, align: 'center', bold: st.combo >= 5, max: 52 });
     mgText(g, env.clock ? env.clock() : '', MG.W - 4, 12, { size: 7, color: PAL.a3, align: 'right' });
     g.fillStyle = PAL.k2; g.fillRect(0, MG.BOT, MG.W, MG.H - MG.BOT); g.fillStyle = PAL.k0; g.fillRect(0, MG.BOT, MG.W, 1);
-    mgText(g, st.hint, 5, MG.BOT + 10, { size: 6.5, color: PAL.mute, font: 'read', max: 200 });
+    mgText(g, st.hint, 5, MG.BOT + 10, { size: 6.5, color: PAL.mute, font: 'read', max: env.assist && !env.auto ? 168 : 200 });
     const ai = env.aiName || 'An AI agent';
     if (st.busy > .12 && st.phase === 'play') { // the machine catches up (down here, out of the way of the work)
       const a = st.t * 8; for (let i = 0; i < 6; i++) { g.fillStyle = i === (a | 0) % 6 ? PAL.a2 : PAL.s2; g.fillRect(MG.W - 56 + i * 3, MG.BOT + 6, 2, 3); }
       mgText(g, 'LOADING', MG.W - 4, MG.BOT + 10, { size: 6, color: PAL.a3, align: 'right' });
     } else if (env.auto) mgText(g, `${ai} · ${Math.round(st.t * 10) / 10}s`, MG.W - 4, MG.BOT + 10, { size: 6, color: PAL.t4, align: 'right' });
-    else mgText(g, `${ai}: ${st.ai.toLocaleString('en-US')} done meanwhile`, MG.W - 4, MG.BOT + 10, { size: 6, color: (st.t * 2 | 0) % 7 === 0 ? PAL.t4 : PAL.t2, align: 'right' });
+    else if (env.assist) { // the AI you paid for is helping: say which part it does
+      const tag = 'AI · ' + (env.assistName || 'ASSIST'), tw = Math.min(140, mgTextW(g, tag, 6.5) + 10), on = (st.t * 3 | 0) % 2;
+      g.fillStyle = PAL.t0; g.fillRect(MG.W - 4 - tw, MG.BOT + 3, tw, 10); g.fillStyle = on ? PAL.t3 : PAL.t2; g.fillRect(MG.W - 4 - tw, MG.BOT + 3, 2, 10);
+      mgText(g, tag, MG.W - 8, MG.BOT + 10.5, { size: 6.5, color: PAL.t4, align: 'right', max: 130 });
+    } else mgText(g, `${ai}: ${st.ai.toLocaleString('en-US')} done meanwhile`, MG.W - 4, MG.BOT + 10, { size: 6, color: (st.t * 2 | 0) % 7 === 0 ? PAL.t4 : PAL.t2, align: 'right' });
   }
 
   function introCard() {
@@ -5717,6 +5795,7 @@ function mgCreate(host, kind, job, env) {
 }
 
 function clampN(v, a, b) { return v < a ? a : v > b ? b : v; }
+function mgTextW(g, s, size) { g.font = mgFont({ size }); return g.measureText(String(s)).width; }
 function mgFont(o) { return `${o.bold ? '700 ' : ''}${o.size || 8}px ${o.font === 'read' ? MG_READ : MG_PIX}`; }
 function mgText(g, s, x, y, o = {}) {
   s = String(s); g.font = mgFont(o); g.textAlign = o.align || 'left'; g.textBaseline = 'alphabetic';
@@ -8324,6 +8403,688 @@ MINI.model3d = {
           bot.i++; moveHead(cx(sol[bot.i]), cy(sol[bot.i]));
         }
       }
+    };
+  }
+};
+
+// Crawler: a snake that scrapes the web. Eat the clean data; the red dots are somebody's personal data.
+// Assist 1 WALL SENSE turns before a wall. Assist 2 FOOD CHASE steers to the data when you let go. 3 plays it all.
+MINI.crawl = {
+  title: 'Crawler', how: 'Eat the clean data. Steer around the red: that’s somebody’s personal data.',
+  keys: 'Arrow keys or WASD · steer (or click where to turn)', pace: 1.6,
+  create(api) {
+    const { P } = api, C = 8, GW = 38, GH = 17, X0 = 8, Y0 = 24, N = GW * GH;
+    const D4 = [[1, 0], [0, 1], [-1, 0], [0, -1]];
+    const KEYS = { ArrowUp: 3, w: 3, W: 3, ArrowDown: 1, s: 1, S: 1, ArrowLeft: 2, a: 2, A: 2, ArrowRight: 0, d: 0, D: 0 };
+    let snake, dir, want = null, grow = 0, acc = 0, idle = 9, dead = 0, sensed = 0, food = [], red = [], walls = new Set(), wallN = 0, path = [], trail = [];
+    const id = (x, y) => x + y * GW, cell = (x, y) => [X0 + x * C + C / 2, Y0 + y * C + C / 2];
+    function reset() { const cx = GW >> 1, cy = GH >> 1; snake = [[cx, cy], [cx - 1, cy], [cx - 2, cy]]; dir = [1, 0]; want = null; grow = 0; path = []; }
+    function blocked(x, y) { // the tail will have moved by the time we get there, unless we're growing
+      if (x < 0 || y < 0 || x >= GW || y >= GH || walls.has(id(x, y))) return true;
+      const n = grow ? snake.length : snake.length - 1;
+      for (let i = 0; i < n; i++) if (snake[i][0] === x && snake[i][1] === y) return true;
+      return false;
+    }
+    const taken = (x, y) => blocked(x, y) || food.some(f => f.x === x && f.y === y) || red.some(f => f.x === x && f.y === y);
+    function freeCell(far = 4) {
+      for (let k = 0; k < 300; k++) { const x = api.ri(1, GW - 2), y = api.ri(1, GH - 2); if (!taken(x, y) && Math.abs(x - snake[0][0]) + Math.abs(y - snake[0][1]) > far) return [x, y]; }
+      return [1, 1];
+    }
+    function spawn() {
+      while (food.length < 3) { const [x, y] = freeCell(); food.push({ x, y, t: 0 }); }
+      const want = 1 + Math.round(api.level * 2 + api.progress * 2);
+      while (red.length < want) { const [x, y] = freeCell(); red.push({ x, y, t: 0, life: 5 + api.rand() * 6 }); }
+    }
+    function area(x, y, cap = 90) { // how much room is there past this cell?
+      if (blocked(x, y)) return 0;
+      const seen = new Uint8Array(N), q = [id(x, y)]; seen[q[0]] = 1;
+      for (let i = 0; i < q.length && q.length < cap; i++) { const c = q[i], cx = c % GW, cy = (c / GW) | 0; for (const [dx, dy] of D4) { const nx = cx + dx, ny = cy + dy; if (blocked(nx, ny)) continue; const k = id(nx, ny); if (!seen[k]) { seen[k] = 1; q.push(k); } } }
+      return q.length;
+    }
+    function safest() {
+      const h = snake[0]; let best = null, bv = 0;
+      for (const d of D4) { if (d[0] === -dir[0] && d[1] === -dir[1]) continue; const v = area(h[0] + d[0], h[1] + d[1]) + (d === dir ? .5 : 0); if (v > bv) { bv = v; best = d; } }
+      return best;
+    }
+    function plan(avoidRed) { // breadth-first to the nearest clean data, never into a dead end
+      const h = snake[0], root = id(h[0], h[1]), prev = new Int16Array(N).fill(-1), isRed = new Uint8Array(N), isFood = new Uint8Array(N);
+      if (avoidRed) for (const r of red) isRed[id(r.x, r.y)] = 1;
+      for (const f of food) isFood[id(f.x, f.y)] = 1;
+      prev[root] = root; const q = [root]; let hit = -1;
+      for (let i = 0; i < q.length && hit < 0; i++) {
+        const c = q[i], cx = c % GW, cy = (c / GW) | 0;
+        for (const [dx, dy] of D4) { const nx = cx + dx, ny = cy + dy, k = id(nx, ny); if (nx < 0 || ny < 0 || nx >= GW || ny >= GH || prev[k] !== -1 || isRed[k] || blocked(nx, ny)) continue; prev[k] = c; if (isFood[k]) { hit = k; break; } q.push(k); }
+      }
+      if (hit < 0) { path = []; return safest(); }
+      let c = hit; path = [c]; while (prev[c] !== root) { c = prev[c]; path.push(c); }
+      const fx = c % GW, fy = (c / GW) | 0;
+      if (area(fx, fy) < Math.min(snake.length + 3, 40)) { path = []; return safest(); }
+      return D4.find(d => d[0] === fx - h[0] && d[1] === fy - h[1]) || safest();
+    }
+    function addWall() { // paywalls go up as the job goes on
+      const horiz = api.chance(.5), len = api.ri(3, 5);
+      for (let k = 0; k < 60; k++) {
+        const x = api.ri(2, GW - 3 - (horiz ? len : 0)), y = api.ri(2, GH - 3 - (horiz ? 0 : len)), cells = [];
+        for (let i = 0; i < len; i++) cells.push(horiz ? [x + i, y] : [x, y + i]);
+        if (cells.some(([a, b]) => taken(a, b) || Math.abs(a - snake[0][0]) + Math.abs(b - snake[0][1]) < 6)) continue;
+        cells.forEach(([a, b]) => walls.add(id(a, b))); wallN++; api.pop(cell(x, y)[0], cell(x, y)[1] - 8, 'PAYWALL', P.s5, 7); api.sfx('stamp'); return;
+      }
+    }
+    function crash(x, y) {
+      const [px, py] = cell(Math.max(0, Math.min(GW - 1, x)), Math.max(0, Math.min(GH - 1, y)));
+      api.shake(6); api.flash(P.e2, .3); api.burst(px, py, P.e3, 16, 90); api.item(false, px, py - 6, 'CRASHED'); api.sfx('crash');
+      trail = snake.map(s => [...s]); dead = .8; reset();
+    }
+    function step() {
+      const A = api.assist, h0 = snake[0];
+      if (A >= 3) { const d = plan(!(api.auto && api.chance(api.autoErr * .12))); if (d) dir = d; }
+      else {
+        if (want && !(want[0] === -dir[0] && want[1] === -dir[1])) dir = want;
+        want = null;
+        if (A >= 2 && idle > .7) { const d = plan(true); if (d) dir = d; } else path = [];
+      }
+      if (A >= 1 && blocked(h0[0] + dir[0], h0[1] + dir[1])) { const d = safest(); if (d) { dir = d; sensed = .45; api.sfx('tick'); } }
+      const nx = h0[0] + dir[0], ny = h0[1] + dir[1];
+      if (blocked(nx, ny)) return crash(nx, ny);
+      snake.unshift([nx, ny]); if (grow > 0) grow--; else snake.pop();
+      const [px, py] = cell(nx, ny);
+      const fi = food.findIndex(f => f.x === nx && f.y === ny);
+      if (fi >= 0) { food.splice(fi, 1); grow++; api.burst(px, py, P.t4, 8, 50); api.item(true, px, py - 6, '+DATA'); spawn(); }
+      const ri = red.findIndex(f => f.x === nx && f.y === ny);
+      if (ri >= 0) { red.splice(ri, 1); api.burst(px, py, P.e3, 12, 70); api.shake(3); api.item(false, px, py - 6, 'PERSONAL DATA'); spawn(); }
+    }
+    reset(); spawn();
+    return {
+      tick(dt) {
+        idle += dt; sensed = Math.max(0, sensed - dt);
+        for (const f of food) f.t += dt;
+        for (const r of red) { r.t += dt; if (r.t > r.life) { const [x, y] = freeCell(3); r.x = x; r.y = y; r.t = 0; r.life = 5 + api.rand() * 6; } }
+        if (wallN < 3 && api.progress > .3 + wallN * .22) addWall();
+        if (dead > 0) { dead -= dt; return; }
+        const sp = 6.5 + api.level * 3 + api.progress * 3.5;
+        acc += dt; while (acc >= 1 / sp && dead <= 0) { acc -= 1 / sp; step(); }
+      },
+      key(k) { const d = KEYS[k]; if (d == null) return false; want = D4[d]; idle = 0; return true; },
+      down(x, y) { const [hx, hy] = cell(snake[0][0], snake[0][1]), dx = x - hx, dy = y - hy; want = Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx) || 1, 0] : [0, Math.sign(dy) || 1]; idle = 0; },
+      draw(g) {
+        const t = api.t, R = api.rect;
+        R(X0 - 3, Y0 - 3, GW * C + 6, GH * C + 6, P.k0); R(X0 - 2, Y0 - 2, GW * C + 4, GH * C + 4, P.s1); R(X0, Y0, GW * C, GH * C, P.k2);
+        for (let y = 0; y < GH; y++) { // the page being crawled: faint lines of text
+          const w = 8 + ((y * 7919) % 23); R(X0 + 4, Y0 + y * C + 3, w * 6, 1, P.k3); R(X0 + 12 + w * 6, Y0 + y * C + 3, ((y * 31) % 9) * 8, 1, P.k3);
+        }
+        for (const k of walls) { const x = k % GW, y = (k / GW) | 0; R(X0 + x * C, Y0 + y * C, C, C, P.s2); R(X0 + x * C, Y0 + y * C, C, 1, P.s4); R(X0 + x * C + 3, Y0 + y * C + 3, 2, 3, P.a2); }
+        if (path.length && dead <= 0) for (let i = 0; i < path.length; i += 1) { const c = path[i], x = c % GW, y = (c / GW) | 0; if ((i + (t * 8 | 0)) % 3 === 0) R(X0 + x * C + 3, Y0 + y * C + 3, 2, 2, P.t2); }
+        for (const f of food) { const [x, y] = cell(f.x, f.y), b = Math.sin(f.t * 6) > .6; R(x - 3, y - 3, 6, 6, P.t1); R(x - 2, y - 2, 4, 4, P.t3); if (b) R(x - 1, y - 3, 1, 1, P.t5); }
+        for (const r of red) { const [x, y] = cell(r.x, r.y), gone = r.life - r.t < 1 && (t * 10 | 0) % 2; if (gone) continue; R(x - 3, y - 3, 6, 6, P.e1); R(x - 2, y - 2, 4, 4, P.e3); R(x - 1, y - 1, 1, 1, P.e0); R(x + 1, y - 1, 1, 1, P.e0); R(x - 1, y + 1, 3, 1, P.e0); }
+        if (dead > 0) for (const [x, y] of trail) if ((t * 14 | 0) % 2) R(X0 + x * C + 1, Y0 + y * C + 1, C - 2, C - 2, P.e1);
+        for (let i = snake.length - 1; i >= 0; i--) {
+          const [x, y] = snake[i], k = i / Math.max(1, snake.length - 1), c = k < .34 ? P.a3 : k < .67 ? P.a2 : P.a1, sx = X0 + x * C, sy = Y0 + y * C;
+          R(sx + 1, sy + 1, C - 2, C - 2, c);
+          if (i > 0) { const [px, py] = snake[i - 1]; if (px !== x) R(Math.min(sx, X0 + px * C) + C - 1, sy + 2, 2, C - 4, c); else R(sx + 2, Math.min(sy, Y0 + py * C) + C - 1, C - 4, 2, c); }
+        }
+        const [hx, hy] = snake[0], ex = X0 + hx * C + 4 + dir[0] * 2, ey = Y0 + hy * C + 4 + dir[1] * 2;
+        R(X0 + hx * C + 1, Y0 + hy * C + 1, C - 2, C - 2, P.a4);
+        R(ex - (dir[1] ? 2 : 0), ey - (dir[0] ? 2 : 0), 1, 1, P.k0); R(ex + (dir[1] ? 1 : 0), ey + (dir[0] ? 1 : 0), 1, 1, P.k0);
+        if (api.assist >= 1 && api.assist < 3) for (const [dx, dy] of D4) { const nx = hx + dx, ny = hy + dy; if (blocked(nx, ny) && nx >= 0 && ny >= 0 && nx < GW && ny < GH) { R(X0 + nx * C, Y0 + ny * C, C, 1, P.t3); R(X0 + nx * C, Y0 + ny * C + C - 1, C, 1, P.t3); } }
+        if (sensed > 0) api.text('!', X0 + hx * C + 4, Y0 + hy * C - 2, { size: 8, color: P.t4, align: 'center', shadow: true, bold: true });
+      },
+      bot() {}
+    };
+  }
+};
+
+// Packer: falling blocks of records. Full rows ship as batches. If the well fills up, the batch overflows.
+// Assist 1 SPREAD drops each piece over the lowest gap instead of the middle. 2 PLACE steers it to the best fit. 3 plays it all.
+MINI.stack = {
+  title: 'Packer', how: 'Pack the records into full rows. Every full row ships as a batch.',
+  keys: '← → move · ↑ rotate · ↓ faster · SPACE drop · or point and click', pace: 2.4,
+  create(api) {
+    const { P } = api, COLS = 8, ROWS = 16, C = 8, WX = 128, WY = 23;
+    const SH = { I: [[0, 1], [1, 1], [2, 1], [3, 1]], O: [[1, 0], [2, 0], [1, 1], [2, 1]], T: [[1, 0], [0, 1], [1, 1], [2, 1]], S: [[1, 0], [2, 0], [0, 1], [1, 1]], Z: [[0, 0], [1, 0], [1, 1], [2, 1]], J: [[0, 0], [0, 1], [1, 1], [2, 1]], L: [[2, 0], [0, 1], [1, 1], [2, 1]] };
+    const COL = { I: P.t3, O: P.a2, T: P.r3, S: P.g3, Z: P.e3, J: P.s4, L: P.d4 }, BOX = { I: 4, O: 4, T: 3, S: 3, Z: 3, J: 3, L: 3 };
+    const ROT = { x: 34, y: 120, w: 76, h: 22 };
+    const rot = (t, k) => { let c = SH[t]; if (t === 'O') return c; for (let i = 0; i < (k & 3); i++) c = c.map(([x, y]) => [BOX[t] - 1 - y, x]); return c; };
+    let grid = Array.from({ length: ROWS }, () => Array(COLS).fill(null)), bag = [], cur = null, nxt = null;
+    let fall = 0, lockT = 0, soft = false, clearing = null, steerT = 0, dropT = 0, mouseCol = null, mouseT = 0, batches = 0, overflowFx = 0, target = null;
+    const fits = (cells, px, py, G = grid) => cells.every(([x, y]) => { const gx = px + x, gy = py + y; return gx >= 0 && gx < COLS && gy < ROWS && (gy < 0 || !G[gy][gx]); });
+    const span = cells => { const xs = cells.map(c => c[0]); return [Math.min(...xs), Math.max(...xs)]; };
+    function draw7() { if (!bag.length) bag = api.shuffle(Object.keys(SH)); return bag.pop(); }
+    const heights = (G = grid) => Array.from({ length: COLS }, (_, x) => { for (let y = 0; y < ROWS; y++) if (G[y][x]) return ROWS - y; return 0; });
+    const landY = (cells, x, G = grid) => { let y = -2; if (!fits(cells, x, y, G)) return null; while (fits(cells, x, y + 1, G)) y++; return y; };
+    function score(G, lines) { // the usual: low, flat, no holes, and clear lines
+      const h = heights(G); let holes = 0, bump = 0;
+      for (let x = 0; x < COLS; x++) { let roof = false; for (let y = 0; y < ROWS; y++) { if (G[y][x]) roof = true; else if (roof) holes++; } if (x) bump += Math.abs(h[x] - h[x - 1]); }
+      return -.51 * h.reduce((a, b) => a + b, 0) + .76 * lines - .36 * holes - .18 * bump;
+    }
+    function options(t) {
+      const out = [];
+      for (let r = 0; r < (t === 'O' ? 1 : 4); r++) {
+        const cells = rot(t, r);
+        for (let x = -3; x < COLS + 3; x++) {
+          const y = landY(cells, x); if (y == null) continue;
+          const G = grid.map(row => row.slice()); let ok = true;
+          for (const [cx, cy] of cells) { if (y + cy < 0) { ok = false; break; } G[y + cy][x + cx] = 1; }
+          if (!ok) continue;
+          const keep = G.filter(row => !row.every(Boolean)), lines = ROWS - keep.length;
+          while (keep.length < ROWS) keep.unshift(Array(COLS).fill(null));
+          out.push({ r, x, s: score(keep, lines) });
+        }
+      }
+      return out.sort((a, b) => b.s - a.s);
+    }
+    function spawnCol(t) { // SPREAD: over the lowest stretch of the well, not always the middle
+      const cells = rot(t, 0), [a, b] = span(cells), w = b - a + 1, h = heights(); let best = [], bv = 1e9;
+      for (let x = 0; x + w <= COLS; x++) { const v = Math.max(...h.slice(x, x + w)); if (v < bv) { bv = v; best = [x]; } else if (v === bv) best.push(x); }
+      return api.pick(best) - a;
+    }
+    function spawn() {
+      const t = nxt || draw7(); nxt = draw7();
+      const A = api.assist, cells = rot(t, 0), [a, b] = span(cells);
+      cur = { t, r: 0, cells, x: A >= 1 ? spawnCol(t) : ((COLS - (b - a + 1)) >> 1) - a, y: -2, manual: false };
+      fall = 0; lockT = 0; dropT = 0; steerT = 0; target = null;
+      if (A >= 2) { const o = options(t); target = o.length ? (api.auto && api.chance(api.autoErr * .5) && o.length > 2 ? o[api.ri(1, Math.min(3, o.length - 1))] : o[0]) : null; }
+      if (!fits(cur.cells, cur.x, cur.y)) overflow();
+    }
+    function overflow() {
+      api.item(false, WX + COLS * C / 2, WY + 20, 'OVERFLOW'); api.shake(7); api.flash(P.e2, .35); api.sfx('crash');
+      for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (grid[y][x]) api.burst(WX + x * C + 4, WY + y * C + 4, grid[y][x], 1, 40);
+      grid = Array.from({ length: ROWS }, () => Array(COLS).fill(null)); overflowFx = .6;
+      const t = cur ? cur.t : draw7(), cells = rot(t, 0); cur = { t, r: 0, cells, x: 2, y: -2, manual: false };
+    }
+    function move(dx) { if (fits(cur.cells, cur.x + dx, cur.y)) { cur.x += dx; lockT = Math.min(lockT, .2); return true; } return false; }
+    function turn() {
+      const r = (cur.r + 1) & 3, cells = rot(cur.t, r);
+      for (const k of [0, -1, 1, -2, 2]) if (fits(cells, cur.x + k, cur.y)) { cur.r = r; cur.cells = cells; cur.x += k; api.sfx('flip'); return true; }
+      return false;
+    }
+    function hard() { let n = 0; while (fits(cur.cells, cur.x, cur.y + 1)) { cur.y++; n++; } if (n) api.burst(WX + (cur.x + 1.5) * C, WY + (cur.y + 2) * C, P.s5, 6, 40); lock(); }
+    function lock() {
+      for (const [x, y] of cur.cells) { const gy = cur.y + y; if (gy < 0) return overflow(); grid[gy][cur.x + x] = COL[cur.t]; }
+      api.sfx('click');
+      const full = []; for (let y = 0; y < ROWS; y++) if (grid[y].every(Boolean)) full.push(y);
+      if (full.length) { clearing = { rows: full, t: 0 }; cur = null; } else spawn();
+    }
+    function cleared() {
+      const rows = clearing.rows; clearing = null;
+      grid = grid.filter((_, y) => !rows.includes(y)); while (grid.length < ROWS) grid.unshift(Array(COLS).fill(null));
+      rows.forEach((y, i) => { batches++; api.item(true, WX + COLS * C / 2, WY + y * C, rows.length >= 4 && i === rows.length - 1 ? 'PACKED ×4' : '+BATCH'); });
+      if (rows.length >= 3) { api.shake(3); api.sfx('milestone'); }
+      spawn();
+    }
+    spawn();
+    const steer = (dt, fast) => { // the AI nudges the piece to its target, one step at a time
+      if (!target || !cur) return true;
+      steerT -= dt; if (steerT > 0) return false; steerT = fast ? .045 : .07;
+      if (cur.r !== target.r) { turn(); if (cur.r !== target.r) return false; }
+      if (cur.x !== target.x) { if (!move(Math.sign(target.x - cur.x))) target = null; return false; }
+      return true;
+    };
+    return {
+      tick(dt) {
+        overflowFx = Math.max(0, overflowFx - dt); mouseT = Math.max(0, mouseT - dt);
+        if (clearing) { clearing.t += dt; if (clearing.t > .24) cleared(); return; }
+        if (!cur) return;
+        const A = api.assist;
+        if (A >= 3) { if (steer(dt, true)) { dropT += dt; if (dropT > .14) return hard(); } }
+        else if (A >= 2 && !cur.manual) steer(dt, false);
+        else if (mouseCol != null && mouseT > 0 && !cur.manual) { steerT -= dt; if (steerT <= 0 && cur.x !== mouseCol) { steerT = .05; move(Math.sign(mouseCol - cur.x)); } }
+        const g = 1.1 + api.level * 1.2 + api.progress * 1.5;
+        fall += dt * (soft ? 18 : g); soft = false;
+        while (fall >= 1) { fall -= 1; if (fits(cur.cells, cur.x, cur.y + 1)) { cur.y++; lockT = 0; } else break; }
+        if (!fits(cur.cells, cur.x, cur.y + 1)) { lockT += dt; if (lockT > .4) lock(); }
+      },
+      key(k, e) {
+        if (!cur || clearing) return ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' '].includes(k);
+        if (k === 'ArrowLeft' || k === 'a' || k === 'A') { cur.manual = true; move(-1); return true; }
+        if (k === 'ArrowRight' || k === 'd' || k === 'D') { cur.manual = true; move(1); return true; }
+        if (k === 'ArrowUp' || k === 'w' || k === 'W' || k === 'x' || k === 'X') { cur.manual = true; turn(); return true; }
+        if (k === 'ArrowDown' || k === 's' || k === 'S') { soft = true; return true; }
+        if (k === ' ' || k === 'Enter') { hard(); return true; }
+        return false;
+      },
+      move(x, y) {
+        if (!cur || x < WX - 8 || x > WX + COLS * C + 8) return;
+        const [a, b] = span(cur.cells), w = b - a + 1;
+        mouseCol = Math.max(-a, Math.min(COLS - w - a, Math.floor((x - WX) / C - w / 2 + .5) - a)); mouseT = 2;
+      },
+      down(x, y) {
+        if (!cur || clearing) return;
+        if (x >= ROT.x && x <= ROT.x + ROT.w && y >= ROT.y && y <= ROT.y + ROT.h) { cur.manual = true; turn(); return; }
+        if (x >= WX - 8 && x <= WX + COLS * C + 8) { if (mouseCol != null) { cur.manual = true; while (cur.x !== mouseCol && move(Math.sign(mouseCol - cur.x))); } hard(); }
+      },
+      draw(g) {
+        const R = api.rect, t = api.t;
+        const block = (x, y, c, a = 1) => { g.globalAlpha = a; R(x, y, C, C, P.k0); R(x + 1, y + 1, C - 2, C - 2, c); R(x + 1, y + 1, C - 2, 1, 'rgba(255,255,255,.28)'); R(x + 1, y + C - 2, C - 2, 1, 'rgba(0,0,0,.3)'); R(x + 2, y + 4, C - 5, 1, 'rgba(0,0,0,.22)'); g.globalAlpha = 1; };
+        api.frame(WX - 4, WY - 3, COLS * C + 8, ROWS * C + 6, 'slot');
+        for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) { R(WX + x * C, WY + y * C, C, C, (x + y) % 2 ? P.k2 : '#121619'); }
+        if (overflowFx > 0) R(WX, WY, COLS * C, ROWS * C, `rgba(184,50,31,${(overflowFx * .6).toFixed(2)})`);
+        for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (grid[y][x]) {
+          const fl = clearing && clearing.rows.includes(y);
+          if (fl) { const k = clearing.t / .24; R(WX + x * C, WY + y * C + Math.round(k * 4), C, Math.max(1, Math.round(C * (1 - k))), (t * 30 | 0) % 2 ? P.p4 : P.t4); }
+          else block(WX + x * C, WY + y * C, grid[y][x]);
+        }
+        if (cur) {
+          const ly = landY(cur.cells, cur.x);
+          if (ly != null && api.assist >= 1 && api.assist < 3) for (const [x, y] of cur.cells) if (ly + y >= 0) { g.globalAlpha = .35; R(WX + (cur.x + x) * C + 1, WY + (ly + y) * C + 1, C - 2, C - 2, COL[cur.t]); g.globalAlpha = 1; }
+          if (target && api.assist >= 2) { const tc = rot(cur.t, target.r), ty = landY(tc, target.x); if (ty != null) for (const [x, y] of tc) if (ty + y >= 0) { const bx = WX + (target.x + x) * C, by = WY + (ty + y) * C; R(bx, by, C, 1, P.t4); R(bx, by + C - 1, C, 1, P.t4); R(bx, by, 1, C, P.t4); R(bx + C - 1, by, 1, C, P.t4); } }
+          for (const [x, y] of cur.cells) if (cur.y + y >= 0) block(WX + (cur.x + x) * C, WY + (cur.y + y) * C, COL[cur.t]);
+        }
+        // left: the shipment
+        api.frame(34, 26, 76, 86, 'panel');
+        api.text('BATCHES', 72, 38, { size: 7, color: P.a3, align: 'center' });
+        api.text(String(batches), 72, 60, { size: 18, color: P.ink, align: 'center', bold: true, shadow: true });
+        for (let i = 0; i < Math.min(8, batches); i++) { R(42 + (i % 4) * 16, 74 + (i >> 2) * 14, 12, 10, P.d3); R(42 + (i % 4) * 16, 74 + (i >> 2) * 14, 12, 2, P.d5); R(47 + (i % 4) * 16, 74 + (i >> 2) * 14, 2, 10, P.a2); }
+        api.frame(ROT.x, ROT.y, ROT.w, ROT.h, 'button'); api.text('↻ ROTATE', ROT.x + ROT.w / 2, ROT.y + 14, { size: 7, color: P.ink, align: 'center' });
+        // right: what's next
+        api.frame(210, 26, 76, 60, 'panel'); api.text('NEXT', 248, 38, { size: 7, color: P.a3, align: 'center' });
+        if (nxt) { const c = rot(nxt, 0), [a, b] = span(c), w = (b - a + 1) * C; for (const [x, y] of c) block(248 - w / 2 + (x - a) * C, 50 + y * C, COL[nxt]); }
+        api.text(api.assist >= 2 ? 'The AI picks the spot.' : api.assist >= 1 ? 'The AI spreads the drops.' : 'Fill rows. Leave no holes.', 248, 104, { size: 6.5, color: P.mute, align: 'center', font: 'read', max: 80 });
+      },
+      bot() {}
+    };
+  }
+};
+
+// Ranker: a pinball table where every target the ball hits is a search result ranked. A drained ball is a result lost.
+// Assist 1 LEFT HAND works the left flipper. 2 BOTH HANDS works both, a beat late now and then. 3 plays it all.
+MINI.rank = {
+  title: 'Ranker', how: 'Keep the ball up. Every target it hits is a result ranked.',
+  keys: '← or Z · left flipper   → or M · right flipper   · or click a side', pace: 2.2,
+  create(api) {
+    const { P } = api, BR = 3, LEN = 26, FR = 2.5, GRAV = 240, VMAX = 430;
+    const walls = [];
+    const wall = pts => { for (let i = 0; i < pts.length - 1; i++) walls.push([...pts[i], ...pts[i + 1]]); };
+    wall([[96, 128], [96, 44], [104, 30], [120, 22], [200, 22], [216, 30], [224, 44], [224, 128]]);
+    wall([[96, 128], [128, 148]]); wall([[224, 128], [192, 148]]);
+    wall([[108, 108], [108, 120], [122, 130]]); wall([[212, 108], [212, 120], [198, 130]]); // the slingshot rails
+    const bumpers = [{ x: 136, y: 80, r: 8, f: 0 }, { x: 184, y: 80, r: 8, f: 0 }, { x: 160, y: 100, r: 8, f: 0 }];
+    const targets = [116, 138, 160, 182, 204].map((x, i) => ({ x: x - 6, y: 48, w: 12, h: 5, down: false, n: i + 1, f: 0 }));
+    const fl = { L: { px: 130, py: 150, s: 1, a: .45, held: false, ai: 0, cool: 0, tip: null }, R: { px: 190, py: 150, s: -1, a: .45, held: false, ai: 0, cool: 0, tip: null } };
+    const POST = { x: 160, y: 166, r: 2 }; // the centre post: it saves a ball that drops straight down, sometimes
+    const REST = .45, UP = -.42;
+    let ball = null, wait = .9, resetT = 0, sinceHit = 0, keyL = false, keyR = false, mouseSide = null, lit = 0, combo = 0;
+    const tipOf = f => [f.px + f.s * LEN * Math.cos(f.a), f.py + LEN * Math.sin(f.a)];
+    for (const f of Object.values(fl)) f.tip = tipOf(f);
+    function feed() { ball = { x: 188, y: 30, vx: -110 - api.rand() * 60, vy: 10 }; api.sfx('whoosh'); }
+    function closest(ax, ay, bx, by, x, y) { const dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy || 1; let t = ((x - ax) * dx + (y - ay) * dy) / L2; t = t < 0 ? 0 : t > 1 ? 1 : t; return [ax + dx * t, ay + dy * t, t]; }
+    function bounce(nx, ny, e, vsx = 0, vsy = 0) { const rvx = ball.vx - vsx, rvy = ball.vy - vsy, vn = rvx * nx + rvy * ny; if (vn < 0) { ball.vx -= (1 + e) * vn * nx; ball.vy -= (1 + e) * vn * ny; } }
+    function physics(dt) {
+      const b = ball; b.vy += GRAV * dt; b.x += b.vx * dt; b.y += b.vy * dt;
+      for (const [ax, ay, bx, by] of walls) { const [cx, cy] = closest(ax, ay, bx, by, b.x, b.y), dx = b.x - cx, dy = b.y - cy, d = Math.hypot(dx, dy); if (d < BR && d > 0) { const nx = dx / d, ny = dy / d; b.x = cx + nx * BR; b.y = cy + ny * BR; bounce(nx, ny, .5); } }
+      for (const u of bumpers) { const dx = b.x - u.x, dy = b.y - u.y, d = Math.hypot(dx, dy); if (d < u.r + BR && d > 0) { const nx = dx / d, ny = dy / d; b.x = u.x + nx * (u.r + BR); b.y = u.y + ny * (u.r + BR); bounce(nx, ny, .9); const sp = Math.hypot(b.vx, b.vy); if (sp < 230) { b.vx += nx * (230 - sp); b.vy += ny * (230 - sp); } if (u.f <= 0) { u.f = .18; api.sfx('tick'); api.burst(u.x + nx * u.r, u.y + ny * u.r, P.t4, 4, 40); } sinceHit = 0; } }
+      for (const g of targets) { if (g.down) continue; const cx = Math.max(g.x, Math.min(g.x + g.w, b.x)), cy = Math.max(g.y, Math.min(g.y + g.h, b.y)), dx = b.x - cx, dy = b.y - cy, d = Math.hypot(dx, dy);
+        if (d < BR) { const nx = d ? dx / d : 0, ny = d ? dy / d : 1; b.x = cx + nx * BR; b.y = cy + ny * BR; bounce(nx, ny, .6); hit(g); } }
+      { const dx = b.x - POST.x, dy = b.y - POST.y, d = Math.hypot(dx, dy); if (d < POST.r + BR && d > 0) { const nx = dx / d, ny = dy / d; b.x = POST.x + nx * (POST.r + BR); b.y = POST.y + ny * (POST.r + BR); bounce(nx, ny, .55); } }
+      for (const f of Object.values(fl)) {
+        const [tx, ty] = f.tip, [cx, cy, t] = closest(f.px, f.py, tx, ty, b.x, b.y), dx = b.x - cx, dy = b.y - cy, d = Math.hypot(dx, dy);
+        if (d < BR + FR && d > 0) { const nx = dx / d, ny = dy / d; b.x = cx + nx * (BR + FR); b.y = cy + ny * (BR + FR); bounce(nx, ny, .25, f.vx * t, f.vy * t); }
+      }
+      const sp = Math.hypot(b.vx, b.vy); if (sp > VMAX) { b.vx *= VMAX / sp; b.vy *= VMAX / sp; }
+    }
+    function hit(g) {
+      g.down = true; g.f = .5; combo++; sinceHit = 0; api.burst(g.x + g.w / 2, g.y + 2, P.a3, 10, 60); api.shake(2);
+      api.item(true, g.x + g.w / 2, g.y - 4, `#${g.n} RANKED`);
+      if (targets.every(x => x.down)) { resetT = .7; api.pop(160, 66, 'PAGE RANKED', P.t4, 10); api.sfx('milestone'); }
+    }
+    function drain() { api.item(false, ball.x, 156, 'RESULT LOST'); api.shake(4); api.flash(P.e1, .25); api.sfx('fail'); ball = null; wait = 1; combo = 0; }
+    function aiHold(f, lateness) { // the AI watches the ball come down over its flipper, and flicks it
+      if (!ball) return f.ai > 0;
+      if (f.ai <= 0 && f.cool <= 0) {
+        const [tx, ty] = tipOf({ px: f.px, py: f.py, s: f.s, a: REST }), near = closest(f.px, f.py, tx, ty, ball.x, ball.y), d = Math.hypot(ball.x - near[0], ball.y - near[1]);
+        const side = f.s > 0 ? ball.x < 163 : ball.x > 157, slow = Math.hypot(ball.vx, ball.vy) < 40;
+        if (side && (ball.vy > -40 || slow) && near[2] > .15 && d < 9 + Math.max(0, ball.vy) * .03 - lateness * 5 && ball.y < f.py + 12) { f.ai = .13; f.cool = .34; }
+      }
+      return f.ai > 0;
+    }
+    const onUp = e => { const k = e.key; if (['ArrowLeft', 'z', 'Z', 'a', 'A', ' '].includes(k)) keyL = false; if (['ArrowRight', 'm', 'M', '/', 'l', 'L', ' '].includes(k)) keyR = false; };
+    const onPUp = () => { mouseSide = null; }, onBlur = () => { keyL = keyR = false; mouseSide = null; };
+    addEventListener('keyup', onUp); addEventListener('pointerup', onPUp); addEventListener('blur', onBlur);
+    return {
+      tick(dt) {
+        const A = api.assist, late = api.auto ? api.autoErr : A >= 3 ? 0 : .5;
+        for (const u of bumpers) u.f = Math.max(0, u.f - dt);
+        for (const g of targets) g.f = Math.max(0, g.f - dt);
+        lit += dt; sinceHit += dt;
+        if (resetT > 0) { resetT -= dt; if (resetT <= 0) targets.forEach(g => { g.down = false; g.f = .3; }); }
+        for (const f of Object.values(fl)) {
+          f.ai = Math.max(0, f.ai - dt); f.cool = Math.max(0, f.cool - dt);
+          const auto = (A >= 3 || (A >= 2) || (A >= 1 && f.s > 0)) && !(api.auto && api.chance(api.autoErr * .02)) ? aiHold(f, late * (A >= 3 ? 0 : 1)) : false;
+          const human = f.s > 0 ? keyL || mouseSide === 'L' : keyR || mouseSide === 'R';
+          f.held = human || auto;
+          const goal = f.held ? UP : REST, sp = f.held ? 20 : 11;
+          const prev = f.tip; f.a += Math.sign(goal - f.a) * Math.min(Math.abs(goal - f.a), sp * dt);
+          f.tip = tipOf(f); f.vx = (f.tip[0] - prev[0]) / Math.max(dt, 1e-3); f.vy = (f.tip[1] - prev[1]) / Math.max(dt, 1e-3);
+        }
+        if (!ball) { wait -= dt; if (wait <= 0) feed(); return; }
+        const n = 8; for (let i = 0; i < n && ball; i++) { physics(dt / n); if (ball.y > 176) { drain(); break; } }
+        if (ball && sinceHit > 9 && Math.hypot(ball.vx, ball.vy) < 25) { ball.vy -= 160; ball.vx += api.rand() * 80 - 40; sinceHit = 0; } // a nudge if it settles
+      },
+      key(k) {
+        if (['ArrowLeft', 'z', 'Z', 'a', 'A'].includes(k)) { keyL = true; return true; }
+        if (['ArrowRight', 'm', 'M', '/', 'l', 'L'].includes(k)) { keyR = true; return true; }
+        if (k === ' ') { keyL = keyR = true; return true; }
+        return false;
+      },
+      down(x) { mouseSide = x < 160 ? 'L' : 'R'; },
+      up() { mouseSide = null; },
+      draw(g) {
+        const R = api.rect, t = api.t;
+        const thick = (x0, y0, x1, y1, w, c) => { const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0)); for (let i = 0; i <= n; i++) R(x0 + (x1 - x0) * i / n - w / 2, y0 + (y1 - y0) * i / n - w / 2, w, w, c); };
+        // the cabinet
+        R(84, 18, 152, 148, P.k0); R(88, 18, 144, 148, P.d0);
+        for (let y = 24; y < 166; y += 6) R(98, y, 124, 1, P.d1);
+        api.text('SEARCH', 160, 136, { size: 12, color: P.d2, align: 'center', bold: true });
+        for (let i = 0; i < 3; i++) { const on = ((lit * 4 | 0) + i) % 3 === 0; R(152 + i * 6, 118, 4, 4, on ? P.a3 : P.d2); }
+        for (const [ax, ay, bx, by] of walls) thick(ax, ay, bx, by, 2, P.s4);
+        R(POST.x - 2, POST.y - 2, 4, 4, P.s5); R(POST.x - 1, POST.y - 3, 2, 1, P.p3);
+        // targets: the results
+        for (const tg of targets) {
+          if (tg.down) { R(tg.x, tg.y + 3, tg.w, 2, P.k1); continue; }
+          const c = tg.f > 0 && (t * 20 | 0) % 2 ? P.p4 : P.p2; R(tg.x, tg.y, tg.w, tg.h, c); R(tg.x, tg.y + tg.h - 1, tg.w, 1, P.p0);
+          api.text('#' + tg.n, tg.x + tg.w / 2, tg.y - 2, { size: 6, color: P.a3, align: 'center' });
+        }
+        for (const u of bumpers) { api.circle(u.x, u.y, u.r, u.f > 0 ? P.p4 : P.t3); api.circle(u.x, u.y, u.r - 3, u.f > 0 ? P.t4 : P.t1); api.circle(u.x, u.y, 1.5, P.t5); }
+        // flippers
+        for (const f of Object.values(fl)) { thick(f.px, f.py, f.tip[0], f.tip[1], 4, f.held ? P.a3 : P.a2); R(f.px - 2, f.py - 2, 4, 4, P.k1); R(f.px - 1, f.py - 1, 2, 2, P.s5); if (f.ai > 0 && api.assist < 3) R(f.px - 3, f.py + 5, 6, 2, P.t4); }
+        if (ball) { const x = Math.round(ball.x), y = Math.round(ball.y); R(x - 2, y - 3, 4, 6, P.s5); R(x - 3, y - 2, 6, 4, P.s5); R(x - 2, y - 2, 3, 3, P.p4); R(x - 1, y - 2, 1, 1, '#ffffff'); }
+        else { const k = 1 - Math.max(0, wait); api.text(wait > 0 ? 'NEXT QUERY' : '', 160, 34, { size: 6.5, color: (t * 4 | 0) % 2 ? P.a3 : P.a1, align: 'center' }); }
+        // side panels: the page being ranked
+        api.frame(14, 26, 62, 120, 'paper');
+        api.text('RESULTS', 45, 37, { size: 6.5, color: P.d1, align: 'center' });
+        targets.forEach((tg, i) => { R(20, 46 + i * 18, 50, 12, tg.down ? P.t5 : P.p3); api.text(`#${tg.n}`, 23, 55 + i * 18, { size: 6.5, color: tg.down ? P.t1 : P.p0 }); R(36, 49 + i * 18, tg.down ? 30 : 18, 2, tg.down ? P.t2 : P.p1); R(36, 53 + i * 18, tg.down ? 22 : 12, 1, tg.down ? P.t2 : P.p1); });
+        api.frame(244, 26, 62, 46, 'panel');
+        api.text('L', 262, 54, { size: 12, color: keyL || mouseSide === 'L' ? P.a3 : P.s4, align: 'center', bold: true }); api.text('R', 288, 54, { size: 12, color: keyR || mouseSide === 'R' ? P.a3 : P.s4, align: 'center', bold: true });
+        api.text(api.assist >= 2 ? 'AI flips both' : api.assist >= 1 ? 'AI flips left' : 'flippers', 275, 66, { size: 6, color: api.assist ? P.t4 : P.mute, align: 'center' });
+      },
+      bot() {},
+      destroy() { removeEventListener('keyup', onUp); removeEventListener('pointerup', onPUp); removeEventListener('blur', onBlur); }
+    };
+  }
+};
+
+// Uploader: files drop from the users above. Catch them in the bag; keep the malware out; don't let a file hit the floor.
+// Assist 1 MAGNET pulls nearby files in. 2 SHIELD also knocks malware away. 3 plays it all.
+MINI.catch = {
+  title: 'Uploader', how: 'Catch every file in the bag. Keep the malware out.',
+  keys: 'Move the mouse, or hold ← → · move the bag', pace: 1.4,
+  create(api) {
+    const { P } = api, FLOOR = 154, BW = 32, BY = 140, LX = 20, RX = 300;
+    const CH = [44, 92, 140, 188, 236, 284];
+    let bag = { x: 160, vx: 0 }, drops = [], spawnT = .6, keyL = false, keyR = false, mouseX = null, mouseT = 0, rings = [], caught = 0, wob = 0;
+    const SPR = {
+      doc: api.art(['.oooo..', 'oppppo.', 'opllpoo', 'oppppppo', 'opllllpo', 'oppppppo', 'opllllpo', 'oppppppo', 'oooooooo'], { o: P.k0, p: P.p3, l: P.p0 }),
+      img: api.art(['oooooooo', 'ottttttto', 'otgttagto', 'otttgggto', 'oggggggto', 'oggggggto', 'oooooooo'], { o: P.k0, t: P.t4, g: P.g3, a: P.a3 }),
+      bug: api.art(['.o....o.', '..o..o..', '.oeeeeo.', 'oeEeeEeo', 'oeeeeeeo', 'oeeEEeeo', '.oeeeeo.', 'o.o..o.o'], { o: P.k0, e: P.e2, E: P.e4 })
+    };
+    const land = d => (BY - d.y) / d.vy;
+    function spawn() { // fair drops: a file you could never reach in time is never sent
+      const bad = api.chance(.22 + api.level * .12 + api.progress * .1), vy = 34 + api.level * 22 + api.progress * 26 + api.rand() * 14;
+      const lt = (BY - 22) / vy, ok = x => drops.every(o => o.bad || bad || Math.abs(land(o) - lt) > Math.abs(o.x - x) / 175 + .12);
+      const xs = api.shuffle(CH).map(x => x + api.ri(-6, 6)), x = xs.find(ok);
+      if (x == null) return;
+      drops.push({ x, y: 22, vy, vx: 0, bad, k: bad ? 'bug' : api.chance(.5) ? 'doc' : 'img', bump: 0 });
+    }
+    const onUp = e => { if (['ArrowLeft', 'a', 'A'].includes(e.key)) keyL = false; if (['ArrowRight', 'd', 'D'].includes(e.key)) keyR = false; };
+    const onBlur = () => { keyL = keyR = false; };
+    addEventListener('keyup', onUp); addEventListener('blur', onBlur);
+    function botTarget() { // the lowest good file it can still reach, with no malware about to land in the bag on the way
+      let best = null, bt = 1e9;
+      for (const d of drops) { if (d.bad) continue; const tt = (BY - d.y) / d.vy, need = Math.abs(d.x - bag.x) / 190; if (tt > need - .05 && tt < bt) { bt = tt; best = d; } }
+      let x = best ? best.x : 160;
+      for (const d of drops) if (d.bad && Math.abs(d.x - x) < BW / 2 + 6 && (BY - d.y) / d.vy < .5) x += d.x > x ? -BW : BW;
+      return Math.max(LX + BW / 2, Math.min(RX - BW / 2, x));
+    }
+    return {
+      tick(dt) {
+        const A = api.assist; mouseT = Math.max(0, mouseT - dt); wob = Math.max(0, wob - dt);
+        spawnT -= dt; if (spawnT <= 0) { spawn(); spawnT = Math.max(.45, 1.25 - api.level * .4 - api.progress * .35) * (.8 + api.rand() * .5); }
+        let goal = null;
+        if (A >= 3) goal = api.auto && api.chance(api.autoErr * .02) ? bag.x + api.ri(-40, 40) : botTarget();
+        else if (mouseX != null && mouseT > 0) goal = mouseX;
+        if (goal != null) { const d = goal - bag.x; bag.vx = Math.max(-200, Math.min(200, d * 12)); }
+        else bag.vx = (keyR ? 170 : 0) - (keyL ? 170 : 0);
+        bag.x = Math.max(LX + BW / 2, Math.min(RX - BW / 2, bag.x + bag.vx * dt));
+        for (const r of rings) r.t += dt; rings = rings.filter(r => r.t < .4);
+        for (const d of drops) {
+          d.y += d.vy * dt; d.x += d.vx * dt; d.vx *= Math.pow(.2, dt); d.bump = Math.max(0, d.bump - dt);
+          const dx = bag.x - d.x, near = Math.abs(dx) < 42 && BY - d.y < 70 && BY - d.y > 0;
+          if (!d.bad && A >= 1 && A < 3 && near) d.vx += Math.sign(dx) * (A >= 2 ? 260 : 170) * dt; // MAGNET
+          if (d.bad && A >= 2 && A < 3 && Math.abs(dx) < BW / 2 + 8 && BY - d.y < 34 && BY - d.y > 0 && !d.bump) { d.vx = -Math.sign(dx || 1) * 150; d.bump = .6; rings.push({ x: d.x, y: d.y, t: 0 }); api.sfx('zap'); } // SHIELD
+          if (d.y >= BY - 4 && d.y <= BY + 4 && Math.abs(d.x - bag.x) < BW / 2 + 2 && !d.done) {
+            d.done = true; wob = .2;
+            if (d.bad) { api.item(false, bag.x, BY - 14, 'MALWARE IN'); api.shake(4); api.burst(bag.x, BY - 4, P.e3, 12, 70); }
+            else { caught++; api.item(true, bag.x, BY - 14, d.k === 'img' ? '+IMAGE' : '+FILE'); api.burst(bag.x, BY - 6, P.t4, 6, 40); }
+          }
+          if (d.y >= FLOOR && !d.done) { d.done = true; if (!d.bad) { api.item(false, d.x, FLOOR - 10, 'LOST'); api.burst(d.x, FLOOR, P.p2, 8, 50); } else api.burst(d.x, FLOOR, P.e1, 5, 30); }
+        }
+        drops = drops.filter(d => !d.done && d.x > 0 && d.x < 320);
+      },
+      key(k) {
+        if (['ArrowLeft', 'a', 'A'].includes(k)) { keyL = true; mouseT = 0; return true; }
+        if (['ArrowRight', 'd', 'D'].includes(k)) { keyR = true; mouseT = 0; return true; }
+        return false;
+      },
+      move(x) { mouseX = x; mouseT = 1.2; },
+      down(x) { mouseX = x; mouseT = 1.2; },
+      draw(g) {
+        const R = api.rect, t = api.t;
+        R(LX - 4, 18, RX - LX + 8, 148, P.k2);
+        for (const x of CH) { R(x - 9, 18, 18, 6, P.s1); R(x - 7, 24, 14, 2, P.s0); api.circle(x, 21, 2, (t * 3 + x) % 4 < 1 ? P.a3 : P.s3); } // the users' chutes
+        for (let y = 34; y < FLOOR; y += 12) R(LX, y, RX - LX, 1, P.k3);
+        R(LX - 4, FLOOR, RX - LX + 8, 12, P.s0); R(LX - 4, FLOOR, RX - LX + 8, 1, P.s2);
+        for (const d of drops) { const img = SPR[d.k]; R(Math.round(d.x) - 4, FLOOR - 2, 8, 2, 'rgba(0,0,0,.35)'); api.sprite(img, Math.round(d.x - img.width), Math.round(d.y - img.height), 2); if (d.bad && (t * 6 | 0) % 2) { R(d.x - 9, d.y - 11, 2, 2, P.e4); R(d.x + 7, d.y - 11, 2, 2, P.e4); } }
+        for (const r of rings) { const k = r.t / .4; api.circle(r.x, r.y, 4 + k * 12, `rgba(127,216,192,${(1 - k).toFixed(2)})`, false); }
+        const A = api.assist, bx = Math.round(bag.x - BW / 2), wy = wob > 0 ? 1 : 0;
+        if (A >= 1 && A < 3) for (let i = 0; i < 4; i++) { const k = ((t * 1.6 + i / 4) % 1), y = BY - 6 - k * 62, w = 10 + k * 34; g.globalAlpha = (1 - k) * .7; R(bag.x - w, y, 4, 1, P.t3); R(bag.x + w - 4, y, 4, 1, P.t3); g.globalAlpha = 1; } // the magnet's pull
+        R(bx - 1, BY - 1 + wy, BW + 2, 14, P.k0); R(bx, BY + wy, BW, 12, P.d3); R(bx, BY + wy, BW, 2, P.d5); R(bx + 2, BY + 4 + wy, BW - 4, 1, P.d2); R(bx + BW / 2 - 3, BY + 5 + wy, 6, 4, P.a2); // the bag
+        if (A >= 2 && A < 3) { R(bx - 3, BY - 3, 2, 8, P.t3); R(bx + BW + 1, BY - 3, 2, 8, P.t3); }
+        api.text(`${caught} IN THE BAG`, RX - 2, 30, { size: 6.5, color: P.mute, align: 'right' });
+      },
+      bot() {},
+      destroy() { removeEventListener('keyup', onUp); removeEventListener('blur', onBlur); }
+    };
+  }
+};
+
+// Shipper: fire each packet across the room into the client's port. It moves. So does the wind.
+// Assist 1 ARC shows where the shot will go. 2 AIM sets the angle for whatever power you hold. 3 does it all.
+MINI.launch = {
+  title: 'Shipper', how: 'Fire each packet into the client’s port. Watch the wind.',
+  keys: 'Aim with the mouse · hold and release to fire (or ↑ ↓ and SPACE)', pace: 2.4,
+  create(api) {
+    const { P } = api, CX = 30, CY = 146, PX = 290, GRAV = 150, FLOOR = 156;
+    let ang = .7, power = 0, charging = false, chargeT = 0, shot = null, port = { y: 90, v: 34, h: 20 }, wind = 0, windT = 6, wall = null, cool = .6;
+    let trail = [], keyUp = false, keyDown = false, aiT = 0, aiFire = 0, sent = 0;
+    const speedOf = p => 130 + p * 190;
+    function sim(a, p, maxT = 3.2, out) { // where does a shot at this angle and power cross the port's x?
+      let x = CX + Math.cos(a) * 14, y = CY - Math.sin(a) * 14, vx = Math.cos(a) * speedOf(p), vy = -Math.sin(a) * speedOf(p); const dt = 1 / 60;
+      for (let t = 0; t < maxT; t += dt) {
+        vx += wind * dt; vy += GRAV * dt; x += vx * dt; y += vy * dt; if (out && (t * 60 | 0) % 3 === 0) out.push([x, y]);
+        if (wall && x > wall.x && x < wall.x + wall.w && y > wall.y) return { hit: false, x, y, t, wall: true };
+        if (x >= PX - 4) return { x, y, t };
+        if (y > FLOOR) return { hit: false, x, y, t };
+      }
+      return null;
+    }
+    function portAt(t) { // the port bounces between 44 and 136
+      let y = port.y, v = port.v; const dt = 1 / 30;
+      for (let s = 0; s < t; s += dt) { y += v * dt; if (y < 44) { y = 44; v = -v; } if (y > 136) { y = 136; v = -v; } }
+      return y;
+    }
+    function solve(p, lead, delay = 0) { // best angle for this power
+      let best = null, bd = 1e9;
+      for (let a = .12; a < 1.42; a += .02) { const r = sim(a, p); if (!r || r.wall || r.y > FLOOR) continue; const ty = lead ? portAt(r.t + delay) : port.y, d = Math.abs(r.y - ty); if (d < bd) { bd = d; best = a; } }
+      return { a: best, d: bd };
+    }
+    function fire() {
+      if (shot || cool > 0) return;
+      shot = { x: CX + Math.cos(ang) * 14, y: CY - Math.sin(ang) * 14, vx: Math.cos(ang) * speedOf(power), vy: -Math.sin(ang) * speedOf(power), t: 0 };
+      trail = []; charging = false; api.sfx('whoosh'); api.burst(shot.x, shot.y, P.s5, 6, 40); api.shake(1.5);
+    }
+    function resolve(ok, label) {
+      const s = shot; shot = null; cool = .45;
+      if (ok) { sent++; api.item(true, PX - 8, port.y - 12, label || 'DELIVERED'); api.burst(PX - 4, port.y, P.t4, 12, 60); }
+      else { api.item(false, Math.min(300, Math.max(20, s.x)), Math.min(150, Math.max(30, s.y)) - 8, label || 'MISSED'); api.burst(Math.min(310, s.x), Math.min(FLOOR, s.y), P.e3, 8, 50); }
+      if (--windT <= 0) { windT = api.ri(3, 6); wind = Math.round((api.rand() * 2 - 1) * (10 + api.level * 30 + api.progress * 30)); }
+      if (!wall && api.progress > .35) { wall = { x: 150, w: 10, y: 100 }; api.pop(155, 92, 'FIREWALL', P.e3, 7); }
+      if (wall) wall.y = api.ri(78, 118);
+    }
+    const onUp = e => { if (e.key === ' ') { if (charging && api.assist < 3) fire(); } if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') keyUp = false; if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') keyDown = false; };
+    const onPUp = () => { if (charging && api.assist < 3) fire(); }, onBlur = () => { charging = false; keyUp = keyDown = false; };
+    addEventListener('keyup', onUp); addEventListener('pointerup', onPUp); addEventListener('blur', onBlur);
+    return {
+      tick(dt) {
+        const A = api.assist; cool = Math.max(0, cool - dt);
+        port.y += port.v * dt; if (port.y < 44) { port.y = 44; port.v = Math.abs(port.v); } if (port.y > 136) { port.y = 136; port.v = -Math.abs(port.v); }
+        port.v = Math.sign(port.v) * (26 + api.level * 20 + api.progress * 24);
+        if (keyUp) ang = Math.min(1.42, ang + dt * 1.2); if (keyDown) ang = Math.max(.12, ang - dt * 1.2);
+        if (A >= 3) { // the AI: pick a power, lead the port, fire
+          if (!shot && cool <= 0 && aiFire <= 0) { aiT -= dt; if (aiT <= 0) { aiT = .12; let best = null; for (const p of [.3, .45, .6, .75, .9]) { const s = solve(p, true, .22); if (s.a != null && (!best || s.d < best.d)) best = { ...s, p }; }
+            if (best && best.d < 5) { power = best.p; ang = best.a + (api.auto && api.chance(api.autoErr) ? (api.rand() - .5) * .25 : 0); aiFire = .22; } } }
+          if (aiFire > 0) { aiFire -= dt; if (aiFire <= 0) fire(); }
+        } else {
+          if (charging) { chargeT += dt; power = .5 - .5 * Math.cos(chargeT * Math.PI / .8); }
+          if (A >= 2 && !shot) { aiT -= dt; if (aiT <= 0) { aiT = .08; const s = solve(charging ? power : .6, false); if (s.a != null) ang = s.a; } }
+        }
+        if (shot) {
+          const s = shot; const n = 3;
+          for (let i = 0; i < n && shot; i++) {
+            const h = dt / n; s.vx += wind * h; s.vy += GRAV * h; s.x += s.vx * h; s.y += s.vy * h; s.t += h;
+            if (wall && s.x > wall.x && s.x < wall.x + wall.w && s.y > wall.y) { resolve(false, 'BLOCKED'); break; }
+            if (s.x >= PX - 4) { if (Math.abs(s.y - port.y) <= port.h / 2 - 1) resolve(true); else resolve(false, 'BOUNCED'); break; }
+            if (s.y > FLOOR || s.x < 0 || s.t > 4) { resolve(false, 'LOST'); break; }
+          }
+          if (shot && (api.t * 60 | 0) % 2 === 0) trail.push([s.x, s.y]); if (trail.length > 30) trail.shift();
+        }
+      },
+      key(k) {
+        if (k === 'ArrowUp' || k === 'w' || k === 'W') { keyUp = true; return true; }
+        if (k === 'ArrowDown' || k === 's' || k === 'S') { keyDown = true; return true; }
+        if (k === ' ') { if (!charging && !shot && cool <= 0 && api.assist < 3) { charging = true; chargeT = 0; } return true; }
+        return false;
+      },
+      move(x, y) { if (api.assist < 2) ang = Math.max(.12, Math.min(1.42, Math.atan2(CY - y, Math.max(1, x - CX)))); },
+      down(x, y) { if (api.assist < 2) ang = Math.max(.12, Math.min(1.42, Math.atan2(CY - y, Math.max(1, x - CX)))); if (!shot && cool <= 0 && api.assist < 3) { charging = true; chargeT = 0; } },
+      draw(g) {
+        const R = api.rect, t = api.t, A = api.assist;
+        R(8, 18, 304, 148, P.k2); for (let x = 8; x < 312; x += 16) R(x, 18, 1, 138, P.k3);
+        R(8, FLOOR, 304, 10, P.s0); R(8, FLOOR, 304, 1, P.s2);
+        // wind sock
+        api.text(wind ? `WIND ${wind > 0 ? '→' : '←'} ${Math.abs(wind)}` : 'NO WIND', 160, 30, { size: 6.5, color: wind ? P.a3 : P.mute, align: 'center' });
+        for (let i = 0; i < 5; i++) R(146 + i * 6 + Math.sign(wind) * ((t * 20 + i * 3) % 6), 36, 4, 1, Math.abs(wind) > i * 9 ? P.a2 : P.s1);
+        if (wall) { R(wall.x, wall.y, wall.w, FLOOR - wall.y, P.e1); R(wall.x, wall.y, wall.w, 2, P.e3); for (let y = wall.y + 5; y < FLOOR; y += 6) R(wall.x + 1, y, wall.w - 2, 1, P.e0); }
+        // the client's port
+        R(PX - 4, 22, 20, 134, P.s1); R(PX - 4, 22, 2, 134, P.s3);
+        const py = Math.round(port.y), ph = port.h; R(PX - 4, py - ph / 2, 20, ph, P.k0); R(PX - 2, py - ph / 2 + 2, 16, ph - 4, P.t0);
+        R(PX - 6, py - ph / 2 - 2, 4, 3, P.a2); R(PX - 6, py + ph / 2 - 1, 4, 3, P.a2); if ((t * 4 | 0) % 2) R(PX + 6, py - 1, 3, 3, P.t4);
+        api.text('PORT', PX + 6, 30, { size: 6, color: P.mute, align: 'center' });
+        // the predicted arc
+        if (!shot && A >= 1 && A < 3) { const pts = []; sim(ang, charging ? power : .6, 3.2, pts); pts.forEach(([x, y], i) => { if (i % 2 === 0 && x < PX) R(x - .5, y - .5, 1.5, 1.5, P.t3); }); }
+        // the launcher
+        R(CX - 12, CY - 2, 24, 12, P.s2); R(CX - 12, CY - 2, 24, 2, P.s4); R(CX - 8, CY + 10, 16, 2, P.k0);
+        for (let i = 0; i < 14; i++) R(CX + Math.cos(ang) * i - 2, CY - Math.sin(ang) * i - 2, 4, 4, i > 10 ? P.a2 : P.s5);
+        api.frame(16, 60, 10, 66, 'slot'); R(17, 61 + 64 * (1 - power), 8, 64 * power, power > .85 ? P.e3 : power > .55 ? P.a2 : P.t3); // the power gauge
+        api.text('POWER', 21, 56, { size: 5.5, color: P.mute, align: 'center' });
+        for (const [x, y] of trail) R(x - .5, y - .5, 1, 1, P.s3);
+        if (shot) { R(shot.x - 3, shot.y - 3, 6, 6, P.k0); R(shot.x - 2, shot.y - 2, 4, 4, P.a3); R(shot.x - 2, shot.y - 2, 2, 1, P.a4); }
+        else if (!charging && cool <= 0 && A < 3) api.text('READY', CX, CY - 22, { size: 6, color: (t * 3 | 0) % 2 ? P.a3 : P.a1, align: 'center' });
+        api.text(`${sent} SHIPPED`, 300, 150, { size: 6.5, color: P.mute, align: 'right' });
+      },
+      bot() {},
+      destroy() { removeEventListener('keyup', onUp); removeEventListener('pointerup', onPUp); removeEventListener('blur', onBlur); }
+    };
+  }
+};
+
+// Deduper: copies of the same file slide together and merge into one. Each merge is a duplicate gone.
+// If the board fills up, the batch is stuck. Assist 1 HINT shows the best move. 2 AUTO moves when you pause. 3 plays it all.
+MINI.merge = {
+  title: 'Deduper', how: 'Slide the files. Two copies that meet merge into one.',
+  keys: 'Arrow keys or WASD · slide everything (or swipe, or click an arrow)', pace: 1.2,
+  create(api) {
+    const { P } = api, N = 4, S = 30, GX = 100, GY = 26, GAP = 2;
+    const COLS = [P.s2, P.t1, P.t2, P.g2, P.g3, P.a1, P.a2, P.r3, P.e2, P.e3, P.p2];
+    const DIR = { ArrowLeft: 0, a: 0, A: 0, ArrowUp: 1, w: 1, W: 1, ArrowRight: 2, d: 2, D: 2, ArrowDown: 3, s: 3, S: 3 };
+    const V = [[-1, 0], [0, -1], [1, 0], [0, 1]], NAMES = ['LEFT', 'UP', 'RIGHT', 'DOWN'];
+    let grid = Array.from({ length: N }, () => Array(N).fill(0)), tiles = [], idle = 0, aiT = .5, stuck = 0, merges = 0, swipe = null, hintDir = -1, hintT = 0;
+    const ARROWS = [{ d: 0, x: 76, y: GY + 52, w: 18, h: 26 }, { d: 1, x: GX + 52, y: 19, w: 26, h: 0 }, { d: 2, x: GX + N * (S + GAP) + 8, y: GY + 52, w: 18, h: 26 }, { d: 3, x: GX + 52, y: GY + N * (S + GAP) + 2, w: 26, h: 0 }];
+    function empty(G = grid) { const e = []; for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (!G[y][x]) e.push([x, y]); return e; }
+    function add() { const e = empty(); if (!e.length) return; const [x, y] = api.pick(e), v = api.chance(.9) ? 1 : 2; grid[y][x] = v; tiles.push({ x, y, fx: x, fy: y, v, born: 0, pop: 0 }); }
+    function slide(G, d) { // returns the new grid, merges and the moves, without touching the board
+      const H = G.map(r => r.slice()), [dx, dy] = V[d], moves = [], done = Array.from({ length: N }, () => Array(N).fill(false)); let m = 0, moved = false;
+      const xs = dx > 0 ? [3, 2, 1, 0] : [0, 1, 2, 3], ys = dy > 0 ? [3, 2, 1, 0] : [0, 1, 2, 3];
+      for (const y of ys) for (const x of xs) {
+        const v = H[y][x]; if (!v) continue;
+        let cx = x, cy = y;
+        while (true) { const nx = cx + dx, ny = cy + dy; if (nx < 0 || ny < 0 || nx >= N || ny >= N) break; if (!H[ny][nx]) { cx = nx; cy = ny; continue; } if (H[ny][nx] === v && !done[ny][nx]) { cx = nx; cy = ny; } break; }
+        if (cx === x && cy === y) continue;
+        moved = true; H[y][x] = 0;
+        if (H[cy][cx] === v) { H[cy][cx] = v + 1; done[cy][cx] = true; m++; moves.push([x, y, cx, cy, true]); } else { H[cy][cx] = v; moves.push([x, y, cx, cy, false]); }
+      }
+      return { H, m, moved, moves };
+    }
+    function value(G) { // more space, big files in a corner, rows in order
+      let e = 0, mono = 0, big = 0;
+      for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const v = G[y][x]; if (!v) e++; big = Math.max(big, v); if (x < N - 1) mono -= Math.abs(v - G[y][x + 1]); if (y < N - 1) mono -= Math.abs(v - G[y + 1][x]); }
+      return e * 2.7 + mono * .5 + (G[0][0] === big ? 2 : 0);
+    }
+    function best() {
+      let bd = -1, bv = -1e9;
+      for (let d = 0; d < 4; d++) { const r = slide(grid, d); if (!r.moved) continue; let v = r.m * 3 + value(r.H); // look one more move ahead
+        let nb = -1e9; for (let d2 = 0; d2 < 4; d2++) { const r2 = slide(r.H, d2); if (r2.moved) nb = Math.max(nb, r2.m * 2 + value(r2.H)); } v += nb > -1e9 ? nb * .6 : -30;
+        if (v > bv) { bv = v; bd = d; } }
+      return bd;
+    }
+    function go(d) {
+      if (stuck > 0) return;
+      const r = slide(grid, d); if (!r.moved) { api.sfx('click'); return; }
+      for (const [x, y, cx, cy, mg] of r.moves) { const t = tiles.find(q => q.x === x && q.y === y && !q.gone); if (t) { t.fx = t.x; t.fy = t.y; t.x = cx; t.y = cy; t.mt = 0; if (mg) t.gone = true; } }
+      grid = r.H; api.sfx('flip');
+      for (const [, , cx, cy, mg] of r.moves) if (mg) { const v = grid[cy][cx]; tiles.push({ x: cx, y: cy, fx: cx, fy: cy, v, born: .1, pop: .25 }); merges++; const [px, py] = center(cx, cy); api.item(true, px, py - 10, v >= 6 ? 'MERGED ×' + (1 << (v - 1)) : 'MERGED'); api.burst(px, py, COLS[Math.min(v, COLS.length - 1)], 6, 40); }
+      add(); idle = 0; hintDir = -1;
+      if (![0, 1, 2, 3].some(k => slide(grid, k).moved)) { stuck = 1.1; api.item(false, GX + 62, GY + 60, 'STUCK · BATCH CLEARED'); api.shake(6); api.flash(P.e2, .3); api.sfx('crash'); }
+    }
+    const center = (x, y) => [GX + x * (S + GAP) + S / 2, GY + y * (S + GAP) + S / 2];
+    add(); add();
+    return {
+      tick(dt) {
+        const A = api.assist; idle += dt; hintT += dt;
+        for (const t of tiles) { t.mt = Math.min(1, (t.mt == null ? 1 : t.mt) + dt / .1); t.pop = Math.max(0, t.pop - dt); t.born = Math.max(0, t.born - dt); }
+        tiles = tiles.filter(t => !(t.gone && t.mt >= 1));
+        if (stuck > 0) { stuck -= dt; if (stuck <= 0) { // clear the small half and carry on
+          for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (grid[y][x] && grid[y][x] <= 2) grid[y][x] = 0;
+          if (empty().length < 6) for (let y = 2; y < N; y++) for (let x = 0; x < N; x++) grid[y][x] = 0;
+          tiles = []; for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (grid[y][x]) tiles.push({ x, y, fx: x, fy: y, v: grid[y][x], born: 0, pop: 0, mt: 1 }); add(); } return; }
+        if (A >= 1 && A < 3 && hintDir < 0 && hintT > .2) { hintDir = best(); hintT = 0; }
+        if (A >= 3) { aiT -= dt; if (aiT <= 0) { aiT = .22; const d = api.auto && api.chance(api.autoErr * .3) ? api.ri(0, 3) : best(); if (d >= 0) go(d); } }
+        else if (A >= 2 && idle > 1) { aiT -= dt; if (aiT <= 0) { aiT = .45; const d = best(); if (d >= 0) go(d); } }
+      },
+      key(k) { const d = DIR[k]; if (d == null) return false; go(d); return true; },
+      down(x, y) {
+        for (const a of ARROWS) if (Math.abs(x - (a.x + (a.d % 2 ? a.w / 2 : a.w / 2))) < 16 && Math.abs(y - (a.y + 4)) < 16) { go(a.d); return; }
+        swipe = { x, y };
+      },
+      up(x, y) { if (!swipe) return; const dx = x - swipe.x, dy = y - swipe.y; swipe = null; if (Math.max(Math.abs(dx), Math.abs(dy)) < 10) return; go(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 2 : 0) : (dy > 0 ? 3 : 1)); },
+      draw(g) {
+        const R = api.rect, t = api.t, A = api.assist;
+        api.frame(GX - 4, GY - 4, N * (S + GAP) + 6, N * (S + GAP) + 6, 'slot');
+        for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) R(GX + x * (S + GAP), GY + y * (S + GAP), S, S, P.k3);
+        for (const tl of tiles) {
+          const k = api.ease.out(tl.mt == null ? 1 : tl.mt), x = GX + (tl.fx + (tl.x - tl.fx) * k) * (S + GAP), y = GY + (tl.fy + (tl.y - tl.fy) * k) * (S + GAP);
+          const s = tl.born > 0 ? 0 : tl.pop > 0 ? 1 + tl.pop * .5 : 1, w = S * s, c = COLS[Math.min(tl.v, COLS.length - 1)];
+          const ox = x + (S - w) / 2, oy = y + (S - w) / 2;
+          R(ox, oy, w, w, P.k0); R(ox + 1, oy + 1, w - 2, w - 2, c); R(ox + 1, oy + 1, w - 2, 2, 'rgba(255,255,255,.22)');
+          R(ox + w - 9, oy + 3, 6, 7, P.p3); R(ox + w - 9, oy + 3, 6, 1, P.p4); // a little file icon
+          api.text('×' + (1 << (tl.v - 1)), ox + w / 2 - 2, oy + w / 2 + 6, { size: tl.v > 6 ? 8 : 9, color: tl.v >= 5 ? P.k0 : P.ink, align: 'center', bold: true });
+        }
+        for (const a of ARROWS) { const on = A >= 1 && A < 3 && hintDir === a.d, c = on ? ((t * 4 | 0) % 2 ? P.t4 : P.t2) : P.s3, cx = a.x + a.w / 2, cy = a.y + (a.d % 2 ? 4 : a.h / 2);
+          api.text(['◀', '▲', '▶', '▼'][a.d], cx, cy + 3, { size: 9, color: c, align: 'center' }); }
+        if (stuck > 0) { g.globalAlpha = .7; R(GX - 4, GY - 4, N * (S + GAP) + 6, N * (S + GAP) + 6, P.e0); g.globalAlpha = 1; api.text('STUCK', GX + 62, GY + 66, { size: 12, color: P.e4, align: 'center', bold: true, shadow: true }); }
+        api.frame(14, 30, 58, 70, 'panel'); api.text('MERGED', 43, 42, { size: 6.5, color: P.a3, align: 'center' }); api.text(String(merges), 43, 64, { size: 16, color: P.ink, align: 'center', bold: true, shadow: true });
+        api.text(A >= 2 ? 'AI moves when you wait' : A >= 1 ? 'AI shows the move' : 'same + same = one', 43, 88, { size: 6, color: A ? P.t4 : P.mute, align: 'center', font: 'read', max: 54 });
+        if (A >= 1 && A < 3 && hintDir >= 0) api.text('BEST: ' + NAMES[hintDir], 270, 60, { size: 7, color: P.t4, align: 'center' });
+      },
+      bot() {}
     };
   }
 };
@@ -11573,7 +12334,7 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
