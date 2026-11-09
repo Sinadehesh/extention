@@ -920,6 +920,147 @@ body { padding: 0; }
 .rb-top span:first-child { color: #2e3a42; }
 .rb-top b { margin-left: auto; color: #fbf6e8; background: #ad5536; padding: 1px 6px; font-weight: 400; }
 .rb-t { font-size: 15px; line-height: 1.45; }
+/* ================= UI KIT: one pixel look for every panel, button and card =================
+   Frames are nine-slice pixel images drawn from the palette at startup (see the UI kit in the script):
+   windows and cards at 3×, boxes, buttons and chips at 2×. Buttons press down. A pixel cursor. */
+html.uikit, html.uikit body { cursor: var(--cur-arrow); }
+html.uikit :is(button, a, [role="tab"], label, summary, select, .dicon, .appic, .rail-item) { cursor: var(--cur-hand) !important; }
+html.uikit :is(input[type="text"], input:not([type]), textarea) { cursor: text !important; }
+html.uikit :is(button, .btn):disabled { cursor: var(--cur-arrow) !important; }
+html.uikit .fr, html.uikit :is(.win, .card, .pop, .bezel, .box, .gig, .ph-note, .lst, .pc, .ag, .tk, .stats div, .vs div, .mail button, .actrow, .rb-rule, .btn, .sbtn, .lbtn, .ttabs button, #hud .hc, .vital, .toast, #subtitle, .phone, .phone-dock, .appic i, .dicon span, .taskbar, .tb-app, .tb-os, .seg button, .ctrls .fs, #lapClose, #roomStatus span, #roomStatus button, .meal button, #shQuit, .lg-report, .cvwrap) { image-rendering: pixelated; }
+
+/* windows, cards, popovers: 3× frames with a hard drop shadow */
+html.uikit :is(.win, .card, .pop) { border: 9px solid transparent !important; border-image: var(--fr-win) 3 fill / 9px / 0 stretch !important; background: transparent !important; box-shadow: none !important; filter: drop-shadow(6px 6px 0 rgba(7,8,10,.7)); }
+html.uikit .card { padding: 12px 14px 14px !important; gap: 12px; }
+html.uikit .card.alarm { border-image-source: var(--fr-warn) !important; filter: drop-shadow(6px 6px 0 rgba(61,15,12,.9)); }
+html.uikit .card > .ttl { font-family: var(--f-term); font-weight: 400; font-size: 16px; letter-spacing: .12em; color: var(--amber); text-transform: uppercase; display: flex; align-items: center; gap: 10px; padding-bottom: 10px; margin-bottom: 2px; border-bottom: 3px dotted #2e3a42; text-shadow: 2px 2px 0 #07080a; }
+html.uikit .card > .ttl::before { content: ''; width: 12px; height: 12px; flex: none; background: #e0a33a; box-shadow: inset -3px -3px 0 #8a5a1c, inset 3px 3px 0 #ffe6a6, 2px 2px 0 #07080a; }
+html.uikit .card.alarm > .ttl { color: #ff7a5c; border-bottom-color: #7a2116; }
+html.uikit .card.alarm > .ttl::before { background: #e04a34; box-shadow: inset -3px -3px 0 #7a2116, inset 3px 3px 0 #ff7a5c, 2px 2px 0 #07080a; animation: tblink 1s steps(1) infinite; }
+@keyframes tblink { 50% { opacity: .25; } }
+html.uikit .card .acts2 { gap: 8px; padding-top: 4px; }
+
+/* boxes and cards inside windows: 2× frames */
+html.uikit :is(.box, .gig, .ph-note, .lst, .pc, .ag, .tk, .stats div, .vs div, .actrow, .rb-rule) { border: 6px solid transparent !important; border-image: var(--fr-box) 3 fill / 6px / 0 stretch !important; background: transparent !important; box-shadow: none !important; }
+html.uikit .box { padding: 5px 7px !important; }
+html.uikit .ag.bad { border-image-source: var(--fr-warn) !important; }
+html.uikit .rb-rule { border-image-source: var(--fr-paper) !important; color: #0d1013; }
+html.uikit :is(.box.warn) { border-image-source: var(--fr-warn) !important; }
+
+/* buttons: a raised face with a 3D side that presses in */
+html.uikit :is(.btn, .sbtn, .lbtn, .tb-app, .seg button, .ctrls .fs, #lapClose, #roomStatus button, .meal button, #shQuit, .bbar button) {
+  border: 6px solid transparent !important; border-width: 6px 6px 8px !important;
+  border-image: var(--fr-btn) 3 3 4 3 fill / 6px 6px 8px / 0 stretch !important;
+  background: transparent !important; box-shadow: none !important; color: var(--ink) !important; font-family: var(--f-term); letter-spacing: .05em; transition: none !important; }
+html.uikit :is(.btn, .sbtn, .lbtn, .tb-app, .seg button, .ctrls .fs, #lapClose, #roomStatus button, .meal button, #shQuit, .bbar button):hover:not(:disabled) { border-image-source: var(--fr-btnHi) !important; color: #fbf6e8 !important; }
+html.uikit :is(.btn, .sbtn, .lbtn, .tb-app, .seg button, .ctrls .fs, #lapClose, #roomStatus button, .meal button, #shQuit, .bbar button):active:not(:disabled) { border-image: var(--fr-btnDown) 3 fill / 6px / 0 stretch !important; border-width: 6px !important; transform: translateY(2px) !important; margin-bottom: 2px; }
+html.uikit :is(.btn.primary, .cta, .meal button[aria-pressed="true"], .seg button[aria-pressed="true"], .bbar button.on) { border-image-source: var(--fr-hot) !important; color: #0d1013 !important; text-shadow: none !important; }
+html.uikit :is(.btn.primary, .cta, .meal button[aria-pressed="true"], .bbar button.on):hover:not(:disabled) { border-image-source: var(--fr-hotHi) !important; color: #07080a !important; }
+html.uikit :is(.btn.primary, .cta):active:not(:disabled) { border-image-source: var(--fr-hotDown) !important; }
+html.uikit .seg button[aria-pressed="true"] { border-image: var(--fr-hotDown) 3 fill / 6px / 0 stretch !important; border-width: 6px !important; transform: translateY(2px); }
+html.uikit .btn.danger { border-image-source: var(--fr-bad) !important; color: #fbf6e8 !important; }
+html.uikit .btn.danger:hover:not(:disabled) { border-image-source: var(--fr-badHi) !important; }
+html.uikit .btn.danger:active:not(:disabled) { border-image-source: var(--fr-badDown) !important; }
+html.uikit :is(.btn, .sbtn, .lbtn):disabled { opacity: .45; filter: grayscale(.6); }
+html.uikit .btn { font-size: 13px; padding: 4px 12px 2px; }
+html.uikit .card .acts2 .btn { font-size: 14px; padding: 6px 14px 4px; }
+html.uikit .seg { border: 0 !important; background: none !important; box-shadow: none !important; gap: 3px; overflow: visible; }
+html.uikit .seg button { min-width: 38px; padding: 1px 6px 0; }
+html.uikit .seg button + button { border-left: 0; }
+
+/* tabs: folder tabs, the selected one joins the panel */
+html.uikit .ttabs { gap: 3px; padding: 6px 6px 0; border-bottom: 3px solid #07080a !important; box-shadow: 0 3px 0 #2e3a42; background: #0d1013; }
+html.uikit .ttabs button { border: 6px solid transparent !important; border-bottom-width: 3px !important; border-image: var(--fr-tab) 3 3 1 3 fill / 6px 6px 3px / 0 stretch !important; background: transparent !important; box-shadow: none !important; color: #a6a690; padding: 2px 4px 4px !important; }
+html.uikit .ttabs button:hover { color: #fbf6e8; }
+html.uikit .ttabs button[aria-selected="true"] { border-image-source: var(--fr-tabOn) !important; color: #e0a33a !important; transform: translateY(3px); box-shadow: none !important; }
+
+/* the top bar: a HUD with icons */
+html.uikit #top { background: #0d1013 !important; border-bottom: 0 !important; box-shadow: 0 3px 0 #07080a, 0 6px 0 #232c33 !important; z-index: 20; position: relative; }
+html.uikit :is(#hud .hc, .vitals .vital) { border: 6px solid transparent !important; border-image: var(--fr-slot) 3 fill / 6px / 0 stretch !important; background: transparent !important; box-shadow: none !important; position: relative; padding: 0 8px 0 32px !important; }
+html.uikit :is(#hud .hc, .vitals .vital)::before { content: ''; position: absolute; left: 4px; top: 50%; width: 20px; height: 20px; margin-top: -10px; background: var(--ic) center / 20px 20px no-repeat; image-rendering: pixelated; }
+html.uikit #hud .hc:nth-child(1) { --ic: var(--ic-cash); } html.uikit #hud .hc:nth-child(2) { --ic: var(--ic-trend); }
+html.uikit #hGoalCell { --ic: var(--ic-goal); } html.uikit #hProjCell { --ic: var(--ic-rent); }
+html.uikit .vitals .vital:nth-child(1) { --ic: var(--ic-food); } html.uikit .vitals .vital:nth-child(2) { --ic: var(--ic-energy); } html.uikit .vitals .vital:nth-child(3) { --ic: var(--ic-body); }
+html.uikit #hud .hp.short, html.uikit #hud .hp.evict { border-image-source: var(--fr-warn) !important; }
+html.uikit #hud .hgoal.met { border-image-source: var(--fr-teal) !important; }
+html.uikit #top .clock { display: flex; align-items: center; gap: 8px; }
+html.uikit #top .clock::before { content: ''; width: 20px; height: 20px; background: var(--ic-clock) center / 20px 20px no-repeat; image-rendering: pixelated; }
+html.uikit #top .act { font-family: var(--f-term); color: #e0a33a; border: 6px solid transparent; border-image: var(--fr-chip) 3 fill / 6px / 0 stretch; padding: 0 4px; }
+
+/* the room, in a frame */
+html.uikit #room .cvwrap { border: 9px solid transparent !important; border-image: var(--fr-win) 3 fill / 9px / 0 stretch !important; box-shadow: none !important; filter: drop-shadow(8px 8px 0 rgba(7,8,10,.75)); }
+html.uikit #roomStatus span, html.uikit #roomStatus button { border: 6px solid transparent !important; border-image: var(--fr-chip) 3 fill / 6px / 0 stretch !important; background: transparent !important; font-family: var(--f-term); font-size: 12px; letter-spacing: .06em; padding: 1px 4px !important; }
+html.uikit #roomStatus button { border-image: var(--fr-btn) 3 3 4 3 fill / 6px 6px 8px / 0 stretch !important; border-width: 6px 6px 8px !important; }
+html.uikit .rail-item span { font-size: 12px; letter-spacing: .12em; text-shadow: 2px 2px 0 #07080a; }
+html.uikit #subtitle { border: 9px solid transparent !important; border-image: var(--fr-chip) 3 fill / 9px / 0 stretch !important; background: transparent !important; box-shadow: none !important; filter: drop-shadow(4px 4px 0 rgba(7,8,10,.7)); padding: 6px 14px !important; }
+html.uikit .toast { border: 6px solid transparent !important; border-image: var(--fr-chip) 3 fill / 6px / 0 stretch !important; background: transparent !important; box-shadow: none !important; filter: drop-shadow(3px 3px 0 rgba(7,8,10,.7)); display: flex; align-items: center; gap: 8px; font-size: 13px !important; padding: 4px 10px !important; color: #ddd6c1; }
+html.uikit .toast::before { content: ''; width: 9px; height: 9px; flex: none; background: #e0a33a; box-shadow: inset -3px -3px 0 #8a5a1c, 2px 2px 0 #07080a; }
+
+/* the laptop: a bezel, a CRT-teal desktop, windows with title bars, a taskbar */
+html.uikit #laptop { background: rgba(7,8,10,.86) !important; }
+html.uikit .bezel { border: 12px solid transparent !important; border-image: var(--fr-win) 3 fill / 12px / 0 stretch !important; background: transparent !important; box-shadow: none !important; filter: drop-shadow(10px 10px 0 rgba(7,8,10,.8)); padding: 10px 10px 8px !important; position: relative; }
+html.uikit .bezel::after { content: ''; position: absolute; left: 50%; top: -6px; width: 6px; height: 6px; margin-left: -3px; background: #07080a; box-shadow: 0 0 0 2px #2e3a42; }
+html.uikit .lscreen { border: 6px solid transparent !important; border-image: var(--fr-slot) 3 fill / 6px / 0 stretch !important;
+  background: repeating-linear-gradient(0deg, rgba(7,8,10,.22) 0 2px, transparent 2px 4px), radial-gradient(ellipse 80% 70% at 50% 38%, #174540 0%, #0e2724 55%, #0d1013 100%) !important; }
+html.uikit .lscreen::before { content: 'LoopOS'; position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); font-family: var(--f-term); font-size: 92px; letter-spacing: .08em; color: rgba(127,216,192,.06); pointer-events: none; white-space: nowrap; }
+html.uikit .win > .osbar { background: #2e3a42 !important; box-shadow: inset 0 2px 0 #3d4c55, inset 0 -2px 0 #1d242b !important; border-bottom: 3px solid #07080a !important; color: #a6a690 !important; font-family: var(--f-term); letter-spacing: .06em; padding: 6px 10px 5px !important; position: relative; }
+html.uikit .win.active > .osbar { background: #174540 !important; box-shadow: inset 0 2px 0 #20685c, inset 0 -2px 0 #0e2724 !important; color: #c4f0e4 !important; }
+html.uikit .win > .osbar::before { content: ''; display: inline-block; width: 9px; height: 9px; margin-right: 8px; background: #e04a34; box-shadow: 12px 0 0 #e0a33a, 24px 0 0 #2fb589, 0 0 0 2px #07080a, 12px 0 0 2px #07080a, 24px 0 0 2px #07080a; vertical-align: -1px; margin-right: 34px; }
+html.uikit .win > .osbar { display: flex; align-items: center; }
+html.uikit .win > .osbar > span:last-child { margin-left: auto; }
+html.uikit .dicon span { border: 6px solid transparent !important; border-image: var(--fr-tile) 3 fill / 6px / 0 stretch !important; box-shadow: 3px 3px 0 #07080a !important; width: 54px !important; height: 54px !important; }
+html.uikit .dicon svg { shape-rendering: crispEdges; stroke-width: 2.6; filter: drop-shadow(2px 2px 0 rgba(7,8,10,.6)); }
+html.uikit .dicon b { font-size: 13px !important; text-shadow: 2px 2px 0 #07080a !important; }
+html.uikit .dicon:hover span { outline: 3px solid #e0a33a; outline-offset: 2px; }
+html.uikit .taskbar { background: #151a1f !important; border-top: 3px solid #07080a !important; box-shadow: inset 0 3px 0 #2e3a42; height: 44px !important; }
+html.uikit .tb-os { border: 6px solid transparent !important; border-image: var(--fr-hot) 3 3 4 3 fill / 6px 6px 8px / 0 stretch !important; color: #0d1013 !important; padding: 0 8px !important; }
+
+/* the phone: a pixel handset */
+html.uikit #phoneModal .phone { border: 18px solid transparent !important; border-image: var(--fr-phone) 6 fill / 18px / 0 stretch !important; background: transparent !important; box-shadow: none !important; filter: drop-shadow(8px 0 0 rgba(7,8,10,.8)); border-radius: 0 !important; }
+html.uikit #phoneModal .phone::before { top: 4px !important; height: 12px !important; border-radius: 0 !important; background: #07080a !important; box-shadow: inset 0 0 0 2px #1d242b; }
+html.uikit .phone-dock { border: 18px solid transparent !important; border-image: var(--fr-phone) 6 fill / 18px / 0 stretch !important; background: transparent !important; border-radius: 0 !important; box-shadow: none !important; filter: drop-shadow(5px 5px 0 rgba(7,8,10,.8)); }
+html.uikit .pd-screen { border-radius: 0 !important; background: #0d1013 !important; box-shadow: inset 0 0 0 2px #07080a; left: 3px !important; right: 3px !important; top: 3px !important; }
+html.uikit #phoneModal .appic i { border: 6px solid transparent !important; border-image: var(--fr-tile) 3 fill / 6px / 0 stretch !important; border-radius: 0 !important; box-shadow: 3px 3px 0 #07080a !important; position: relative; }
+html.uikit #phoneModal .appic i::after { content: ''; position: absolute; inset: 8px; background: var(--gl) center / contain no-repeat; image-rendering: pixelated; filter: drop-shadow(2px 2px 0 rgba(7,8,10,.45)); }
+html.uikit .appic[data-app="bully"] { --gl: var(--gl-bully); } html.uikit .appic[data-app="pulse"] { --gl: var(--gl-pulse); } html.uikit .appic[data-app="taskdrop"] { --gl: var(--gl-taskdrop); }
+html.uikit .appic[data-app="slack"] { --gl: var(--gl-slack); } html.uikit .appic[data-app="wren"] { --gl: var(--gl-wren); } html.uikit .appic[data-app="uburn"] { --gl: var(--gl-uburn); } html.uikit .appic[data-app="grovel"] { --gl: var(--gl-grovel); }
+html.uikit #phoneModal .ph-note { border-image-source: var(--fr-chip) !important; }
+html.uikit #phoneModal .ph-lock b { text-shadow: 4px 4px 0 #07080a !important; }
+html.uikit #phoneModal .gig { border-image-source: var(--fr-box) !important; }
+html.uikit #phoneModal .app { font-family: var(--f-term); letter-spacing: .06em; }
+html.uikit #phoneModal .app i { border: 3px solid #07080a; box-shadow: 2px 2px 0 #07080a; }
+
+/* paper things keep their paper */
+html.uikit .lg-report { border: 6px solid transparent !important; border-image: var(--fr-paper) 3 fill / 6px / 0 stretch !important; background: transparent !important; box-shadow: none !important; filter: drop-shadow(3px 3px 0 rgba(7,8,10,.6)); }
+html.uikit .card.ledger .lg-row { padding: 2px 0; }
+html.uikit .card.ledger .lg-sep { border-top: 3px dotted #2e3a42; }
+
+html.uikit #evBtn { border: 6px solid transparent !important; border-width: 6px 6px 8px !important; border-image: var(--fr-bad) 3 3 4 3 fill / 6px 6px 8px / 0 stretch !important; background: transparent !important; color: #fbf6e8 !important; font-family: var(--f-term); font-size: 12px; letter-spacing: .1em; padding: 1px 8px 0; box-shadow: none !important; }
+html.uikit #evBtn.new { animation: evPulse 1.2s steps(1) infinite; } @keyframes evPulse { 50% { border-image-source: var(--fr-badHi); } }
+/* web pages are paper-white: their cards stay light */
+html.uikit .bpage :is(.lst, .lbme, .lbpost, .box) { border-image-source: var(--fr-paper) !important; color: #0d1013; }
+html.uikit .bpage .lst.dim { opacity: .55; }
+/* vitals: the icon says what it is; the number and the bar say how bad */
+html.uikit .vitals .vtop span { display: none; }
+html.uikit .vitals .vtop { justify-content: flex-start; }
+html.uikit .vitals .vital { min-width: 78px !important; padding: 0 8px 0 30px !important; }
+html.uikit .vitals .vtop b { font-size: 14px; }
+@media (max-width: 1560px) {
+  html.uikit :is(#hud .hc, .vitals .vital) { padding-left: 26px !important; }
+  html.uikit :is(#hud .hc, .vitals .vital)::before { width: 16px; height: 16px; margin-top: -8px; left: 3px; background-size: 16px 16px; }
+  html.uikit .vitals .vital { min-width: 70px !important; }
+  html.uikit #top .clock::before { width: 16px; height: 16px; background-size: 16px 16px; }
+}
+@media (max-width: 1340px) { html.uikit #hud .hc { padding-right: 5px !important; } html.uikit .vitals .vital { min-width: 64px !important; } html.uikit #top .act { display: none; } }
+/* inputs and scrollbars */
+html.uikit :is(input[type="text"], input:not([type]), .bn-in, textarea) { border: 6px solid transparent !important; border-image: var(--fr-slot) 3 fill / 6px / 0 stretch !important; background: transparent !important; color: #ddd6c1; font-family: var(--f-term); }
+html.uikit ::-webkit-scrollbar { width: 12px; height: 12px; }
+html.uikit ::-webkit-scrollbar-track { background: #0d1013; }
+html.uikit ::-webkit-scrollbar-thumb { background: #3d4c55; border: 3px solid #0d1013; box-shadow: inset 2px 2px 0 #536570, inset -2px -2px 0 #232c33; }
+html.uikit ::-webkit-scrollbar-corner { background: #0d1013; }
+
+/* the shift overlay */
+html.uikit :is(.shift-stage, .bn-stage.mg) canvas.mg-cv { box-shadow: 0 0 0 3px #07080a, 0 0 0 6px #3d4c55, 0 0 0 9px #07080a, 9px 9px 0 6px rgba(7,8,10,.7) !important; }
 </style>
 </head>
 <body>
@@ -956,7 +1097,7 @@ body { padding: 0; }
       </div>
     </div>
     <div class="ctrls">
-      <button id="evBtn" hidden>EVIDENCE · VERIFIED REAL</button>
+      <button id="evBtn" hidden title="Evidence files: this part of the story already happened. Verified real.">EVIDENCE</button>
       <div class="seg" role="group" aria-label="Time speed">
         <button data-speed="0" aria-pressed="false" aria-label="Pause">II</button>
         <button data-speed="1" aria-pressed="true">1×</button>
@@ -8549,6 +8690,56 @@ const RAIL_ICONS = {
     { o: P.k0, L: P.d3, D: P.d2, B: P.a1, A: P.a2, p: P.p2 })
 };
 document.querySelectorAll('canvas.rail-ic').forEach(c => { const g = c.getContext('2d'); g.clearRect(0, 0, c.width, c.height); g.drawImage(RAIL_ICONS[c.dataset.ic], 0, 0); });
+// ---- the UI kit: pixel frames, icons and cursors, drawn from the palette and handed to the CSS ----
+// Frames are 7×7 (or 7×8 with a 3D side) nine-slices: outline, a lit top-left, a dark bottom-right, the fill.
+(() => {
+  const css = document.documentElement.style;
+  const url = c => `url(${c.toDataURL()})`;
+  const scaled = (img, k) => { const c = document.createElement('canvas'); c.width = img.width * k; c.height = img.height * k; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(img, 0, 0, c.width, c.height); return c; };
+  const flat = (o, L, f, D) => mgArt(['.ooooo.', 'oLLLLLo', 'oLfffDo', 'oLfffDo', 'oLfffDo', 'oDDDDDo', '.ooooo.'], { o, L, f, D });
+  const deep = (o, L, f, D, s) => mgArt(['.ooooo.', 'oLLLLLo', 'oLfffDo', 'oLfffDo', 'oLfffDo', 'oDDDDDo', 'osssssos'.slice(0, 7), '.ooooo.'], { o, L, f, D, s });
+  const F = {
+    win: flat(P.k0, P.s2, P.k2, P.k1), box: flat(P.k0, P.s1, P.k3, P.k1), chip: flat(P.k0, P.s1, P.k1, P.k0),
+    slot: flat(P.k0, P.k0, P.k1, P.s1), paper: flat(P.k1, P.p4, P.p3, P.p1), warn: flat(P.k0, P.e2, P.e0, P.k0),
+    tab: flat(P.k0, P.s1, P.k2, P.k1), tabOn: mgArt(['.ooooo.', 'oAAAAAo', 'oLfffDo', 'oLfffDo', 'oLfffDo', 'oLfffDo', 'oLfffDo'], { o: P.k0, A: P.a2, L: P.s1, f: P.k3, D: P.k1 }),
+    btn: deep(P.k0, P.s3, P.s1, P.s0, P.k1), btnHi: deep(P.k0, P.s4, P.s2, P.s1, P.k1), btnDown: flat(P.k0, P.k1, P.s1, P.s2),
+    hot: deep(P.k0, P.a3, P.a2, P.a1, P.a0), hotHi: deep(P.k0, P.a4, P.a3, P.a2, P.a0), hotDown: flat(P.k0, P.a0, P.a2, P.a3),
+    bad: deep(P.k0, P.e3, P.e2, P.e1, P.e0), badHi: deep(P.k0, P.e4, P.e3, P.e2, P.e0), badDown: flat(P.k0, P.e0, P.e2, P.e3),
+    teal: flat(P.k0, P.t2, P.t0, P.k0),
+    phone: mgArt(['...ooooooo...', '.ooLLLLLLLoo.', '.oLLfffffDDo.', 'oLLfffffffDDo', 'oLfffffffffDo', 'oLfffffffffDo', 'oLfffffffffDo', 'oLfffffffffDo', 'oLfffffffffDo', 'oLLfffffffDDo', '.oLDfffffDDo.', '.ooDDDDDDDoo.', '...ooooooo...'], { o: P.k0, L: P.s2, f: P.k2, D: P.k1 }),
+    tile: mgArt(['.ooooo.', 'oLLLLLo', 'oLfffDo', 'oLfffDo', 'oLfffDo', 'oDDDDDo', '.ooooo.'], { o: P.k0, L: 'rgba(255,255,255,.28)', f: 'rgba(0,0,0,0)', D: 'rgba(0,0,0,.3)' })
+  };
+  for (const [k, img] of Object.entries(F)) css.setProperty('--fr-' + k, url(img));
+  // icons, 10×10
+  const I = {
+    cash: [['...oooo...', '.ooaaaaoo.', '.oaAAAAao.', 'oaAaaaaAao', 'oaAadaaAao', 'oaAaadaAao', 'oaAaaaaAao', '.oaAAAAao.', '.ooaaaaoo.', '...oooo...'], { o: P.k0, a: P.a1, A: P.a3, d: P.a0 }],
+    trend: [['....oo....', '...oggo...', '..oggggo..', '.oggggggo.', '...oggo...', '...oeeo...', '.oeeeeeeo.', '..oeeeeo..', '...oeeo...', '....oo....'], { o: P.k0, g: P.g4, e: P.e3 }],
+    goal: [['...oooo...', '.oorrrroo.', '.orppppro.', 'orpprrppro', 'orprAArpro', 'orprAArpro', 'orpprrppro', '.orppppro.', '.oorrrroo.', '...oooo...'], { o: P.k0, r: P.e2, p: P.p3, A: P.a2 }],
+    rent: [['....oo....', '...orro...', '..orrrro..', '.orrrrrro.', 'orrrrrrrro', '.oppppppo.', '.oppddppo.', '.oppddppo.', '.oppddppo.', '.oooooooo.'], { o: P.k0, r: P.r3, p: P.p2, d: P.d2 }],
+    food: [['..s..s....', '...s..s...', '..s..s....', '..........', 'oooooooooo', 'opppeepppo', '.oppppppo.', '..oppppo..', '...oooo...', '..........'], { o: P.k0, p: P.p2, e: P.e2, s: P.s4 }],
+    energy: [['.....ooo..', '....oAAo..', '...oAAo...', '..oAAoooo.', '.oAAAAAAo.', '.ooooAAo..', '...oAAo...', '..oAAo....', '..oAo.....', '..oo......'], { o: P.k0, A: P.a3 }],
+    body: [['....oo....', '...oppo...', '...oppo...', '...oeeo...', '...oeeo...', '...oeeo...', '..oeeeeo..', '..oeeeeo..', '...oooo...', '..........'], { o: P.k0, p: P.p3, e: P.e3 }],
+    clock: [['...oooo...', '.oopppoo..', '.oppkpppo.', 'opppkpppo.', 'opppkkkpo.', 'oppppppo..', '.oppppppo.', '.oopppoo..', '...oooo...', '..........'], { o: P.k0, p: P.p3, k: P.k1 }]
+  };
+  for (const [k, [rows, map]] of Object.entries(I)) css.setProperty('--ic-' + k, url(scaled(mgArt(rows, map), 1)));
+  // phone app glyphs, 8×8, white on the app's colour
+  const W = { o: P.p4 }, G = {
+    bully: ['o......o', 'oo....oo', '.oooooo.', '.o.oo.o.', '.oooooo.', '..oooo..', '..o..o..', '...oo...'],
+    pulse: ['.oo..oo.', 'oooooooo', 'oooooooo', 'oooooooo', '.oooooo.', '..oooo..', '...oo...', '........'],
+    taskdrop: ['........', '.oooooo.', '.o.oo.o.', '.oooooo.', '.o....o.', '.o....o.', '.oooooo.', '........'],
+    slack: ['..o..o..', '..o..o..', 'oooooooo', '..o..o..', '..o..o..', 'oooooooo', '..o..o..', '..o..o..'],
+    wren: ['........', '..oo....', '.ooooo..', 'oooooooo', '.ooooooo', '..oooo..', '...o.o..', '........'],
+    uburn: ['........', '..oooo..', '.oo..oo.', 'oooooooo', 'oooooooo', '.oo..oo.', '.oo..oo.', '........'],
+    grovel: ['..oooo..', '.o....o.', 'oooooooo', 'oooooooo', 'oo.oo.oo', 'oooooooo', 'oooooooo', '........']
+  };
+  for (const [k, rows] of Object.entries(G)) css.setProperty('--gl-' + k, url(mgArt(rows, W)));
+  // cursors: a bone arrow and a pointing hand, outlined, at 2×
+  const arrow = scaled(mgArt(['o..........', 'oo.........', 'oio........', 'oiio.......', 'oiiio......', 'oiiiio.....', 'oiiiiio....', 'oiiiiiio...', 'oiiiiiiio..', 'oiiiiiiiio.', 'oiiiiiooooo', 'oiioiio....', 'oio.oiio...', 'oo..oiio...', 'o....oiio..', '.....oooo..'], { o: P.k0, i: P.p3 }), 2);
+  const hand = scaled(mgArt(['....oo.......', '...oiio......', '...oiio......', '...oiio......', '...oiiooo....', '...oiioiiooo.', '.oooiioiioiio', 'oiioiiiiiiiio', 'oiiiiiiiiiiio', '.oiiiiiiiiiio', '..oiiiiiiiio.', '..oiiiiiiiio.', '...oiiiiiio..', '...oiiiiiio..', '...oooooooo..'], { o: P.k0, i: P.a3 }), 2);
+  css.setProperty('--cur-arrow', `url(${arrow.toDataURL()}) 0 0, default`);
+  css.setProperty('--cur-hand', `url(${hand.toDataURL()}) 9 0, pointer`);
+  document.documentElement.classList.add('uikit');
+})();
 
 // ---- people ----
 // Seen from behind, at a desk. (x, y) is the top-left of the 12×12 head; the hand reaches right to the keyboard.
@@ -9375,7 +9566,7 @@ function spotAt(e) {
 }
 cv.addEventListener('pointermove', e => {
   if (e.pointerType === 'touch') return;
-  hoverSpot = spotAt(e); cv.style.cursor = hoverSpot ? 'pointer' : 'default';
+  hoverSpot = spotAt(e); cv.style.cursor = hoverSpot ? 'var(--cur-hand)' : 'var(--cur-arrow)';
   if (!hoverSpot) { tip.hidden = true; return; }
   const wr = cv.parentElement.getBoundingClientRect();
   tip.textContent = hoverSpot.label(); tip.hidden = false;
@@ -10929,7 +11120,7 @@ function desktopSync() {
   $('tbCash').textContent = money(S.balance);
 }
 let winZ = 5;
-function raiseWin(w) { if (w) w.style.zIndex = ++winZ; }
+function raiseWin(w) { if (!w) return; w.style.zIndex = ++winZ; document.querySelectorAll('.win.active').forEach(x => x !== w && x.classList.remove('active')); w.classList.add('active'); }
 let wdrag = null;
 document.addEventListener('pointerdown', e => {
   const h = e.target.closest('[data-drag]'); if (!h || e.target.closest('button, a, input')) return;
@@ -10948,6 +11139,7 @@ $('lscreen').addEventListener('pointerdown', e => { const w = e.target.closest('
 $('lapClose').onclick = closeLaptop;
 $('laptop').addEventListener('click', e => { if (e.target.id === 'laptop') closeLaptop(); });
 $('railLaptop').onclick = () => { sfx.init(); openLaptop(); };
+document.addEventListener('pointerdown', e => { const b = e.target.closest('button'); if (b && !b.disabled && sfx.ctx) sfx.tone(1250, .014, 'square', .011); }, true); // every button clicks
 
 // ---- the kitchen: meals, coffee, pills ----
 function toggleKitchen() { const k = $('popKitchen'); k.hidden = !k.hidden; if (!k.hidden) rise(k.querySelectorAll('.meal, .lbtn'), .03, 6); }
