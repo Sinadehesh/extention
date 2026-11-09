@@ -948,12 +948,12 @@ html.uikit .rb-rule { border-image-source: var(--fr-paper) !important; color: #0
 html.uikit :is(.box.warn) { border-image-source: var(--fr-warn) !important; }
 
 /* buttons: a raised face with a 3D side that presses in */
-html.uikit :is(.btn, .sbtn, .lbtn, .tb-app, .seg button, .ctrls .fs, #lapClose, #roomStatus button, .meal button, #shQuit, .bbar button) {
+html.uikit :is(.btn, .sbtn, .lbtn, .tb-app, .seg button, .ctrls .fs, .meal button, .bbar button), html.uikit :is(#lapClose, #roomStatus button, #shQuit) {
   border: 6px solid transparent !important; border-width: 6px 6px 8px !important;
   border-image: var(--fr-btn) 3 3 4 3 fill / 6px 6px 8px / 0 stretch !important;
   background: transparent !important; box-shadow: none !important; color: var(--ink) !important; font-family: var(--f-term); letter-spacing: .05em; transition: none !important; }
-html.uikit :is(.btn, .sbtn, .lbtn, .tb-app, .seg button, .ctrls .fs, #lapClose, #roomStatus button, .meal button, #shQuit, .bbar button):hover:not(:disabled) { border-image-source: var(--fr-btnHi) !important; color: #fbf6e8 !important; }
-html.uikit :is(.btn, .sbtn, .lbtn, .tb-app, .seg button, .ctrls .fs, #lapClose, #roomStatus button, .meal button, #shQuit, .bbar button):active:not(:disabled) { border-image: var(--fr-btnDown) 3 fill / 6px / 0 stretch !important; border-width: 6px !important; transform: translateY(2px) !important; margin-bottom: 2px; }
+html.uikit :is(.btn, .sbtn, .lbtn, .tb-app, .seg button, .ctrls .fs, .meal button, .bbar button):hover:not(:disabled), html.uikit :is(#lapClose, #roomStatus button, #shQuit):hover:not(:disabled) { border-image-source: var(--fr-btnHi) !important; color: #fbf6e8 !important; }
+html.uikit :is(.btn, .sbtn, .lbtn, .tb-app, .seg button, .ctrls .fs, .meal button, .bbar button):active:not(:disabled), html.uikit :is(#lapClose, #roomStatus button, #shQuit):active:not(:disabled) { border-image: var(--fr-btnDown) 3 fill / 6px / 0 stretch !important; border-width: 6px !important; transform: translateY(2px) !important; margin-bottom: 2px; }
 html.uikit :is(.btn.primary, .cta, .meal button[aria-pressed="true"], .seg button[aria-pressed="true"], .bbar button.on) { border-image-source: var(--fr-hot) !important; color: #0d1013 !important; text-shadow: none !important; }
 html.uikit :is(.btn.primary, .cta, .meal button[aria-pressed="true"], .bbar button.on):hover:not(:disabled) { border-image-source: var(--fr-hotHi) !important; color: #07080a !important; }
 html.uikit :is(.btn.primary, .cta):active:not(:disabled) { border-image-source: var(--fr-hotDown) !important; }
@@ -1023,7 +1023,7 @@ html.uikit .pd-screen { border-radius: 0 !important; background: #0d1013 !import
 html.uikit #phoneModal .appic i { border: 6px solid transparent !important; border-image: var(--fr-tile) 3 fill / 6px / 0 stretch !important; border-radius: 0 !important; box-shadow: 3px 3px 0 #07080a !important; position: relative; }
 html.uikit #phoneModal .appic i::after { content: ''; position: absolute; inset: 8px; background: var(--gl) center / contain no-repeat; image-rendering: pixelated; filter: drop-shadow(2px 2px 0 rgba(7,8,10,.45)); }
 html.uikit .appic[data-app="bully"] { --gl: var(--gl-bully); } html.uikit .appic[data-app="pulse"] { --gl: var(--gl-pulse); } html.uikit .appic[data-app="taskdrop"] { --gl: var(--gl-taskdrop); }
-html.uikit .appic[data-app="slack"] { --gl: var(--gl-slack); } html.uikit .appic[data-app="wren"] { --gl: var(--gl-wren); } html.uikit .appic[data-app="uburn"] { --gl: var(--gl-uburn); } html.uikit .appic[data-app="grovel"] { --gl: var(--gl-grovel); }
+html.uikit .appic[data-app="slack"] { --gl: var(--gl-slack); } html.uikit .appic[data-app="wren"] { --gl: var(--gl-wren); } html.uikit .appic[data-app="uburn"] { --gl: var(--gl-uburn); } html.uikit .appic[data-app="grovel"] { --gl: var(--gl-grovel); } html.uikit .appic[data-app="hood"] { --gl: var(--gl-hood); }
 html.uikit #phoneModal .ph-note { border-image-source: var(--fr-chip) !important; }
 html.uikit #phoneModal .ph-lock b { text-shadow: 4px 4px 0 #07080a !important; }
 html.uikit #phoneModal .gig { border-image-source: var(--fr-box) !important; }
@@ -1061,6 +1061,53 @@ html.uikit ::-webkit-scrollbar-corner { background: #0d1013; }
 
 /* the shift overlay */
 html.uikit :is(.shift-stage, .bn-stage.mg) canvas.mg-cv { box-shadow: 0 0 0 3px #07080a, 0 0 0 6px #3d4c55, 0 0 0 9px #07080a, 9px 9px 0 6px rgba(7,8,10,.7) !important; }
+/* ================= Act I extras: the paper, the all-nighter, Marcus, Hoodwink ================= */
+.paper-pick .pp-art { display: block; width: 100%; aspect-ratio: 160 / 60; image-rendering: pixelated; border: 3px solid #07080a; box-shadow: 3px 3px 0 #07080a; margin: 0 0 12px; background: #07080a; }
+#bossWarn { position: absolute; top: 26px; left: 50%; transform: translateX(-50%); z-index: 3; pointer-events: none; white-space: nowrap;
+  font-family: var(--f-term); font-size: 12px; letter-spacing: .1em; color: #ddd6c1; background: #a8321f; padding: 6px 10px; border: 2px solid #07080a; box-shadow: 3px 3px 0 #07080a;
+  animation: bossBlink .5s steps(2) infinite; }
+#bossWarn[hidden] { display: none; }
+@keyframes bossBlink { 50% { background: #e04a34; } }
+#nightBtn.on { color: #e0a33a !important; }
+html.uikit #roomStatus #nightBtn.on { color: #e0a33a !important; }
+html.uikit #roomStatus #nightBtn.on.late { border-image-source: var(--fr-hot) !important; color: #0d1013 !important; }
+.vital.hurt .vbar i { background: repeating-linear-gradient(90deg, #e04a34 0 4px, #a8321f 4px 8px) !important; }
+.vital.hurt .vtop b { color: #e04a34 !important; }
+
+/* Hoodwink */
+#phoneModal .hw-top { display: flex; flex-direction: column; gap: 1px; padding: 4px 0 2px; }
+#phoneModal .hw-top span { font-family: var(--f-term); font-size: 11px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+#phoneModal .hw-top b { font-family: var(--f-term); font-weight: 400; font-size: 30px; line-height: 1.05; color: var(--ink); text-shadow: 3px 3px 0 #07080a; }
+#phoneModal .hw-top small { font-size: 12.5px; color: var(--muted); }
+#phoneModal .hw-sel { display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; margin-top: 6px; }
+#phoneModal .hw-sel b { font-family: var(--f-term); font-weight: 400; font-size: 18px; color: var(--ink); display: block; }
+#phoneModal .hw-sel span { font-size: 12.5px; color: var(--muted); }
+#phoneModal .hw-px { text-align: right; } #phoneModal .hw-px i { font-style: normal; font-family: var(--f-term); font-size: 12px; }
+#phoneModal .hw-chart { display: block; width: 100%; height: 84px; margin: 4px 0 2px; background: repeating-linear-gradient(0deg, transparent 0 20px, rgba(221,214,193,.06) 20px 21px); border-bottom: 2px solid #232c33; }
+#phoneModal .hw-own { font-size: 13px; color: var(--ink); }
+#phoneModal .hw-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 6px 0; }
+#phoneModal .hw-row .btn { padding: 8px 4px; font-size: 13px; }
+#phoneModal .hw-yolo { width: 100%; font-size: 12.5px; line-height: 1.3; white-space: normal; }
+#phoneModal .hw-list { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 8px; }
+#phoneModal .hw-it { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 6px; text-align: left; padding: 6px 8px; background: #161b20 !important; border: 2px solid #07080a !important; box-shadow: 2px 2px 0 #07080a !important; color: var(--ink); }
+#phoneModal .hw-it.on { border-color: #2fb589 !important; background: #12261f !important; }
+#phoneModal .hw-it b { font-family: var(--f-term); font-weight: 400; font-size: 13px; }
+#phoneModal .hw-it span { font-family: var(--f-term); font-size: 12px; text-align: right; color: var(--muted); }
+#phoneModal .hw-it i { grid-column: 1 / 3; font-style: normal; font-family: var(--f-term); font-size: 11px; }
+#phoneModal .hw-confetti { position: absolute; left: 50%; top: 120px; width: 6px; height: 6px; pointer-events: none; z-index: 4; background: #e0a33a;
+  box-shadow: -96px 0 #2fb589, -70px -26px #e04a34, -44px 8px #ddd6c1, -20px -38px #87b85a, 18px -12px #2fb589, 44px -30px #e0a33a, 70px 4px #e04a34, 96px -22px #ddd6c1, -84px -50px #e0a33a, 84px -54px #87b85a, 0 -60px #e04a34;
+  animation: hwConf 1.2s steps(12) forwards; }
+#phoneModal .hw-confetti::after { content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 4px; background: #2fb589;
+  box-shadow: -60px -12px #e0a33a, -32px -44px #ddd6c1, 30px -6px #e04a34, 58px -40px #87b85a, 110px -16px #e0a33a, -110px -28px #ddd6c1; animation: hwConf2 1.2s steps(12) forwards; }
+@keyframes hwConf { 0% { transform: translateY(-30px); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(260px); opacity: 0; } }
+@keyframes hwConf2 { 0% { transform: translate(0, 0) rotate(0); } 100% { transform: translate(14px, -40px) rotate(90deg); } }
+/* the top bar never cuts your cash off. Under 1560px the evidence and full-screen buttons become icons. */
+#hud .hc:first-child { flex-shrink: 0; }
+@media (max-width: 1560px) {
+  html.uikit #top :is(#fsBtn, #evBtn) { font-size: 0 !important; letter-spacing: 0; width: 46px; min-width: 46px; height: 34px; padding: 0 !important; position: relative; }
+  html.uikit #top :is(#fsBtn, #evBtn)::before { content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; margin: -11px 0 0 -10px; background: var(--ic-fs) center / 20px 20px no-repeat; image-rendering: pixelated; }
+  html.uikit #top #evBtn::before { background-image: var(--ic-files); }
+}
 </style>
 </head>
 <body>
@@ -1116,6 +1163,7 @@ html.uikit :is(.shift-stage, .bn-stage.mg) canvas.mg-cv { box-shadow: 0 0 0 3px 
         <button id="heatBtn">HEAT: ON ($8/d)</button>
         <button id="catBtn">SOOT</button>
         <button id="ledgerBtn">LEDGER: ON</button>
+        <button id="nightBtn" title="Stay up and work through the night. Night work pays 25% more. You pay for it in the morning.">ALL-NIGHTER: OFF</button>
       </div>
       <button class="rail-item" id="railLaptop"><canvas class="rail-ic lap" data-ic="lap" width="22" height="14"></canvas><span>LAPTOP</span></button>
       <button class="rail-item" id="railRules"><canvas class="rail-ic book" data-ic="book" width="17" height="20"></canvas><span>RULEBOOK</span></button>
@@ -1268,7 +1316,7 @@ html.uikit :is(.shift-stage, .bn-stage.mg) canvas.mg-cv { box-shadow: 0 0 0 3px 
 
 <div id="toasts" aria-live="polite"></div>
 <div class="modal" id="modal" hidden><div class="card" id="modalCard"></div></div>
-<div class="modal" id="phoneModal" hidden><div class="phone" id="phoneScreen"></div></div>
+<div class="modal" id="phoneModal" hidden><div class="phone" id="phoneScreen"></div><div id="bossWarn" hidden>FOOTSTEPS · MARCUS IS COMING</div></div>
 <div id="shiftModal" hidden><div class="shift-top"><b id="shTitle"></b><span id="shInfo"></span><button class="btn" id="shQuit">End the shift</button></div><div class="shift-stage" id="shStage"></div></div>
 <div class="modal" id="evModal" hidden>
   <div class="card" style="max-width:520px">
@@ -1773,7 +1821,7 @@ function newAct1() {
     battery: 100,
     // risk economy
     stake: 0, stakePct: 0, vps: 0, hasVPN: false, crypto: false, heat: 0, retainer: false, heatPeak: 0, arrestDays: 0,
-    deskAuto: false, deskOpenDay: -1,
+    deskAuto: false, deskOpenDay: -1, paperAuto: navigator.webdriver ? 'buy' : null,
     eve: {}, echoes: [], lines: [],
     price: Object.assign({}, PRICE0), cat: { name: 'Soot', fed: 80, food: true, hungry: 0, sick: 0, gone: 0, vetDays: 0 },
     agents: [], nextAgentNum: 101,
@@ -1801,9 +1849,10 @@ function newAct1() {
 // Feb 1: the job is gone, and so is the laptop. You need a computer before anything else.
 const VACATION = 1010;
 function enterApartment() {
+  const vac = vacPay();
   S.day = 0; S.phase = 'farm'; S.temp = 20; S.office = null;
   scene = 'room'; fog = []; acc = 0;
-  S.balance += VACATION; tx('Northvale · unused vacation, paid out', VACATION);
+  S.balance += vac; tx('Northvale · unused vacation, paid out' + (vac < VACATION ? ' (less a written warning)' : ''), vac);
   note(`Feb 1. −6°C outside. ${money(S.balance)} in checking. No computer. A black cat called Soot. Rent is $1,800 on March 1.`);
   addMail(0, 'Northvale Logistics HR', 'Your separation', 'Hi,\n\nYour role on the dispatch team has been consolidated into ChatGPX, our AI teammate. As a contract-to-hire employee you are not eligible for severance. Your unused vacation has been paid out.\n\nPlease return your badge by mail.\n\nNorthvale People Team');
   postBulletin(0); S.deskOpenDay = 0; bullyNight(); bullyOpen(0);
@@ -1835,7 +1884,7 @@ function newTicket() {
 function dayStepOffice() {
   S.day++;
   const d = S.day, o = S.office;
-  bullyNight(); bullyOpen(d);
+  bullyNight(); bullyOpen(d); hoodNight();
   S.stimCountToday = 0;
   S.heartStrain = Math.max(0, S.heartStrain - 10);
   S.stamina = clamp(S.stamina + 12, 0, 100);
@@ -1875,7 +1924,7 @@ function layoff() {
       <p><b>“Honestly? AI just makes more sense.”</b></p>
       <div class="vs"><div><span class="muted">You, this week</span><span class="n">${o.mine.toLocaleString('en-US')}</span><span class="muted">batches</span></div><div><span class="muted">ChatGPX</span><span class="n" style="color:var(--gpu)">${o.kw.toLocaleString('en-US')}</span><span class="muted">batches</span></div></div>
       <p>A man from IT unplugs your laptop and drops it in a grey bin. “Company property.”</p>
-      <p class="muted">Your last paycheck covers February’s rent. HR pays out your unused vacation: ${money(VACATION)}.</p>`,
+      <p class="muted">Your last paycheck covers February’s rent. HR pays out your unused vacation: ${money(vacPay())}${vacPay() < VACATION ? ', less $300 for the written warning' : ''}.</p>`,
     buttons: [{ label: 'Carry the box home', primary: true, fn: enterApartment }]
   });
 }
@@ -2022,7 +2071,7 @@ function vetVisit() {
 }
 
 // ---- the night ledger: you, Soot, and what you can afford ----
-function ledgerWanted() { return !S.ledgerAuto && !S.over && (S.act === 2 || S.phase === 'farm'); }
+function ledgerWanted() { return !S.ledgerAuto && !S.over && !(S.allNight && S.act !== 2) && (S.act === 2 || S.phase === 'farm'); }
 function ledgerReport() { // the day, graded: did you earn what rent needed?
   if (S.act === 2 || S.phase !== 'farm' || S.goalDay !== S.day || !S.goal || S.goalGraded === S.day) return S.goalReport || '';
   const goal = S.goal, got = S.earnToday || 0, k = got / goal, gr = k >= 1.5 ? 'S' : k >= 1 ? 'A' : k >= .7 ? 'B' : k >= .4 ? 'C' : 'F';
@@ -2345,6 +2394,7 @@ function dayStep() {
   S.stimCountToday = 0;
   S.heartStrain = Math.max(0, S.heartStrain - 10);
   applyPrices(d);
+  hoodNight();
   jobsTick(d);
   bullyNight(); bullyOpen(d);
   netBill(d); if (S.net) { lbTick(d); webRefresh(d); }
@@ -2410,7 +2460,7 @@ function dayStep() {
   // 3. Hunger & Stamina
   mealTick();
   catTick();
-  S.stamina = clamp(S.stamina + 12, 0, 100); // Overnight rest
+  S.stamina = clamp(S.stamina + nightMorning(d), 0, 100); // Overnight rest, or not
   if (S.food <= 0) {
     S.starveDays++;
     S.bodyTemp = clamp(S.bodyTemp - 0.35, 29.0, 37.0);
@@ -3039,7 +3089,7 @@ function makeBulletin(d) {
   const next = PRICE_EVENTS.filter(e => e.d > d && e.d <= d + 5);
   const obits = d >= 41 ? [0, 1, 2].map(i => OBIT_NAMES[(d * 3 + i) % OBIT_NAMES.length]) : [];
   const temp = d < 35 ? -6 : d < 60 ? 1 : 7;
-  return { d, head: head[1], dek: head[2], rule, prices: (S.todayPrices || []).map(e => ({ k: e.k, old: e.old, v: e.v, why: e.why })), next: next.map(e => ({ k: e.k, d: e.d, v: e.v })), ins: insightsFor(d), obits, ad: ADS[d % ADS.length], weather: `${temp}°C, ${temp < 0 ? 'snow' : 'sleet'}` };
+  return { d, head: head[1], dek: head[2], rule, prices: (S.todayPrices || []).map(e => ({ k: e.k, old: e.old, v: e.v, why: e.why })), next: next.map(e => ({ k: e.k, d: e.d, v: e.v })), ins: [...insightsFor(d), hoodTip()].filter(Boolean), price: d > 0 ? PAPER_COST : 0, obits, ad: ADS[d % ADS.length], weather: `${temp}°C, ${temp < 0 ? 'snow' : 'sleet'}` };
 }
 // ---- the paper, Papers, Please-style: one headline, one picture, two short boxes ----
 // The picture is your own window, printed in grey. New rules don't hide in the paper: each arrives as its own notice.
@@ -3050,7 +3100,7 @@ function bulletinHTML(b) {
   const next = b.next.map(p => `From ${fmtDay(p.d).slice(4)}: ${PRICE_NAME[p.k]} ${money(p.v)}${PRICE_UNIT[p.k]}`);
   return `<div class="np np2">
     <div class="np-mast">THE MORNING LOOP</div>
-    <div class="np-line"><span>${esc(fmtLong(b.d).toUpperCase())}</span><span>${esc(b.weather.toUpperCase())}</span><span>FREE · AD-SUPPORTED</span></div>
+    <div class="np-line"><span>${esc(fmtLong(b.d).toUpperCase())}</span><span>${esc(b.weather.toUpperCase())}</span><span>${b.price ? money(b.price) + ' AT THE CORNER' : 'FREE · AD-SUPPORTED'}</span></div>
     <div class="np-head">${esc(b.head)}</div>
     <div class="np-grid"><figure class="np-fig"><canvas class="np-photo" width="88" height="66"></canvas><figcaption>${esc(PHOTO_CAPTION(b.d))}</figcaption></figure><div class="np-dek">${esc(b.dek)}</div></div>
     ${ins.length || prices.length || next.length ? `<div class="np-boxes">
@@ -3203,7 +3253,7 @@ function reportItem() {
 }
 
 function buildQueue(d) {
-  const q = [{ kind: 'bulletin', b: S.lastBulletin }];
+  const q = havePaper() ? [{ kind: 'bulletin', b: S.lastBulletin }] : [];
   if (S.lastBulletin && S.lastBulletin.rule) q.push({ kind: 'notice', r: S.lastBulletin.rule });
   const st = S.stars || 3, n = (d < 3 ? 2 : d < 8 ? 3 : d < 20 ? 4 : 5) + (st >= 4.2 ? 1 : 0);
   const items = Math.random() < .35 + (st - 3) * .2 ? [mailItem('job', d)] : []; // direct offers: most work comes from the job sites now
@@ -3231,8 +3281,9 @@ function buildQueue(d) {
 
 let DESK = null;
 const SHIFT_MS = 60000;
-function postBulletin(d) {
+function postBulletin(d, quiet) {
   const b = makeBulletin(d); S.lastBulletin = b;
+  if (quiet) return b; // no paper today: you never see it
   S.mail.unshift({ id: (S.mailSeq = (S.mailSeq || S.mail.length) + 1) + 1000, day: d, from: 'THE MORNING LOOP', subj: b.head, body: '', bul: b, read: false });
   if (S.mail.length > 160) S.mail.length = 160;
   S.unread.mail = true;
@@ -3244,7 +3295,8 @@ function archiveMail(it, fate) {
 }
 function startDeskDay(force) {
   if (S.act === 2 || S.phase !== 'farm' || S.over) return;
-  postBulletin(S.day);
+  if (S.day > 0 && S.paperDay !== S.day) return paperChoice(() => startDeskDay(force));
+  postBulletin(S.day, !havePaper());
   if (!online()) { S.deskOpenDay = S.day; return; } // no computer, no inbox: just the paper on the mat
   DESK = { q: buildQueue(S.day), i: 0, earned: 0, scammed: 0, failed: 0, killed: 0, caught: 0, spotted: 0, cites: [], auto: S.deskAuto, t0: 0, open: false };
   S.deskOpenDay = S.day; S.dayStrikes = 0;
@@ -3994,12 +4046,13 @@ function mgEnd(j, sum) {
   let pay;
   if (auto) { pay = Math.round(j.pay * (.55 + .45 * acc)); earn(pay, `${j.title} (AI-made)`); rate((acc - .78) * .3, acc < .85 ? 'the client noticed it was AI' : 'clean AI work'); if (a) note(`${tag(a)} did “${j.title}” in seconds. “${castOf(a).lines[a.lvl || 0]}”`); }
   else {
-    pay = Math.round(j.pay * (acc >= .95 ? 1 : acc)); earn(pay, j.title);
+    const nr = nightRate(); pay = Math.round(j.pay * (acc >= .95 ? 1 : acc) * nr); earn(pay, j.title + (nr > 1 ? ' · night rate' : ''));
     if (acc >= .95) rate(.1 * (5.2 - st) / 2.2, `${j.from} loved it`); else if (acc >= .85) rate(.02, 'good enough'); else rate(-.06, 'sloppy work');
     if (acc < .95) note(`“${j.title}” is done. ${j.errs} mistake${j.errs > 1 ? 's' : ''}. The client paid ${money(pay)} of ${money(j.pay)}.`);
   }
   sfx.cash();
   lines.push(['Paid', money(pay) + (pay < j.pay ? ` of ${money(j.pay)}` : '')]);
+  if (!auto && nightRate() > 1) lines.push(['Night rate', '+25%']);
   let tip = 0; // now and then a client is impressed. You never know which one.
   if (!auto && (sum.grade === 'S' || sum.grade === 'A') && Math.random() < (sum.grade === 'S' ? .5 : .2)) { tip = Math.max(1, Math.round(j.pay * (.08 + Math.random() * .2))); earn(tip, `Tip · ${j.from}`); lines.push(['Tip', '+' + money(tip)]); }
   lines.push(['Stars', (S.stars || 3).toFixed(2) + ' ★']);
@@ -4445,6 +4498,7 @@ function phoneApp(app) {
   if (app === 'slack') p.innerHTML = bar + `<div class="app"><i style="background:var(--pink)"></i>Slack · #general</div>
       <p class="note">${!office ? 'You were removed from Northvale Logistics.' : S.office.launched ? '🎉 Marcus: Everyone welcome @ChatGPX to dispatch!! 214 reactions.' : 'Marcus: big announcement tomorrow, stay tuned 👀'}</p>` + back;
   else if (app === 'bully') { p.innerHTML = bar + bullyHTML() + back; p.querySelectorAll('[data-bm]').forEach(b => b.onclick = () => bullyBet(+b.dataset.bm, b.dataset.side, b.dataset.s === 'all' ? 'all' : +b.dataset.s)); }
+  else if (app === 'hood') { p.innerHTML = bar + hoodHTML() + back; hoodBind(p); }
   else if (app === 'pulse') {
     p.innerHTML = bar + pulseHTML() + back;
     const on = (id, f) => { if ($(id)) $(id).onclick = f; };
@@ -4453,13 +4507,14 @@ function phoneApp(app) {
     pulseFace(S.pulse.i % PULSE_PEOPLE.length);
   } else {
     const notes = [S.gig && !S.gig.done ? ['taskdrop', 'TASKDROP', 'Urgent task nearby. Pays well.'] : null, S.side ? ['taskdrop', 'TASKDROP', 'A small errand for 127 Holdings.'] : null,
-      S.pulse && S.pulse.chat ? ['pulse', 'PULSE', 'You have a new message.'] : null, S.bully && S.bully.open.length && !S.bully.settled ? ['bully', 'BULLYMARKET', '3 markets close tonight.'] : null].filter(Boolean);
+      S.pulse && S.pulse.chat ? ['pulse', 'PULSE', 'You have a new message.'] : null, S.bully && S.bully.open.length && !S.bully.settled ? ['bully', 'BULLYMARKET', '3 markets close tonight.'] : null, hoodNote()].filter(Boolean);
     p.innerHTML = bar + `<div class="ph-lock"><b>${clockText().replace(/ [AP]M$/, '')}</b><span>${esc(fmtLong(S.day))}</span></div>
     ${notes.map(([app, who, t]) => `<button class="ph-note" data-app="${app}"><span>${who}</span>${esc(t)}</button>`).join('')}
     <div class="homegrid">
       ${office ? `<button class="appic" data-app="slack"><i style="background:var(--pink)"></i>Slack<small>#general</small></button>` : `<button class="appic" data-app="taskdrop"><i style="background:var(--amber)"></i>TaskDrop<small>${(S.jobs || []).length} jobs</small></button>`}
       <button class="appic" data-app="bully"><i style="background:#e04a34"></i>Bullymarket<small>${S.bully && S.bully.open.length && !S.bully.settled ? '3 markets today' : 'back tomorrow'}</small></button>
       <button class="appic" data-app="pulse"><i style="background:#cf7a4f"></i>PULSE<small>${S.pulse && S.pulse.chat ? '1 message' : 'dating'}</small></button>
+      <button class="appic" data-app="hood"><i style="background:#2fb589"></i>Hoodwink<small>stocks</small></button>
     </div><p class="note">${office ? 'Company policy: no personal apps on shift. Everyone ignores it. The clock keeps running.' : S.gigDone ? 'TaskDrop status: Trusted Meat-Space Contractor for 127 Holdings LLC.' : 'No calls. A battery warning you ignored. The clock keeps running.'}</p><button class="btn" id="gClose">Put the phone away</button>`;
     p.querySelectorAll('[data-app]').forEach(b => b.onclick = () => b.dataset.app === 'taskdrop' ? (closePhone(), openLaptop('farm')) : phoneApp(b.dataset.app));
     $('gClose').onclick = closePhone;
@@ -4630,6 +4685,251 @@ function openPhone() {
   phoneApp('home');
 }
 function closePhone() { $('phoneModal').hidden = true; renderAll(); }
+
+// ================= the morning paper: buy it, or take the neighbour's =================
+// Day 0 it's free on your mat. After that it's two dollars on the corner, or Mrs. Okafor's copy outside 4A.
+const PAPER_COST = 2;
+const havePaper = () => S.day <= 0 || (S.paperDay === S.day && !!S.paperHave);
+function paperArt(c, mode) { // the hallway outside your door, 160×60
+  if (!c) return;
+  const g = c.getContext('2d'), g0 = G; G = g; g.imageSmoothingEnabled = false;
+  px(0, 0, 160, 60, P.k1); px(0, 0, 160, 40, P.s0); for (let x = 0; x < 160; x += 16) px(x, 0, 1, 40, P.k2); // wallpaper seams
+  px(0, 40, 160, 20, P.k2); for (let x = 0; x < 160; x += 10) px(x, 40, 1, 20, P.k1); px(0, 40, 160, 1, P.s1); // the floor tiles
+  px(0, 29, 160, 11, P.k3); px(0, 29, 160, 1, P.s1); for (let x = 6; x < 160; x += 22) px(x, 31, 14, 7, P.k2); // the wainscot, scuffed
+  px(66, 4, 28, 16, P.s2); px(67, 5, 26, 14, mixc(P.s3, P.p3, .25)); px(79, 5, 1, 14, P.s2); px(67, 11, 26, 1, P.s2); px(67, 5, 26, 2, mixc(P.s4, P.p4, .3)); // the window at the end of the hall
+  px(96, 30, 12, 10, P.s1); for (let x = 97; x < 108; x += 2) px(x, 31, 1, 8, P.s2); // a radiator, cold
+  const fl = Math.random() < .2; px(77, 0, 6, 2, fl ? P.k3 : P.a3);
+  if (!fl) { g.fillStyle = 'rgba(224,163,58,.07)'; g.beginPath(); g.moveTo(74, 2); g.lineTo(86, 2); g.lineTo(110, 60); g.lineTo(50, 60); g.fill(); } // the hall light, on its last tube
+  px(48, 33, 6, 8, P.r1); px(48, 33, 6, 1, P.r2); px(46, 26, 3, 3, P.g2); px(50, 24, 3, 4, P.g3); px(53, 27, 3, 3, P.g2); px(50, 28, 1, 5, P.g2); // her plant
+  // 4A: Mrs. Okafor's door
+  px(14, 8, 32, 33, P.k0); px(16, 10, 28, 31, mode === 'caught' ? P.k0 : P.r1); px(16, 10, 28, 1, P.r2);
+  if (mode !== 'caught') { px(19, 14, 22, 10, P.r0); px(19, 27, 22, 11, P.r0); px(40, 24, 2, 2, P.a3); }
+  px(26, 4, 8, 4, P.p2); px(27, 5, 2, 2, P.k1); px(30, 5, 3, 2, P.k1); // 4A
+  if (mode !== 'caught') px(16, 40, 28, 1, P.a2); // light under her door: she's up
+  px(8, 41, 44, 5, P.d2); px(8, 41, 44, 1, P.d3); // the mat
+  if (mode === 'mat') { px(18, 37, 18, 5, P.p3); px(18, 37, 18, 1, P.p4); px(22, 38, 1, 4, P.p1); px(30, 38, 1, 4, P.p1); px(25, 39, 4, 1, P.k2); } // her paper
+  if (mode === 'caught') drawWalker(22, 46, 0, { still: true, coat: P.s1, coatS: P.s0, coatL: P.s2, pants: P.k3, skin: P.h1, hair: P.k0 });
+  // your door
+  px(114, 8, 32, 33, P.k0); px(116, 10, 28, 31, P.s1); px(116, 10, 28, 1, P.s2); px(140, 24, 2, 2, P.a2);
+  px(126, 4, 8, 4, P.p2); px(127, 5, 2, 2, P.k1); px(130, 5, 3, 2, P.k1); px(131, 5, 1, 1, P.p2); // 4B, yours
+  px(108, 41, 44, 5, P.k3);
+  if (mode === 'taken') drawWalker(124, 46, 0, { still: true, dir: -1, carry: false, letter: true });
+  G = g0;
+}
+function paperChoice(then) {
+  const n = S.paperSteals || 0, risk = clamp(.12 + n * .07, .12, .55), gone = !!S.okaforGone, broke = S.balance < PAPER_COST;
+  const buy = () => { S.balance -= PAPER_COST; tx('The Morning Loop · corner newsstand', -PAPER_COST); S.paperDay = S.day; S.paperHave = true; };
+  if (S.paperAuto === 'buy' && !broke) { buy(); return then(); }
+  modal({
+    cls: 'paper-pick', title: `7:00 AM · ${fmtLong(S.day).toUpperCase()}`,
+    body: `<canvas class="pp-art" id="ppArt" width="160" height="60"></canvas>
+      <p>The newsstand on the corner sells today’s <b>Morning Loop</b> for <b>${money(PAPER_COST)}</b>.${gone ? ' The mat outside 4A is empty. Mrs. Okafor cancelled hers.' : ' Mrs. Okafor’s copy is lying on the mat outside 4A. She’s eighty-one. Her grandson is not.'}</p>
+      <p class="muted">The paper tells you what is about to change: prices, the rules, the market.${n ? ` You’ve taken hers ${n} time${n > 1 ? 's' : ''}. ${n > 2 ? 'Her grandson has started leaving his door open.' : 'People notice.'}` : ''}</p>
+      <label class="lg-auto"><input type="checkbox" id="paperAuto"> Always buy it</label>`,
+    buttons: [
+      { label: broke ? `You can’t afford it (${money(PAPER_COST)})` : `Buy it on the corner · ${money(PAPER_COST)}`, primary: !broke, fn: () => { if (S.balance < PAPER_COST) { S.paperDay = S.day; S.paperHave = false; return then(); } buy(); sfx.cash(); then(); } },
+      ...(gone ? [] : [{ label: 'Take the neighbour’s', danger: true, fn: () => stealPaper(risk, then) }]),
+      { label: 'No paper today', fn: () => { S.paperDay = S.day; S.paperHave = false; then(); } }
+    ]
+  });
+  paperArt($('ppArt'), gone ? 'empty' : 'mat');
+  const a = $('paperAuto'); if (a) a.onchange = () => { S.paperAuto = a.checked ? 'buy' : null; };
+}
+function stealPaper(risk, then) {
+  S.paperSteals = (S.paperSteals || 0) + 1; S.paperDay = S.day; crossLine('Took an old woman’s newspaper');
+  if (S.paperSteals === 4) echo(S.day + 2, 'okaforCancels');
+  if (Math.random() < risk) {
+    S.stamina = clamp(S.stamina - 28, 0, 100); S.injury = Math.max(S.injury || 0, S.day + 2); S.paperHave = false;
+    shakeRoom(6); sfx.alarm(); vib([200, 80, 300]);
+    note('Mrs. Okafor’s grandson caught you with her paper. Your ribs hurt when you breathe.');
+    modal({ cls: 'alarm paper-pick', title: 'CAUGHT', body: '<canvas class="pp-art" id="ppArt" width="160" height="60"></canvas><p>The door of 4A opens before you’re back inside. Her grandson doesn’t say anything. He doesn’t need to.</p><p>Your ribs hurt when you breathe. <b>Energy −28</b>, and you’ll sleep badly for two nights. The paper is back on her mat.</p>', buttons: [{ label: 'Go back inside', primary: true, fn: then }] });
+    paperArt($('ppArt'), 'caught');
+  } else { S.paperHave = true; sfx.tone(180, .05, 'square', .02); toast('You took Mrs. Okafor’s paper. Nobody saw. Probably.'); then(); }
+}
+ECHO.okaforCancels = () => { S.okaforGone = true; note('Mrs. Okafor told the super she cancelled the paper. “It keeps going missing. I can’t pay for it twice.”'); };
+
+// ================= no sleep: work through the night =================
+// Flip it on before bed. The night then runs at the speed of a working hour, night work pays 25% more,
+// and in the morning you pay for it with your body. Flip it off at night and you go to bed right away.
+const nightRate = () => { const h = hourNow(); return S.allNight && S.act !== 2 && (h >= 21 || h < 7) ? 1.25 : 1; };
+const nightNow = () => { const h = hourNow(); return h >= 21 || h < 7; };
+function toggleAllNight() {
+  if (S.over || S.act === 2 || S.phase !== 'farm') return;
+  sfx.init();
+  if (!S.allNight) {
+    S.allNight = true;
+    note('You put the kettle on at nine and decided not to go to bed.');
+    toast('NO SLEEP TONIGHT · night work pays 25% more until 7 AM');
+  } else {
+    S.allNight = false;
+    if (nightNow()) { acc = (DAY_SEC[speed] || DAY_SEC[1]) - .01; toast('You give up and go to bed.'); } // the ledger opens on the next frame
+    else toast('You’ll sleep tonight after all.');
+  }
+  renderAll();
+}
+const nightStep = () => S.allNight && S.act !== 2 && acc > (DAY_SEC[speed] || DAY_SEC[1]) * AWAKE ? 1 / 6 : 1; // night hours pass like day hours
+function nightMorning(d) { // dayStep, Act I: what the night took
+  const injured = S.injury != null && S.injury >= d;
+  if (!S.allNight) return injured ? 4 : 12;
+  const twice = S.allNightDay === d - 1;
+  S.allNight = false; S.allNightDay = d; S.nights = (S.nights || 0) + 1;
+  S.heartStrain += twice ? 22 : 12;
+  note(twice ? 'Two nights without sleep. The words on the screen slide sideways when you look at them.' : 'You watched the sky go grey over the car park. Your hands shake on the mug.');
+  if (twice) crossLine('Went two nights without sleep for the rent');
+  return twice ? -34 : -22;
+}
+
+// ================= the office: Marcus does his rounds =================
+// Use your phone at your desk and, sooner or later, you'll hear him coming. Three strikes and HR hears about it.
+const BOSS_IN = 3.2, BOSS_LOOK = 1.3, BOSS_X = 186;
+const vacPay = () => VACATION - (S.office && S.office.strikes >= 3 ? 300 : 0);
+function bossTick(dt, live) {
+  if (!S || S.phase !== 'office' || S.over || scene !== 'room') { if (fx.boss) { fx.boss = null; $('bossWarn').hidden = true; } return; }
+  if (!live) return;
+  const phoneUp = !$('phoneModal').hidden;
+  if (!fx.boss && phoneUp && (S.office.calm || 0) <= 0 && Math.random() < dt * .085) fx.boss = { t: 0, steps: 0 };
+  if (S.office.calm > 0) S.office.calm -= dt;
+  const b = fx.boss; if (!b) return;
+  b.t += dt;
+  if (b.t < BOSS_IN && b.t >= b.steps * .32) { b.steps++; sfx.tone(b.steps % 2 ? 74 : 64, .06, 'square', .012 + b.steps * .0035); } // footsteps, getting louder
+  $('bossWarn').hidden = !(phoneUp && b.t < BOSS_IN);
+  if (b.t >= BOSS_IN && !b.done) {
+    b.done = true; $('bossWarn').hidden = true;
+    const o = S.office;
+    if (!$('phoneModal').hidden) {
+      b.caught = true; o.strikes = (o.strikes || 0) + 1; S.stamina = clamp(S.stamina - 5, 0, 100);
+      closePhone(); shakeRoom(3); sfx.alarm(); vib([90, 60, 90]);
+      const line = o.strikes >= 3 ? '“That’s three. I’ve let HR know.”' : o.strikes === 2 ? '“Again? This is a place of work.”' : '“Phones away, please. We’re all very busy this week.”';
+      note(`Marcus caught you on your phone. ${line}`); toast(`MARCUS · ${line}`);
+      if (o.strikes === 3) { crossLine('Got written up for your phone in your last week'); note('HR put a note in your file. It will cost you $300 of your vacation pay.'); }
+    } else { b.caught = false; toast('Marcus walks past your desk. “Morning!”'); sfx.tone(520, .05, 'sine', .02); }
+    o.calm = 14; // he won't be back for a while
+  }
+  if (b.t > BOSS_IN + BOSS_LOOK + 3.6) fx.boss = null;
+}
+function drawBoss(t) { // in the aisle between the back row and your desk. Feet at y 152.
+  const b = fx.boss; if (!b) return;
+  const k = b.t, look = k >= BOSS_IN && k < BOSS_IN + BOSS_LOOK;
+  const x = k < BOSS_IN ? -14 + (BOSS_X + 14) * k / BOSS_IN : look ? BOSS_X : BOSS_X - (k - BOSS_IN - BOSS_LOOK) * 64;
+  const dir = k < BOSS_IN || look ? 1 : -1, xi = Math.round(x);
+  drawWalker(xi, 152, t * 1.7, { dir, still: look, coat: P.s2, coatS: P.s1, coatL: P.s3, pants: P.k2, skin: P.h3, hair: P.k1 });
+  px(dir > 0 ? xi + 6 : xi + 5, 122, 1, 5, P.e2); // his lanyard
+  if (look) { // a speech bubble: ! if he saw the phone, … if he didn't
+    px(xi + 1, 100, 11, 9, P.k0); px(xi + 2, 101, 9, 7, P.p4); px(xi + 4, 109, 2, 2, P.k0); px(xi + 4, 108, 2, 1, P.p4);
+    if (b.caught) { px(xi + 6, 102, 1, 3, P.e2); px(xi + 6, 106, 1, 1, P.e2); }
+    else for (let i = 0; i < 3; i++) px(xi + 4 + i * 2, 104, 1, 1, P.s1);
+  }
+}
+
+// ================= Hoodwink: commission-free trading. Confetti on every trade. =================
+const STOCKS = [
+  { k: 'GPX', name: 'ChatGPX', p: 112, vol: .05, drift: .014 },
+  { k: 'NVY', name: 'Envydia', p: 640, vol: .045, drift: .011 },
+  { k: 'NVL', name: 'Northvale Logistics', p: 38, vol: .035, drift: -.011 },
+  { k: 'PEAR', name: 'Pear', p: 190, vol: .02, drift: .002 },
+  { k: 'BULL', name: 'Bullymarket', p: 9, vol: .09, drift: -.004 },
+  { k: 'HODL', name: 'HODLcoin', p: 4.2, vol: .14, drift: -.006 }
+];
+const HOOD_NEWS = [ // printed in the morning paper. It happens that night, three times in four.
+  ['GPX', 1.22, 'OpenBrain shows ChatGPX 6 to investors tonight. “It does whole departments now.”'],
+  ['GPX', .8, 'A judge rules on the ChatGPX copyright case tonight.'],
+  ['NVY', 1.2, 'Envydia reports tonight. Every data centre on earth is still buying.'],
+  ['NVL', 1.16, 'Northvale Logistics will “restructure”. Investors love the word.'],
+  ['NVL', .84, 'Northvale Logistics misses its numbers. The call is tonight.'],
+  ['PEAR', 1.08, 'Pear unveils a phone tonight. It is the same phone, but thinner.'],
+  ['BULL', .6, 'Regulators are “looking closely” at Bullymarket.'],
+  ['BULL', 1.4, 'Bullymarket signs a football league. Every game is a market now.'],
+  ['HODL', 1.6, 'A celebrity will say “HODLcoin to the moon” on a stream tonight.'],
+  ['HODL', .45, 'Nobody has seen HODLcoin’s founder since Tuesday.']
+];
+const usd = n => (n < 0 ? '−' : '') + '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const gauss3 = () => (Math.random() + Math.random() + Math.random() - 1.5) * 1.4;
+let hwFx = 0;
+function hood() {
+  if (!S.hood) {
+    const px0 = {};
+    for (const s of STOCKS) { const h = [s.p]; for (let i = 0; i < 13; i++) h.unshift(Math.round(h[0] / Math.exp(s.drift + s.vol * gauss3()) * 100) / 100); px0[s.k] = h; }
+    S.hood = { px: px0, own: {}, cost: {}, yolo: null, sel: 'GPX', next: null };
+  }
+  return S.hood;
+}
+const hPrice = k => { const h = hood().px[k]; return h[h.length - 1]; };
+const hChange = k => { const h = hood().px[k]; return h.length > 1 ? h[h.length - 1] / h[h.length - 2] - 1 : 0; };
+const hValue = () => STOCKS.reduce((a, s) => a + (hood().own[s.k] || 0) * hPrice(s.k), 0);
+function hoodTip() { const R = S.hood; return R && R.next ? `STOCKS · ${R.next.why}` : ''; }
+function hoodNight() { // every night the market moves. The AI names mostly go up.
+  const R = hood(), nx = R.next, before = hValue();
+  for (const s of STOCKS) {
+    const h = R.px[s.k];
+    let p = h[h.length - 1] * Math.exp(s.drift + s.vol * gauss3());
+    if (s.k === 'NVL' && S.day === OFFICE_LAYOFF) p *= 1.18; // the layoffs: the stock jumps
+    if (nx && nx.k === s.k) p *= nx.real ? nx.m : 1 / Math.sqrt(nx.m);
+    h.push(Math.max(.05, Math.round(p * 100) / 100)); if (h.length > 30) h.shift();
+  }
+  if (R.yolo) { // a call option on tonight: double or nothing, mostly nothing
+    const y = R.yolo, up = hChange(y.k) > .03;
+    if (up) { const w = y.stake * 2.4; S.balance += w; tx(`Hoodwink · YOLO call on ${y.k} paid`, w); note(`Your YOLO call on ${y.k} paid ${money(w)}. You want to do it again.`); }
+    else note(`Your YOLO call on ${y.k} expired worthless. ${money(y.stake)}, gone overnight.`);
+    R.yolo = null;
+  }
+  const after = hValue();
+  if (before > 1) note(`Hoodwink: your stocks are worth ${usd(after)} this morning (${after >= before ? '+' : '−'}${usd(Math.abs(after - before))}).`);
+  R.next = Math.random() < .3 ? (() => { const [k, m, why] = pick(HOOD_NEWS); return { k, m, why, real: Math.random() < .75 }; })() : null;
+}
+function hoodTrade(k, dollars) { // dollars > 0 buys that much (fractional shares), dollars < 0 sells everything
+  const R = hood(), p = hPrice(k), own = R.own[k] || 0;
+  if (dollars > 0) {
+    if (S.balance < dollars) return toast(`You need ${money(dollars)}.`);
+    const n = dollars / p; S.balance -= dollars; tx(`Hoodwink · bought ${n.toFixed(3)} ${k}`, -dollars);
+    R.own[k] = own + n; R.cost[k] = (R.cost[k] || 0) + dollars;
+  } else {
+    if (own <= 0) return;
+    const got = Math.round(p * own * 100) / 100; S.balance += got; tx(`Hoodwink · sold ${own.toFixed(3)} ${k}`, got);
+    const pl = got - (R.cost[k] || 0); if (pl < -50) note(`You sold ${k} for ${usd(-pl)} less than you paid.`);
+    R.own[k] = 0; R.cost[k] = 0;
+  }
+  hwFx = performance.now(); sfx.tone(1200, .05, 'square', .03); sfx.tone(1800, .08, 'square', .03, 0, .06); vib(20);
+  phoneApp('hood'); renderHud();
+}
+function hoodYolo() {
+  const R = hood(); if (R.yolo) return;
+  if (S.balance < 50) return toast('You need $50.');
+  S.balance -= 50; tx(`Hoodwink · YOLO call on ${R.sel}`, -50); R.yolo = { k: R.sel, stake: 50 };
+  hwFx = performance.now(); sfx.tone(900, .05, 'square', .03); sfx.tone(1500, .1, 'square', .03, 0, .07);
+  phoneApp('hood'); renderHud();
+}
+function hoodHTML() {
+  const R = hood(), sel = STOCKS.find(s => s.k === R.sel) || STOCKS[0], h = R.px[sel.k], p = h[h.length - 1], ch = hChange(sel.k);
+  const val = hValue(), basis = STOCKS.reduce((a, s) => a + (R.own[s.k] ? R.cost[s.k] || 0 : 0), 0), up = ch >= 0;
+  const mn = Math.min(...h), mx = Math.max(...h), CW = 120, CH = 40;
+  const yOf = v => Math.round(CH - 3 - (v - mn) / Math.max(.01, mx - mn) * (CH - 6));
+  let path = `M0 ${yOf(h[0])}`; h.forEach((v, i) => { if (i) path += ` H${Math.round(i / (h.length - 1) * CW)} V${yOf(v)}`; });
+  const col = up ? '#87b85a' : '#e04a34', own = R.own[sel.k] || 0, ownVal = own * p, ownPl = ownVal - (R.cost[sel.k] || 0);
+  const fresh = performance.now() - hwFx < 1300;
+  return `<div class="app"><i style="background:#2fb589"></i>Hoodwink</div>
+    <div class="hw-top"><span>Your stocks</span><b>${usd(val)}</b>${basis ? `<small class="${val >= basis ? 'ok' : 'danger'}">${val >= basis ? '+' : '−'}${usd(Math.abs(val - basis))} all time</small>` : '<small>Free stock when you sign up! (Terms apply)</small>'}</div>
+    <div class="hw-sel"><div><b>${sel.k}</b><span>${esc(sel.name)}</span></div><div class="hw-px"><b>${usd(p)}</b><i class="${up ? 'ok' : 'danger'}">${up ? '▲' : '▼'} ${Math.abs(ch * 100).toFixed(1)}% today</i></div></div>
+    <svg class="hw-chart" viewBox="0 0 ${CW} ${CH}" preserveAspectRatio="none" shape-rendering="crispEdges" aria-hidden="true"><path d="${path} V${CH} H0 Z" fill="${col}" fill-opacity=".16" stroke="none"/><path d="${path}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>
+    ${own > 0 ? `<div class="hw-own">You own ${own.toFixed(3)} ${sel.k} · ${usd(ownVal)} · <span class="${ownPl >= 0 ? 'ok' : 'danger'}">${ownPl >= 0 ? '+' : '−'}${usd(Math.abs(ownPl))}</span></div>` : ''}
+    <div class="hw-row"><button class="btn primary" data-hb="25">Buy $25</button><button class="btn primary" data-hb="100">Buy $100</button><button class="btn" data-hs="1" ${own > 0 ? '' : 'disabled'}>Sell all</button></div>
+    <button class="btn danger hw-yolo" id="hwYolo" ${R.yolo ? 'disabled' : ''}>${R.yolo ? `YOLO call on ${R.yolo.k} · ${money(R.yolo.stake)} · pays out tonight` : `🚀 YOLO · $50 call on ${sel.k} · pays $120 if it jumps 3% tonight`}</button>
+    <div class="hw-list">${STOCKS.map(s => { const c = hChange(s.k); return `<button class="hw-it ${s.k === sel.k ? 'on' : ''}" data-hk="${s.k}"><b>${s.k}</b><span>${usd(hPrice(s.k))}</span><i class="${c >= 0 ? 'ok' : 'danger'}">${c >= 0 ? '▲' : '▼'}${Math.abs(c * 100).toFixed(1)}%</i></button>`; }).join('')}</div>
+    ${fresh ? '<div class="hw-confetti" aria-hidden="true"></div>' : ''}
+    <p class="note">Commission-free. We make our money another way. Prices move overnight.</p>`;
+}
+function hoodBind(p) {
+  const R = hood();
+  p.querySelectorAll('[data-hk]').forEach(b => b.onclick = () => { R.sel = b.dataset.hk; sfx.tone(700, .03, 'square', .02); phoneApp('hood'); });
+  p.querySelectorAll('[data-hb]').forEach(b => b.onclick = () => hoodTrade(R.sel, +b.dataset.hb));
+  p.querySelectorAll('[data-hs]').forEach(b => b.onclick = () => hoodTrade(R.sel, -1));
+  const y = p.querySelector('#hwYolo'); if (y) y.onclick = hoodYolo;
+}
+function hoodNote() { // the lock screen: a big mover, to pull you in
+  if (!S.hood) return null;
+  const big = STOCKS.map(s => [s, hChange(s.k)]).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))[0];
+  if (!big || Math.abs(big[1]) < .04) return null;
+  return ['hood', 'HOODWINK', `${big[0].k} is ${big[1] > 0 ? 'up' : 'down'} ${Math.abs(big[1] * 100).toFixed(1)}% today ${big[1] > 0 ? '🚀' : '📉'}`];
+}
 
 // ================= rendering: terminal =================
 const $ = id => document.getElementById(id);
@@ -5038,6 +5338,11 @@ function renderAll() {
   $('stPower').textContent = S.power ? 'GRID ON' : 'POWER CUT';
   $('stPower').className = S.power ? '' : 'danger';
   const cs = S.cat; $('catBtn').hidden = !cs || S.phase === 'office'; if (cs) { $('catBtn').textContent = cs.gone ? `${cs.name.toUpperCase()}: GONE` : cs.sick ? `${cs.name.toUpperCase()}: SICK` : cs.fed < 30 ? `${cs.name.toUpperCase()}: HUNGRY` : cs.name.toUpperCase(); $('catBtn').className = cs.gone || cs.sick ? 'danger' : cs.fed < 30 ? 'amber' : ''; }
+  $('nightBtn').hidden = S.act === 2 || S.phase !== 'farm'; $('nightBtn').textContent = S.allNight ? (nightNow() ? 'GO TO BED' : 'ALL-NIGHTER: ON') : 'ALL-NIGHTER: OFF';
+  $('nightBtn').title = S.allNight && nightNow() ? 'You are working through the night at +25%. Click to give up and go to bed now.' : 'Stay up and work through the night. Night work pays 25% more. You pay for it in the morning.';
+  $('nightBtn').classList.toggle('on', !!S.allNight); $('nightBtn').classList.toggle('late', !!S.allNight && nightNow());
+  const hurt = S.act !== 2 && S.injury != null && S.injury >= S.day;
+  $('vStamBar').parentElement.parentElement.classList.toggle('hurt', hurt); $('vStamBar').parentElement.parentElement.title = hurt ? 'Bruised ribs. You sleep badly: energy comes back slowly for two nights.' : '';
   $('ledgerBtn').hidden = S.phase === 'office'; $('ledgerBtn').textContent = S.ledgerAuto ? 'LEDGER: OFF' : 'LEDGER: ON';
   $('phoneBtn').classList.toggle('buzz', !!S.phoneUnread);
 
@@ -5122,6 +5427,7 @@ $('actPills').onclick = () => drinkStim(pr('stim'), 60, true);
 $('actGrind').onclick = grindManualWork;
 $('heatBtn').onclick = toggleHeat;
 $('catBtn').onclick = () => { if (S && !S.over) petCat(); };
+$('nightBtn').onclick = toggleAllNight;
 $('ledgerBtn').onclick = () => { if (!S) return; S.ledgerAuto = !S.ledgerAuto; toast(S.ledgerAuto ? 'You’ll sleep straight through. Costs follow your current settings.' : 'The night ledger is back on.'); renderAll(); };
 
 // ================= the work, as games =================
@@ -8719,7 +9025,9 @@ document.querySelectorAll('canvas.rail-ic').forEach(c => { const g = c.getContex
     food: [['..s..s....', '...s..s...', '..s..s....', '..........', 'oooooooooo', 'opppeepppo', '.oppppppo.', '..oppppo..', '...oooo...', '..........'], { o: P.k0, p: P.p2, e: P.e2, s: P.s4 }],
     energy: [['.....ooo..', '....oAAo..', '...oAAo...', '..oAAoooo.', '.oAAAAAAo.', '.ooooAAo..', '...oAAo...', '..oAAo....', '..oAo.....', '..oo......'], { o: P.k0, A: P.a3 }],
     body: [['....oo....', '...oppo...', '...oppo...', '...oeeo...', '...oeeo...', '...oeeo...', '..oeeeeo..', '..oeeeeo..', '...oooo...', '..........'], { o: P.k0, p: P.p3, e: P.e3 }],
-    clock: [['...oooo...', '.oopppoo..', '.oppkpppo.', 'opppkpppo.', 'opppkkkpo.', 'oppppppo..', '.oppppppo.', '.oopppoo..', '...oooo...', '..........'], { o: P.k0, p: P.p3, k: P.k1 }]
+    clock: [['...oooo...', '.oopppoo..', '.oppkpppo.', 'opppkpppo.', 'opppkkkpo.', 'oppppppo..', '.oppppppo.', '.oopppoo..', '...oooo...', '..........'], { o: P.k0, p: P.p3, k: P.k1 }],
+    fs: [['oooo..oooo', 'oppo..oppo', 'opo....opo', 'oo......oo', '..........', '..........', 'oo......oo', 'opo....opo', 'oppo..oppo', 'oooo..oooo'], { o: P.k0, p: P.p3 }],
+    files: [['.oooo.....', 'oaaaao....', 'oaaaaooooo', 'oAAAAAAAAo', 'oApppppAAo', 'oAAAAAAAAo', 'oApppAAAAo', 'oAAAAAAAAo', 'oAAAAAAAAo', 'oooooooooo'], { o: P.k0, a: P.e1, A: P.e2, p: P.p3 }]
   };
   for (const [k, [rows, map]] of Object.entries(I)) css.setProperty('--ic-' + k, url(scaled(mgArt(rows, map), 1)));
   // phone app glyphs, 8×8, white on the app's colour
@@ -8730,7 +9038,8 @@ document.querySelectorAll('canvas.rail-ic').forEach(c => { const g = c.getContex
     slack: ['..o..o..', '..o..o..', 'oooooooo', '..o..o..', '..o..o..', 'oooooooo', '..o..o..', '..o..o..'],
     wren: ['........', '..oo....', '.ooooo..', 'oooooooo', '.ooooooo', '..oooo..', '...o.o..', '........'],
     uburn: ['........', '..oooo..', '.oo..oo.', 'oooooooo', 'oooooooo', '.oo..oo.', '.oo..oo.', '........'],
-    grovel: ['..oooo..', '.o....o.', 'oooooooo', 'oooooooo', 'oo.oo.oo', 'oooooooo', 'oooooooo', '........']
+    grovel: ['..oooo..', '.o....o.', 'oooooooo', 'oooooooo', 'oo.oo.oo', 'oooooooo', 'oooooooo', '........'],
+    hood: ['........', '....oooo', '......oo', '.....o.o', '....o...', 'o..o....', '.oo.....', '........']
   };
   for (const [k, rows] of Object.entries(G)) css.setProperty('--gl-' + k, url(mgArt(rows, W)));
   // cursors: a bone arrow and a pointing hand, outlined, at 2×
@@ -9346,6 +9655,7 @@ function drawOffice(t) {
     const hxp = Math.round(h.x + Math.sin(k * 9 + i) * 4), hyp = Math.round(h.y + k * 44 - k * k * 10), c = rgba(P.t4, 1 - k);
     px(hxp, hyp + 1, 1, 1, c); px(hxp + 1, hyp + 2, 1, 1, c); px(hxp + 2, hyp + 1, 1, 1, c); px(hxp + 3, hyp, 1, 1, c); px(hxp + 4, hyp - 1, 1, 1, c);
   }
+  drawBoss(t); // Marcus, doing his rounds
   // your desk, in front
   px(196, 150, 124, 4, P.p1); px(196, 150, 124, 1, P.p2); px(196, 154, 124, 26, P.s2); px(196, 154, 124, 1, P.k3);
   px(240, 110, 60, 40, P.k2); px(240, 110, 60, 1, P.s1); px(266, 150, 8, 1, P.k2);
@@ -11234,7 +11544,7 @@ function frame(t) {
         else if ($('phClock')) $('phClock').textContent = `${fmtDay(S.day)} · ${clockText()}`;
       }
       const blocked = !!SHC || !$('modal').hidden || (phoneUp && S.act === 2) || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
-      benchTick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked); if (SHC) shiftTick(dt);
+      benchTick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked); bossTick(dt, !!speed && !blocked); if (SHC) shiftTick(dt);
       if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
       // After launch, ChatGPX takes your tickets while you watch.
       if (S.phase === 'office' && S.office.launched && speed && !blocked) {
@@ -11244,7 +11554,7 @@ function frame(t) {
       if (speed && !blocked) {
         // evenings start around 7 PM, at .8 of the day
         if (acc > DAY_SEC[speed] * .8) { const ev = eveningDue(); if (ev) { runEvening(ev); return requestAnimationFrame(frame); } }
-        acc += dt;
+        acc += dt * nightStep();
         const len = DAY_SEC[speed];
         while (acc >= len && !S.over) {
           if (ledgerWanted()) { acc = len; openLedger(); break; }
@@ -11263,7 +11573,7 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
