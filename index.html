@@ -1393,6 +1393,7 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
 .k4-dot { display: inline-block; width: 10px; height: 10px; margin-right: 8px; background: #3d4c55; box-shadow: 0 0 0 2px #07080a; vertical-align: -1px; } .k4-dot.ai { background: #e0a33a; }
 /* who is talking: a face and a nameplate beside the words */
 #modalCard.has-who { max-width: 600px; }
+#modalCard.has-who:not(.ai-who) .bd { color: #e4dcc6; } /* people speak in warm ink; the machines keep the terminal's green */
 .who-wrap { display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: 18px; align-items: start; }
 .who { margin: 2px 0 0; display: flex; flex-direction: column; gap: 6px; }
 .who img { display: block; width: 108px; height: 108px; image-rendering: pixelated; border: 3px solid #07080a; box-shadow: 4px 4px 0 #07080a, inset 0 0 0 1px rgba(255,255,255,.06); background: #07080a; }
@@ -5421,7 +5422,7 @@ function faceURL(k) {
 function modal({ title, body, buttons = [{ label: 'OK', primary: true }], cls = '', who }) {
   const c = $('modalCard');
   who = who || (WHO_BY_TITLE.find(([re]) => re.test(title)) || [])[1]; const pp = who && PEOPLE[who];
-  c.className = 'card term ' + cls + (pp ? ' has-who' : '');
+  c.className = 'card term ' + cls + (pp ? ' has-who' + (pp.ai ? ' ai-who' : '') : '');
   c.innerHTML = `<div class="ttl">${esc(title)}</div>${pp ? `<div class="who-wrap"><figure class="who"><img alt="${esc(pp.name)}" src="${faceURL(who)}"><figcaption><b>${esc(pp.name)}</b><span>${esc(pp.role)}</span></figcaption></figure><div class="bd">${body}</div></div>` : `<div class="bd">${body}</div>`}<div class="acts2">${buttons.map((b, i) => `<button class="btn ${b.primary ? 'primary' : b.danger ? 'danger' : ''}" data-i="${i}">${esc(b.label)}</button>`).join('')}</div>`;
   c.querySelectorAll('button[data-i]').forEach(btn => btn.addEventListener('click', () => {
     $('modal').hidden = true; const b = buttons[+btn.dataset.i]; b.fn && b.fn(); renderAll();
