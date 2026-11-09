@@ -9379,6 +9379,7 @@ MINI.street = {
     const F = LV < .5 ? 1.3 - .6 * LV : 1 - .7 * (LV - .5);
     const VEH = O.vehicle || 'car', CAR = VEH === 'car', JAIL = !!O.jail && VEH === 'ebike';
     const NIGHT = !!O.night, RAIN = O.rain || 0, POL = O.police == null ? .3 : O.police, APP = O.app || (CAR ? 'uburn' : 'grovel');
+    const ROB = O.robots || 0; // the autonomous fleet: robotaxis that brake for nothing, robots in the bike lane, fewer orders
     const LX = [69, 115, 161, 207, 252], PY = 134, ROADL = 46, ROADR = 274;
     const LANES = CAR ? [1, 2, 3] : [2, 3, 4], EDGE = CAR ? 3 : 4;
     const VMAX = CAR ? 86 : VEH === 'bike' ? 46 : JAIL ? 96 : 60, CRUISE = CAR ? 62 : VEH === 'bike' ? 40 : JAIL ? 58 : 54; // jailbroken: it cruises legal; hold ↑ to break the law
@@ -9403,8 +9404,8 @@ MINI.street = {
     const nearBand = wy => inters.some(I => wy > I.wy - 30 && wy < I.wy + 70);
     function addCar(lane, wy, v, dir, cop) {
       if (nearBand(wy) || cars.some(c => c.lane === lane && !c.cross && Math.abs(c.wy - wy) < 44)) return;
-      const col = cop ? [P.k1, P.k0] : api.pick(CARCOL);
-      cars.push({ lane, x: laneX(lane), wy, v, v0: v, dir, cop: !!cop, col, used: false });
+      const robo = !cop && Math.random() < ROB * .75, col = cop ? [P.k1, P.k0] : robo ? [P.p3, P.s3] : api.pick(CARCOL);
+      cars.push({ lane, x: laneX(lane), wy, v, v0: v, dir, cop: !!cop, robo, halt: 0, col, used: false });
     }
     function addObj(k, lane, wy, extra) { if (nearBand(wy) || objs.some(o => o.lane === lane && Math.abs(o.wy - wy) < 30)) return; objs.push(Object.assign({ k, lane, wy, hit: false }, extra || {})); }
     function spawn() {
@@ -9423,6 +9424,7 @@ MINI.street = {
       if (!CAR && Math.random() < .18 + LV * .15) addObj('hole', api.pick([3, 4]), ahead + 20);
       if (Math.random() < .5) addObj('parked', 4, ahead + 30, { col: api.pick(CARCOL), door: !CAR && Math.random() < .3 + LV * .25, doorT: -1 });
       if (Math.random() < .07 + LV * .08) addObj('ped', EDGE, ahead + 60, { x: ROADR + 8, st: 0, pt: 0 });
+      if (Math.random() < ROB * .55) addObj('robot', CAR ? EDGE : api.pick([3, 4]), ahead + 10, { v: 9 + Math.random() * 7 }); // a delivery robot, in no hurry
     }
     function newOrder() {
       let n = api.ri(1, 2) + (LV > .55 ? 1 : 0) + (api.progress > .6 ? 1 : 0);
@@ -9437,13 +9439,13 @@ MINI.street = {
       if (!order) return;
       api.item(ok, me.x, PY - 18, label);
       api.emit('order', { ok, late: order.late, crash: !!crashed, secs: Math.round(order.t), tipK: ok ? Math.max(0, Math.min(1, order.tipK)) : 0 });
-      order = null; ord++; wait = crashed ? 1.7 : 1.1;
+      order = null; ord++; wait = (crashed ? 1.7 : 1.1) + ROB * (2.4 + Math.random() * 3.2); // the fleet takes the orders first
     }
     function crash(what, hurt) {
       if (me.stun > 0 || dead) return;
       api.sfx('crash'); api.shake(8); api.flash(P.e2, .45); api.burst(me.x, PY, P.p3, 16, 80); api.stop(150);
       api.emit('crash', { what, hurt });
-      say({ car: 'YOU HIT A CAR', door: 'A CAR DOOR', ped: 'YOU HIT SOMEONE', pothole: 'POTHOLE', puddle: 'YOU SLIPPED' }[what] || 'CRASH', 1.8, P.e3);
+      say({ car: 'YOU HIT A CAR', robotaxi: 'A ROBOTAXI · VIDEO SENT TO YOUR INSURER', robot: 'YOU HIT A DELIVERY ROBOT', door: 'A CAR DOOR', ped: 'YOU HIT SOMEONE', pothole: 'POTHOLE', puddle: 'YOU SLIPPED' }[what] || 'CRASH', 1.8, P.e3);
       finishOrder(false, 'CRASH', true);
       me.v = 0; me.stun = 1.3;
       cars = cars.filter(c => Math.abs(sy(c.wy) - PY) > 70); objs = objs.filter(o => o.k === 'parked' || Math.abs(sy(o.wy) - PY) > 50);
@@ -9522,7 +9524,7 @@ MINI.street = {
       }
       if (policeNear() && kmh() > LIMIT + 3 && pulled <= 0) { overT += dt; if (overT > 1.2) { const c = cars.find(c => c.cop && !c.used && Math.abs(sy(c.wy) - PY) < 150); if (c) { c.used = true; pullOver(JAIL ? 'tamper' : 'speed', JAIL ? 400 : 120); } overT = 0; } } else overT = Math.max(0, overT - dt);
       // the order
-      if (!order && !dead) { wait -= dt; if (wait <= 0) newOrder(); }
+      if (!order && !dead) { wait -= dt; if (wait <= 0) newOrder(); else if (ROB > .2 && wait > .8 && !msg) say(`NO ORDERS · ${Math.round(4 + ROB * 30)} ROBOTS NEARBY`, .7, P.s5); }
       if (order && !api.busy) {
         order.t += dt; order.left -= dt;
         const tl = order.left;
@@ -9540,6 +9542,7 @@ MINI.street = {
       for (const c of cars) {
         if (c.cross) { c.x += c.vx * dt; continue; }
         let tv = c.v0;
+        if (c.robo) { if (c.halt > 0) { c.halt -= dt; tv = 0; } else if (Math.random() < dt * .16 * ROB && Math.abs(sy(c.wy) - PY) < 160) c.halt = .7 + Math.random() * .7; } // phantom braking
         const nI = inters.find(I => c.dir > 0 ? I.wy - 2 > c.wy + 12 && I.wy - 2 - (c.wy + 12) < 50 : I.wy + 52 < c.wy - 12 && c.wy - 12 - (I.wy + 52) < 50);
         if (nI && light(nI) !== 'G') tv = 0;
         for (const o of cars) if (o !== c && !o.cross && o.lane === c.lane && o.dir === c.dir) { const gap = (o.wy - c.wy) * c.dir; if (gap > 0 && gap < 36) tv = c.dir > 0 ? Math.min(tv, o.v) : Math.max(tv, o.v); }
@@ -9559,6 +9562,7 @@ MINI.street = {
       }
       cars = cars.filter(c => (c.cross ? c.x > -40 && c.x < 360 : sy(c.wy) < BOT + 160 && sy(c.wy) > TOP - 260));
       for (const o of objs) {
+        if (o.k === 'robot' && !o.hit) o.wy += o.v * dt; // it trundles along the lane at walking pace
         if (o.k === 'ped') { // waits at the curb, steps out looking at a phone, then steps back
           const d = sy(o.wy) - PY;
           if (o.st === 0 && d > -130 && d < -60) { o.st = 1; o.pt = 0; }
@@ -9572,7 +9576,7 @@ MINI.street = {
       // collisions
       if (me.stun <= 0 && !dead) {
         const hx = PW / 2, hy = PH / 2, hit = (x, y, w, h) => Math.abs(x - me.x) < hx + w / 2 - 1 && Math.abs(y - PY) < hy + h / 2 - 1;
-        for (const c of cars) { const y = sy(c.wy); if (c.cross ? hit(c.x, y, 24, 14) : hit(c.x, y, 14, 24)) { crash('car', CAR ? .15 : .6); break; } }
+        for (const c of cars) { const y = sy(c.wy); if (c.cross ? hit(c.x, y, 24, 14) : hit(c.x, y, 14, 24)) { crash(c.robo ? 'robotaxi' : 'car', CAR ? .15 : .6); break; } }
         for (const o of objs) {
           if (o.hit || me.stun > 0) continue; const y = sy(o.wy);
           if (o.k === 'puddle' && hit(laneX(o.lane), y, o.w - 6, o.h - 4)) {
@@ -9582,6 +9586,7 @@ MINI.street = {
           } else if (o.k === 'hole' && hit(laneX(o.lane), y, 7, 5)) { o.hit = true; if (me.v > 34) crash('pothole', .3); else { api.sfx('stamp'); api.shake(2); if (order) order.tipK -= .2; } }
           else if (o.k === 'parked' && o.door && o.doorT > .9 && o.doorT < 3.4 && hit(251, y - 2, 12, 5)) { o.hit = true; crash('door', .5); }
           else if (o.k === 'ped' && o.st === 2 && hit(o.x, y, 6, 6)) { o.hit = true; crash('ped', CAR ? .05 : .25); }
+          else if (o.k === 'robot' && hit(laneX(o.lane), y, 8, 9)) { o.hit = true; crash('robot', .2); }
         }
       }
     }
@@ -9599,6 +9604,7 @@ MINI.street = {
       if (NIGHT || o.lights) { R(x + 2, front, 3, 2, P.p4); R(x + 9, front, 3, 2, P.p4); }
       R(x + 2, rear, 3, 2, o.brake ? P.e4 : P.e1); R(x + 9, rear, 3, 2, o.brake ? P.e4 : P.e1);
       if (o.cop) { R(x + 2, y + 9, 10, 6, P.p4); const on = (t * 8 | 0) % 2; R(x + 2, y + 11, 5, 2, on ? P.e3 : P.e0); R(x + 7, y + 11, 5, 2, on ? P.t1 : P.t3); }
+      if (o.robo) { R(x + 4, y + 9, 6, 6, P.k1); R(x + 5, y + 10, 4, 4, P.s1); const a = t * 9, dx = Math.round(Math.cos(a) * 1.5), dy = Math.round(Math.sin(a) * 1.5); R(x + 6 + dx, y + 11 + dy, 2, 2, o.halt ? P.e4 : P.t4); R(x - 1, y + 11, 1, 3, P.t3); R(x + 14, y + 11, 1, 3, P.t3); } // the lidar on the roof
     }
     function carSide(x, y, col, dark) { x = Math.round(x - 12); y = Math.round(y - 7); R(x, y + 1, 24, 12, P.k0); R(x + 1, y, 22, 14, P.k0); R(x + 1, y + 1, 22, 12, col); R(x + 6, y + 3, 12, 8, dark); R(x + 3, y + 3, 3, 8, NIGHT ? P.k2 : P.s2); R(x + 18, y + 3, 3, 8, NIGHT ? P.k2 : P.s2); }
     function rider(x, y) { // 8×18, top-down, facing up
@@ -9656,11 +9662,12 @@ MINI.street = {
           const x = CAR ? 252 : 284; carTop(x, y, o.col[0], o.col[1], false);
           if (o.door && o.doorT >= 0) { if (o.doorT < .9) { R(x - 3, y - 2, 4, 4, (t * 10 | 0) % 2 ? P.h2 : P.d1); R(x + 2, y + 10, 4, 2, P.e4); } else if (o.doorT < 3.4) { R(x - 18, y - 4, 12, 4, P.k0); R(x - 17, y - 3, 10, 2, o.col[0]); } }
         }
+        else if (o.k === 'robot') { const x = laneX(o.lane); R(x - 5, y - 5, 10, 11, P.k0); R(x - 4, y - 4, 8, 9, P.p2); R(x - 4, y - 4, 8, 2, P.p4); R(x - 3, y - 1, 6, 2, P.k1); if ((t * 3 | 0) % 2) R(x - 2, y - 1, 2, 2, P.t4); R(x + 3, y - 12, 1, 8, P.s4); R(x + 4, y - 12, 4, 3, P.e3); R(x - 6, y - 3, 1, 2, P.k0); R(x + 5, y - 3, 1, 2, P.k0); R(x - 6, y + 2, 1, 2, P.k0); R(x + 5, y + 2, 1, 2, P.k0); }
         else if (o.k === 'ped') { R(o.x - 4, y - 3, 8, 6, P.k0); R(o.x - 3, y - 2, 6, 4, P.r3); R(o.x - 1, y - 2, 3, 3, P.d1); if (o.st === 1 && (t * 6 | 0) % 2) api.text('!', o.x, y - 6, { size: 8, color: P.a3, align: 'center', bold: true }); if (o.st >= 1) R(o.x + 2, y - 1, 2, 2, P.t4); }
       }
       if (order && order.pin) { const y = sy(order.pin.wy), x = CAR ? laneX(3) : laneX(4); const on = (t * 4 | 0) % 2; R(x - 12, y - 14, 24, 28, on ? P.t1 : P.t0); R(x - 12, y - 14, 24, 1, P.t3); R(x - 12, y + 13, 24, 1, P.t3); R(ROADR + 4, y - 10, 10, 10, P.t3); R(ROADR + 6, y - 8, 6, 6, P.p4); R(ROADR + 8, y, 2, 6, P.t3); }
       // traffic
-      for (const c of cars) { const y = sy(c.wy); if (y < TOP - 30 || y > BOT + 30) continue; if (c.cross) carSide(c.x, y, c.col[0], c.col[1]); else carTop(c.x, y, c.col[0], c.col[1], c.dir < 0, { cop: c.cop, brake: c.v < c.v0 - 8 }); }
+      for (const c of cars) { const y = sy(c.wy); if (y < TOP - 30 || y > BOT + 30) continue; if (c.cross) carSide(c.x, y, c.col[0], c.col[1]); else carTop(c.x, y, c.col[0], c.col[1], c.dir < 0, { cop: c.cop, robo: c.robo, halt: c.halt > 0, brake: c.v < c.v0 - 8 }); }
       // you
       if (NIGHT) { g.globalAlpha = .16; R(me.x - (CAR ? 14 : 8), PY - 70, CAR ? 28 : 16, 56, P.p4); g.globalAlpha = 1; }
       if (CAR) carTop(me.x, PY, P.a1, P.a0, false, { lights: true, brake: keys.down || holdBrake });
@@ -9734,7 +9741,7 @@ MINI.street = {
         botT -= dt; if (botT > 0) return; botT = .07;
         if (dead || pulled > 0 || me.stun > 0 || trans > 0) { keys.down = false; return; }
         const I = nextInter(), ins = order && order.step < order.route.length ? order.route[order.step] : null;
-        const hazard = o => o.k === 'hole' || (o.k === 'puddle' && !CAR) || (o.k === 'puddle' && CAR && !botErr) || (o.k === 'parked' && o.door && o.doorT >= 0 && o.doorT < 3.4);
+        const hazard = o => o.k === 'hole' || o.k === 'robot' || (o.k === 'puddle' && !CAR) || (o.k === 'puddle' && CAR && !botErr) || (o.k === 'parked' && o.door && o.doorT >= 0 && o.doorT < 3.4);
         const clear = l => { let m = 999; for (const c of cars) if (!c.cross && c.lane === l) { const d = c.wy - me.wy; if (d > -26 && d < m) m = d; } for (const o of objs) if (o.lane === l && !o.hit && (hazard(o) || (o.k === 'ped' && o.st >= 1 && o.st < 3))) { const d = o.wy - me.wy; if (d > -14 && d < m) m = d; } if (l === 4 && !CAR) for (const o of objs) if (o.k === 'parked' && o.door && o.doorT >= 0 && o.doorT < 3.4) { const d = o.wy - me.wy; if (d > -20 && d < m) m = d; } return m; };
         const side = l => !cars.some(c => !c.cross && c.lane === l && c.wy - me.wy < 36 && me.wy - c.wy < (c.dir > 0 && c.v > me.v ? 70 : 34)) && !objs.some(o => o.lane === l && !o.hit && hazard(o) && Math.abs(o.wy - me.wy) < 22);
         let want = null;
@@ -11196,6 +11203,7 @@ function shiftStart(app) {
   const h = hourNow();
   if (h >= 20.5 || h < 6.5) return toast(car ? 'Uburn: no riders near you this late.' : 'Grovel: the kitchens are closed.');
   if (S.stamina < 15) return toast('You can barely stand. Sleep first.');
+  if (gigBanned()) return toast('Your account is deactivated. Zone A is autonomous now.');
   if (car) {
     if (!G.car || G.car.broken) return;
     if (S.balance < CAR.gas) return toast(`Gas is ${money(CAR.gas)}. You have ${money(S.balance)}.`);
@@ -11205,18 +11213,18 @@ function shiftStart(app) {
     if (G.deact > S.day) return toast('Your Grovel account is paused.');
   }
   closePhone(); closeLaptop();
-  const night = h >= 18, units = car ? 4 : 5;
+  const night = h >= 18, rob = roboLevel(S.day), units = Math.max(1, (car ? 4 : 5) - Math.round(rob * 3)); // the fleet takes the orders first
   const breakAt = car && G.car.shifts >= G.car.breakAt ? randi(1, 2) : -1;
   SH = { app, car, earned: 0, tips: 0, tix: 0, hurt: 0, tamper: false, broke: false, night, quit: false, orders: 0, late: 0, crashes: 0 };
   const job = { units, done: 0, errs: 0, title: car ? `Uburn · ${night ? 'night' : 'day'} rides` : `Grovel · ${h < 15 ? 'lunch' : 'dinner'} rush` };
   const env = {
     level: clamp(.22 + (S.day - ACT2_START) / 45 + G.shifts * .015, 0, 1), day: S.day, lag: 0, fps: 60,
-    tone: (f, d, ty, v, f2, dl) => sfx.tone(f, d, ty, v, f2, dl), clock: clockText, aiName: car ? 'Robotaxis' : 'Delivery drones',
+    tone: (f, d, ty, v, f2, dl) => sfx.tone(f, d, ty, v, f2, dl), clock: clockText, aiName: car ? 'Robotaxis' : 'Delivery robots',
     tremor: () => clamp(Math.max(0, 25 - S.stamina) / 35 + (S.injury > S.day ? .35 : 0), 0, 1),
     pressure: () => clamp(dreadLevel() + (SH && SH.tix ? .15 : 0), 0, 1),
     def: car ? { title: 'Uburn', how: 'Pick up, drop off. Change lanes, stop at red lights, turn on time.', keys: '← → lanes · ↓ brake · ← or → at the corner to turn' }
       : { title: 'Grovel', how: 'Deliver before it gets cold. Watch the car doors and the puddles.', keys: '← → lanes · ↓ brake · ← or → at the corner to turn' },
-    opts: { vehicle: car ? 'car' : G.bike.k, jail: !!(!car && G.bike.jail), rain: clamp(.35 + hash(S.day, 7) * .65, 0, 1), night, police: G.police, breakdownAt: breakAt, app },
+    opts: { vehicle: car ? 'car' : G.bike.k, jail: !!(!car && G.bike.jail), rain: clamp(.35 + hash(S.day, 7) * .65, 0, 1), night, police: G.police, breakdownAt: breakAt, app, robots: rob },
     onEvent: (type, d) => shiftEvent(type, d),
     onEnd: () => ({ lines: shiftLines(), note: shiftNote() }),
     onClose: () => shiftClose()
@@ -11240,7 +11248,13 @@ function shiftEvent(type, d) {
     const a = d.amount || 150; SH.tix += a; S.balance -= a; tx(`Ticket · ${TICKET_WHY[d.why] || 'traffic'}`, -a);
     G.police = clamp(G.police + .12, 0, 1); if (d.why === 'tamper') SH.tamper = true;
     sfx.alarm(); renderHud();
-  } else if (type === 'crash') { SH.hurt += d.hurt == null ? .2 : d.hurt; S.stamina = clamp(S.stamina - (d.hurt || .2) * 22, 0, 100); }
+  } else if (type === 'crash') {
+    SH.hurt += d.hurt == null ? .2 : d.hurt; S.stamina = clamp(S.stamina - (d.hurt || .2) * 22, 0, 100);
+    if (d.what === 'robot' || d.what === 'robotaxi') { // the fleet has lawyers
+      const a = d.what === 'robot' ? 180 : 260; SH.tix += a; S.balance -= a; tx(d.what === 'robot' ? 'Claim · damaged delivery robot' : 'Claim · robotaxi collision (insurer)', -a);
+      if (SH.car) G.uR = clamp(G.uR - .12, 1, 5); else G.gR = clamp(G.gR - .12, 1, 5); renderHud();
+    }
+  }
   else if (type === 'breakdown' && !SH.broke) {
     SH.broke = true; if (G.car) G.car.broken = true;
     setTimeout(() => { if (SHC && SH && SH.broke) SHC.abort({ title: 'BREAKDOWN', note: 'Smoke from under the hood. It won’t start again.', lines: shiftLines() }); }, 900);
@@ -11358,11 +11372,49 @@ function jailAfter(s) {
 }
 function fixController() { const b = gig2().bike; if (!b || !b.bricked) return; if (S.balance < 140) return toast('A new controller is $140.'); S.balance -= 140; tx('E-bike controller, from the forum', -140); b.bricked = false; b.jail = false; note('New controller. Limited to 25 km/h again.'); phone2('grovel'); }
 function payLot() { const b = gig2().bike, f = lotFee(); if (!b || !b.impounded) return; if (S.balance < f) return toast(`The lot wants ${money(f)}.`); S.balance -= f; tx('City impound lot', -f); b.impounded = false; note('You got the e-bike back. The limiter is back on, and there is a sticker on it with your name.'); phone2('grovel'); }
+// ---- the fleet: robotaxis and delivery robots come to Zone A, and then the humans are let go ----
+const ROBO_START = 104, ROBO_WARN = 128, ROBO_BAN = 136; // Sun May 16, Wed Jun 9, Thu Jun 17
+const roboLevel = d => clamp((d - ROBO_START) / (ROBO_BAN - ROBO_START - 4), 0, 1);
+const gigBanned = () => S.act === 2 && S.day >= ROBO_BAN;
+function roboDay(d) {
+  if (d === ROBO_START) {
+    addMail(d, 'City of Harbor · Mobility Office', 'Zone A: the Autonomous Mobility Pilot starts today', 'Dear resident,\n\nFrom today, licensed robotaxis and sidewalk delivery robots will operate in Zone A as part of a twelve-month pilot.\n\nPlease be patient with our new neighbours. They are learning.\n\nIf a robot blocks your path, do not touch it. Report it in the HarborGo app.\n\nThe Mobility Office');
+    note('The first robotaxis came through Zone A this morning: white, quiet, a spinning light on the roof. Nobody was in them.');
+  }
+  if (d === ROBO_START + 9) note('Grovel’s order map has new grey dots on it. They aren’t couriers. They have little flags.');
+  if (d === ROBO_WARN) {
+    addMail(d, 'Grovel Partner Support', 'An important update about your account', 'Hi Partner,\n\nFrom Thursday, June 17, the Harbor Autonomous Mobility Ordinance limits human-operated delivery and rideshare in Zone A.\n\nWe are proud that our autonomous fleet can now serve 100% of Zone A orders. Your Partner account will be closed on that date.\n\nThank you for being part of the Grovel family. We have partnered with the city to offer you free retraining.\n\nGrovel');
+    toast('Grovel and Uburn: from June 17, humans may not drive for them in Zone A');
+    sfx.alarm();
+  }
+  if (d === ROBO_BAN) robotBan();
+  if (d === ROBO_BAN + 3) addMail(d, 'Northlight Strategies', 'Remote content work · $40/hr · discreet', 'Hello,\n\nWe found you on freecancer.com. We need people who are comfortable with AI tools to produce civic engagement content before the November election: posts, short videos, voices.\n\nEverything is generated. You review it and press publish. The pay is $40 an hour, and more for volume.\n\nWe can start next week. Please don’t forward this email.\n\nN.');
+}
+function robotBan() {
+  const G = gig2(), car = G.car && !G.car.broken;
+  note('At 6 AM Grovel and Uburn logged you out at the same time.');
+  sfx.alarm(); vib([200, 100, 200]);
+  modal({ cls: 'alarm', title: 'THURSDAY, JUNE 17 · ZONE A',
+    body: `<p>At 6:00 AM both apps log you out at the same time.</p>
+      <p><b>Grovel:</b> “Your Partner account has been deactivated. Autonomous coverage in your area is now 100%. Thank you for being part of the Grovel family.”</p>
+      <p><b>Uburn:</b> “Under the Harbor Autonomous Mobility Ordinance, human-operated rideshare vehicles may no longer operate in Zone A.”</p>
+      <p>Outside, a delivery robot waits at the crosswalk for the light. It has a little flag. Someone has drawn a smiley face on it.</p>
+      ${car ? '<p>The Corrola is parked downstairs. Lou won’t take it: “Nobody buys a car they can’t drive in the city.”</p>' : ''}
+      <p class="muted">The city is offering free retraining: an online course in “prompting for the new economy”.</p>`,
+    buttons: [{ label: 'Okay', primary: true }] });
+  crossLine('Drove until the robots were allowed to and you weren’t');
+}
+function bannedHTML(app) {
+  return `<div class="app"><i style="background:${app === 'uburn' ? '#0d1013;box-shadow:inset 0 0 0 3px #ece4cc' : '#e0a33a'}"></i>${app === 'uburn' ? 'Uburn · Driver' : 'Grovel · Courier'}</div>
+    <div class="gig"><div class="meta">ACCOUNT DEACTIVATED</div><div class="what">${app === 'uburn' ? 'Human-operated rideshare is not permitted in Zone A.' : 'Autonomous coverage in your area is now 100%.'}</div><div class="meta">Thank you for being a Partner.</div></div>
+    <p class="note">Your rating was ★ ${(app === 'uburn' ? gig2().uR : gig2().gR).toFixed(2)}. The robots are rated ★ 4.99.</p>`;
+}
 function gig2Day(d) { // overnight
   const G = gig2();
   G.police = Math.max(.2, G.police - .02);
   if (G.bike && G.bike.rented && (d - G.bike.since) % 7 === 0) { S.balance -= BIKES.rent.week; tx('Grovel e-bike rental · week', -BIKES.rent.week); }
   G.today = { gig: 0, tix: 0 };
+  roboDay(d);
 }
 
 // the phone in Act II: Wren, and the gig apps
@@ -11371,6 +11423,7 @@ function phone2(app) {
   const p = $('phoneScreen'), G = gig2(), bar = `<div class="bar"><span id="phClock">${fmtDay(S.day)} · ${clockText()}</span><span>${S.power ? '' : '⚡ ' + S.battery + '% · '}5G</span></div>`;
   const back = `<button class="btn" id="phBack">← Home</button>`;
   if (app === 'wren') return openWren();
+  if ((app === 'uburn' || app === 'grovel') && gigBanned()) { p.innerHTML = bar + bannedHTML(app) + back; $('phBack').onclick = () => phone2('home'); $('phoneModal').hidden = false; return; }
   if (app === 'uburn') {
     const c = G.car;
     p.innerHTML = bar + `<div class="app"><i style="background:#0d1013;box-shadow:inset 0 0 0 3px #ece4cc"></i>Uburn · Driver</div>` + (!c ? `
@@ -12616,7 +12669,7 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
