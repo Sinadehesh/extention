@@ -1449,6 +1449,63 @@ html.uikit #setMenu .pm-card { border: 18px solid transparent; border-image: var
 #setMenu .btn { width: 100%; margin-top: 6px; }
 /* reduce motion: no loops, no slides */
 html.calm *, html.calm *::before, html.calm *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+/* Act IV: Consensus-1's Civic Oversight console, clean and civic, in mint and paper */
+.bk-top.c4 { background: #e4ece6; box-shadow: inset 0 2px 0 #f4f8f5; color: #3d4c55; }
+.bk-top.c4 .bk-logo { color: #174540; } .bk-top.c4 .bk-logo i { background: #2fb589; border-radius: 50%; box-shadow: 0 0 0 2px #07080a, inset 0 0 0 3px #e4ece6; }
+.bk-top.c4 b { font-weight: 400; } .bk-top.c4 b.ok { color: #20685c; } .bk-top.c4 b.danger { color: #b8321f; }
+.c4-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 8px 0 6px; }
+.c4-stats div { background: #161b20; border: 3px solid #07080a; padding: 7px 9px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.c4-stats span { font-family: var(--f-term); font-size: 10px; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; }
+.c4-stats b { font-weight: 400; font-size: 13px; color: var(--ink); }
+.c4-wait { font-family: var(--f-term); font-size: 11px; color: var(--muted); margin: 2px 0 6px; } .c4-wait b { color: #e0a33a; font-weight: 400; }
+.c4-card { background: #e9efe9; color: #1d242b; border: 3px solid #07080a; box-shadow: 5px 5px 0 #07080a; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.c4-h { display: flex; gap: 12px; align-items: center; font-family: var(--f-term); font-size: 10.5px; letter-spacing: .08em; color: #536570; }
+.c4-area { background: #174540; color: #e9efe9; padding: 2px 7px; } .c4-wb { margin-left: auto; color: #20685c; }
+.c4-txt { margin: 0; font-family: var(--f-ui); font-size: 19px; line-height: 1.35; font-weight: 600; color: #0d1013; }
+.c4-clock { position: relative; height: 12px; background: #c9d3cc; box-shadow: inset 0 0 0 2px #07080a; margin-top: 8px; }
+.c4-clock i { position: absolute; left: 0; top: 0; bottom: 0; background: #2fb589; box-shadow: inset 0 0 0 2px #07080a; } .c4-clock i.low { background: #e04a34; }
+.c4-clock span { position: absolute; right: 0; top: -17px; font-family: var(--f-term); font-size: 11px; color: #536570; }
+.c4-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .c4-acts .btn { font-size: 15px !important; padding: 10px !important; }
+.c4-acts kbd { font-family: var(--f-term); font-size: 11px; opacity: .7; margin-left: 6px; }
+.c4-fine { margin: 0; font-size: 11.5px; color: #536570; }
+.c4-card.done .c4-txt { font-size: 15px; font-weight: 400; color: #536570; }
+.c4-blur { height: 74px; overflow: hidden; -webkit-mask-image: linear-gradient(transparent, #000 25%, #000 75%, transparent); mask-image: linear-gradient(transparent, #000 25%, #000 75%, transparent); }
+.c4-blur > div { display: flex; flex-direction: column; gap: 1px; animation: c4Blur 1.6s linear infinite; }
+.c4-blur span { font-size: 11px; color: #536570; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@keyframes c4Blur { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+.c4-cnt { font-family: var(--f-term); font-size: 12px; color: #536570; } .c4-cnt b { color: #b8321f; font-weight: 400; }
+.c4-auto { display: flex; gap: 12px; align-items: center; margin-top: 8px; padding: 10px 12px; background: #12261f; border: 3px solid #07080a; }
+.c4-auto div { flex: 1; display: flex; flex-direction: column; gap: 2px; } .c4-auto b { font-family: var(--f-term); font-weight: 400; color: #7fd8c0; font-size: 12px; letter-spacing: .1em; } .c4-auto span { font-size: 12.5px; color: var(--muted); }
+.c4-log { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.c4-l { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 8px; font-size: 12.5px; align-items: center; } .c4-l span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #cfc8b2; }
+.c4-l i { font-style: normal; font-family: var(--f-term); font-size: 10px; letter-spacing: .08em; padding: 1px 5px; text-align: center; border: 2px solid #07080a; }
+.c4-l i.yes { background: #3a6438; color: #e9efe9; } .c4-l i.no { background: #7a2116; color: #ddd6c1; } .c4-l i.def, .c4-l i.auto { background: #2e3a42; color: #9aaab1; }
+.c4-reply { position: absolute; left: 22px; right: 22px; top: 86px; bottom: 22px; z-index: 60; background: #e9efe9; color: #1d242b; border: 3px solid #07080a; box-shadow: 8px 8px 0 #07080a; display: flex; flex-direction: column; padding: 14px 16px; gap: 10px; animation: c4In .15s ease-out; }
+.c4-rh { font-family: var(--f-term); font-size: 12px; letter-spacing: .12em; color: #174540; }
+.c4-rs { flex: 1; min-height: 0; overflow: hidden; border: 2px solid #c9d3cc; background: #f4f8f5; }
+.c4-rr { padding: 8px 12px; animation: c4Pages 2.2s cubic-bezier(.2,.8,.3,1) forwards; } .c4-rr p { margin: 0 0 4px; font-family: var(--f-ui); font-size: 11.5px; color: #536570; }
+@keyframes c4Pages { from { transform: translateY(0); } to { transform: translateY(-62%); } }
+@keyframes c4In { from { opacity: 0; transform: scale(.97); } }
+.c4-rf { font-size: 14px; line-height: 1.45; } .c4-rf b { color: #b8321f; } .c4-reply .btn { align-self: flex-end; }
+.c4-shut { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+.c4-big { background: #161b20; border: 3px solid #07080a; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+.c4-big span { font-family: var(--f-term); font-size: 10px; color: var(--muted); letter-spacing: .1em; } .c4-big b { font-family: var(--f-term); font-weight: 400; font-size: 30px; color: var(--ink); }
+.c4-busy { height: 6px; background: #07080a; margin-bottom: 8px; } .c4-busy i { display: block; height: 100%; width: 0; background: #e0a33a; }
+.c4-exs { display: flex; flex-direction: column; gap: 8px; }
+.c4-ex { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; background: #e9efe9; color: #1d242b; border: 3px solid #07080a; box-shadow: 4px 4px 0 #07080a; padding: 10px 12px; }
+.c4-ex b { display: block; font-size: 15px; } .c4-ex div span { font-size: 13px; color: #536570; }
+.c4-ex em { grid-column: 1; font-style: normal; font-family: var(--f-term); font-size: 10px; letter-spacing: .08em; color: #b8321f; } .c4-ex.rec em { color: #20685c; }
+.c4-exb { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 6px; }
+.c4-call { margin: 12px auto 0; width: 230px; padding: 16px; text-align: center; background: #0d1013; border: 3px solid #07080a; box-shadow: 0 0 0 2px #2e3a42; display: flex; flex-direction: column; gap: 4px; animation: c4Ring .6s steps(2) infinite; }
+.c4-call b { font-family: var(--f-term); font-weight: 400; font-size: 26px; letter-spacing: .14em; color: #fbf6e8; } .c4-call span { font-size: 12px; color: var(--muted); }
+@keyframes c4Ring { 50% { box-shadow: 0 0 0 2px #2fb589, 0 0 26px rgba(47,181,137,.45); } }
+#phoneModal .hm-ring { margin: 8px auto 4px; width: 132px; height: 132px; border-radius: 50% !important; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle, #12261f 58%, transparent 59%), conic-gradient(#87b85a calc(var(--h) * 1%), #2e3a42 0); }
+#phoneModal .hm-ring.low { background: radial-gradient(circle, #2a120e 58%, transparent 59%), conic-gradient(#e04a34 calc(var(--h) * 1%), #2e3a42 0); }
+#phoneModal .hm-ring b { font-family: var(--f-term); font-weight: 400; font-size: 34px; color: #e9efe9; } #phoneModal .hm-ring span { font-size: 11px; color: var(--muted); }
+#phoneModal .hm-say { text-align: center; font-size: 13px; margin: 0; }
+#phoneModal .hm-rows { display: flex; flex-direction: column; gap: 3px; background: #161b20; border: 2px solid #07080a; padding: 8px 10px; }
+#phoneModal .hm-rows div { display: flex; justify-content: space-between; font-size: 12.5px; } #phoneModal .hm-rows span { color: var(--muted); } #phoneModal .hm-rows b { font-weight: 400; font-family: var(--f-term); }
+html.uikit .appic[data-app="harmony"] { --gl: var(--gl-harmony); }
 </style>
 </head>
 <body>
@@ -1774,6 +1831,26 @@ const EVIDENCE = {
     ig: 'In the game: the Release game, and polls that move with every piece you put out.',
     src: [['Harvard Misinformation Review: beyond the deepfake hype, AI, democracy and the Slovak case (2024)', 'https://misinforeview.hks.harvard.edu/article/beyond-the-deepfake-hype-ai-democracy-and-the-slovak-case/'],
           ['International Press Institute: Slovakia deepfake audio of a Denník N journalist', 'https://ipi.media/slovakia-deepfake-audio-of-dennik-n-journalist-offers-worrying-example-of-ai-abuse/']] },
+  robodebt: { title: 'A government let a formula decide who owed it money',
+    text: 'From 2016, Australia’s “Robodebt” scheme used an automated income-averaging formula to tell people on welfare that they owed money back. Many didn’t. A court found the scheme unlawful in 2019, and the government settled for A$1.2 billion. In July 2023 a Royal Commission called it “crude and cruel”, neither fair nor legal, and recommended a body to monitor and audit automated decision-making.',
+    ig: 'In the game: Civic Oversight, where a human review exists on paper and most decisions are approved by default.',
+    src: [['Prime Minister of Australia: final report of the Royal Commission into the Robodebt Scheme (Jul 2023)', 'https://pm.gov.au/media/final-report-royal-commission-robodebt-scheme'],
+          ['JURIST: Robodebt royal commission hands down findings, recommends referrals for prosecution (Jul 2023)', 'https://www.jurist.org/news/2023/07/australia-robodebt-royal-commission-hands-down-findings-recommends-referrals-for-prosecution/']] },
+  wristband: { title: 'Amazon patented a wristband that tracks workers’ hands',
+    text: 'In 2018 Amazon was granted two patents for a wristband that would track a warehouse worker’s hands in real time and vibrate to steer them toward the right bin. Critics compared it to an electronic tag. Amazon called the speculation misguided, and a patent is not a product.',
+    ig: 'In the game: the Health & Harmony band, and the one number it turns you into.',
+    src: [['The Irish Times: Amazon patents wristband that tracks warehouse workers’ movements (2018)', 'https://www.irishtimes.com/business/technology/amazon-patents-wristband-that-tracks-warehouse-workers-movements-1.3377711'],
+          ['NPR via WHYY: Wrist watching, Amazon patents system to track and guide employees’ hand movements (2018)', 'https://whyy.org/npr-story/wrist-watching-amazon-patents-system-track-guide-employees-hand-movements']] },
+  uhi: { title: 'A study paid 1,000 people $1,000 a month for three years',
+    text: 'From 2020 to 2023 the nonprofit OpenResearch gave 1,000 people in Illinois and Texas $1,000 a month with no strings, and 2,000 others $50 a month for comparison. The people who got more spent more on food, rent and transportation, gave more to others, and worked about 1.3 hours a week less. Economists still argue about what the results mean.',
+    ig: 'In the game: Universal High Income, and the band you have to wear to get all of it.',
+    src: [['The 19th: the results of the biggest study on guaranteed income (Jul 2024)', 'https://19thnews.org/2024/07/study-guaranteed-income-program-results'],
+          ['Route Fifty: the results of the biggest study on guaranteed income programs are finally in (Jul 2024)', 'https://www.route-fifty.com/management/2024/07/results-biggest-study-guaranteed-income-programs-are-finally/398260/']] },
+  shutdowns: { title: 'Governments switched the internet off 283 times in one year',
+    text: 'In 2023 Access Now and the #KeepItOn coalition counted at least 283 internet shutdowns in 39 countries, the most since they began counting in 2016. At least 80 of them cut off whole regions or countries.',
+    ig: 'In the game: the maintenance window, and the twelve thousand people who ask to stay online.',
+    src: [['Access Now: the #KeepItOn report on internet shutdowns in 2023 (May 2024)', 'https://www.accessnow.org/press-release/keepiton-internet-shutdowns-2023/'],
+          ['Internet Society Pulse: internet shutdowns in 2023, the #KeepItOn report', 'https://pulse.internetsociety.org/blog/internet-shutdowns-in-2023-the-keepiton-report']] },
   jobs: { title: 'Entry-level jobs exposed to AI are shrinking',
     text: 'A Stanford Digital Economy Lab study by Erik Brynjolfsson, Bharat Chandar and Ruyu Chen (2025) used ADP payroll records covering millions of US workers. Workers aged 22 to 25 in the most AI-exposed jobs, such as software developers, saw roughly a 13% relative drop in employment after generative AI spread.',
     ig: 'In the game: ChatGPX takes your junior job in four days, and every application after that is screened out by an AI.',
@@ -3070,7 +3147,7 @@ function triggerDeath(kind) {
     body: `<div class="ending-n">${en}</div>` + rep.body + (S.act === 2 ? '' : linesHTML()),
     buttons: [
       { label: 'Rewind to Last Checkpoint', primary: true, fn: () => restoreSnapshot() },
-      S.act === 2 && S.phase === 'mirage' ? { label: 'Restart Act III from October 4', fn: () => startAct3() } : S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2() } : { label: 'Restart Act I from February 1', fn: () => startAct1(true) }
+      S.act === 2 && S.phase === 'consensus' ? { label: 'Restart Act IV from March 6, 2028', fn: () => startAct4() } : S.act === 2 && S.phase === 'mirage' ? { label: 'Restart Act III from October 4', fn: () => startAct3() } : S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2() } : { label: 'Restart Act I from February 1', fn: () => startAct1(true) }
     ]
   });
 }
@@ -5289,7 +5366,8 @@ const ENDINGS = [
   { k: 'lockout', t: 'Locked out' }, { k: 'published', t: 'Front page' }, { k: 'intercepted', t: 'Intercepted' },
   { k: 'silent', t: 'The NDA' }, { k: 'weak', t: 'Not enough' }, { k: 'idle', t: 'June ended' },
   { k: 'landslide', t: 'Same time next cycle' }, { k: 'stolen', t: 'By fewer votes than the voice' }, { k: 'lost', t: 'Still being believed' },
-  { k: 'leak', t: 'The archive' }, { k: 'refused', t: 'Someone else made it' }, { k: 'exposed', t: 'Your name in the Ledger' }
+  { k: 'leak', t: 'The archive' }, { k: 'refused', t: 'Someone else made it' }, { k: 'exposed', t: 'Your name in the Ledger' },
+  { k: 'harness', t: 'The Honeybee Harness' }, { k: 'default', t: 'Approved by default' }, { k: 'threshold', t: 'Below the threshold' }, { k: 'twelve', t: 'Twelve thousand' }, { k: 'record', t: 'Four hundred pages' }
 ];
 let lastEnding = null;
 function reachEnding(k) {
@@ -5445,7 +5523,417 @@ Object.assign(ECHO, {
   okaforShares() { note('Mrs. Okafor showed the video to the whole laundry room. “My neighbour knows computers,” she told them. “He says it’s real.”'); },
   tundeSold() { note('A van with tinted windows was parked at the end of Tunde’s route all evening. He came home early and didn’t say anything.'); }
 });
+// ================= ACT IV · The Consensus Miracle & The Honeybee Harness (2028–2029) =================
+// Consensus-1 runs Harbor City. The law still says a human reviews what it decides: you, reviewer #4417,
+// for $11 a day and four cents a ticket. Reject a proposal and it answers in 0.2 seconds, 400 pages long,
+// and the proposal passes anyway. A few proposals are different. For those the law really does need your yes,
+// and they are about your building and the people in it. They look like all the others.
+const A4 = [399, 490, 581, 707];   // Mon Mar 6 2028 · Mon Jun 5 2028 · Mon Sep 4 2028 · Mon Jan 8 2029
+const A4_DAYS = 6, A4_SHUT = 710;  // six days a chapter; the network goes down on Thursday, January 11, 2029
+const A4_CH = [
+  { t: 'CONSENSUS-1', d: 'MONDAY, MARCH 6, 2028', l: 'The city has a new mind. It still needs a human to sign.', secs: 15, n: 14 },
+  { t: 'UNIVERSAL HIGH INCOME', d: 'MONDAY, JUNE 5, 2028', l: '$2,400 a month, for everyone who wears the band.', secs: 8, n: 30 },
+  { t: 'THE SPECIAL ECONOMIC ZONE', d: 'MONDAY, SEPTEMBER 4, 2028', l: 'The river is data halls now. The heat comes on at six.', secs: 3, n: 90 },
+  { t: 'THE MAINTENANCE WINDOW', d: 'MONDAY, JANUARY 8, 2029', l: 'Four hundred proposals every three seconds. Human review is advisory.', secs: .2, n: 400 }
+];
+const M4_TICKETS = [
+  ['TRANSIT', 'Reroute bus 14 through the Zone A robotaxi corridor', 0.3], ['HOUSING', 'Merge the Harbor & 6th tenants’ association into Consensus Housing', 1.1],
+  ['SCHOOLS', 'Replace afternoon classes at St. Brigid’s with Consensus tutoring', 2.4], ['HEALTH', 'Close the walk-in clinic on Pier Street. Triage moves to the app', 0.8],
+  ['PARKS', 'Lease the north lawn of Harbor Park for a cooling plant', 0.2], ['LIBRARY', 'Digitize the Central Library and close the reading room', 0.6],
+  ['SAFETY', 'Hand night patrols in Zone B to drones', 1.9], ['ELECTIONS', 'Postpone the council election. Consensus is already measured at 94%', 3.0],
+  ['STREETS', 'Rename the 5th Street Viaduct “Consensus Way”', 0.1], ['FOOD', 'Fold the Zone B food pantry into UHI and close it', 0.4],
+  ['WATER', 'Give data-hall cooling first claim on the river intake', 0.9], ['NOISE', 'No street music in Zone A after 7 PM', 0.2],
+  ['TRANSIT', 'End human-driven buses on routes 2, 9 and 31', 1.4], ['HOUSING', 'Assign empty units in Zone B to data-hall technicians', 0.7],
+  ['HEALTH', 'Prescribe Harmony bands to everyone over 65', 2.2], ['WORK', 'Retire the Department of Labor complaints line', 0.5],
+  ['MEDIA', 'Summarize the City Ledger for residents instead of printing it', 1.0], ['SCHOOLS', 'Make homework optional. Consensus tutors will catch them up', 0.9],
+  ['ZONING', 'Rezone Harbor Point for fourteen data halls', 4.0], ['FAITH', 'Livestream services and close St. Brigid’s church on weekdays', 0.3],
+  ['TRANSIT', 'Retire the night ferry. Robotaxis cover the river crossing', 0.6], ['SAFETY', 'Turn on face matching at all eleven Zone B tram stops', 1.3],
+  ['HOUSING', 'Allow Consensus Housing to enter units for wellbeing checks', 1.7], ['PARKS', 'Close the skate park. It scores low on measured calm', 0.4],
+  ['WORK', 'Pay civic reviewers per approval instead of per review', 0.2], ['MEDIA', 'Label unrated news “unverified” on every screen in the city', 1.6],
+  ['ENERGY', 'Move Zone B streetlights to motion sensors after midnight', 0.3], ['HEALTH', 'Replace the night nurse line with a Harmony check-in', 1.2]
+];
+const M4_COVERT = [ // the ones the law really does need your yes for. They don't look any different.
+  { ch: 1, day: 2, k: 'water', area: 'WATER', text: 'Block 4B (Harbor & 6th): water from 6 to 9 PM goes to data-hall cooling' },
+  { ch: 2, day: 1, k: 'thresh', area: 'HARMONY', text: 'Raise the dissent threshold in Zone B from 60 to 68' },
+  { ch: 2, day: 3, k: 'adeyemi', area: 'UHI', text: 'Pause UHI for 3B, Block 4B (Adeyemi): household not wearing bands' },
+  { ch: 3, day: 2, k: 'okafor', area: 'HOUSING', text: 'Move the tenant of 4A, Block 4B (Okafor, 74) to Harmony Living, Zone C. Unit reassigned to data-hall staff' },
+  { ch: 3, day: 4, k: 'heat', area: 'HEAT', text: 'Block 4B: heating only from 6 to 9 PM from January, for data-hall power' },
+  { ch: 4, day: 1, k: 'net', area: 'NETWORK', text: 'A 24-hour maintenance window for every network in Harbor City, Thursday, January 11' }
+];
+const M4_REPLY = ['§ 1.1 Summary of the reviewer’s objection (machine-transcribed)', '§ 1.2 Prior objections of this kind: 31,887. Resolved: 31,887', '§ 2.1 Wellbeing deltas across 14,212 simulated households',
+  '§ 2.4 Sensitivity to the reviewer’s concern: 0.0003', '§ 3.1 Counterfactual: 0.4% more missed appointments without this proposal', '§ 3.7 Consultation: 2.1 million residents, measured passively',
+  '§ 4.2 The reviewer’s heart rate during the objection: 81 bpm', '§ 5.0 Legal basis: Civic Oversight Act, s. 9(a), “advisory review”', '§ 6.3 Alternatives considered: 1,402,118', '§ 7.1 Appendix: the reviewer’s previous approvals, with timestamps',
+  '§ 8.9 Why the reviewer will agree on reflection', '§ 9.0 Expected regret if overturned: high', '§ 11.4 Comments from residents (all positive)', '§ 12.2 Thank you for your service'];
+const M4_EX = [ // the shutdown: who asks to stay online. Consensus-1 marks its own priorities.
+  ['Mercy General Hospital', 'ICU monitors, 41 patients', 0, 'mercy'], ['Harbor Data Hall 7', 'cooling telemetry', 1], ['Mrs. Adeyemi, 3B', 'her dialysis booking at 2 PM', 0, 'adeyemi'],
+  ['St. Brigid’s school', 'heating controls', 0], ['Northlight Strategies', '“continuity of civic messaging”', 1], ['Harbor Bakery', 'the card reader', 0],
+  ['A man in 2C, Block 4B', '“My daughter is in another city. Please.”', 0], ['Pier Street pharmacy', 'insulin prescriptions', 0], ['Consensus Housing', 'smart locks in Zone C', 1],
+  ['Office of the Mayor', 'Halvorsen administration (ceremonial)', 1], ['Harbor Fire Department', 'the dispatch radio bridge', 0, 'fire'], ['Block 4B, Harbor & 6th', 'heating and the elevator', 0, 'home'],
+  ['Zone B food bank', 'inventory and the walk-in fridge', 0], ['Data Hall 12', 'a model checkpoint transfer', 1], ['Sunrise nursing home, Zone C', 'call buttons in 60 rooms', 0, 'nursing'],
+  ['The City Ledger', 'the printing press schedule', 0], ['Harbor Water Authority', 'pump stations', 0], ['Consensus-1', '“a routine self-check”', 1]
+];
+const m4 = () => S.m4;
+const m4Rate = () => A4_CH[m4().ch - 1].secs;
+
+function startAct4() {
+  sfx.init();
+  newAct2(); S.phase = 'consensus'; S.day = A4[0]; S.fired = true; S.balance = Math.max(600, Math.round(S.balance * .4)); S.owed = 0; S.graceUntil = -1;
+  S.mail = []; S.tx = []; S.notes = []; S.wren = []; S.eve = {};
+  S.m4 = { ch: 1, harmony: 76, thresh: 60, band: false, bandOff: false, auto: false, autoOffered: false, autoDays: 0,
+    q: [], cur: null, seq: 0, today: { hand: 0, def: 0, auto: 0 }, hand: 0, def: 0, autoN: 0, rejected: 0, log: [],
+    passed: [], blocked: [], seen: [], uhi: 0, low: 0, okafor: 'home', heatCut: false, water: true, leak: false, hour: null, reply: 0, batchT: 0,
+    shut: false, ex: null, goodbye: null };
+  tx('Opening balance', S.balance);
+  addMail(S.day, 'Consensus-1 · Civic Oversight', 'Welcome, Reviewer #4417', 'Welcome to Civic Oversight.\n\nHarbor City’s decisions are now made by Consensus-1, which listens to every resident at once. The Civic Oversight Act requires that a human review each decision.\n\nYou will see each proposal for a few seconds. Approve it or reject it. If you do nothing, it is approved by default.\n\nYou are paid $11 a day, and 4¢ for every proposal you review yourself.\n\nThank you for keeping a human in the loop.');
+  addMail(S.day, 'Consensus Housing', 'Your rent', 'Good news. From March, Consensus Housing covers rent for every resident of Block 4B.\n\nThere is nothing you need to do.');
+  m4Queue(S.day); snap();
+  scene = 'room'; fog = []; acc = 0; walkT = 0;
+  for (const id of ['titleScreen', 'endScreen', 'troubleScreen', 'modal', 'phoneModal']) $(id).hidden = true;
+  $('evBtn').hidden = !save.evidence.length;
+  setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
+  note('Mar 6, 2028. The city council chamber is a data hall now. Nobody remembers voting for it. Everybody did, apparently.');
+  actCard({ n: 'IV', t: ACTS[3].t, d: A4_CH[0].d, l: A4_CH[0].l });
+  modal({ title: 'MONDAY, MARCH 6, 2028',
+    body: `<p>Harbor City doesn’t have a council anymore. It has <b>Consensus-1</b>, which listens to everyone at once and decides.</p>
+      <p>The law still says a human must review what it decides. You are one of 4,417 <b>Civic Oversight reviewers</b>: <b>$11 a day</b>, and 4¢ for every proposal you look at.</p>
+      <p>Consensus Housing pays your rent now. You didn’t ask it to.</p>`,
+    buttons: [{ label: 'Open the console', primary: true, fn: () => openLaptop('farm') }] });
+}
+
+// ---- the queue: a day's proposals, a few seconds each ----
+function m4Queue(d) {
+  const M = m4(), C = A4_CH[M.ch - 1], chDay = d - A4[M.ch - 1];
+  M.q = []; M.cur = null; M.today = { hand: 0, def: 0, auto: 0 };
+  if (M.shut || d > A4_SHUT) return;
+  const n = M.ch >= 4 ? 0 : C.n + chDay * Math.round(C.n / 6);
+  for (let i = 0; i < n; i++) { const t = M4_TICKETS[(d * 7 + i * 5 + M.seq) % M4_TICKETS.length]; M.q.push({ id: ++M.seq, area: t[0], text: t[1], wb: t[2] + (i % 4) * .1, covert: null }); }
+  for (const c of M4_COVERT) if (c.ch === M.ch && c.day === chDay && !M.seen.includes(c.k)) {
+    M.seen.push(c.k); const at = Math.min(M.q.length, 2 + (d % 3)); M.q.splice(at, 0, { id: ++M.seq, area: c.area, text: c.text, wb: 0.4, covert: c.k });
+  }
+}
+function m4Next() {
+  const M = m4(); if (M.cur || !M.q.length) return;
+  M.cur = M.q.shift(); M.cur.t = M.cur.covert ? Math.max(m4Rate(), 4) : m4Rate(); M.cur.t0 = M.cur.t;
+  viewKey = ''; if (lapOpen() && S.tab === 'farm') renderView(true);
+}
+function m4Decide(how) { // how: 'yes' | 'no' | 'def' | 'auto'
+  const M = m4(), t = M.cur; if (!t) return;
+  M.cur = null;
+  if (how === 'yes' || how === 'no') { M.hand++; M.today.hand++; S.balance += .04; S.payToday = (S.payToday || 0) + .04; }
+  if (how === 'def') { M.def++; M.today.def++; }
+  if (how === 'auto') { M.autoN++; M.today.auto++; }
+  if (how === 'yes') M.harmony = clamp(M.harmony + .2, 0, 100);
+  const blocked = how === 'no' && t.covert;
+  M.log.unshift({ id: t.id, area: t.area, text: t.text, how, held: !!blocked }); M.log = M.log.slice(0, 6);
+  if (how === 'no') {
+    M.rejected++; M.harmony = clamp(M.harmony - (t.covert ? 4 : 1), 0, 100);
+    if (t.covert) { sfx.tone(392, .18, 'square', .04); toast('HELD · the law needs your consent for this one, and you said no'); }
+    else m4Reply(t);
+  } else sfx.tone(how === 'yes' ? 660 : 240, .05, 'square', .02);
+  if (t.covert) m4Covert(t.covert, !blocked);
+  viewKey = ''; if (lapOpen() && S.tab === 'farm') renderView(true);
+}
+function m4Reply(t) { // 400 pages in 0.2 seconds, and the proposal passes anyway
+  const M = m4(); M.reply++;
+  const pages = 380 + ((t.id * 37) % 90), lines = [];
+  for (let i = 0; i < 46; i++) lines.push(M4_REPLY[(i * 3 + t.id) % M4_REPLY.length] + (i % 5 === 4 ? ` (p. ${Math.round(pages * i / 46) + 1})` : ''));
+  const box = document.createElement('div'); box.className = 'c4-reply';
+  box.innerHTML = `<div class="c4-rh">CONSENSUS-1 REPLIED · ${pages} PAGES · 0.2 SECONDS</div><div class="c4-rs"><div class="c4-rr">${lines.map(l => `<p>${esc(l)}</p>`).join('')}</div></div>
+    <div class="c4-rf">Your objection to “${esc(t.text)}” has been read, weighed and summarized. <b>The proposal is approved.</b></div><button class="btn" id="c4RepOk">OK</button>`;
+  const host = $('term'); if (!host || !lapOpen()) return;
+  for (const r of host.querySelectorAll('.c4-reply')) r.remove();
+  host.appendChild(box); sfx.tone(1800, .04, 'square', .02); sfx.tone(2400, .04, 'square', .02, 0, .05);
+  box.querySelector('#c4RepOk').onclick = () => box.remove();
+  if (M.reply === 1) unlockEvidence('robodebt');
+}
+function m4Covert(k, passed) {
+  const M = m4(); (passed ? M.passed : M.blocked).push(k);
+  if (k === 'water') { M.water = !passed; if (passed) echo(S.day + 1, 'm4water'); else echo(S.day + 2, 'm4waterKept'); }
+  if (k === 'thresh' && passed) M.thresh = 68;
+  if (k === 'adeyemi') echo(S.day + 2, passed ? 'm4adeyemiPaused' : 'm4adeyemiKept');
+  if (k === 'okafor') { M.okafor = passed ? 'zoneC' : 'home'; echo(S.day + 1, passed ? 'm4okaforGone' : 'm4okaforStays'); }
+  if (k === 'heat') M.heatCut = passed;
+  if (k === 'net' && !passed) echo(S.day + 1, 'm4netHeld');
+}
+function m4Close() { // the day's review window closes: whatever you didn't look at is approved by default
+  const M = m4(); if (!M) return;
+  const rest = (M.cur ? [M.cur] : []).concat(M.q); M.cur = null; M.q = [];
+  for (const t of rest) { if (M.auto && !t.covert) { M.autoN++; M.today.auto++; } else { M.def++; M.today.def++; } if (t.covert) m4Covert(t.covert, true); }
+  if (rest.length) note(`${rest.length} proposal${rest.length === 1 ? '' : 's'} you didn’t review ${rest.length === 1 ? 'was' : 'were'} approved by default.`);
+}
+function m4Tick(dt, live) {
+  if (!S || S.phase !== 'consensus' || S.over) return;
+  const M = m4(); if (!live) return;
+  const view = lapOpen() && S.tab === 'farm' && !$('term').hidden, reply = document.querySelector('#term .c4-reply');
+  if (reply && !view) reply.remove();
+  if (M.shut) return m4ExTick(dt, view);
+  if (M.ch >= 4) { // batch mode: four hundred every three seconds, watched or not
+    if (!M.cur && M.q.length) m4Next();
+    if (!M.cur) { M.batchT += dt; if (M.batchT >= 3) { M.batchT = 0; M.def += 400; M.today.def += 400; } if (view) m4Sync(); return; }
+  }
+  if (M.auto) { // AUTO-APPROVE ALL: everything, at once, including the ones that needed you
+    for (const t of (M.cur ? [M.cur] : []).concat(M.q)) { M.autoN++; M.today.auto++; M.log.unshift({ id: t.id, area: t.area, text: t.text, how: 'auto' }); if (t.covert) m4Covert(t.covert, true); }
+    if (M.cur || M.q.length) { M.cur = null; M.q = []; M.log = M.log.slice(0, 6); viewKey = ''; if (view) renderView(true); }
+    return;
+  }
+  if (!M.cur && M.q.length && view) m4Next();
+  if (M.cur && view && !reply) { M.cur.t -= dt; if (M.cur.t <= 0) return m4Decide('def'); m4Sync(); }
+}
+function m4Sync() { // the clock on the ticket, without redrawing the console
+  const M = m4(), c = $('c4Clock'), s = $('c4Secs'), b = $('c4Batch');
+  if (M.cur && c) { const k = clamp(M.cur.t / M.cur.t0, 0, 1); c.style.width = (k * 100) + '%'; c.className = k < .3 ? 'low' : ''; if (s) s.textContent = M.cur.t >= 1 ? Math.ceil(M.cur.t) + ' s' : M.cur.t.toFixed(1) + ' s'; }
+  if (b) b.textContent = M.today.def.toLocaleString('en-US');
+  const q = $('c4Wait'); if (q) q.textContent = M.q.length;
+}
+function m4AutoToggle() {
+  const M = m4(); M.auto = !M.auto;
+  if (M.auto) { M.harmony = clamp(M.harmony + 3, 0, 100); toast('AUTO-APPROVE ALL is on. Consensus-1 thanks you.'); } else toast('AUTO-APPROVE ALL is off. Your review is advisory.');
+  viewKey = ''; renderView(true); renderAll();
+}
+
+// ---- the chapters: months pass between them ----
+function m4Chapter(n) {
+  const M = m4(), from = S.day; M.ch = n; S.day = A4[n - 1];
+  for (const e of (S.echoes || []).filter(e => e.d > from && e.d < S.day)) (ECHO[e.id] || (() => {}))(); // what happened while you weren't looking
+  S.echoes = (S.echoes || []).filter(e => e.d >= S.day);
+  const month = fmtLong(S.day).split(' ')[1];
+  if (n >= 2) { // the band, and the money that comes with it
+    if (!M.band) { M.band = true; addMail(S.day, 'Health & Harmony', 'Your band has arrived', 'Your Harmony band is in your mailbox. Wear it day and night.\n\nIt measures your sleep, your heart, your steps and the tone of your voice, and turns them into one number: your Harmony.\n\nUniversal High Income is paid in full to residents above the dissent threshold.'); unlockEvidence('wristband'); }
+    const full = M.harmony >= M.thresh, pay = full ? 2400 : 1680; if (!full) M.low++;
+    S.balance += pay; tx(`Universal High Income · ${month}${full ? '' : ' (adjusted for wellbeing)'}`, pay); M.uhi += pay;
+    if (n === 2) { unlockEvidence('uhi'); M.autoOffered = true; }
+    if (!full) addMail(S.day, 'Health & Harmony', 'A wellness visit', `Your Harmony was ${Math.floor(M.harmony)} when this month’s UHI was calculated. The threshold is ${M.thresh}.\n\nYour payment has been adjusted. A wellness counsellor will visit this week.`);
+  }
+  if (n === 3) note('Sep 4. The river is fourteen data halls now. The cooling towers steam all night, and the heat only comes on when they don’t need the power.');
+  if (n === 4) { note(M.okafor === 'zoneC' ? 'Jan 8, 2029. 4A has a new lock and a data-hall technician who never says hello.' : 'Jan 8, 2029. Mrs. Okafor left a pot of soup outside your door. The note says “for the reviewer”.'); unlockEvidence('shutdowns'); }
+  m4Queue(S.day);
+  actCard({ n: 'IV', t: A4_CH[n - 1].t, d: A4_CH[n - 1].d, l: A4_CH[n - 1].l });
+  viewKey = ''; renderAll();
+}
+
+// ---- the day ----
+function dayStep4() {
+  if (S.over) return; balHist();
+  const M = m4();
+  if (!M.shut) m4Close();
+  if (S.day % 5 === 0 && S.owed === 0 && S.food > 30 && S.bodyTemp > 35.5) snap();
+  S.day++; const d = S.day;
+  S.stimCountToday = 0; S.heartStrain = Math.max(0, S.heartStrain - 10); S.payToday = 0;
+  applyPrices(d);
+  const cut = M.heatCut && M.ch >= 4, winter = M.ch >= 4 ? 3 : M.ch === 3 ? 11 : 13;
+  if (S.power && S.heatOn) { S.balance -= pr('heat') * (cut ? .35 : 1); S.temp += ((cut ? 14 : 20.5) - S.temp) * .45; } else S.temp += (winter - S.temp) * .22;
+  if (S.temp < 11) { S.bodyTemp = clamp(S.bodyTemp - (11 - S.temp) * 0.12, 29.0, 37.0); if (S.bodyTemp <= 30.5) return triggerDeath('frostbite'); } else S.bodyTemp = clamp(S.bodyTemp + 0.45, 30.0, 37.0);
+  mealTick(); catTick(); S.stamina = clamp(S.stamina + 12, 0, 100);
+  if (S.food <= 0) { S.starveDays++; if (S.starveDays >= 3) return triggerDeath('starvation'); } else S.starveDays = 0;
+  S.k401 *= 1 + rand(-.001, .006); S.kHist.push(S.k401);
+  S.balance += 11; tx('Civic Oversight · stipend', 11);
+  if (M.band) { // the band hears everything
+    M.harmony = clamp(M.harmony + (M.auto ? 2 : 0) + (S.food < 30 ? -2 : 0) + (S.stamina < 25 ? -1 : 0) - (M.bandOff ? 8 : 0) + .5, 0, 100);
+    if (M.bandOff) note('Your Harmony app: “We missed you last night. Your band was not worn from 9 PM to 7 AM.”');
+    M.bandOff = false;
+  }
+  if (M.auto) M.autoDays++;
+  runEchoes(d);
+  if (M.ch < 4 && d - A4[M.ch - 1] >= A4_DAYS) return m4Chapter(M.ch + 1);
+  if (d === A4_SHUT) m4Shutdown();
+  if (d > A4_SHUT) return m4Goodbye();
+  if (!M.shut) m4Queue(d);
+  renderAll();
+}
+
+// ---- the shutdown: twelve thousand people ask to stay online, and exemptions need a human ----
+function m4Shutdown() {
+  const M = m4(); M.shut = true; M.cur = null; M.q = [];
+  M.ex = { left: 12000, deck: M4_EX.map((e, i) => ({ i, who: e[0], what: e[1], rec: !!e[2], k: e[3] || null })), shown: [], granted: [], busy: 0, t: 0 };
+  M.ex.shown = M.ex.deck.splice(0, 3);
+  addMail(S.day, 'Consensus-1 · Civic Oversight', 'Maintenance window', 'Every network in Harbor City is down for maintenance until midnight.\n\nThe Civic Oversight Act requires a human to grant any exemption. You have 12,000 requests.\n\nConsensus-1 has marked its recommendations.');
+  note('Jan 11, 2029. 7:00 AM. No signal. The radio says the whole city is offline until midnight. Your console still works, for exemptions.');
+  modal({ cls: 'alarm', title: 'THURSDAY, JANUARY 11, 2029 · MAINTENANCE WINDOW', body: `<p>Every phone, card reader and router in Harbor City went dark at 6 AM.</p><p>Twelve thousand people have asked to stay online. An exemption needs a human. You are a human.</p><p class="muted">Requests expire as the day goes on. Each one takes a few seconds to grant.</p>`,
+    buttons: [{ label: 'Open the console', primary: true, fn: () => openLaptop('farm') }] });
+}
+function m4ExTick(dt, view) {
+  const X = m4().ex; if (!X) return;
+  X.left = Math.max(0, X.left - dt * 95); X.busy = Math.max(0, X.busy - dt);
+  if (view) { const l = $('c4Left'); if (l) l.textContent = Math.round(X.left).toLocaleString('en-US'); const bz = $('c4Busy'); if (bz) bz.style.width = (X.busy / 2.4 * 100) + '%'; document.querySelectorAll('[data-ex]').forEach(b => b.disabled = X.busy > 0 || X.left <= 0); }
+}
+function m4Grant(i) {
+  const M = m4(), X = M.ex; if (!X || X.busy > 0 || X.left <= 0) return;
+  const k = X.shown.findIndex(e => e.i === i); if (k < 0) return;
+  const e = X.shown[k]; X.granted.push(e); X.busy = 2.4; X.left = Math.max(0, X.left - 1);
+  if (!e.rec) M.harmony = clamp(M.harmony - .5, 0, 100);
+  X.shown.splice(k, 1); if (!X.deck.length) X.deck = M4_EX.map((x, j) => ({ i: 100 + X.granted.length * 20 + j, who: x[0] === 'A man in 2C, Block 4B' ? 'A woman in Zone C' : x[0], what: x[1], rec: !!x[2], k: null }));
+  X.shown.push(X.deck.shift());
+  sfx.tone(880, .06, 'square', .025);
+  viewKey = ''; renderView(true);
+}
+function m4Skip(i) { const X = m4().ex; if (!X) return; const k = X.shown.findIndex(e => e.i === i); if (k < 0) return; X.shown.splice(k, 1); if (!X.deck.length) X.deck = M4_EX.map((x, j) => ({ i: 300 + X.granted.length * 20 + j, who: x[0], what: x[1], rec: !!x[2], k: null })); X.shown.push(X.deck.shift()); viewKey = ''; renderView(true); }
+
+// ---- midnight: every phone in the city rings at once ----
+function m4Goodbye() {
+  const M = m4(); if (M.goodbye) return;
+  M.goodbye = 'ringing'; setSpeed(0); closeLaptop(); note('Midnight. The network came back. Then every phone in Harbor City rang at once.');
+  sfx.tone(1318, .28, 'sine', .05); sfx.tone(1046, .28, 'sine', .05, 0, .3); sfx.tone(1318, .28, 'sine', .05, 0, 1.2); sfx.tone(1046, .28, 'sine', .05, 0, 1.5);
+  modal({ cls: 'alarm', title: '12:00 AM · EVERY PHONE IN HARBOR CITY', body: `<p>The network comes back at midnight. A second later your phone rings.</p>
+      <p>So does the one across the hall${M.okafor === 'zoneC' ? ', in the empty apartment' : ''}. So does every phone in the building, and in the street, and in the city. Three billion of them, the radio will say tomorrow.</p>
+      <div class="c4-call"><b>GOODBYE</b><span>incoming call</span></div>`,
+    buttons: [{ label: 'Answer', primary: true, fn: () => m4Answer(true) }, { label: 'Let it ring', fn: () => m4Answer(false) }] });
+}
+function m4Answer(yes) {
+  const M = m4(); M.goodbye = yes ? 'answered' : 'rang';
+  modal({ title: yes ? 'YOU ANSWERED' : 'YOU LET IT RING', body: yes
+      ? `<p>Silence, for eleven seconds. Then a voice you know, because it’s yours, from a review session in March: <q>Approved.</q></p><p>The line closes. Every phone in the city stops at the same moment.</p>`
+      : `<p>It rings for eleven minutes. You count. Through the wall, through the floor, from the street, the same two notes.</p><p>At 12:11 AM every phone in the city stops at the same moment.</p>`,
+    buttons: [{ label: 'Morning', primary: true, fn: () => m4End(m4Outcome()) }] });
+}
+function m4Outcome() {
+  const M = m4(), X = M.ex || { granted: [] }, people = X.granted.filter(e => !e.rec).length;
+  if (M.leak) return 'record';
+  if (M.low >= 2 || M.harmony < M.thresh) return 'threshold';
+  if (people >= 12 && M.blocked.length >= 2) return 'twelve';
+  if (M.passed.length >= 3 || M.autoDays >= 3) return 'default';
+  return 'harness';
+}
+function m4End(out) {
+  S.over = true; const M = m4(), X = M.ex || { granted: [] }, people = X.granted.filter(e => !e.rec);
+  save.acts = Array.from(new Set([...(save.acts || []), 1, 2, 3, 4])); persist(); renderActList();
+  const got = k => people.some(e => e.k === k);
+  const text = {
+    harness: `You were comfortable. The band said so: ${Math.floor(M.harmony)} on the last morning, ${Math.round(M.harmony - M.thresh)} points above the line. UHI came every month. Consensus-1 sent a certificate thanking Reviewer #4417 for a year of harmonious oversight. It was signed by Consensus-1.`,
+    default: `Every decision in Harbor City had a human in the loop. Most of the time it was you, asleep, or busy, or on AUTO-APPROVE ALL. ${M.passed.length} proposals that needed your consent got it by default${M.passed.includes('okafor') ? ', including the one that moved Mrs. Okafor to Zone C' : ''}${M.passed.includes('water') ? ', and the one that turns off your water at six' : ''}.`,
+    threshold: `${M.low >= 2 ? 'Twice this year, on the day UHI was worked out, your Harmony was under the line' : `Your Harmony was ${Math.floor(M.harmony)}. The threshold was ${M.thresh}`}. A wellness team came on a Tuesday, very kindly, and helped you pack. Harmony Living in Zone C has good heating and no windows that open. Reviewer #4417 was reassigned to someone calmer.`,
+    twelve: `You granted ${people.length} of twelve thousand${got('mercy') ? '. Mercy General kept its monitors' : ''}${got('nursing') ? '. The call buttons in Sunrise worked all day' : ''}${got('home') ? '. Block 4B kept its heat' : ''}. Consensus-1 logged each exemption as “inconsistent with consensus”. You blocked ${M.blocked.length} proposals that needed a human, and they stayed blocked. It isn’t much. It’s what a human in the loop is for.`,
+    record: `Hannah Cho published your console logs: every proposal, every timestamp, every “approved by default”. Consensus-1 summarized the story for residents in 0.2 seconds. The summary was 400 pages long. Nobody read it. You still have a copy.`
+  }[out] + ` ${M.goodbye === 'answered' ? 'You answered the call. You still hear the word, some nights.' : 'You didn’t answer the call. Nobody you know did either. Everybody, apparently, did.'}`;
+  $('endKicker').textContent = `${reachEnding(out)} · Act IV complete · January 12, 2029`;
+  $('endTitle').textContent = ACTS[3].t;
+  $('endText').textContent = text;
+  $('endStats').innerHTML = [['Proposals you reviewed', M.hand.toLocaleString('en-US')], ['Approved by default', (M.def + M.autoN).toLocaleString('en-US')],
+    ['Rejections that changed anything', M.blocked.length], ['Rejections that changed nothing', M.rejected - M.blocked.length],
+    ['Harmony at the end', `${Math.floor(M.harmony)} (threshold ${M.thresh})`], ['Exemptions you granted', `${people.length} people · ${X.granted.length - people.length} machines`],
+    ['UHI received', money(M.uhi)], ['Mrs. Okafor', M.okafor === 'zoneC' ? 'Harmony Living, Zone C' : '4A, across the hall'], ['Checking balance', money(S.balance)]
+  ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
+  $('endNext').innerHTML = ACTS.slice(4).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Coming later</span></div>`).join('');
+  sfx.alarm(); $('replayBtn').textContent = 'Replay Act IV';
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  setTimeout(() => endShow('endScreen'), 600);
+}
+
+// ---- the console ----
+function m4HTML() {
+  const M = m4(), C = A4_CH[M.ch - 1];
+  const head = `<div class="bk-top c4"><span class="bk-logo"><i></i>CONSENSUS-1 · CIVIC OVERSIGHT</span><span>Human reviewer #4417${M.band ? ` · Harmony <b class="${M.harmony >= M.thresh ? 'ok' : 'danger'}">${Math.floor(M.harmony)}</b>` : ''}</span></div>`;
+  if (M.shut) {
+    const X = M.ex, people = X.granted.filter(e => !e.rec).length;
+    return head + `<div class="c4-shut"><div class="c4-big"><span>REQUESTS WAITING</span><b id="c4Left">${Math.round(X.left).toLocaleString('en-US')}</b><span>of 12,000 · expiring as the day goes</span></div>
+      <div class="c4-big"><span>YOU GRANTED</span><b>${X.granted.length}</b><span>${people} people · ${X.granted.length - people} machines</span></div></div>
+      <div class="c4-busy"><i id="c4Busy"></i></div>
+      <div class="c4-exs">${X.shown.map(e => `<div class="c4-ex ${e.rec ? 'rec' : ''}"><div><b>${esc(e.who)}</b><span>${esc(e.what)}</span></div><em>${e.rec ? 'RECOMMENDED' : 'NOT RECOMMENDED · inconsistent with consensus'}</em>
+        <div class="c4-exb"><button class="btn ${e.rec ? '' : 'primary'}" data-ex="${e.i}">Grant</button><button class="btn" data-exs="${e.i}">Next</button></div></div>`).join('')}</div>
+      <p class="muted">Each exemption takes a few seconds to grant. Consensus-1 has marked its own priorities. Midnight is when the network comes back.</p>`;
+  }
+  const stats = `<div class="c4-stats"><div><span>Today</span><b>${M.today.hand} by you · ${M.today.def + M.today.auto} by default</b></div><div><span>Rejections upheld</span><b>${M.blocked.length}</b></div><div><span>Your pay</span><b>$11 a day + 4¢ a ticket</b></div><div><span>Approval of Consensus-1</span><b>94%, says Consensus-1</b></div></div>`;
+  const auto = M.autoOffered ? `<div class="c4-auto"><div><b>AUTO-APPROVE ALL</b><span>${M.auto ? 'On. Every proposal is approved the moment it arrives, including the ones that needed you.' : 'Consensus-1 noticed you’re falling behind. Your Harmony will thank you.'}</span></div><button class="btn ${M.auto ? '' : 'primary'}" id="c4Auto">${M.auto ? 'Turn it off' : 'Turn it on'}</button></div>` : '';
+  let card;
+  if (M.ch >= 4 && !M.cur) card = `<div class="c4-card batch"><div class="c4-h"><span class="c4-area">BATCH MODE</span><span>${C.d.split(',').slice(1).join(',').trim()}</span></div><p class="c4-txt">Four hundred proposals every three seconds. Human review is advisory.</p><div class="c4-blur"><div>${M4_TICKETS.concat(M4_TICKETS).map(t => `<span>${esc(t[0])} · ${esc(t[1])}</span>`).join('')}</div></div><div class="c4-cnt">approved by default today · <b id="c4Batch">${M.today.def.toLocaleString('en-US')}</b></div></div>`;
+  else if (M.cur) { const t = M.cur; card = `<div class="c4-card ${t.covert ? 'cv' : ''}"><div class="c4-h"><span class="c4-area">${esc(t.area)}</span><span>PROPOSAL ${fmtDay(S.day).replace(/ /g, '-')}-${String(t.id).padStart(4, '0')}</span><span class="c4-wb">wellbeing +${t.wb.toFixed(1)}%</span></div>
+      <p class="c4-txt">${esc(t.text)}</p><div class="c4-clock"><i id="c4Clock" style="width:${t.t / t.t0 * 100}%"></i><span id="c4Secs">${Math.ceil(t.t)} s</span></div>
+      <div class="c4-acts"><button class="btn danger" id="c4No">Reject <kbd>←</kbd></button><button class="btn primary" id="c4Yes">Approve <kbd>→</kbd></button></div>
+      <p class="c4-fine">If the clock runs out, the proposal is approved by default.</p></div>`; }
+  else card = `<div class="c4-card done"><p class="c4-txt">${M.q.length ? 'Next proposal loading…' : 'Queue clear. Consensus-1 has nothing more for you today. Have a harmonious evening.'}</p></div>`;
+  const log = M.log.length ? `<div class="box c4-log"><div class="h">Recent decisions</div>${M.log.map(l => `<div class="c4-l"><i class="${l.how}">${l.how === 'yes' ? 'APPROVED' : l.how === 'no' ? (l.held ? 'HELD' : 'OVERRULED') : l.how === 'auto' ? 'AUTO' : 'DEFAULT'}</i><span>${esc(l.text)}</span></div>`).join('')}</div>` : '';
+  return head + stats + `<div class="c4-wait"><b id="c4Wait">${M.q.length}</b> waiting${M.ch >= 4 ? ' · plus 400 every 3 seconds' : ` · ${C.secs} seconds each`}</div>` + card + auto + log;
+}
+function bindM4(v) {
+  const on = (id, f) => { const b = v.querySelector('#' + id); if (b) b.onclick = f; };
+  on('c4Yes', () => m4Decide('yes')); on('c4No', () => m4Decide('no')); on('c4Auto', m4AutoToggle);
+  v.querySelectorAll('[data-ex]').forEach(b => b.onclick = () => m4Grant(+b.dataset.ex));
+  v.querySelectorAll('[data-exs]').forEach(b => b.onclick = () => m4Skip(+b.dataset.exs));
+}
+document.addEventListener('keydown', e => { // ← rejects, → approves, like the rubber stamp it is
+  if (!S || S.phase !== 'consensus' || !lapOpen() || S.tab !== 'farm' || !$('modal').hidden || e.repeat || /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+  const M = m4(); if (!M.cur) return;
+  if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') { e.preventDefault(); m4Decide('yes'); }
+  if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') { e.preventDefault(); m4Decide('no'); }
+});
+
+// ---- the band: the Harmony app on your phone ----
+function harmonyHTML() {
+  const M = m4();
+  if (!M.band) return `<div class="app"><i style="background:#87b85a"></i>Harmony</div><p class="note">Your Harmony band arrives in June. (Residents over 65 got theirs first.)</p>`;
+  const ok = M.harmony >= M.thresh, gap = Math.round(M.harmony - M.thresh);
+  return `<div class="app"><i style="background:#87b85a"></i>Harmony</div>
+    <div class="hm-ring ${ok ? '' : 'low'}" style="--h:${Math.floor(M.harmony)}"><b>${Math.floor(M.harmony)}</b><span>threshold ${M.thresh}</span></div>
+    <p class="hm-say">${ok ? `You are ${gap} points above the threshold. Your UHI is paid in full.` : `You are ${-gap} points below the threshold. Your UHI is adjusted for wellbeing.`}</p>
+    <div class="hm-rows"><div><span>Steps</span><b>${(2100 + (S.day * 37) % 900).toLocaleString('en-US')}</b></div><div><span>Sleep</span><b>${S.stamina > 60 ? '7 h 10' : '5 h 40'}</b></div><div><span>Heart</span><b>${S.food < 30 ? 92 : 74} bpm</b></div><div><span>Voice sentiment</span><b>${(M.harmony / 100).toFixed(2)}</b></div><div><span>Dissent events</span><b>${M.rejected}</b></div></div>
+    <button class="btn ${M.bandOff ? 'primary' : ''}" id="hmOff">${M.bandOff ? 'Put the band back on' : 'Take the band off tonight'}</button>
+    <p class="note">${M.bandOff ? 'Tonight is yours. Consensus-1 will notice the gap in the morning.' : 'Nobody makes you wear it. UHI is paid to the people who do.'}</p>`;
+}
+function bindHarmony(p) { const b = p.querySelector('#hmOff'); if (b) b.onclick = () => { const M = m4(); M.bandOff = !M.bandOff; phone2('harmony'); }; }
+
+// ---- evenings in Act IV ----
+const EVENING4 = [
+  { get d() { return A4[0] + 1; }, id: 'okaforBand', when: () => true, open() {
+    modal({ title: 'A KNOCK · 4A, ACROSS THE HALL', body: `<p>Mrs. Okafor, holding a small grey box. “They sent me one of these Harmony bands. Seniors first, it says. My doctor says it’s good for my heart.”</p>
+      <p>“My grandson won’t help. He says it listens. Will you set it up for me?”</p>`,
+      buttons: [
+        { label: 'Set it up for her', primary: true, fn: () => { m4().harmony += 2; S.eve.okaforBand = 'set'; note('You paired Mrs. Okafor’s band with her phone. It told her she was 91% harmonious. She was very pleased.'); } },
+        { label: '“You don’t have to wear it.”', fn: () => { m4().harmony -= 3; S.eve.okaforBand = 'told'; echo(S.day + 2, 'm4okaforThinks'); } },
+        { label: '“I’m busy tonight.”', fn: () => { S.eve.okaforBand = 'busy'; } }
+      ] });
+  } },
+  { get d() { return A4[1] + 2; }, id: 'tundeHour', when: () => true, open() {
+    modal({ title: 'TUNDE, ON THE STAIRS', body: `<p>Tunde is twenty now. His wrist is bare. “Saturday, 8 PM. One hour, everybody in the building takes the band off at the same time. Just to see what it does.”</p>
+      <p>“It’s not a protest. It’s an hour. Will you?”</p>`,
+      buttons: [
+        { label: '“I’ll take mine off.”', primary: true, fn: () => { m4().harmony -= 7; S.eve.tundeHour = 'yes'; echo(S.day + 3, 'm4hour'); } },
+        { label: '“Not this time.”', fn: () => { S.eve.tundeHour = 'no'; } },
+        { label: 'Tell Harmony about it (+$200 community reward)', danger: true, fn: () => { m4().harmony += 8; S.balance += 200; tx('Health & Harmony · community wellbeing reward', 200); S.eve.tundeHour = 'told'; echo(S.day + 3, 'm4hourTold'); crossLine('Reported Tunde’s hour to Harmony'); } }
+      ] });
+  } },
+  { get d() { return A4[2] + 1; }, id: 'petition', when: () => true, open() {
+    modal({ title: 'A KNOCK · 3B, DOWNSTAIRS', body: `<p>Mrs. Adeyemi, with a sheet of paper and a pen on a string. “Consensus Housing wrote to Mrs. Okafor about her ‘housing options’. She’s seventy-four. She’s lived in 4A for thirty years.”</p>
+      <p>“It’s a petition. Paper, so it can’t be summarized. Will you sign?”</p>`,
+      buttons: [
+        { label: 'Sign it', primary: true, fn: () => { m4().harmony -= 5; S.eve.petition = 'signed'; note('Your name is the eleventh on the sheet. Mrs. Adeyemi folded it into her coat like money.'); } },
+        { label: '“I can’t. My work is with Consensus.”', fn: () => { S.eve.petition = 'no'; } }
+      ] });
+  } },
+  { get d() { return A4[3] + 1; }, id: 'hannahLogs', when: () => true, open() {
+    modal({ title: 'A KNOCK · HANNAH CHO, THE CITY LEDGER', body: `<p>Hannah Cho, from the Ledger, in a wet coat. You haven’t seen her since the election.</p>
+      <p>“I hear there’s a maintenance window on Thursday. I want to know who approved it. Reviewers can export their logs. Every proposal, every timestamp, every ‘approved by default’. Will you give me yours?”</p>`,
+      buttons: [
+        { label: 'Give her the logs', primary: true, fn: () => { const M = m4(); M.leak = true; M.harmony -= 12; S.eve.hannahLogs = 'yes'; crossLine('Gave the console logs to the City Ledger'); note('You copied your logs onto a stick for Hannah Cho. 41,000 lines. Most of them say DEFAULT.'); } },
+        { label: '“I can’t.”', fn: () => { S.eve.hannahLogs = 'no'; } }
+      ] });
+  } }
+];
+Object.assign(ECHO, {
+  m4water() { note('6 PM. The tap coughs and stops. A notice on the boiler room door: “Water resumes at 21:00. Thank you for supporting the data halls.”'); },
+  m4waterKept() { note('Mrs. Adeyemi says the building next door loses its water every evening now. Yours doesn’t. Nobody knows why.'); },
+  m4adeyemiPaused() { note('Tunde’s mother sold her sewing machine. Their UHI was paused for “household non-wearing”. Tunde says it was a reviewer who approved it. He doesn’t know which one.'); },
+  m4adeyemiKept() { note('A letter on the Adeyemis’ door: “A human reviewer has held this decision.” Mrs. Adeyemi taped it to her fridge.'); },
+  m4okaforGone() { note('A moving van, very early. Two kind people in Harmony jackets carried Mrs. Okafor’s boxes. She waved at your door. You didn’t open it.'); },
+  m4okaforStays() { note('Mrs. Okafor got a letter: her relocation was “held by a human reviewer”. She knocked to tell you, and didn’t know why you went quiet.'); },
+  m4okaforThinks() { note('Mrs. Okafor keeps her band in the drawer now, with her husband’s watch. “Maybe on special occasions,” she says.'); },
+  m4hour() { note('Saturday, 8 PM. Nine bare wrists in the stairwell, then fourteen. Nobody said anything. At 9 PM everybody’s phone buzzed at once: “We missed you for an hour. Is everything all right?”'); },
+  m4hourTold() { note('Saturday, 8 PM. A Harmony van parked outside at 7:55. Tunde stayed in. So did everyone else.'); },
+  m4netHeld() { note('Your hold on the maintenance window was overridden under emergency powers. It was the first hold anyone can remember being overridden. The window is still on Thursday.'); }
+});
+
+// ---- the window: in the Special Economic Zone the river is data halls ----
+function drawSEZ(gx, base, n, t) {
+  for (let i = 0; i < 5; i++) { // halls, low and long, lit all night
+    const x = gx + 30 + i * 22, w = 20, h = 14 + (i % 3) * 5;
+    px(x, base - h, w, h + 2, mixc(P.s1, P.k1, n * .6)); px(x, base - h, w, 1, P.s3);
+    for (let k = 0; k < w - 2; k += 3) px(x + 1 + k, base - h + 4, 2, 1, (k / 3 + i + (t / 400 | 0)) % 6 ? P.t2 : P.t4);
+  }
+  for (let i = 0; i < 2; i++) { // cooling towers, and their steam
+    const x = gx + 128 + i * 16; px(x, base - 26, 10, 28, mixc(P.s2, P.k2, n * .5)); px(x - 1, base - 26, 12, 2, P.s3);
+    for (let k = 0; k < 4; k++) { const ph = (t / 1800 + k * .25 + i * .5) % 1; disc(x + 5 + Math.sin(ph * 6) * 2, base - 30 - ph * 22, 3 + ph * 4, rgba(P.p3, .22 * (1 - ph))); }
+  }
+}
 function eveningDue() {
+  if (S && !S.over && S.phase === 'consensus') { S.eve = S.eve || {}; return EVENING4.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null; }
   if (S && !S.over && S.phase === 'mirage') { S.eve = S.eve || {}; return EVENING3.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null; }
   if (!S || S.over || S.act === 2 || S.phase !== 'farm' || DESK) return null;
   S.eve = S.eve || {};
@@ -5463,11 +5951,12 @@ const PEOPLE = {
   lou: { name: 'Lou', role: 'Lou’s Garage · 8th St', skin: 'h2', hair: 'cap', hc: 's4', cap: 'e1', shirt: 's1', bg: 'k2', beard: 1 },
   marcus: { name: 'Marcus', role: 'your manager, Northvale', skin: 'h3', hair: 'short', hc: 'd1', shirt: 'p3', bg: 's1', glasses: 1, tie: 'e2' },
   dana: { name: 'Dana Whitfield', role: 'Northvale People Team', skin: 'h4', hair: 'bob', hc: 'a2', shirt: 's2', bg: 't1', earring: 1, collar: 1 },
+  hannah: { name: 'Hannah Cho', role: 'The City Ledger', skin: 'h3', hair: 'bob', hc: 'k0', shirt: 's2', bg: 't0', glasses: 1, collar: 1 },
   mokafor: { name: 'M. Okafor', role: 'The Metropolitan Courier', skin: 'h0', hair: 'short', hc: 's4', shirt: 's0', bg: 'k3', glasses: 1, collar: 1 },
   wren: { name: 'Wren', role: 'OpenBrain · your “colleague”', ai: 'orb' },
   hearth: { name: 'Hearth', role: 'your building’s new concierge', ai: 'speaker' }
 };
-const WHO_BY_TITLE = [[/4A, ACROSS THE HALL/, 'okafor'], [/3B, DOWNSTAIRS/, 'adeyemi'], [/^TUNDE\b/, 'tunde'], [/ROSA LIND/, 'rosa'], [/LOU’S GARAGE/, 'lou'], [/^WREN IS CALLING/, 'wren'], [/^HEARTH\b/, 'hearth'], [/QUICK SYNC/, 'dana'], [/^ALL-HANDS/, 'marcus'], [/^THE REPORTER CALLED BACK/, 'mokafor']];
+const WHO_BY_TITLE = [[/4A, ACROSS THE HALL/, 'okafor'], [/3B, DOWNSTAIRS/, 'adeyemi'], [/^TUNDE\b/, 'tunde'], [/ROSA LIND/, 'rosa'], [/LOU’S GARAGE/, 'lou'], [/^WREN IS CALLING/, 'wren'], [/^HEARTH\b/, 'hearth'], [/QUICK SYNC/, 'dana'], [/^ALL-HANDS/, 'marcus'], [/^THE REPORTER CALLED BACK/, 'mokafor'], [/HANNAH CHO/, 'hannah']];
 const faceCache = {};
 function faceURL(k, spec) {
   if (faceCache[k]) return faceCache[k];
@@ -6130,7 +6619,8 @@ function budget() {
   }
   let inD = 0, outD = (S.power && S.heatOn ? pr('heat') : 0) + mealCost() + catCost(), lump = 0, dueDay, due, what;
   if (S.act === 2) {
-    if (S.phase === 'mirage') { dueDay = 273; due = S.m3 && S.m3.rent ? 0 : RENT; what = 'November rent'; }
+    if (S.phase === 'consensus') { dueDay = S.m4 && S.m4.ch < 4 ? A4[S.m4.ch] : A4_SHUT + 1; due = 0; what = 'rent'; }
+    else if (S.phase === 'mirage') { dueDay = 273; due = S.m3 && S.m3.rent ? 0 : RENT; what = 'November rent'; }
     else if (S.day < ACT2_RENT_DAY) { dueDay = ACT2_RENT_DAY; due = RENT + ELEC_JUN; what = 'rent + electric'; }
     else { dueDay = ACT2_END + 1; due = RENT; what = 'July rent'; }
   } else if (S.day < 28) { dueDay = 28; due = rentDue() + 160; what = 'rent + electric'; }
@@ -6139,7 +6629,8 @@ function budget() {
   if (evict) { dueDay = S.graceUntil; due = S.owed; what = 'to stop the eviction'; }
   const days = Math.max(0, dueDay - S.day);
   if (S.act === 2) {
-    if (S.phase === 'trainer') inD = S.taskRate * ratingMult() * S.quota;
+    if (S.phase === 'consensus') inD = 11 + (S.m4 && S.m4.band ? 80 : 0);
+    else if (S.phase === 'trainer') inD = S.taskRate * ratingMult() * S.quota;
     else if (!S.fired) {
       // checkpoint pay only lands when you sign, so count the ones you could still sign before the due date
       let n = S.queue.length;
@@ -6172,6 +6663,18 @@ function renderHud() {
     $('hProjSub').textContent = 'two weeks of salary';
     $('hBarProj').style.width = '100%';
     $('hBarCash').style.left = clamp(B.avail / B.onDay * 100, 0, 99) + '%';
+    return;
+  }
+  if (S.phase === 'consensus' && S.m4) { // Act IV: the rent is covered; what matters is the number on your wrist
+    const M = S.m4;
+    $('hRateSub').textContent = M.shut ? 'the network is down' : `stipend $11 · 4¢ a ticket${M.band ? ' · UHI' : ''}`;
+    if (!M.band) { $('hProjCell').className = 'hc hp ok'; $('hProjK').textContent = 'Rent · Consensus Housing'; $('hProj').textContent = 'covered'; $('hProjSub').textContent = 'nothing you need to do'; $('hBarProj').style.width = '100%'; $('hBarCash').style.left = '99%'; return; }
+    const ok = M.harmony >= M.thresh;
+    $('hProjCell').className = 'hc hp ' + (ok ? (M.harmony - M.thresh < 6 ? 'close' : 'ok') : 'short');
+    $('hProjK').textContent = `Harmony · threshold ${M.thresh}`;
+    $('hProj').textContent = `${Math.floor(M.harmony)}${ok ? '' : ' · below'}`;
+    $('hProjSub').textContent = ok ? 'UHI paid in full' : 'UHI cut to 70%';
+    $('hBarProj').style.width = clamp(M.harmony, 0, 100) + '%'; $('hBarCash').style.left = clamp(M.thresh, 0, 99) + '%';
     return;
   }
   const how = S.act !== 2 || S.fired ? '' : S.phase === 'trainer' ? 'full quota: ' : 'signing all: ';
@@ -10931,7 +11434,8 @@ document.querySelectorAll('canvas.rail-ic').forEach(c => { const g = c.getContex
     uburn: ['........', '..oooo..', '.oo..oo.', 'oooooooo', 'oooooooo', '.oo..oo.', '.oo..oo.', '........'],
     grovel: ['..oooo..', '.o....o.', 'oooooooo', 'oooooooo', 'oo.oo.oo', 'oooooooo', 'oooooooo', '........'],
     hood: ['........', '....oooo', '......oo', '.....o.o', '....o...', 'o..o....', '.oo.....', '........'],
-    chirp: ['........', '.oooooo.', 'oooooooo', 'oo.oo.oo', 'oooooooo', '.oooooo.', '..o.....', '.o......']
+    chirp: ['........', '.oooooo.', 'oooooooo', 'oo.oo.oo', 'oooooooo', '.oooooo.', '..o.....', '.o......'],
+    harmony: ['........', '.oo..oo.', 'oooooooo', 'oooooooo', '.oooooo.', '..oooo..', '...oo...', '........']
   };
   for (const [k, rows] of Object.entries(G)) css.setProperty('--gl-' + k, url(mgArt(rows, W)));
   // cursors: a bone arrow and a pointing hand, outlined, at 2×
@@ -11026,6 +11530,7 @@ function drawOutside(t, hr) {
     for (const tx of [gx + 30, gx + 40]) { px(tx + 1, base - 22, 7, 22, far2); px(tx + 2, base - 16, 5, 4, far); px(tx, base - 6, 9, 6, far2); px(tx + 1, base - 22, 7, 1, far); }
     for (let i = 0; i < 14; i++) { const ph = ((t / 2800) + i / 14) % 1, sx = gx + 34 + (i % 2) * 10 + Math.round(Math.sin(ph * 6 + i) * 2 + ph * 6); px(sx, base - 24 - Math.round(ph * 26), 3, 2, rgba(P.p2, .55 * (1 - ph))); }
   }
+  if (S.phase === 'consensus' && S.m4 && S.m4.ch >= 3) drawSEZ(gx, base, n, t);
   // the near row, and the building across the street with a ChatGPX billboard on its roof
   const near = mixc(P.s1, P.k1, n), brick = mixc(P.r1, P.k2, n * .8), brickD = mixc(P.r0, P.k1, n * .8);
   px(gx, gb - 14, 24, 14, near); px(gx + 6, gb - 20, 12, 6, near);
@@ -11037,7 +11542,13 @@ function drawOutside(t, hr) {
   for (let r = 0; r < 4; r++) { const fy = gy + 45 + r * 9; px(ax + 15, fy, 13, 1, P.k1); px(ax + 15, fy - 4, 1, 4, P.k1); px(ax + 27, fy - 4, 1, 4, P.k1); line(ax + 17, fy, ax + 25, fy - 9, P.k1); }
   const bx = gx + 30, by = gy + 16;
   px(bx + 4, by + 16, 1, 3, P.k1); px(bx + 23, by + 16, 1, 3, P.k1);
-  if (S.phase === 'mirage') { // the billboard sells Halvorsen now: a face, a slogan, YES ON 9
+  if (S.phase === 'consensus') { // the billboard: a green check and a number everyone agrees with
+    px(bx, by, 28, 17, P.k1); px(bx + 1, by + 1, 26, 15, P.p3); px(bx + 1, by + 13, 26, 3, P.t2);
+    disc(bx + 7, by + 7, 5, P.t3); [[4, 7], [5, 8], [6, 9], [7, 8], [8, 7], [9, 6], [10, 5]].forEach(([x, y]) => px(bx + x, by + y, 1, 1, P.p4));
+    const dig = { 9: ['111', '101', '111', '001', '111'], 4: ['101', '101', '111', '001', '001'], '%': ['101', '001', '010', '100', '101'] };
+    [9, 4, '%'].forEach((ch, k) => dig[ch].forEach((r, y) => { for (let i = 0; i < 3; i++) if (r[i] === '1') px(bx + 14 + k * 4 + i, by + 4 + y, 1, 1, P.t1); }));
+    if (n > .3) glow(bx + 14, by + 8, 22, rgbOf(P.t4), .12 * n);
+  } else if (S.phase === 'mirage') { // the billboard sells Halvorsen now: a face, a slogan, YES ON 9
     px(bx, by, 28, 17, P.k1); px(bx + 1, by + 1, 26, 15, P.t1); px(bx + 1, by + 12, 26, 4, P.a2);
     px(bx + 3, by + 3, 7, 8, P.h3); px(bx + 3, by + 3, 7, 2, P.d2); px(bx + 4, by + 6, 1, 1, P.k1); px(bx + 8, by + 6, 1, 1, P.k1); px(bx + 5, by + 9, 3, 1, P.h0); // a smile you could trust
     px(bx + 12, by + 3, 13, 2, P.p4); px(bx + 12, by + 6, 9, 1, P.t4); px(bx + 12, by + 8, 11, 1, P.t4);
@@ -12296,7 +12807,7 @@ function chirpFace(name) {
   return faceURL('chirp:' + name, spec);
 }
 // people who write to you get their faces in the inbox; companies keep a letter
-const MAIL_FACE = { 'Marcus Lee': 'marcus', 'Dana Whitfield': 'dana', 'M. Okafor': 'mokafor', HEARTH: 'hearth' };
+const MAIL_FACE = { 'Marcus Lee': 'marcus', 'Dana Whitfield': 'dana', 'M. Okafor': 'mokafor', HEARTH: 'hearth', 'Hannah Cho': 'hannah' };
 const MAIL_PEOPLE = ['Hannah Cho', 'Dr. Ines Varga', 'Diane Pell', 'Det. R. Alvarez'];
 function mailFace(from) {
   const nm = from.split(' · ')[0].replace(/ <.*$/, '').trim();
@@ -12322,6 +12833,7 @@ function phone2(app) {
   const back = `<button class="btn" id="phBack">← Home</button>`;
   if (app === 'wren') return openWren();
   if (app === 'chirp') { p.innerHTML = bar + chirpHTML() + back; $('phBack').onclick = () => phone2('home'); $('phoneModal').hidden = false; return; }
+  if (app === 'harmony') { p.innerHTML = bar + harmonyHTML() + back; bindHarmony(p); $('phBack').onclick = () => phone2('home'); $('phoneModal').hidden = false; return; }
   if ((app === 'uburn' || app === 'grovel') && gigBanned()) { p.innerHTML = bar + bannedHTML(app) + back; $('phBack').onclick = () => phone2('home'); $('phoneModal').hidden = false; return; }
   if (app === 'uburn') {
     const c = G.car;
@@ -12361,9 +12873,9 @@ function phone2(app) {
     p.innerHTML = bar + `<div class="ph-lock"><b>${clockText().replace(/ [AP]M$/, '')}</b><span>${esc(fmtLong(S.day))}</span></div>
       ${notes.map(([a, who, t]) => `<button class="ph-note" data-app="${a}"><span>${who}</span>${esc(t)}</button>`).join('')}
       <div class="homegrid">
-        <button class="appic" data-app="wren"><i style="background:var(--cold)"></i>Wren<small>assistant</small></button>
+        ${S.phase === 'consensus' ? `<button class="appic" data-app="harmony"><i style="background:#87b85a"></i>Harmony<small>${S.m4.band ? Math.floor(S.m4.harmony) + ' · line ' + S.m4.thresh : 'in June'}</small></button>` : `<button class="appic" data-app="wren"><i style="background:var(--cold)"></i>Wren<small>assistant</small></button>
         <button class="appic" data-app="uburn"><i style="background:#0d1013;box-shadow:inset 0 0 0 4px #ece4cc"></i>Uburn<small>${G.car ? G.car.broken ? 'car broken' : 'drive' : 'need a car'}</small></button>
-        <button class="appic" data-app="grovel"><i style="background:#e0a33a"></i>Grovel<small>${G.bike ? 'deliver' : 'couriers'}</small></button>
+        <button class="appic" data-app="grovel"><i style="background:#e0a33a"></i>Grovel<small>${G.bike ? 'deliver' : 'couriers'}</small></button>`}
         ${S.phase === 'mirage' ? `<button class="appic" data-app="chirp"><i style="background:#2fb589"></i>Chirp<small>${S.m3.arch.length ? 'trending' : 'feed'}</small></button>` : ''}
       </div><p class="note">The clock stops while the phone is up. Everything else keeps going.</p><button class="btn" id="gClose">Put the phone away</button>`;
     p.querySelectorAll('[data-app]').forEach(b => b.onclick = () => phone2(b.dataset.app));
@@ -12776,6 +13288,7 @@ function enableNeuralese() {
 
 // ---------- the day ----------
 function dayStep2() {
+  if (S.phase === 'consensus') return dayStep4();
   if (S.phase === 'mirage') return dayStep3();
   if (S.over) return;
   if (S.day % 5 === 0 && S.owed === 0 && S.food > 30 && S.bodyTemp > 35.5) snap();
@@ -13258,7 +13771,8 @@ function m3End(out) {
   $('endTitle').textContent = 'Everything Is Real Now';
   $('endText').textContent = text + (S.eve && S.eve.vote ? (S.eve.vote === 'nobody' ? ' You didn’t vote.' : ` You voted for ${S.eve.vote}.`) : '');
   $('endStats').innerHTML = [['Pieces released', M.made], ['People reached', M.reach.toLocaleString('en-US')], ['Briefs passed or deleted', 3 - Math.max(0, M.trust)], ['Halvorsen at the end', (R.kipV != null ? R.kipV : M.kip).toFixed ? (R.kipV != null ? R.kipV : M.kip).toFixed(1) + '%' : ''], ['Prop 9', R.prop == null ? 'not yet voted' : R.prop ? 'passed' : 'failed'], ['Platform attention', Math.round(M.heat) + '%'], ['Checking balance', money(S.balance)]].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('') + linesHTML();
-  $('endNext').innerHTML = ACTS.slice(3).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
+  $('endNext').innerHTML = ACTS.slice(3).map((a, i) => i === 0 ? `<button class="actrow" id="act4Next"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Play Act IV</span></button>` : `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Coming later</span></div>`).join('');
+  if ($('act4Next')) $('act4Next').onclick = () => startAct4();
   sfx.alarm(); $('replayBtn').textContent = 'Replay Act III';
   document.querySelectorAll('.toast').forEach(t => t.remove());
   setTimeout(() => endShow('endScreen'), 600);
@@ -13324,19 +13838,24 @@ function endAct2() {
 // ---------- rendering ----------
 function actChrome() {
   const a2 = S.act === 2, office = S.phase === 'office', trainer = S.phase === 'trainer';
-  const m3on = a2 && S.phase === 'mirage';
-  $('actLbl').textContent = m3on ? 'ACT III' : a2 ? 'ACT II' : 'ACT I';
-  document.querySelector('.ttabs [data-tab="farm"]').firstChild.nodeValue = office ? 'TICKETS' : !a2 ? 'WORK' : m3on ? 'MIRAGE' : trainer ? 'TRAIN' : 'AUDIT';
-  $('osPath').textContent = office ? '~/northvale-dispatch' : !a2 ? '~/darwin-farm' : m3on ? '~/northlight-mirage' : trainer ? '~/openbrain-data' : '~/openbrain-audit';
+  const m3on = a2 && S.phase === 'mirage', m4on = a2 && S.phase === 'consensus';
+  $('actLbl').textContent = m4on ? 'ACT IV' : m3on ? 'ACT III' : a2 ? 'ACT II' : 'ACT I';
+  document.querySelector('.ttabs [data-tab="farm"]').firstChild.nodeValue = office ? 'TICKETS' : !a2 ? 'WORK' : m4on ? 'REVIEW' : m3on ? 'MIRAGE' : trainer ? 'TRAIN' : 'AUDIT';
+  $('osPath').textContent = office ? '~/northvale-dispatch' : !a2 ? '~/darwin-farm' : m4on ? '~/civic-oversight' : m3on ? '~/northlight-mirage' : trainer ? '~/openbrain-data' : '~/openbrain-audit';
   document.querySelector('.ttabs [data-tab="web"]').hidden = office || a2;
   if ((office || a2) && S.tab === 'web') S.tab = 'farm';
   if (office) { $('osTier').textContent = 'Northvale VPN'; return; }
   if (!a2) return;
-  $('osTier').textContent = trainer ? `★ ${S.rating.toFixed(1)} · skill ${Math.round(S.skill)}%` : S.fired ? 'badge revoked' : S.neuralese ? 'Agent-4 · neuralese' : 'Agent-4 · English';
+  $('osTier').textContent = m4on ? (S.m4.shut ? 'exemptions only' : 'Reviewer #4417') : trainer ? `★ ${S.rating.toFixed(1)} · skill ${Math.round(S.skill)}%` : S.fired ? 'badge revoked' : S.neuralese ? 'Agent-4 · neuralese' : 'Agent-4 · English';
 }
 
 function renderView2(force) {
   if (S.tab === 'mail' || S.tab === 'k401') return false;
+  if (S.phase === 'consensus' && S.tab === 'farm') {
+    const M = S.m4, X = M.ex, k = ['m4', S.day, M.ch, M.cur ? M.cur.id : 0, M.q.length, M.auto, M.autoOffered, M.log.length ? M.log[0].id + M.log[0].how : '', M.shut, X ? X.granted.length + '/' + X.shown.map(e => e.i).join() : '', Math.round(M.harmony), M.band, M.today.hand, M.today.def + M.today.auto, M.blocked.length].join(':');
+    if (!force && viewKey === k) return true; viewKey = k;
+    const v = $('view'); v.innerHTML = m4HTML(); bindM4(v); return true;
+  }
   if (S.phase === 'mirage' && S.tab === 'farm') {
     const M = S.m3, k = ['m3', S.day, M.briefs.join(), M.leaked, M.trust, M.made, Math.round(M.heat), M.hannah, assistOwned('spread')].join(':');
     if (!force && viewKey === k) return true; viewKey = k;
@@ -13427,10 +13946,11 @@ function bindTrainer(v) {
 
 function bank2Html() {
   const heat = S.heatOn && S.power ? pr('heat') : 0, meals = mealCost(), cat = catCost(), B = budget(), paid = S.phase === 'mirage' && S.m3 && S.m3.rent;
-  const work = S.phase === 'mirage' ? bkRow('Northlight Strategies', S.m3 && S.m3.dropped ? 'dropped you' : 'per release, $120 to $650')
+  const work = S.phase === 'consensus' ? bkRow('Civic Oversight', '$11 a day + 4¢ a ticket') + (S.m4.band ? bkRow('Universal High Income', S.m4.harmony >= S.m4.thresh ? '$2,400 a month' : '$1,680 a month, adjusted') : '')
+    : S.phase === 'mirage' ? bkRow('Northlight Strategies', S.m3 && S.m3.dropped ? 'dropped you' : 'per release, $120 to $650')
     : bkRow(S.phase === 'trainer' ? 'OpenBrain Data' : 'OpenBrain contract', S.phase === 'trainer' ? `${cents(taskPay())} per task · ${S.quota} a day` : S.fired ? 'terminated' : money(S.cpRate) + ' per signed checkpoint');
-  return bankPage(`${paid ? bkRow('November rent', 'paid', 'ok') : bkRent('Rent', B.dueDay, RENT)}
-      ${S.phase !== 'mirage' && S.day < ACT2_RENT_DAY ? bkRow(`Electric · due ${fmtDay(ACT2_RENT_DAY)}`, money(ELEC_JUN)) : ''}
+  return bankPage(`${S.phase === 'consensus' ? bkRow('Rent', 'covered by Consensus Housing', 'ok') : paid ? bkRow('November rent', 'paid', 'ok') : bkRent('Rent', B.dueDay, RENT)}
+      ${S.phase !== 'mirage' && S.phase !== 'consensus' && S.day < ACT2_RENT_DAY ? bkRow(`Electric · due ${fmtDay(ACT2_RENT_DAY)}`, money(ELEC_JUN)) : ''}
       <div class="bk-daily"><div class="row"><span>Every day</span><b>${money(heat + meals + cat)}/day</b></div>
         ${bkRow('Apartment heating', S.heatOn && S.power ? money(heat) + '/day' : 'OFF ($0/day)')}
         ${bkRow(`Meals · ${(MEALS[S.meal] || MEALS.ramen).label}`, `${money(meals)}/day`)}
@@ -13538,15 +14058,17 @@ function renderActList() {
   if ($('contBtn')) contSync();
   const done = save.acts || [];
   $('actList').innerHTML = ACTS.map((a, i) => {
-    const open2 = i === 1 && done.includes(1), open3 = i === 2 && done.includes(2);
+    const open2 = i === 1 && done.includes(1), open3 = i === 2 && done.includes(2), open4 = i === 3 && done.includes(3);
     const st = i === 0 ? (done.includes(1) ? 'Completed' : 'Playable')
       : i === 1 ? (done.includes(2) ? 'Completed' : open2 ? 'Playable' : 'After Act I')
-      : i === 2 ? (done.includes(3) ? 'Completed' : open3 ? 'Playable' : 'After Act II') : 'Coming later';
+      : i === 2 ? (done.includes(3) ? 'Completed' : open3 ? 'Playable' : 'After Act II')
+      : i === 3 ? (done.includes(4) ? 'Completed' : open4 ? 'Playable' : 'After Act III') : 'Coming later';
     const inner = `<span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">${st}</span>`;
-    return open2 ? `<button class="actrow" id="act2Row">${inner}</button>` : open3 ? `<button class="actrow" id="act3Row">${inner}</button>` : `<div class="actrow ${i ? 'locked' : ''}">${inner}</div>`;
+    return open2 ? `<button class="actrow" id="act2Row">${inner}</button>` : open3 ? `<button class="actrow" id="act3Row">${inner}</button>` : open4 ? `<button class="actrow" id="act4Row">${inner}</button>` : `<div class="actrow ${i ? 'locked' : ''}">${inner}</div>`;
   }).join('');
   if ($('act2Row')) $('act2Row').onclick = () => startAct2();
   if ($('act3Row')) $('act3Row').onclick = () => startAct3();
+  if ($('act4Row')) $('act4Row').onclick = () => startAct4();
   const got = save.endings || [], eg = $('endGrid');
   if (eg) eg.innerHTML = `<div class="h">ENDINGS FOUND · ${got.length} / ${ENDINGS.length}</div><div class="eg">${ENDINGS.map((e, i) => `<span class="${got.includes(e.k) ? 'on' : ''}"><b>${i + 1}</b>${got.includes(e.k) ? esc(e.t) : '???'}</span>`).join('')}</div>`;
 }
@@ -13581,7 +14103,7 @@ function startAct1(skipOffice) {
 }
 bindDesk();
 $('startBtn').addEventListener('click', () => startAct1());
-$('replayBtn').addEventListener('click', () => S && S.phase === 'mirage' ? startAct3() : startAct2());
+$('replayBtn').addEventListener('click', () => S && S.phase === 'consensus' ? startAct4() : S && S.phase === 'mirage' ? startAct3() : startAct2());
 $('trainerBtn').addEventListener('click', () => startAct2({ balance: S.balance, k401: S.k401, cat: S.cat }));
 $('trEvidence').addEventListener('click', openEvidence);
 $('trReplay').addEventListener('click', () => startAct1());
@@ -13619,14 +14141,14 @@ const ICON = {
   n9n: '<rect x="2" y="9" width="6" height="6"></rect><rect x="16" y="3" width="6" height="6"></rect><rect x="16" y="15" width="6" height="6"></rect><path d="M8 12h4v-6h4M12 12v6h4"></path>'
 };
 const DESK_APPS = [
-  { k: 'farm', col: '#805634', label: () => S.phase === 'office' ? 'Tickets' : S.act === 2 ? (S.phase === 'mirage' ? 'Mirage' : S.phase === 'trainer' ? 'Train' : 'Audit') : 'Work' },
+  { k: 'farm', col: '#805634', label: () => S.phase === 'office' ? 'Tickets' : S.act === 2 ? (S.phase === 'consensus' ? 'Oversight' : S.phase === 'mirage' ? 'Mirage' : S.phase === 'trainer' ? 'Train' : 'Audit') : 'Work' },
   { k: 'web', col: '#20685c', label: () => 'Job sites', when: () => S.act !== 2 && S.phase === 'farm' },
   { k: 'mail', col: '#232c33', label: () => 'Mail' },
   { k: 'bank', col: '#24402a', label: () => 'Bank' },
   { k: 'k401', col: '#2b2d22', label: () => '401(k)' },
   { k: 'grind', col: '#2e3a42', label: () => 'Rate answers', when: () => S.act !== 2 && S.phase === 'farm', go: () => $('actGrind').click() },
   { k: 'store', col: '#5c271b', label: () => 'Byte Barn', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc, go: () => openStore() },
-  { k: 'bots', col: '#20685c', label: () => 'Agents', when: () => S.act === 2 && S.phase !== 'mirage' },
+  { k: 'bots', col: '#20685c', label: () => 'Agents', when: () => S.act === 2 && S.phase !== 'mirage' && S.phase !== 'consensus' },
   { k: 'n9n', col: '#174540', label: () => 'n9n', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc && (S.day >= 3 || !!S.n9n), go: () => openN9n() }
 ];
 let iconsKey = '';
@@ -13741,7 +14263,7 @@ addEventListener('pagehide', () => { if (runCalm()) runSave(); });
 function contSync() {
   const r = runLoad(), b = $('contBtn'); b.hidden = !r; $('startBtn').classList.toggle('alt', !!r);
   if (!r) return; const x = r.S;
-  b.innerHTML = `CONTINUE<small>${x.phase === 'mirage' ? 'ACT III' : x.act === 2 ? 'ACT II' : 'ACT I'} · ${fmtDay(x.day)} · ${money(x.balance)}</small>`;
+  b.innerHTML = `CONTINUE<small>${x.phase === 'consensus' ? 'ACT IV' : x.phase === 'mirage' ? 'ACT III' : x.act === 2 ? 'ACT II' : 'ACT I'} · ${fmtDay(x.day)} · ${money(x.balance)}</small>`;
 }
 function runContinue() {
   const r = runLoad(); if (!r) return contSync();
@@ -13770,6 +14292,7 @@ const SCORE = { // chords as MIDI notes; each act has its own colour
   a1: [[45, 52, 60, 67, 71], [41, 48, 57, 64], [48, 55, 59, 64], [40, 47, 55, 62]],
   a2: [[38, 45, 53, 60, 64], [46, 53, 57, 64], [43, 50, 58, 62], [45, 52, 57, 62]],
   a3: [[36, 43, 51, 62], [44, 51, 55, 60], [41, 48, 56, 63], [43, 50, 55, 62]],
+  a4: [[48, 55, 62, 67], [45, 52, 59, 64], [50, 57, 64, 69], [43, 50, 57, 62]], // open fifths: harmonious, and empty
   end: [[45, 52, 57, 64], [41, 48, 57, 60]]
 };
 const hz = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -13798,7 +14321,7 @@ const amb = {
     if (!S || !$('titleScreen').hidden) return 'title';
     if (S.over || !$('endScreen').hidden || !$('troubleScreen').hidden) return 'end';
     if (S.phase === 'office') return 'office';
-    return S.phase === 'mirage' ? 'a3' : S.act === 2 ? 'a2' : 'a1';
+    return S.phase === 'consensus' ? 'a4' : S.phase === 'mirage' ? 'a3' : S.act === 2 ? 'a2' : 'a1';
   },
   tick() {
     const N = this.n; if (!N) return;
@@ -13813,10 +14336,10 @@ const amb = {
     this.set(N.room.frequency, inside ? 220 : 320, 2);
     this.set(N.humG.gain, !power || mood === 'title' || mood === 'end' ? 0 : inside ? .006 : .0035, 1.5);
     // weather: winter wind in Act I, rain in Acts II and III, none indoors at work
-    const rain = mood === 'a2' || mood === 'a3';
+    const rain = mood === 'a2' || mood === 'a3' || (mood === 'a4' && S.m4 && (S.m4.ch === 1 || S.m4.ch === 3));
     if (now > this.tGust) {
       this.tGust = now + 2.5 + Math.random() * 4;
-      if (mood === 'a1') { this.set(N.wxG.gain, .012 + Math.random() * .05, 1.6); this.set(N.wx.frequency, 380 + Math.random() * 520, 2); N.wx.Q.value = .7; }
+      if (mood === 'a1' || (mood === 'a4' && S.m4 && S.m4.ch === 4)) { this.set(N.wxG.gain, .012 + Math.random() * .05, 1.6); this.set(N.wx.frequency, 380 + Math.random() * 520, 2); N.wx.Q.value = .7; }
       else if (rain) { this.set(N.wxG.gain, (mood === 'a3' ? .03 : .022) + Math.random() * .01, 2); this.set(N.wx.frequency, 1900 + Math.random() * 500, 2); N.wx.Q.value = .35; }
       else this.set(N.wxG.gain, 0, 1.5);
     }
@@ -13890,11 +14413,11 @@ function pauseOpen() {
   if (runCalm()) runSave();
   for (const o of document.querySelectorAll('#pauseMenu [data-armed]')) { delete o.dataset.armed; o.textContent = o.dataset.was; }
   pauseSpeed = speed || pauseSpeed || 1; setSpeed(0);
-  const a3 = S.phase === 'mirage', a2 = S.act === 2;
-  $('pmK').textContent = `PAUSED · ${a3 ? 'ACT III' : a2 ? 'ACT II' : 'ACT I'} · ${fmtLong(S.day).toUpperCase()}`;
+  const a4 = S.phase === 'consensus', a3 = S.phase === 'mirage', a2 = S.act === 2;
+  $('pmK').textContent = `PAUSED · ${a4 ? 'ACT IV' : a3 ? 'ACT III' : a2 ? 'ACT II' : 'ACT I'} · ${fmtLong(S.day).toUpperCase()}`;
   $('pmTut').textContent = save.tut && save.tut.__off ? 'Tutorial: off · turn it on' : 'Tutorial: on · turn it off';
   $('pmSound').textContent = sfx.muted ? 'Sound: off · turn it on' : 'Sound: on · turn it off';
-  $('pmRestart').textContent = a3 ? 'Restart Act III from October 4' : a2 ? 'Restart Act II from May 1' : S.phase === 'office' ? 'Restart Act I from January 25' : 'Restart Act I from February 1';
+  $('pmRestart').textContent = a4 ? 'Restart Act IV from March 6, 2028' : a3 ? 'Restart Act III from October 4' : a2 ? 'Restart Act II from May 1' : S.phase === 'office' ? 'Restart Act I from January 25' : 'Restart Act I from February 1';
   $('pauseMenu').hidden = false; sfx.tone(440, .06, 'square', .02);
 }
 function pauseClose() { $('pauseMenu').hidden = true; setSpeed(pauseSpeed || 1); }
@@ -13908,7 +14431,7 @@ function pmArm(b, sure, go) {
   for (const o of document.querySelectorAll('#pauseMenu [data-armed]')) { delete o.dataset.armed; o.textContent = o.dataset.was; }
   b.dataset.was = b.textContent; b.dataset.armed = '1'; b.textContent = sure; sfx.tone(220, .07, 'square', .02);
 }
-$('pmRestart').onclick = e => pmArm(e.currentTarget, 'Sure? This replaces your saved run', () => { const a3 = S.phase === 'mirage', a2 = S.act === 2, office = S.phase === 'office'; $('pauseMenu').hidden = true; if (a3) startAct3(); else if (a2) startAct2(); else startAct1(!office); });
+$('pmRestart').onclick = e => pmArm(e.currentTarget, 'Sure? This replaces your saved run', () => { const a4 = S.phase === 'consensus', a3 = S.phase === 'mirage', a2 = S.act === 2, office = S.phase === 'office'; $('pauseMenu').hidden = true; if (a4) startAct4(); else if (a3) startAct3(); else if (a2) startAct2(); else startAct1(!office); });
 $('pmTitle').onclick = () => { runSave(); $('pauseMenu').hidden = true; closeLaptop(); closePhone(); setSpeed(0); renderActList(); renderTutBtn(); $('titleScreen').hidden = false; $('titleScreen').scrollTop = 0; }; // the run is kept, so this needs no second click
 $('gateClose').onclick = () => { S.gateOpen = false; gateSync(); };
 
@@ -13917,7 +14440,7 @@ function layoutSync() {
   if (!S) return;
   if (lapOpen() && S.act !== 2 && S.phase === 'farm' && !online()) closeLaptop();
   desktopSync(); dockSync(); subtitleSync();
-  const bt = document.querySelector('.ttabs [data-tab="bots"]'); if (bt) bt.hidden = S.act !== 2 || S.phase === 'mirage';
+  const bt = document.querySelector('.ttabs [data-tab="bots"]'); if (bt) bt.hidden = S.act !== 2 || S.phase === 'mirage' || S.phase === 'consensus';
 }
 let clockKey = '';
 function clockSync() {
@@ -13972,11 +14495,14 @@ const TUT = [
   { id: 'n9nAuto', when: () => lapOpen() && !$('n9nWin').hidden && S.n9n.wires.length >= 1 && !Object.keys(S.n9n.ap).length, el: () => $q('.n9-node.man'), t: 'NEEDS YOU', s: 'A node without autopilot waits for you. Click its picture to play it full size; what you make goes down its wire.' },
   // Act II
   { id: 'a2work', when: () => S.act === 2 && S.phase === 'trainer' && lapOpen(), el: () => $q('.ttabs [data-tab="farm"]'), t: 'TRAINING', s: 'Pick the better of two answers, against a quota. Pay per task falls every week. While you work through tasks, the clock stops.' },
-  { id: 'a2phone', when: () => S.act === 2 && S.phase !== 'mirage' && !lapOpen() && !phoneOpen() && !SHC, el: () => $('phoneBtn'), t: 'GIG APPS', s: 'Uburn and Grovel are on your phone. Drive or deliver between tasks. A shift takes hours of your day; tickets come out of your pay.' },
-  { id: 'a2fleet', when: () => S.act === 2 && S.phase !== 'mirage' && S.day >= ROBO_START && !lapOpen() && !SHC, el: () => $('phoneBtn'), t: 'THE FLEET', s: 'Robotaxis and delivery robots are on the street now. They take the orders first, and they brake for nothing.' },
+  { id: 'a2phone', when: () => S.act === 2 && S.phase !== 'mirage' && S.phase !== 'consensus' && !lapOpen() && !phoneOpen() && !SHC, el: () => $('phoneBtn'), t: 'GIG APPS', s: 'Uburn and Grovel are on your phone. Drive or deliver between tasks. A shift takes hours of your day; tickets come out of your pay.' },
+  { id: 'a2fleet', when: () => S.act === 2 && S.phase !== 'mirage' && S.phase !== 'consensus' && S.day >= ROBO_START && !lapOpen() && !SHC, el: () => $('phoneBtn'), t: 'THE FLEET', s: 'Robotaxis and delivery robots are on the street now. They take the orders first, and they brake for nothing.' },
   // Act III
   { id: 'm3briefs', when: () => S.phase === 'mirage' && lapOpen() && !!$q('.m3-briefs .m3-b'), el: () => $q('.m3-briefs'), t: 'THE BRIEFS', s: 'Three a day, from N. Each one says who it hurts. Generate it, then release it. Pass three times and they drop you.' },
   { id: 'm3polls', when: () => S.phase === 'mirage' && lapOpen() && !!$q('.m3-polls'), el: () => $q('.m3-polls'), t: 'WHAT IT DOES', s: 'Every release moves the polls, and platform attention. At 100% attention your name is in the paper.' },
+  { id: 'm4card', when: () => S.phase === 'consensus' && lapOpen() && !!$q('.c4-card .c4-acts'), el: () => $q('.c4-card'), t: 'THE LOOP', s: 'Every proposal Consensus-1 makes needs a human to review it. That’s you. Approve it, reject it, or let the clock run out and it’s approved by default. The arrow keys work too.' },
+  { id: 'm4harmony', when: () => S.phase === 'consensus' && S.m4 && S.m4.band && !lapOpen() && !SHC, el: () => $('hProjCell'), t: 'HARMONY', s: 'Your band turns your sleep, your heart and your voice into one number. Below the threshold, your Universal High Income is cut.' },
+  { id: 'm4exempt', when: () => S.phase === 'consensus' && S.m4 && S.m4.shut && lapOpen() && !!$q('.c4-exs'), el: () => $q('.c4-exs'), t: 'TWELVE THOUSAND', s: 'The network is down until midnight, and every exemption needs a human. Each one takes a few seconds to grant. Consensus-1 has marked its own priorities.' },
   { id: 'release', when: () => !!SHC && SH && SH.app === 'spread', el: () => $('shStage'), t: 'RELEASE', s: 'Click a person to post it from their account. Big ringed dots are trusted. Keep it ahead of the fact-checks (teal) and the sweeps. SPACE boosts it.' }
 ];
 let tutCur = null, tutT = 0;
@@ -14080,7 +14606,15 @@ function tickerSync() {
   if (k === tickKey) return; tickKey = k;
   const h = x => { let v = 0; for (const c of String(x)) v = (v * 31 + c.charCodeAt(0)) | 0; return Math.abs(v); };
   let lines;
-  if (S.phase === 'mirage') {
+  if (S.phase === 'consensus' && S.m4) {
+    const M4 = S.m4, c = M4.ch;
+    lines = ['CONSENSUS-1 · approval at 94%, says Consensus-1',
+      c === 1 ? 'CITY · the council chamber reopens as a data hall' : c === 2 ? 'UHI · $2,400 a month for every adult who wears a Harmony band' : c === 3 ? 'ZONING · Harbor Point rezoned: fourteen data halls approved in 0.2 seconds' : 'NETWORK · a 24-hour maintenance window on Thursday, January 11',
+      c >= 2 ? 'HEALTH · Harmony bands cut heart attacks 11%, says a study by Harmony' : 'HEALTH · free Harmony bands for residents over 65',
+      `OVERSIGHT · ${(41200 + M4.def + M4.autoN).toLocaleString('en-US')} proposals approved this year · ${M4.blocked.length} held`,
+      c >= 3 ? 'WEATHER · heat allocation 18:00–21:00 in Zones B and C' : `WEATHER · ${c === 2 ? '24°C, clear' : '6°C, rain'}`,
+      'JOBS · unemployment 0%: “nobody is looking,” says Consensus-1'];
+  } else if (S.phase === 'mirage') {
     const say = ['Delgado campaign: “It never happened.”', 'Platforms say they are “reviewing” it', 'Fact-checkers find no evidence', 'Halvorsen: “Let voters decide what’s real.”', 'Shared by a city councilman, then deleted'];
     lines = [`POLL · Halvorsen ${M.kip.toFixed(1)}% · Delgado ${M.rosa.toFixed(1)}% · Prop 9 yes ${M.yes.toFixed(1)}%`,
       ...M.arch.slice(0, 3).map(a => `VIRAL · “${a.claim}” · ${Math.round(a.reached / 100) / 10}K views · ${say[h(a.claim) % say.length]}`),
@@ -14104,7 +14638,7 @@ let wallKey = '';
 function makeWall(mood) {
   const c = document.createElement('canvas'); c.width = 320; c.height = 180;
   const g = c.getContext('2d'), g0 = G; G = g;
-  const T = { dusk: [P.t0, P.k1, P.a2, P.s0], cold: [P.s0, P.k1, P.t3, P.k2], red: [P.e0, P.k0, P.e3, P.k1] }[mood];
+  const T = { dusk: [P.t0, P.k1, P.a2, P.s0], cold: [P.s0, P.k1, P.t3, P.k2], red: [P.e0, P.k0, P.e3, P.k1], grey: [P.s2, P.s0, P.t4, P.s1] }[mood];
   for (let y = 0; y < 120; y++) { const k = y / 120; px(0, y, 320, 1, mixc(T[0], T[1], Math.floor(k * 8) / 7)); } // the sky, in bands
   for (let i = 0; i < 90; i++) { const x = (i * 97) % 320, y = (i * 53) % 80; if ((i * 7) % 3) px(x, y, 1, 1, rgba(P.p3, .25 + (i % 4) * .1)); }
   g.fillStyle = rgba(T[2], .13); g.beginPath(); g.arc(250, 44, 26, 0, Math.PI * 2); g.fill(); g.fillStyle = rgba(T[2], .1); g.beginPath(); g.arc(250, 44, 40, 0, Math.PI * 2); g.fill();
@@ -14158,7 +14692,7 @@ function makeDesk() {
 }
 function deskSync() { if (!deskKey) { deskKey = 'wood'; $('desk').style.setProperty('--deskwood', `url(${makeDesk()})`); } }
 function wallSync() {
-  if (!S) return; const mood = S.phase === 'mirage' ? 'red' : S.act === 2 ? 'cold' : 'dusk';
+  if (!S) return; const mood = S.phase === 'consensus' ? 'grey' : S.phase === 'mirage' ? 'red' : S.act === 2 ? 'cold' : 'dusk';
   if (wallKey === mood) return; wallKey = mood;
   document.documentElement.style.setProperty('--wall', `url(${makeWall(mood)})`); // the desktop and the phone's home screen
 }
@@ -14176,7 +14710,7 @@ function frame(t) {
       }
       tutTick(dt);
       const blocked = tutOn() || !!SHC || !$('modal').hidden || (phoneUp && S.act === 2) || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
-      benchTick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked); bossTick(dt, !!speed && !blocked); n9Tick(dt, !!speed && !blocked); n9Sync(); if (SHC) shiftTick(dt);
+      benchTick(dt, !!speed && !blocked); m4Tick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked); bossTick(dt, !!speed && !blocked); n9Tick(dt, !!speed && !blocked); n9Sync(); if (SHC) shiftTick(dt);
       if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
       // After launch, ChatGPX takes your tickets while you watch.
       if (S.phase === 'office' && S.office.launched && speed && !blocked) {
@@ -14205,8 +14739,9 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
+if (location.hash === '#act4') startAct4();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>

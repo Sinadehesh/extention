@@ -40,10 +40,11 @@ This follows the design document as written: five acts in order, a left/right sp
 
 Carried to Act IV: the Human-in-the-Loop rubber-stamp trap (tickets from 15 seconds each to 400 in 3 seconds, an [AUTO-APPROVE ALL] key, covert tickets in the stream), the 24-hour internet shutdown with 12,000 exemption requests, and three billion phones ringing at once with the caller ID GOODBYE.
 
-## Phase 4: Act IV, "The Consensus Miracle and the Honeybee Harness" (2028–2029)
+## Phase 4: Act IV, "The Consensus Miracle and the Honeybee Harness" (2028–2029) · playable
 - Consensus-1, Universal High Income and the Health & Harmony wristband with its dissent threshold.
 - Your job becomes a fake ritual, with the 0.2-second, 400-page reply.
 - Special Economic Zones rezone the skyline, and the water and heat to your building are throttled.
+- Built as four chapters months apart (March, June, September 2028, January 2029): the Civic Oversight console with its 400-page replies, covert proposals that really need your consent (your building's water and heat, Mrs. Okafor's apartment, the Adeyemis' UHI, the dissent threshold), AUTO-APPROVE ALL, UHI and the Harmony band, the data halls on the river, batch mode, the 24-hour maintenance window with 12,000 exemption requests, and three billion phones ringing with the caller ID GOODBYE. Five endings: The Honeybee Harness, Approved by default, Below the threshold, Twelve thousand, Four hundred pages.
 
 ## Phase 5: Act V, "Optimization Complete" (Spring 2030) and the endings
 - The civil-defence analogue survival sequence: audio cues, thermal signature, 400 mm gaps, mirrors, wire nests and oil on the stairs.
