@@ -1400,6 +1400,7 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
 .who figcaption { display: flex; flex-direction: column; gap: 1px; }
 .who figcaption b { font-family: var(--f-term); font-size: 12px; font-weight: 400; color: #e0a33a; letter-spacing: .04em; }
 .who figcaption span { font-size: 11px; line-height: 1.3; color: var(--muted); }
+.lm img.av { image-rendering: pixelated; background: #07080a; }
 /* Chirp faces */
 #phoneModal .ch-h { align-items: center; gap: 7px; } #phoneModal .ch-h b { margin-right: auto; }
 #phoneModal .ch-av { width: 24px; height: 24px; image-rendering: pixelated; border: 2px solid #07080a; flex: none; }
@@ -5897,7 +5898,7 @@ function renderView(force) {
     const board = `<div class="box"><div class="row"><span class="h">Prices today</span><span class="muted">${fmtDay(S.day)}</span></div><div class="pboard">${Object.keys(PRICE0).filter(k => S.act !== 2 || (k !== 'vps' && k !== 'spawn')).map(k => `<div><span>${PRICE_NAME[k]}</span><b>${money(pr(k))}${PRICE_UNIT[k]}</b></div>`).join('')}</div></div>`;
     const rb = S.act === 2 || S.phase === 'office' ? '' : `<details class="box"><summary class="h">Rulebook · ${RULES.filter(r => r.d <= S.day).length} rules · tap to open</summary>${rulebookHTML()}</details>`;
     const AVC = [P.t2, P.a1, P.g2, P.s3, P.r2, P.d4, P.t1, P.e1];
-    const av = m => { let h = 0; for (const c of m.from) h = (h * 31 + c.charCodeAt(0)) | 0; return `<i class="av" style="background:${m.bul ? P.e1 : AVC[Math.abs(h) % AVC.length]}">${m.bul ? '▤' : esc((m.from.match(/[A-Za-z0-9]/) || ['?'])[0].toUpperCase())}</i>`; };
+    const av = m => { const f = mailFace(m.from); if (f) return `<img class="av" src="${f}" alt="">`; let h = 0; for (const c of m.from) h = (h * 31 + c.charCodeAt(0)) | 0; return `<i class="av" style="background:${m.bul ? P.e1 : AVC[Math.abs(h) % AVC.length]}">${m.bul ? '▤' : esc((m.from.match(/[A-Za-z0-9]/) || ['?'])[0].toUpperCase())}</i>`; };
     const snip = m => m.bul ? 'Today’s paper: prices, a new rule, the market.' : esc(String(m.body || '').replace(/\s+/g, ' ').slice(0, 96));
     const unread = S.mail.filter(m => !m.read).length;
     const list = `<div class="lm-list"><div class="lm-h"><b>Inbox</b><span>${unread ? `${unread} unread` : 'all read'}</span></div>${S.mail.map(m => `<button class="lm-row${m.read ? '' : ' unread'}${m.bul ? ' bul' : ''}${cur && cur.id === m.id ? ' on' : ''}" data-m="${m.id}">${av(m)}<span class="who">${esc(m.from)}</span><span class="when">${fmtDay(m.day)}</span><span class="subj">${esc(m.subj)}</span><span class="snip">${snip(m)}</span></button>`).join('')}</div>`;
@@ -12224,6 +12225,15 @@ function chirpFace(name) {
         shirt: pick(['s1', 's2', 't1', 'g2', 'r1', 'd3', 'a0', 'p1'], 12), bg: pick(['s0', 'k2', 't0', 'g0', 'r0', 'd0'], 15), glasses: (v >>> 18) % 4 === 0, beard: (v >>> 20) % 6 === 0, earring: (v >>> 22) % 5 === 0 };
   return faceURL('chirp:' + name, spec);
 }
+// people who write to you get their faces in the inbox; companies keep a letter
+const MAIL_FACE = { 'Marcus Lee': 'marcus', 'Dana Whitfield': 'dana', 'M. Okafor': 'mokafor', HEARTH: 'hearth' };
+const MAIL_PEOPLE = ['Hannah Cho', 'Dr. Ines Varga', 'Diane Pell', 'Det. R. Alvarez'];
+function mailFace(from) {
+  const nm = from.split(' · ')[0].replace(/ <.*$/, '').trim();
+  if (MAIL_FACE[nm]) return faceURL(MAIL_FACE[nm]);
+  if (nm === 'N.') return faceURL('mail:N', { skin: 'k3', hair: 'short', hc: 'k1', shirt: 'k2', bg: 'e0' }); // you never see N.'s face
+  return MAIL_PEOPLE.includes(nm) ? chirpFace(nm) : '';
+}
 function chirpHTML() {
   const M = S.m3, h = x => { let v = 0; for (const c of String(x)) v = (v * 31 + c.charCodeAt(0)) | 0; return Math.abs(v); };
   const trend = M.arch.slice(0, 5);
@@ -13452,7 +13462,7 @@ function renderActList() {
     const open2 = i === 1 && done.includes(1), open3 = i === 2 && done.includes(2);
     const st = i === 0 ? (done.includes(1) ? 'Completed' : 'Playable')
       : i === 1 ? (done.includes(2) ? 'Completed' : open2 ? 'Playable' : 'After Act I')
-      : i === 2 ? (done.includes(3) ? 'Completed' : open3 ? 'Playable' : 'After Act II') : 'Phase ' + a.phase;
+      : i === 2 ? (done.includes(3) ? 'Completed' : open3 ? 'Playable' : 'After Act II') : 'Coming later';
     const inner = `<span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">${st}</span>`;
     return open2 ? `<button class="actrow" id="act2Row">${inner}</button>` : open3 ? `<button class="actrow" id="act3Row">${inner}</button>` : `<div class="actrow ${i ? 'locked' : ''}">${inner}</div>`;
   }).join('');
