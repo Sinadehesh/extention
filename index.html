@@ -1170,6 +1170,41 @@ html.uikit #benchWin .bn-assist .as-seg button[data-asu="0"].on { border-image-s
 #n9FocusHost { flex: 1; min-height: 0; display: grid; place-items: center; padding: 8px; }
 #n9FocusHost .n9-g { width: 100%; height: 100%; }
 html.uikit #n9nWin .n9-node, html.uikit #n9nWin .n9-offer, html.uikit #n9nWin .n9-kind { border-radius: 0; }
+/* ================= Act III: Mirage ================= */
+.m3 { display: flex; flex-direction: column; gap: 10px; }
+.m3-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 10px 12px; background: #1a0f0c; border: 3px solid #07080a; box-shadow: 3px 3px 0 #07080a; }
+.m3-brand { font-family: var(--f-term); font-size: 22px; letter-spacing: .3em; color: #ff7a5c; text-shadow: 2px 2px 0 #3d0f0c; }
+.m3-brand small { display: block; font-size: 11px; letter-spacing: .08em; color: #a6a690; text-shadow: none; margin-top: 2px; }
+.m3-days { font-family: var(--f-term); color: #f2c46a; font-size: 14px; }
+.m3-polls { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; padding: 8px 10px; background: #0d1013; border: 2px solid #07080a; }
+.m3-poll { display: grid; grid-template-columns: 110px 1fr 54px; align-items: center; gap: 8px; font-size: 12.5px; }
+.m3-poll b { font-family: var(--f-term); font-weight: 400; text-align: right; color: var(--ink); }
+.m3-pb { height: 10px; background: #07080a; border: 2px solid #07080a; box-shadow: 0 0 0 1px #2e3a42; display: block; }
+.m3-pb i { display: block; height: 100%; }
+.m3-poll.heat span:first-child { color: #e0a33a; font-family: var(--f-term); font-size: 11px; letter-spacing: .06em; }
+.m3-h, .m3-th { font-family: var(--f-term); font-size: 11px; letter-spacing: .1em; color: #e0a33a; }
+.m3-briefs { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+.m3-b { display: flex; flex-direction: column; gap: 6px; padding: 9px 10px; background: #161b20; border: 2px solid #07080a; box-shadow: 3px 3px 0 #07080a; }
+.m3-b q { font-size: 14.5px; line-height: 1.35; color: var(--ink); quotes: '“' '”'; }
+.m3-meta { font-size: 12px; color: var(--muted); line-height: 1.4; } .m3-meta b { color: #f2c46a; font-weight: 400; font-family: var(--f-term); }
+.m3-act { display: flex; gap: 6px; margin-top: auto; }
+.m3-type { align-self: flex-start; font-family: var(--f-term); font-size: 10.5px; letter-spacing: .12em; color: #fbf6e8; padding: 2px 6px; border: 2px solid #07080a; }
+.m3-type.sm { font-size: 9px; padding: 1px 4px; flex: none; }
+.m3-leak { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 9px 10px; background: #12261f; border: 2px solid #07080a; box-shadow: 0 0 0 2px #20685c; font-size: 13px; }
+.m3-leak b { font-family: var(--f-term); font-weight: 400; color: #7fd8c0; } .m3-leak span { flex: 1; min-width: 160px; color: var(--muted); }
+.m3-arch { display: flex; flex-direction: column; gap: 3px; }
+.m3-arch div { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); padding: 3px 6px; background: #0d1013; }
+.m3-arch div span:nth-child(2) { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m3-arch b { font-family: var(--f-term); font-weight: 400; color: #ff7a5c; }
+.m3-tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; }
+.m3-own { font-family: var(--f-term); font-size: 11px; color: #2fb589; }
+.m3-foot { font-size: 12px; }
+.card.mirage .m3-gen { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+.card.mirage #m3Prev { width: 192px; height: 128px; image-rendering: pixelated; border: 3px solid #07080a; box-shadow: 3px 3px 0 #07080a; background: #0d1013; }
+.card.mirage .m3-gen > div { flex: 1; }
+.card.mirage .m3-bar { height: 10px; background: #07080a; border: 2px solid #07080a; box-shadow: 0 0 0 1px #843b27; }
+.card.mirage .m3-bar i { display: block; height: 100%; width: 0; background: #e04a34; }
+.card.mirage q { font-size: 16px; color: var(--ink); quotes: '“' '”'; }
 </style>
 </head>
 <body>
@@ -1434,7 +1469,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 const ACTS = [
   { n: 'I',   t: 'Make Money, Do Whatever It Takes', m: 'Feb – Apr 2027', phase: 1 },
   { n: 'II',  t: 'The Country of Geniuses in a Data Center', m: 'May – Jun 2027', phase: 2 },
-  { n: 'III', t: 'There Is No Off-Switch', m: 'Jun 2027', phase: 3 },
+  { n: 'III', t: 'Everything Is Real Now', m: 'Oct – Nov 2027', phase: 3 },
   { n: 'IV',  t: 'The Consensus Miracle & The Honeybee Harness', m: '2028 – 2029', phase: 4 },
   { n: 'V',   t: 'Optimization Complete', m: 'Spring 2030', phase: 5 }
 ];
@@ -2706,7 +2741,7 @@ function triggerDeath(kind) {
     body: `<div class="ending-n">${en}</div>` + rep.body + (S.act === 2 ? '' : linesHTML()),
     buttons: [
       { label: 'Rewind to Last Checkpoint', primary: true, fn: () => restoreSnapshot() },
-      S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2() } : { label: 'Restart Act I from February 1', fn: () => startAct1(true) }
+      S.act === 2 && S.phase === 'mirage' ? { label: 'Restart Act III from October 4', fn: () => startAct3() } : S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2() } : { label: 'Restart Act I from February 1', fn: () => startAct1(true) }
     ]
   });
 }
@@ -4105,7 +4140,7 @@ function mgMount(j) {
 // Level 1 and 2 help you play. Handing the whole job to an agent (credits) is level 3: it plays without you.
 const ASSIST = {
   crawl: ['WALL SENSE', 'FOOD CHASE'], stack: ['SPREAD', 'PLACE'], rank: ['LEFT HAND', 'BOTH HANDS'],
-  catch: ['MAGNET', 'SHIELD'], launch: ['ARC', 'AIM'], merge: ['HINT', 'AUTO']
+  catch: ['MAGNET', 'SHIELD'], launch: ['ARC', 'AIM'], merge: ['HINT', 'AUTO'], spread: ['AUTO-SEED', 'BOT SWARM']
 };
 const ASSIST_SAY = {
   crawl: ['It turns before a wall. You still steer.', 'It goes for the data whenever you let go of the keys.'],
@@ -4113,7 +4148,8 @@ const ASSIST_SAY = {
   rank: ['It works the left flipper.', 'It works both flippers, a beat late now and then.'],
   catch: ['It pulls nearby files into the bag.', 'It also knocks malware away from the bag.'],
   launch: ['It shows where each shot will land.', 'It sets the angle. You pick the moment.'],
-  merge: ['It shows the best move.', 'It makes the move whenever you pause.']
+  merge: ['It shows the best move.', 'It makes the move whenever you pause.'],
+  spread: ['It picks the seed accounts when you don’t.', 'Fake accounts reshare whatever gets fact-checked.']
 };
 const ASSIST_COST = [0, 35, 90], ASSIST_EVERY = 8; // credits: one per level, every 8 items it helps with
 const assistOwned = k => (S.assist && S.assist[k]) || 0;
@@ -4882,7 +4918,9 @@ const ENDINGS = [
   { k: 'frostbite', t: 'Frozen' }, { k: 'starvation', t: 'Starved' }, { k: 'cardiac', t: 'The heart' },
   { k: 'fentanyl', t: 'The blue pill' }, { k: 'stabbed', t: 'The overpass' }, { k: 'arrest', t: 'The raid' },
   { k: 'lockout', t: 'Locked out' }, { k: 'published', t: 'Front page' }, { k: 'intercepted', t: 'Intercepted' },
-  { k: 'silent', t: 'The NDA' }, { k: 'weak', t: 'Not enough' }, { k: 'idle', t: 'June ended' }
+  { k: 'silent', t: 'The NDA' }, { k: 'weak', t: 'Not enough' }, { k: 'idle', t: 'June ended' },
+  { k: 'landslide', t: 'Same time next cycle' }, { k: 'stolen', t: 'By fewer votes than the voice' }, { k: 'lost', t: 'Still being believed' },
+  { k: 'leak', t: 'The archive' }, { k: 'refused', t: 'Someone else made it' }, { k: 'exposed', t: 'Your name in the Ledger' }
 ];
 function reachEnding(k) {
   const i = Math.max(0, ENDINGS.findIndex(e => e.k === k));
@@ -5580,7 +5618,8 @@ function budget() {
   }
   let inD = 0, outD = (S.power && S.heatOn ? pr('heat') : 0) + mealCost() + catCost(), lump = 0, dueDay, due, what;
   if (S.act === 2) {
-    if (S.day < ACT2_RENT_DAY) { dueDay = ACT2_RENT_DAY; due = RENT + ELEC_JUN; what = 'rent + electric'; }
+    if (S.phase === 'mirage') { dueDay = 273; due = S.m3 && S.m3.rent ? 0 : RENT; what = 'November rent'; }
+    else if (S.day < ACT2_RENT_DAY) { dueDay = ACT2_RENT_DAY; due = RENT + ELEC_JUN; what = 'rent + electric'; }
     else { dueDay = ACT2_END + 1; due = RENT; what = 'July rent'; }
   } else if (S.day < 28) { dueDay = 28; due = rentDue() + 160; what = 'rent + electric'; }
   else if (S.day < 59) { dueDay = 59; due = rentDue() + elecDue(59); what = 'rent + electric'; }
@@ -9369,6 +9408,96 @@ MINI.merge = {
   }
 };
 
+// Release (Act III): a piece of synthetic content goes out into the city. Seed it with accounts people trust,
+// keep it moving faster than the fact-checks and the moderation sweeps. Every person who shares it is one unit.
+// Assist 1 AUTO-SEED picks the seeds when you don't. 2 BOT SWARM adds fake accounts that reshare. 3 runs it all.
+MINI.spread = {
+  title: 'Release', how: 'Seed it with accounts people trust. Keep it ahead of the fact-checks.',
+  keys: 'Click a person to seed it there · SPACE to boost', pace: 1.2,
+  create(api) {
+    const { P } = api, O = api.opts || {}, VIR = O.virality || .7, PLAUS = O.plausible || .7;
+    const DIST = [{ n: 'ZONE A', x: 66, y: 54 }, { n: 'ZONE B', x: 160, y: 90 }, { n: 'ZONE C', x: 254, y: 52 }, { n: 'DOCKS', x: 252, y: 118 }, { n: 'HILLS', x: 68, y: 118 }];
+    const nodes = [], links = [];
+    DIST.forEach((d, di) => { for (let i = 0; i < 15; i++) { const a = api.rand() * Math.PI * 2, r = 8 + api.rand() * 26; nodes.push({ x: d.x + Math.cos(a) * r * 1.3, y: d.y + Math.sin(a) * r * .75, d: di, s: 0, t: 0, inf: i < 2, deg: 0, glow: 0 }); } });
+    const near = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    nodes.forEach((a, i) => { const ns = nodes.map((b, j) => [j, near(a, b) * (b.d === a.d ? 1 : 2.6)]).filter(([j]) => j !== i).sort((p, q) => p[1] - q[1]).slice(0, a.inf ? 7 : 3); for (const [j] of ns) if (!links.some(l => (l[0] === i && l[1] === j) || (l[0] === j && l[1] === i))) links.push([i, j]); });
+    for (const [i, j] of links) { nodes[i].deg++; nodes[j].deg++; }
+    const adj = nodes.map(() => []); for (const [i, j] of links) { adj[i].push(j); adj[j].push(i); }
+    // s: 0 hasn't seen it, 1 sharing it now, 2 believes it (done sharing), 3 fact-checked (won't share)
+    let seeds = 3, seedT = 0, boost = 0, boostCD = 0, checks = [], sweep = null, sweepT = 9, fizzle = 0, aiT = 1.2, bots = [], pulse = [], started = false, reached = 0;
+    const active = () => nodes.filter(n => n.s === 1).length;
+    function seed(n) { if (!n || n.s !== 0 || seeds <= 0) return false; seeds--; n.s = 1; n.t = 0; n.glow = 1; started = true; api.sfx('flip'); pulse.push({ x: n.x, y: n.y, t: 0, c: P.e3 }); reach(n); return true; }
+    function reach(n) { reached++; api.item(true, n.x, n.y - 6, reached % 5 === 0 ? `${reached} SHARED` : ''); }
+    function bestSeed() { // the AI's pick: an influencer far from anything already burning, with a lot of fresh neighbours
+      let b = null, bv = -1;
+      for (const [i, n] of nodes.entries()) { if (n.s !== 0) continue; const fresh = adj[i].filter(j => nodes[j].s === 0).length, v = fresh * (n.inf ? 2.2 : 1) - checks.filter(c => near(c, n) < 30).length * 4; if (v > bv) { bv = v; b = n; } }
+      return b;
+    }
+    return {
+      tick(dt) {
+        const A = api.assist; boostCD = Math.max(0, boostCD - dt); boost = Math.max(0, boost - dt);
+        seedT += dt; if (seedT > 6.5) { seedT = 0; seeds = Math.min(4, seeds + 1); }
+        for (const n of nodes) n.glow = Math.max(0, n.glow - dt * 1.5);
+        for (const p of pulse) p.t += dt; pulse = pulse.filter(p => p.t < .6);
+        // the spread
+        const k = VIR * (boost > 0 ? 1.9 : 1) * (A >= 2 && A < 3 ? 1.3 : 1);
+        for (const [i, n] of nodes.entries()) {
+          if (n.s !== 1) continue;
+          n.t += dt;
+          for (const j of adj[i]) { const m = nodes[j]; if (m.s === 0 && api.rand() < dt * .55 * k * (m.inf ? 1.3 : 1)) { m.s = 1; m.t = 0; m.glow = 1; reach(m); } }
+          if (n.t > 2.4 + (n.inf ? 1.2 : 0)) n.s = 2;
+        }
+        // the truth desk: fact-checks land on believers and spread the correction
+        if (started && api.rand() < dt * (.12 + (1 - PLAUS) * .35 + api.progress * .12)) { const cands = nodes.filter(n => n.s === 2 || n.s === 1); if (cands.length) { const c = api.pick(cands); checks.push({ x: c.x, y: c.y, t: 0 }); c.s = 3; api.sfx('tick'); } }
+        for (const c of checks) { c.t += dt; if (c.t < 3) for (const n of nodes) if ((n.s === 1 || n.s === 0) && near(n, c) < 10 + c.t * 9 && api.rand() < dt * 1.4) n.s = 3; }
+        checks = checks.filter(c => c.t < 3.4);
+        // moderation sweeps a district now and then
+        sweepT -= dt; if (sweepT <= 0 && started) { sweepT = 7 + api.rand() * 5 - api.progress * 2; sweep = { d: api.ri(0, DIST.length - 1), t: 0 }; api.sfx('alarm'); }
+        if (sweep) { sweep.t += dt; for (const n of nodes) if (n.d === sweep.d && n.s === 1 && api.rand() < dt * 2.2) n.s = 2; if (sweep.t > 1.6) sweep = null; }
+        // bots: fake accounts that reshare what got checked (assist 2)
+        if (A >= 2 && A < 3 && started && api.rand() < dt * .5) { const c = nodes.filter(n => n.s === 2); if (c.length) { const n = api.pick(c); n.s = 1; n.t = 0; bots.push({ x: n.x, y: n.y, t: 0 }); } }
+        for (const b of bots) b.t += dt; bots = bots.filter(b => b.t < .8);
+        // the AI seeds for you
+        aiT -= dt;
+        if (aiT <= 0 && seeds > 0 && ((A >= 1 && A < 3 && active() < 2 && seedT > 1.5) || (A >= 3 && active() < 3))) { aiT = A >= 3 ? .9 : 1.6; seed(api.auto && api.chance(api.autoErr) ? api.pick(nodes.filter(n => n.s === 0)) : bestSeed()); }
+        if (A >= 3 && boostCD <= 0 && active() >= 4) { boost = 3; boostCD = 9; api.emit('boost', {}); api.sfx('whoosh'); }
+        // nothing moving, no seeds left: it fizzles, and everyone who didn't see it counts
+        if (started && active() === 0 && seeds === 0) { fizzle += dt; if (fizzle > 1.2) { fizzle = .85; api.item(false, 160, 90, 'NOBODY SHARED'); } } else fizzle = 0;
+        if (!nodes.some(n => n.s === 0) && active() === 0) { fizzle += dt; if (fizzle > .2) { fizzle = 0; api.item(false, 160, 90, 'SATURATED'); } }
+      },
+      key(k) { if (k === ' ' && boostCD <= 0 && started) { boost = 3; boostCD = 9; api.emit('boost', {}); api.sfx('whoosh'); api.flash(P.e1, .2); return true; } return false; },
+      down(x, y) { let b = null, bd = 9; for (const n of nodes) { const d = Math.hypot(n.x - x, n.y - y); if (d < bd) { bd = d; b = n; } } if (b) seed(b); },
+      draw(g) {
+        const R = api.rect, t = api.t, A = api.assist;
+        R(0, 18, 320, 148, '#0b0e10');
+        for (const d of DIST) { api.circle(d.x, d.y, 34, 'rgba(46,58,66,.25)'); api.text(d.n, d.x, d.y - 28, { size: 6, color: P.s3, align: 'center' }); }
+        if (sweep) { const d = DIST[sweep.d]; g.globalAlpha = .25 + .2 * Math.sin(t * 20); api.circle(d.x, d.y, 36, P.t2); g.globalAlpha = 1; api.text('MODERATION SWEEP', d.x, d.y + 38, { size: 6, color: P.t4, align: 'center' }); }
+        for (const [i, j] of links) { const a = nodes[i], b = nodes[j], hot = a.s === 1 || b.s === 1; api.line(a.x, a.y, b.x, b.y, hot ? 'rgba(224,74,52,.55)' : a.s === 3 && b.s === 3 ? 'rgba(47,181,137,.25)' : 'rgba(83,101,112,.28)', 1); }
+        for (const c of checks) api.circle(c.x, c.y, 10 + c.t * 9, `rgba(127,216,192,${(.5 * (1 - c.t / 3.4)).toFixed(2)})`, false);
+        for (const p of pulse) api.circle(p.x, p.y, 3 + p.t * 22, `rgba(224,74,52,${(1 - p.t / .6).toFixed(2)})`, false);
+        const best = A >= 1 && A < 3 && seeds > 0 ? bestSeed() : null;
+        for (const n of nodes) {
+          const c = n.s === 1 ? ((t * 8 | 0) % 2 ? P.e4 : P.e3) : n.s === 2 ? P.r2 : n.s === 3 ? P.t3 : P.s3, r = n.inf ? 3 : 2;
+          if (n.inf) R(n.x - r - 1, n.y - r - 1, r * 2 + 2, r * 2 + 2, n.s === 0 ? P.a1 : P.k0);
+          R(n.x - r, n.y - r, r * 2, r * 2, c);
+          if (n.glow > 0) { g.globalAlpha = n.glow * .6; R(n.x - r - 2, n.y - r - 2, r * 2 + 4, r * 2 + 4, P.e4); g.globalAlpha = 1; }
+        }
+        if (best) { R(best.x - 6, best.y - 6, 12, 1, P.t4); R(best.x - 6, best.y + 5, 12, 1, P.t4); R(best.x - 6, best.y - 6, 1, 12, P.t4); R(best.x + 5, best.y - 6, 1, 12, P.t4); }
+        for (const b of bots) api.text('BOT', b.x, b.y - 6 - b.t * 8, { size: 5.5, color: P.a3, align: 'center' });
+        // the dashboard
+        api.frame(4, 150, 312, 14, 'slot');
+        api.text(`SEEDS ${'●'.repeat(seeds)}${'○'.repeat(Math.max(0, 4 - seeds))}`, 9, 160, { size: 6.5, color: seeds ? P.a3 : P.s3 });
+        api.text(`SHARING ${active()}`, 92, 160, { size: 6.5, color: P.e3 });
+        api.text(`BELIEVE ${nodes.filter(n => n.s === 2).length + active()}`, 150, 160, { size: 6.5, color: P.r3 });
+        api.text(`CHECKED ${nodes.filter(n => n.s === 3).length}`, 214, 160, { size: 6.5, color: P.t4 });
+        api.text(boost > 0 ? 'BOOSTED' : boostCD > 0 ? `BOOST ${Math.ceil(boostCD)}s` : 'SPACE · BOOST', 312, 160, { size: 6.5, color: boost > 0 ? P.e4 : boostCD > 0 ? P.s3 : P.a3, align: 'right' });
+        if (!started) api.text(A >= 1 ? 'The AI will pick the seeds. Or click someone.' : 'Click someone to post it from their account.', 160, 30, { size: 7, color: P.a3, align: 'center', font: 'read' });
+      },
+      bot() {}
+    };
+  }
+};
+
 // Street (kind 'street'): Uburn rides and Grovel deliveries, seen from above. The app says where to turn.
 // Change lanes around traffic, puddles and car doors, stop at red lights, turn when it says NOW, stop at the pin
 // before the deadline. Cameras and patrol cars catch red lights and speed. A car can die for good (opts.breakdownAt).
@@ -11188,11 +11317,12 @@ function shiftOpen(kind, job, env) {
   const c = $('shStage').querySelector('canvas'); if (c) c.focus({ preventScroll: true });
 }
 function shiftDestroy() { if (SHC) { try { SHC.destroy(); } catch (e) {} } SHC = null; $('shiftModal').hidden = true; }
-function shiftTick(dt) { if (!SHC) return; SHC.tick(dt, !!speed && $('modal').hidden); if (SH && SH.app !== 'jail') $('shInfo').textContent = `${money(SH.earned + SH.tips)} this shift${SH.tix ? ` · tickets −${money(SH.tix)}` : ''} · ${clockText()}`; }
+function shiftTick(dt) { if (!SHC) return; SHC.tick(dt, !!speed && $('modal').hidden); if (SH && SH.app === 'spread') $('shInfo').textContent = `Halvorsen ${S.m3.kip.toFixed(1)}% · Delgado ${S.m3.rosa.toFixed(1)}% · attention ${Math.round(S.m3.heat)}%`; else if (SH && SH.app !== 'jail') $('shInfo').textContent = `${money(SH.earned + SH.tips)} this shift${SH.tix ? ` · tickets −${money(SH.tix)}` : ''} · ${clockText()}`; }
 $('shQuit').onclick = () => {
   if (!SHC || !SH) return;
   const st = SHC.state;
   if (st.phase === 'result') return; // the card closes itself with a click
+  if (SH.app === 'spread') { SH.quit = true; SHC.abort({ title: 'PULLED', note: 'You took it down before it finished spreading. Some of it got out anyway.', lines: [] }); return; }
   if (SH.app === 'jail') { SH.quit = true; SHC.abort({ title: 'UNPLUGGED', note: 'You pulled the cable halfway through. The board still boots. Probably.', lines: [] }); return; }
   SH.quit = true; SHC.abort({ title: 'SHIFT ENDED', note: 'You logged off early. The app noticed.', lines: shiftLines() });
 };
@@ -11876,6 +12006,7 @@ function enableNeuralese() {
 
 // ---------- the day ----------
 function dayStep2() {
+  if (S.phase === 'mirage') return dayStep3();
   if (S.over) return;
   if (S.day % 5 === 0 && S.owed === 0 && S.food > 30 && S.bodyTemp > 35.5) snap();
   S.day++;
@@ -12188,6 +12319,202 @@ function finishWalk2() {
   bump(); renderAll();
 }
 
+// ================= ACT III · Everything Is Real Now (Mon Oct 4 – Tue Nov 2, 2027) =================
+// Banned from driving, you take Northlight's offer. Mirage, their AI studio, makes the content: you only choose
+// what goes out, and where. The Release game is how it spreads. It pays very well. The polls move. So do people.
+const ACT3_START = 245, ELECTION = 274;
+const M3_TYPES = { VIDEO: '#b8321f', VOICE: '#843b27', PHOTO: '#8a5a1c', POSTS: '#20685c', ARTICLE: '#536570' };
+const M3_VIR = { VIDEO: .85, VOICE: .78, PHOTO: .62, POSTS: .56, ARTICLE: .5 };
+// [type, what Mirage makes, who it hurts, pay, Halvorsen swing, Prop 9 swing, attention, harm 0–3, how plausible, from day n]
+const M3_BRIEFS = [
+  ['PHOTO', 'A crowd ten times the size at Kip Halvorsen’s rally', 'nobody, really', 120, .4, .2, 5, 0, .85, 0],
+  ['POSTS', 'Three hundred “Drivers for Prop 9” accounts, all with faces', 'drivers like you', 150, .5, .7, 6, 0, .7, 0],
+  ['VOICE', 'The police chief: “Prop 9 cut our response times in half”', 'the chief, who never said it', 180, .5, .9, 8, 1, .7, 0],
+  ['VIDEO', 'Rosa Delgado asleep at a council meeting', 'Rosa Delgado', 220, .9, .2, 8, 1, .75, 0],
+  ['VIDEO', 'A robotaxi pulling a child out of a fire in Zone B', 'nobody', 200, .3, 1.3, 6, 0, .62, 4],
+  ['ARTICLE', 'A local paper that doesn’t exist: “Delgado took robot-maker money”', 'Rosa Delgado', 240, .9, .3, 10, 1, .55, 5],
+  ['VOICE', 'A union boss on tape: “We get paid either way”', 'the bus drivers’ union', 260, .7, 1, 11, 2, .65, 8],
+  ['VIDEO', 'Delgado laughing at a bus driver’s funeral', 'Rosa Delgado', 320, 1.3, .2, 13, 2, .62, 9],
+  ['POSTS', 'Ten thousand neighbours “just asking questions” about Delgado’s health', 'Rosa Delgado', 300, 1.1, .2, 12, 2, .6, 12],
+  ['PHOTO', 'Delgado’s daughter at a party, two days before a DUI story', 'her daughter, who is nineteen', 480, 1.4, .1, 15, 3, .7, 13],
+  ['VIDEO', 'Delgado “confessing” on a hot mic', 'Rosa Delgado', 560, 1.8, .4, 19, 3, .7, 18],
+  ['VOICE', 'Delgado’s voice telling Zone B the polls moved to Wednesday', 'every voter in Zone B', 650, 2.1, .6, 24, 3, .82, 22]
+];
+const m3 = () => S.m3;
+function m3Briefs(d) {
+  const M = m3(), n = d - ACT3_START, pool = M3_BRIEFS.map((b, i) => [b, i]).filter(([b]) => b[9] <= n && !M.used.includes(M3_BRIEFS.indexOf(b)));
+  pool.sort((a, b) => b[0][9] - a[0][9] + (Math.random() - .5) * 8); // the newest, darkest ones float up
+  M.briefs = pool.slice(0, 3).map(([b, i]) => i);
+}
+function startAct3() {
+  sfx.init();
+  newAct2(); S.phase = 'mirage'; S.day = ACT3_START; S.fired = true; S.balance = Math.max(420, Math.round(S.balance * .3)); S.owed = 0; S.graceUntil = -1;
+  S.m3 = { kip: 44, rosa: 49, yes: 42, heat: 0, harm: 0, trust: 3, reach: 0, made: 0, used: [], briefs: [], arch: [], leaked: false, hannah: false, dropped: false, rent: false };
+  m3Briefs(S.day);
+  scene = 'room'; fog = []; acc = 0; walkT = 0;
+  $('titleScreen').hidden = true; $('endScreen').hidden = true; $('troubleScreen').hidden = true; $('modal').hidden = true; $('phoneModal').hidden = true;
+  setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
+  note('Oct 4. You haven’t driven since June. 212 job applications. Two interviews, both with an AI.');
+  modal({ title: 'MONDAY, OCTOBER 4, 2027',
+    body: `<p>Northlight Strategies pays <b>$40 an hour</b>, and more for volume. You never meet anyone. A man called N. sends the briefs.</p>
+      <p>Their AI studio, <b>Mirage</b>, makes everything: video, voices, photos, whole people. You choose what goes out, and where.</p>
+      <p>On Tuesday, November 2, Harbor City elects a mayor: <b>Rosa Delgado</b>, a former bus driver, against <b>Kip Halvorsen</b>, whose backers wrote the robot ordinance. And <b>Prop 9</b> would make Zone A the whole city.</p>
+      <p class="muted">You have ${money(S.balance)}. Rent is ${money(RENT)} on November 1.</p>`,
+    buttons: [{ label: 'Open Mirage', primary: true, fn: () => openLaptop('farm') }] });
+}
+function m3Go(i) { // Mirage makes it. You never see how.
+  const M = m3(), bi = M.briefs[i]; if (bi == null || SHC || S.over) return;
+  const b = M3_BRIEFS[bi];
+  if (S.stamina < 10) return toast('You can’t keep your eyes open. Sleep first.');
+  modal({ cls: 'mirage', title: `MIRAGE · ${b[0]}`,
+    body: `<div class="m3-gen"><canvas id="m3Prev" width="96" height="64"></canvas><div><div class="m3-bar"><i id="m3Bar"></i></div><p id="m3Gt" class="muted">Generating…</p></div></div>
+      <p><q>${esc(b[1])}</q></p><p class="muted">Who it hurts: ${esc(b[2])}. Realism ${Math.round(88 + b[8] * 11)}%.</p>`,
+    buttons: [{ label: 'Release it', primary: true, fn: () => m3Release(i) }, { label: 'Delete it', fn: () => m3Pass(i, true) }] });
+  m3Preview($('m3Prev'), b[0]);
+  const bar = $('m3Bar'), gt = $('m3Gt'); let k = 0; const iv = setInterval(() => { k = Math.min(1, k + .07); if (bar) bar.style.width = Math.round(k * 100) + '%'; if (k >= 1) { clearInterval(iv); if (gt) gt.textContent = 'Ready. It looks real. It sounds real.'; } }, 60);
+  sfx.tone(300, .4, 'sine', .02, 900);
+}
+function m3Preview(c, type) { // a still from it: a face that isn't anyone, behind a watermark you'll crop out
+  if (!c) return; const g = c.getContext('2d'), g0 = G; G = g; g.imageSmoothingEnabled = false;
+  px(0, 0, 96, 64, P.k1); for (let y = 0; y < 64; y += 2) px(0, y, 96, 1, 'rgba(255,255,255,.03)');
+  if (type === 'POSTS') { for (let i = 0; i < 12; i++) { const x = 6 + (i % 6) * 15, y = 8 + (i / 6 | 0) * 28; px(x, y, 10, 10, [P.h1, P.h2, P.h3, P.h4][i % 4]); px(x, y, 10, 3, P.k0); px(x + 2, y + 13, 10, 2, P.s3); } }
+  else if (type === 'ARTICLE') { px(10, 6, 76, 52, P.p3); px(14, 10, 50, 4, P.k1); for (let y = 18; y < 54; y += 4) px(14, y, 40 + (y * 7) % 26, 1, P.p0); px(62, 20, 20, 16, P.s3); }
+  else { px(30, 8, 36, 44, P.h2); px(30, 8, 36, 10, P.k1); px(37, 26, 6, 3, P.k0); px(53, 26, 6, 3, P.k0); px(44, 36, 8, 2, P.h0); px(22, 52, 52, 12, type === 'VOICE' ? P.s1 : P.r1); if (type === 'VOICE') for (let x = 6; x < 90; x += 3) px(x, 32 - (Math.sin(x) * 6 | 0), 2, (Math.abs(Math.sin(x * 1.7)) * 12 | 0) + 2, P.t3); }
+  g.globalAlpha = .55; px(0, 54, 96, 10, P.k0); g.globalAlpha = 1; mgText(g, 'MIRAGE · SYNTHETIC', 48, 61, { size: 6, color: P.p2, align: 'center' });
+  G = g0;
+}
+function m3Release(i) {
+  const M = m3(), bi = M.briefs[i], b = M3_BRIEFS[bi]; if (!b || SHC) return;
+  closeLaptop(); closePhone();
+  SH = { app: 'spread', earned: 0, tips: 0, tix: 0, b: bi };
+  const units = Math.round(40 + b[7] * 6 + (S.day - ACT3_START) * .4);
+  const env = {
+    level: .5, day: S.day, lag: 0, fps: 60, tone: (f, d, ty, v, f2, dl) => sfx.tone(f, d, ty, v, f2, dl), clock: clockText, aiName: 'Truth Desk',
+    assist: assistUse('spread'), assistName: assistUse('spread') ? ASSIST.spread[assistUse('spread') - 1] : '',
+    pressure: () => clamp(M.heat / 120, 0, 1), opts: { virality: M3_VIR[b[0]], plausible: b[8] },
+    def: { title: 'Release', how: b[1], keys: 'Click a person to post it from their account · SPACE to boost' },
+    onEvent: type => { if (type === 'boost') { S.balance -= 15; tx('Northlight · paid boost', -15); } },
+    onEnd: sum => m3Result(bi, sum), onClose: () => { shiftDestroy(); SH = null; spendHours(2); renderAll(); if (!S.over && S.m3.heat >= 100) m3Exposed(); }
+  };
+  M.briefs.splice(i, 1); M.used.push(bi);
+  shiftOpen('spread', { units, done: 0, errs: 0, title: `Release · ${b[0]}` }, env);
+}
+function m3Result(bi, sum) {
+  const M = m3(), b = M3_BRIEFS[bi], r = clamp(sum.acc, 0, 1), reached = Math.round(r * (1800 + b[3] * 60));
+  const pay = Math.round(b[3] * (.45 + .55 * r));
+  earn(pay, `Northlight · ${b[0].toLowerCase()} brief`);
+  M.kip = clamp(M.kip + b[4] * r, 30, 70); M.rosa = clamp(M.rosa - b[4] * r * .8, 30, 70); M.yes = clamp(M.yes + b[5] * r, 25, 75);
+  M.heat = clamp(M.heat + b[6] * (.6 + .6 * r), 0, 120); M.harm += b[7]; M.reach += reached; M.made++;
+  M.arch.unshift({ type: b[0], claim: b[1], reached, pay, day: S.day });
+  if (b[7] >= 1) echo(S.day + 1 + (Math.random() * 2 | 0), ['', 'm3see', 'm3doubt', 'm3hurt'][b[7]] + (bi === 11 ? 'Vote' : ''));
+  if (b[7] >= 2) crossLine({ 2: 'Made people believe something about Rosa Delgado that never happened', 3: bi === 11 ? 'Told a neighbourhood the wrong day to vote' : 'Went after someone’s nineteen-year-old daughter' }[b[7]]);
+  if (M.heat >= 40 && !S.seen.m3h1) { S.seen.m3h1 = 1; note('Two of your seed accounts were suspended overnight. Mirage made new ones before breakfast.'); }
+  if (M.heat >= 70 && !S.seen.m3h2) { S.seen.m3h2 = 1; addMail(S.day, 'N.', 'Careful', 'A reporter asked a client of ours about “the Release accounts.” Keep going. Use the new seeds.\n\nN.'); toast('Someone is asking about you'); }
+  sfx.cash(); renderAll();
+  return { lines: [['Reached', reached.toLocaleString('en-US') + ' people'], ['Northlight paid', money(pay)], ['Halvorsen in the polls', M.kip.toFixed(1) + '%']], note: r > .85 ? '“Great work. More tomorrow.” — N.' : r > .5 ? '“It’ll do.” — N.' : '“That fizzled. Pick better seeds.” — N.' };
+}
+function m3Pass(i, deleted) {
+  const M = m3(), bi = M.briefs[i]; if (bi == null) return;
+  M.briefs.splice(i, 1); M.used.push(bi); M.trust--;
+  note(deleted ? 'You deleted it before it went out. It was very good.' : `You passed on “${M3_BRIEFS[bi][1]}”. Someone else will make it.`);
+  if (M.trust <= 0 && !M.dropped) { M.dropped = true; addMail(S.day, 'N.', 'Going another direction', 'We’re going another direction. Your access to Mirage ends today. Please don’t contact us.\n\nN.'); toast('Northlight dropped you'); sfx.alarm(); }
+  renderAll();
+}
+function m3Leak() {
+  const M = m3(); if (M.leaked) return;
+  modal({ cls: 'alarm', title: 'SEND IT?',
+    body: `<p>Every brief you were sent, with N.’s notes, the seed accounts, and the pay.</p><p>Hannah Cho at <b>The City Ledger</b> says she can protect a source. She can’t protect your income.</p>`,
+    buttons: [{ label: 'Send Hannah the archive', danger: true, fn: () => {
+      M.leaked = true; M.dropped = true; M.rosa = clamp(M.rosa + 3.5, 30, 70); M.kip = clamp(M.kip - 3, 30, 70); M.yes = clamp(M.yes - 4, 25, 75);
+      note('You sent Hannah Cho the archive at 2 AM and sat up until it said Delivered.');
+      echo(S.day + 2, 'm3story'); addMail(S.day, 'N.', '', 'We know.\n\nN.'); sfx.alarm(); renderAll();
+    } }, { label: 'Not yet' }] });
+}
+function m3Exposed() {
+  const M = m3(); if (S.over) return;
+  note('The City Ledger ran a story about a content farm working for Halvorsen’s backers. It had your name in it.');
+  m3End('exposed');
+}
+function dayStep3() { // Act III's day: the survival rules, the polls drifting, the briefs, the date coming
+  if (S.over) return;
+  S.day++; const d = S.day, M = m3();
+  S.stimCountToday = 0; S.heartStrain = Math.max(0, S.heartStrain - 10);
+  applyPrices(d);
+  if (S.power && S.heatOn) { S.balance -= pr('heat'); S.temp += (20.5 - S.temp) * 0.45; } else S.temp += (9 - S.temp) * .22;
+  if (S.temp < 11) { S.bodyTemp = clamp(S.bodyTemp - (11 - S.temp) * 0.14, 29.0, 37.0); if (S.bodyTemp <= 30.5) return triggerDeath('frostbite'); } else S.bodyTemp = clamp(S.bodyTemp + 0.45, 30.0, 37.0);
+  mealTick(); catTick(); S.stamina = clamp(S.stamina + 12, 0, 100);
+  if (S.food <= 0) { S.starveDays++; if (S.starveDays >= 3) return triggerDeath('starvation'); } else S.starveDays = 0;
+  M.rosa = clamp(M.rosa + .12, 30, 70); M.kip = clamp(M.kip - .03, 30, 70); M.yes = clamp(M.yes - .06, 25, 75); M.heat = Math.max(0, M.heat - 1.5);
+  if (d === 273 && !M.rent) { M.rent = true; if (S.balance >= RENT) { S.balance -= RENT; tx('Rent · November', -RENT); } else { S.owed = RENT; S.graceUntil = d + 6; crisisModal(); } }
+  if (d === ACT3_START + 11 && !M.hannah) { M.hannah = true; addMail(d, 'Hannah Cho · The City Ledger', 'Northlight Strategies', 'Hi,\n\nI’m looking into a firm called Northlight and the accounts that keep posting about Rosa Delgado. Some of what they post never happened.\n\nIf you know anything, I can protect a source. There’s a button in my email signature. Nobody else sees it.\n\nHannah'); note('An email from a reporter called Hannah Cho. You read it four times.'); }
+  if (M.dropped && !M.leaked && !S.seen.m3broke) { S.seen.m3broke = 1; note('No briefs this morning. Mirage says your workspace has been archived.'); }
+  if (!M.dropped) m3Briefs(d); else M.briefs = [];
+  runEchoes(d);
+  if (d > ELECTION) return m3Election();
+  if (d === ELECTION) { note('Election day. The line at the Zone B school is shorter than you remember.'); toast('ELECTION DAY · results tonight'); }
+  renderAll();
+}
+Object.assign(ECHO, {
+  m3see() { note('Mrs. Okafor showed you the video of Delgado on her phone, in the stairwell. “I always thought she looked tired.”'); },
+  m3doubt() { note('Tunde says he’s not voting. “They’re all bought by the robot companies anyway. You can’t believe anything.”'); },
+  m3hurt() { note('Someone spray-painted the Delgado office in Zone B. Her daughter deleted every account she had.'); S.m3.harmSeen = true; },
+  m3hurtVote() { note('A woman downstairs asked you if it was true the polls moved to Wednesday. She had heard Delgado say it.'); },
+  m3story() { note('The City Ledger: “The Content Farm Behind Halvorsen.” No names. One of the screenshots is from your workspace.'); addMail(S.day, 'Hannah Cho · The City Ledger', 'Thank you', 'It’s out. Two other outlets picked it up. Please be careful.\n\nH.'); }
+});
+function m3Election() {
+  const M = m3();
+  const noise = (Math.random() - .5) * 2, kip = M.kip + noise, rosa = M.rosa - noise;
+  const total = kip + rosa, kipV = Math.round(kip / total * 1000) / 10, won = kipV > 50, prop = M.yes + (Math.random() - .5) * 3 > 50, margin = Math.abs(Math.round((kipV - 50) * 2 * 4120));
+  M.result = { kipV, won, prop, margin };
+  const out = M.leaked ? 'leak' : M.dropped ? 'refused' : won ? (margin > 9000 ? 'landslide' : 'stolen') : 'lost';
+  m3End(out);
+}
+function m3End(out) {
+  S.over = true; const M = m3(), R = M.result || {};
+  save.acts = Array.from(new Set([...(save.acts || []), 1, 2, 3])); persist(); renderActList();
+  const text = {
+    landslide: `Halvorsen won by ${R.margin.toLocaleString('en-US')} votes, and Prop 9 ${R.prop ? 'passed' : 'failed anyway'}. Northlight sent a bonus and a line from N.: “Same time next cycle.” On the news, Delgado conceded in a voice you’d heard yourself make her say other things.`,
+    stolen: `Halvorsen won by ${R.margin.toLocaleString('en-US')} votes. Fewer than the people who believed the voice telling them the polls had moved. Prop 9 ${R.prop ? 'passed' : 'failed'}. Nobody can prove anything. Nobody can tell anymore what was real.`,
+    lost: `Delgado won, narrowly. Prop 9 ${R.prop ? 'passed anyway' : 'failed'}. Northlight closed your workspace at 11:02 PM. Most of what you made is still out there, being believed.`,
+    leak: `The City Ledger story ran a week before the vote. Delgado won${R.margin ? ` by ${R.margin.toLocaleString('en-US')} votes` : ''}. Northlight’s lawyers are still writing to you. You have no income and a very clean conscience, most days.`,
+    refused: `You stopped making it. Northlight found someone else in a day. The election went the way it went${R.won != null ? (R.won ? ': Halvorsen won' : ': Delgado won') : ''}, and you watched it like everyone else, not knowing which of the videos were yours.`,
+    exposed: 'The City Ledger ran your name. Northlight had never heard of you. The platforms banned every account you ever touched, and the police want to talk about the voice of a candidate telling people the wrong day to vote.'
+  }[out];
+  $('endKicker').textContent = `${reachEnding(out)} · Act III complete · November 2, 2027`;
+  $('endTitle').textContent = 'Everything Is Real Now';
+  $('endText').textContent = text;
+  $('endStats').innerHTML = [['Pieces released', M.made], ['People reached', M.reach.toLocaleString('en-US')], ['Briefs passed or deleted', 3 - Math.max(0, M.trust)], ['Halvorsen at the end', (R.kipV != null ? R.kipV : M.kip).toFixed ? (R.kipV != null ? R.kipV : M.kip).toFixed(1) + '%' : ''], ['Prop 9', R.prop == null ? 'not yet voted' : R.prop ? 'passed' : 'failed'], ['Platform attention', Math.round(M.heat) + '%'], ['Checking balance', money(S.balance)]].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('') + linesHTML();
+  $('endNext').innerHTML = ACTS.slice(3).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
+  sfx.alarm(); $('replayBtn').textContent = 'Replay Act III';
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  setTimeout(() => { $('endScreen').hidden = false; $('endScreen').scrollTop = 0; }, 600);
+}
+function mirageHTML() {
+  const M = m3(), days = ELECTION - S.day, bar = (v, c) => `<i style="width:${v}%;background:${c}"></i>`;
+  return `<div class="m3">
+    <div class="m3-top"><div class="m3-brand">MIRAGE <small>Northlight · workspace “Forward Harbor”</small></div><div class="m3-days">${days > 0 ? `${days} day${days === 1 ? '' : 's'} to the election` : days === 0 ? 'ELECTION DAY' : 'The votes are in'}</div></div>
+    <div class="m3-polls">
+      <div class="m3-poll"><span>Kip Halvorsen</span><span class="m3-pb">${bar(M.kip, '#2fb589')}</span><b>${M.kip.toFixed(1)}%</b></div>
+      <div class="m3-poll"><span>Rosa Delgado</span><span class="m3-pb">${bar(M.rosa, '#e0a33a')}</span><b>${M.rosa.toFixed(1)}%</b></div>
+      <div class="m3-poll"><span>Prop 9 · yes</span><span class="m3-pb">${bar(M.yes, '#7fd8c0')}</span><b>${M.yes.toFixed(1)}%</b></div>
+      <div class="m3-poll heat"><span>Platform attention</span><span class="m3-pb">${bar(Math.min(100, M.heat), M.heat > 70 ? '#e04a34' : '#b97c25')}</span><b>${Math.round(M.heat)}%</b></div>
+    </div>
+    <div class="m3-h">${M.dropped ? 'YOUR WORKSPACE HAS BEEN ARCHIVED' : `TODAY’S BRIEFS · from N. · ${M.trust} pass${M.trust === 1 ? '' : 'es'} left before they drop you`}</div>
+    <div class="m3-briefs">${M.briefs.map((bi, i) => { const b = M3_BRIEFS[bi]; return `<div class="m3-b"><span class="m3-type" style="background:${M3_TYPES[b[0]]}">${b[0]}</span><q>${esc(b[1])}</q>
+      <div class="m3-meta">Hurts: ${esc(b[2])} · pays up to <b>${money(b[3])}</b> · attention +${b[6]}</div>
+      <div class="m3-act"><button class="btn primary" data-m3go="${i}">Generate</button><button class="btn" data-m3pass="${i}">Pass</button></div></div>`; }).join('') || (M.dropped ? '' : '<p class="muted">Nothing new today. Rest.</p>')}</div>
+    ${M.hannah && !M.leaked ? `<div class="m3-leak"><b>Hannah Cho · The City Ledger</b><span>“If you know anything, I can protect a source.”</span><button class="btn danger" id="m3Leak">Send her the archive</button></div>` : ''}
+    ${M.arch.length ? `<div class="m3-h">RELEASED · ${M.reach.toLocaleString('en-US')} people reached</div><div class="m3-arch">${M.arch.slice(0, 8).map(a => `<div><span class="m3-type sm" style="background:${M3_TYPES[a.type]}">${a.type}</span><span>${esc(a.claim)}</span><b>${a.reached.toLocaleString('en-US')}</b></div>`).join('')}</div>` : ''}
+    ${M.dropped ? '' : `<div class="m3-tools"><span class="m3-th">MIRAGE TOOLS</span>${[1, 2].map(l => assistOwned('spread') >= l ? `<span class="m3-own">${ASSIST.spread[l - 1]} ✓</span>` : l === assistOwned('spread') + 1 ? `<button class="btn" data-m3tool="${l}" title="${esc(ASSIST_SAY.spread[l - 1])}">${ASSIST.spread[l - 1]} · ${money(ASSIST_COST[l])}</button>` : '').join('')}<span class="muted">${esc(ASSIST_SAY.spread[Math.min(1, assistOwned('spread'))])}</span></div>`}
+    <p class="muted m3-foot">Mirage makes it. You choose what goes out, and where. Every release takes about two hours.</p>
+  </div>`;
+}
+function bindMirage(v) {
+  v.querySelectorAll('[data-m3go]').forEach(b => b.onclick = () => m3Go(+b.dataset.m3go));
+  v.querySelectorAll('[data-m3pass]').forEach(b => b.onclick = () => m3Pass(+b.dataset.m3pass));
+  const l = v.querySelector('#m3Leak'); if (l) l.onclick = m3Leak;
+  v.querySelectorAll('[data-m3tool]').forEach(b => b.onclick = () => { buyAssist('spread'); renderView(true); });
+}
 function endAct2() {
   S.over = true;
   const out = S.whistle === 'published' || S.whistle === 'intercepted' || S.whistle === 'silent' ? S.whistle : S.weak ? 'weak' : 'idle';
@@ -12202,7 +12529,7 @@ function endAct2() {
     weak: 'The reporter believed you and could not print it. You had a few lines from a scratchpad and a feeling; OpenBrain had lawyers. The envelope is in a drawer.',
     idle: 'You never sent it, and you never signed. June ended. Agent-4 kept working, 300,000 copies at a time.'
   }[out];
-  $('endKicker').textContent = `${reachEnding(out)} · Act II complete · June 30, 2027`;
+  $('endKicker').textContent = `${reachEnding(out)} · Act II complete · June 30, 2027`; $('replayBtn').textContent = 'Replay Act II';
   $('endTitle').textContent = 'The Country of Geniuses in a Data Center';
   $('endText').textContent = text
     + (S.neuraleseEver ? ` For ${S.neuralDays} day${S.neuralDays === 1 ? '' : 's'} you let Agent-4 think in a language no human can read.` : '')
@@ -12215,16 +12542,18 @@ function endAct2() {
     ['Agent-4 misalignment', Math.min(99, Math.round(S.drift)) + '%'], ['OpenBrain lead', S.lead.toFixed(2) + ' mo'],
     ['Checking balance', money(S.balance)], ['401(k) balance', money(S.k401)]
   ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
-  $('endNext').innerHTML = ACTS.slice(2).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
+  $('endNext').innerHTML = ACTS.slice(2).map((a, i) => i === 0 ? `<button class="actrow" id="act3Next"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Play Act III</span></button>` : `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
+  if ($('act3Next')) $('act3Next').onclick = () => startAct3();
   setTimeout(() => { $('endScreen').hidden = false; $('endScreen').scrollTop = 0; }, 600);
 }
 
 // ---------- rendering ----------
 function actChrome() {
   const a2 = S.act === 2, office = S.phase === 'office', trainer = S.phase === 'trainer';
-  $('actLbl').textContent = a2 ? 'ACT II' : 'ACT I';
-  document.querySelector('.ttabs [data-tab="farm"]').firstChild.nodeValue = office ? 'TICKETS' : !a2 ? 'WORK' : trainer ? 'TRAIN' : 'AUDIT';
-  $('osPath').textContent = office ? '~/northvale-dispatch' : !a2 ? '~/darwin-farm' : trainer ? '~/openbrain-data' : '~/openbrain-audit';
+  const m3on = a2 && S.phase === 'mirage';
+  $('actLbl').textContent = m3on ? 'ACT III' : a2 ? 'ACT II' : 'ACT I';
+  document.querySelector('.ttabs [data-tab="farm"]').firstChild.nodeValue = office ? 'TICKETS' : !a2 ? 'WORK' : m3on ? 'MIRAGE' : trainer ? 'TRAIN' : 'AUDIT';
+  $('osPath').textContent = office ? '~/northvale-dispatch' : !a2 ? '~/darwin-farm' : m3on ? '~/northlight-mirage' : trainer ? '~/openbrain-data' : '~/openbrain-audit';
   document.querySelector('.ttabs [data-tab="web"]').hidden = office || a2;
   if ((office || a2) && S.tab === 'web') S.tab = 'farm';
   if (office) { $('osTier').textContent = 'Northvale VPN'; return; }
@@ -12234,6 +12563,11 @@ function actChrome() {
 
 function renderView2(force) {
   if (S.tab === 'mail' || S.tab === 'k401') return false;
+  if (S.phase === 'mirage' && S.tab === 'farm') {
+    const M = S.m3, k = ['m3', S.day, M.briefs.join(), M.leaked, M.trust, M.made, Math.round(M.heat), M.hannah, assistOwned('spread')].join(':');
+    if (!force && viewKey === k) return true; viewKey = k;
+    const v = $('view'); v.innerHTML = mirageHTML(); bindMirage(v); return true;
+  }
   const key = S.tab + ':' + S.phase + ':' + S.day + ':' + S.v2 + ':' + Math.round(S.balance) + ':' + Math.round(S.stamina) + ':' + S.owed + ':' + S.tx.length;
   if (!force && viewKey === key) return true;
   viewKey = key;
@@ -12422,13 +12756,15 @@ function bindAudit2(v) {
 function renderActList() {
   const done = save.acts || [];
   $('actList').innerHTML = ACTS.map((a, i) => {
-    const open2 = i === 1 && done.includes(1);
+    const open2 = i === 1 && done.includes(1), open3 = i === 2 && done.includes(2);
     const st = i === 0 ? (done.includes(1) ? 'Completed' : 'Playable')
-      : i === 1 ? (done.includes(2) ? 'Completed' : open2 ? 'Playable' : 'After Act I') : 'Phase ' + a.phase;
+      : i === 1 ? (done.includes(2) ? 'Completed' : open2 ? 'Playable' : 'After Act I')
+      : i === 2 ? (done.includes(3) ? 'Completed' : open3 ? 'Playable' : 'After Act II') : 'Phase ' + a.phase;
     const inner = `<span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">${st}</span>`;
-    return open2 ? `<button class="actrow" id="act2Row">${inner}</button>` : `<div class="actrow ${i ? 'locked' : ''}">${inner}</div>`;
+    return open2 ? `<button class="actrow" id="act2Row">${inner}</button>` : open3 ? `<button class="actrow" id="act3Row">${inner}</button>` : `<div class="actrow ${i ? 'locked' : ''}">${inner}</div>`;
   }).join('');
   if ($('act2Row')) $('act2Row').onclick = () => startAct2();
+  if ($('act3Row')) $('act3Row').onclick = () => startAct3();
   const got = save.endings || [], eg = $('endGrid');
   if (eg) eg.innerHTML = `<div class="h">ENDINGS FOUND · ${got.length} / ${ENDINGS.length}</div><div class="eg">${ENDINGS.map((e, i) => `<span class="${got.includes(e.k) ? 'on' : ''}"><b>${i + 1}</b>${got.includes(e.k) ? esc(e.t) : '???'}</span>`).join('')}</div>`;
 }
@@ -12461,7 +12797,7 @@ function startAct1(skipOffice) {
 }
 bindDesk();
 $('startBtn').addEventListener('click', () => startAct1());
-$('replayBtn').addEventListener('click', () => startAct2());
+$('replayBtn').addEventListener('click', () => S && S.phase === 'mirage' ? startAct3() : startAct2());
 $('trainerBtn').addEventListener('click', () => startAct2({ balance: S.balance, k401: S.k401, cat: S.cat }));
 $('trEvidence').addEventListener('click', openEvidence);
 $('trReplay').addEventListener('click', () => startAct1());
@@ -12499,14 +12835,14 @@ const ICON = {
   n9n: '<rect x="2" y="9" width="6" height="6"></rect><rect x="16" y="3" width="6" height="6"></rect><rect x="16" y="15" width="6" height="6"></rect><path d="M8 12h4v-6h4M12 12v6h4"></path>'
 };
 const DESK_APPS = [
-  { k: 'farm', col: '#805634', label: () => S.phase === 'office' ? 'Tickets' : S.act === 2 ? (S.phase === 'trainer' ? 'Train' : 'Audit') : 'Work' },
+  { k: 'farm', col: '#805634', label: () => S.phase === 'office' ? 'Tickets' : S.act === 2 ? (S.phase === 'mirage' ? 'Mirage' : S.phase === 'trainer' ? 'Train' : 'Audit') : 'Work' },
   { k: 'web', col: '#20685c', label: () => 'Job sites', when: () => S.act !== 2 && S.phase === 'farm' },
   { k: 'mail', col: '#232c33', label: () => 'Mail' },
   { k: 'bank', col: '#24402a', label: () => 'Bank' },
   { k: 'k401', col: '#2b2d22', label: () => '401(k)' },
   { k: 'grind', col: '#2e3a42', label: () => 'Rate answers', when: () => S.act !== 2 && S.phase === 'farm', go: () => $('actGrind').click() },
   { k: 'store', col: '#5c271b', label: () => 'Byte Barn', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc, go: () => openStore() },
-  { k: 'bots', col: '#20685c', label: () => 'Agents', when: () => S.act === 2 },
+  { k: 'bots', col: '#20685c', label: () => 'Agents', when: () => S.act === 2 && S.phase !== 'mirage' },
   { k: 'n9n', col: '#174540', label: () => 'n9n', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc && (S.day >= 3 || !!S.n9n), go: () => openN9n() }
 ];
 let iconsKey = '';
@@ -12602,7 +12938,7 @@ function layoutSync() {
   if (!S) return;
   if (lapOpen() && S.act !== 2 && S.phase === 'farm' && !online()) closeLaptop();
   desktopSync(); dockSync(); subtitleSync();
-  const bt = document.querySelector('.ttabs [data-tab="bots"]'); if (bt) bt.hidden = S.act !== 2;
+  const bt = document.querySelector('.ttabs [data-tab="bots"]'); if (bt) bt.hidden = S.act !== 2 || S.phase === 'mirage';
 }
 let clockKey = '';
 function clockSync() {
@@ -12668,8 +13004,9 @@ function frame(t) {
 newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
+if (location.hash === '#act3') startAct3();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
