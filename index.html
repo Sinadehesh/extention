@@ -1218,6 +1218,21 @@ html.uikit #tutCard { border: 18px solid transparent; border-image: var(--fr-pap
 .tut-b { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; }
 .tut-b .btn { font-size: 12.5px !important; }
 .tut-reset { margin-top: 10px; font-size: 12px !important; }
+/* the title screen: two columns, the logo and the button above the fold */
+#titleScreen .title-inner { max-width: 1160px; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 20px 54px; align-items: start; padding-top: 4vh; }
+#titleScreen .t-hero, #titleScreen .t-side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+#titleScreen .t-hero { position: sticky; top: 4vh; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+#logoCv { width: 100%; max-width: 520px; height: auto; aspect-ratio: 118 / 64; image-rendering: pixelated; display: block; margin: 0 0 2px -6px; }
+#titleScreen .t-hero .kicker { line-height: 1.6; }
+#titleScreen .t-hero .lede { font-size: 17px; line-height: 1.55; }
+.t-cta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 6px 0 2px; }
+.t-cta .cta { font-size: 19px !important; padding: 16px 34px !important; animation: ctaBreath 2.4s ease-in-out infinite; }
+@keyframes ctaBreath { 50% { filter: brightness(1.12); } }
+.t-cta .tut-reset { margin: 0; }
+.t-warn { color: #ad5536 !important; }
+.t-h { font-family: var(--f-term); font-size: 11px; letter-spacing: .14em; color: #e0a33a; }
+@media (max-width: 1100px) { #titleScreen .title-inner { grid-template-columns: 1fr; max-width: 640px; } #titleScreen .t-hero { position: static; } }
 </style>
 </head>
 <body>
@@ -1357,17 +1372,20 @@ html.uikit #tutCard { border: 18px solid transparent; border-image: var(--fr-pap
 
 <!-- Title -->
 <div class="screen" id="titleScreen">
-  <div class="screen-inner">
-    <div class="kicker">A game in five acts · 2027–2030</div>
-    <h1>The Loop</h1>
+  <div class="screen-inner title-inner"><div class="t-hero">
+    <h1 class="sr">The Loop</h1>
+    <canvas id="logoCv" width="118" height="64" aria-hidden="true"></canvas>
+    <div class="kicker">A story game in five acts · 2027–2030 · about being the human in the loop</div>
     <p class="lede">You are the human in the loop. It is January 2027 and you are a junior analyst at a logistics company, the week a new AI called ChatGPX arrives. By February you have $480, an old laptop, three stars on a freelance site, and a black cat called Soot. Rent is $1,800.</p>
+    <div class="t-cta"><button class="cta" id="startBtn">BEGIN ACT I</button><button class="btn tut-reset" id="tutReset">Tutorial: on</button></div>
     <p class="fine">The bar across the top tells you, at a glance, whether you will have the rent on the day it is due. What you do about it is up to you.</p>
+    <p class="fine t-warn">Fiction about AI catastrophe, for adults. Made for a computer screen.</p>
+    </div><div class="t-side">
+    <div class="t-h">THE ACTS</div>
     <div class="acts" id="actList"></div>
     <div class="endgrid" id="endGrid"></div>
-    <button class="cta" id="startBtn">BEGIN ACT I</button>
-    <button class="btn tut-reset" id="tutReset">Tutorial: on</button>
     <p class="fine">Based on research by Dan Hendrycks (<i>Natural Selection Favors AIs over Humans</i>), Daniel Kokotajlo (<i>AI 2027</i>), and Max Tegmark (<i>Life 3.0</i>).</p>
-  </div>
+  </div></div>
 </div>
 
 <!-- Act end -->
@@ -13058,6 +13076,42 @@ function renderTutBtn() { const b = $('tutReset'); if (b) b.textContent = save.t
 $('tutOk').onclick = () => tutDone(); $('tutSkip').onclick = () => tutDone(true);
 $('tutReset').onclick = () => { tutReset(); }; renderTutBtn();
 document.addEventListener('keydown', e => { if (!tutOn()) return; if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') { e.preventDefault(); e.stopImmediatePropagation(); tutDone(); } }, true);
+// ---- the title logo: THE LOOP in big pixels, the two O's a figure eight, and you, running around it ----
+const LOGO_G = {
+  T: ['XXXXX', '..X..', '..X..', '..X..', '..X..', '..X..', '..X..'], H: ['X...X', 'X...X', 'X...X', 'XXXXX', 'X...X', 'X...X', 'X...X'],
+  E: ['XXXXX', 'X....', 'X....', 'XXXX.', 'X....', 'X....', 'XXXXX'], L: ['X....', 'X....', 'X....', 'X....', 'X....', 'X....', 'XXXXX'],
+  P: ['XXXX.', 'X...X', 'X...X', 'XXXX.', 'X....', 'X....', 'X....'], 8: ['.XXX.XXX.', 'X...X...X', 'X...X...X', 'X...X...X', 'X...X...X', 'X...X...X', '.XXX.XXX.'] // OO, as one figure eight
+};
+function logoDraw(t) {
+  const c = $('logoCv'); if (!c || $('titleScreen').hidden) return;
+  const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, c.width, c.height);
+  const word = (w, x0, y0, k) => { const cells = []; let x = x0; for (const ch of w) { const gl = LOGO_G[ch]; gl.forEach((row, y) => { for (let i = 0; i < row.length; i++) if (row[i] === 'X') cells.push([x + i * k, y0 + y * k, y]); }); x += (gl[0].length + 1) * k; } return cells; };
+  const small = word('THE', 6, 2, 2), big = word('L8P', 6, 20, 5), on = new Set(big.map(([x, y]) => x + ',' + y));
+  const glint = ((t / 1000) % 4.5) * 70 - 40; // a bright band that crosses the letters now and then
+  for (const [cells, k] of [[small, 2], [big, 5]]) {
+    for (const [x, y] of cells) { g.fillStyle = '#3d0f0c'; g.fillRect(x + (k > 2 ? 3 : 1), y + (k > 2 ? 3 : 1), k, k); } // the extrusion
+    for (const [x, y] of cells) { g.fillStyle = '#07080a'; g.fillRect(x - 1, y - 1, k + 2, k + 2); } // the outline
+    const GRAD = ['#fbf6e8', '#fbf6e8', '#ece4cc', '#ece4cc', '#ffe6a6', '#f2c46a', '#f2c46a', '#e0a33a', '#e0a33a', '#cf7a4f', '#cf7a4f', '#ad5536']; // bone at the top, rust at the bottom, in 3px bands
+    for (const [x, y] of cells) {
+      if (k > 2) { for (let yy = 0; yy < k; yy++) { g.fillStyle = GRAD[Math.min(GRAD.length - 1, ((y - 20 + yy) / 3) | 0)]; g.fillRect(x, y + yy, k, 1); }
+        if (!on.has(x + ',' + (y - k))) { g.fillStyle = 'rgba(255,255,255,.55)'; g.fillRect(x, y, k, 1); } // light on the top edges only
+        if (!on.has(x + ',' + (y + k))) { g.fillStyle = 'rgba(61,15,12,.55)'; g.fillRect(x, y + k - 1, k, 1); } }
+      else { g.fillStyle = '#e0a33a'; g.fillRect(x, y, k, k); }
+      const gx = x + y * .6; if (gx > glint && gx < glint + 9) { g.fillStyle = 'rgba(255,255,255,.5)'; g.fillRect(x, y, k, k); }
+    }
+  }
+  // the human in the loop: a figure eight through the middle of the two O's
+  const ox = 6 + 6 * 5, oy = 20, cx = ox + 4 * 5 + 2.5, cy = oy + 3 * 5 + 2.5, a = t / 1000 * 1.25;
+  const px = cx + Math.sin(a) * 20, py = cy + Math.sin(a * 2) * 9;
+  for (let i = 6; i > 0; i--) { const b = a - i * .09; g.fillStyle = `rgba(224,74,52,${(.5 - i * .07).toFixed(2)})`; g.fillRect(Math.round(cx + Math.sin(b) * 20) - 1, Math.round(cy + Math.sin(b * 2) * 9) - 1, 2, 2); }
+  const fx = Math.round(px), fy = Math.round(py), step = (t / 120 | 0) % 2;
+  g.fillStyle = '#07080a'; g.fillRect(fx - 2, fy - 5, 5, 8);
+  g.fillStyle = '#dcae88'; g.fillRect(fx - 1, fy - 4, 3, 2); // a head
+  g.fillStyle = '#e0a33a'; g.fillRect(fx - 1, fy - 2, 3, 3); // the coat
+  g.fillStyle = '#2e3a42'; g.fillRect(fx - 1 + step, fy + 1, 1, 2); g.fillRect(fx + 1 - step, fy + 1, 1, 2); // running
+  // the tagline under the word
+  g.fillStyle = '#536570'; g.fillRect(6, 60, 106, 1); g.fillStyle = '#e0a33a'; g.fillRect(6, 60, 14, 1);
+}
 function frame(t) {
   const dt = Math.min(.25, (t - last) / 1000); last = t;
   if (S && !S.over) {
@@ -13093,7 +13147,7 @@ function frame(t) {
       }
     }
   }
-  paintRoom(t);
+  paintRoom(t); logoDraw(t);
   if (S) { paintBots(t); deskTick(t); clockSync(); }
   requestAnimationFrame(frame);
 }
