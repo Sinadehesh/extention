@@ -1205,6 +1205,19 @@ html.uikit #n9nWin .n9-node, html.uikit #n9nWin .n9-offer, html.uikit #n9nWin .n
 .card.mirage .m3-bar { height: 10px; background: #07080a; border: 2px solid #07080a; box-shadow: 0 0 0 1px #843b27; }
 .card.mirage .m3-bar i { display: block; height: 100%; width: 0; background: #e04a34; }
 .card.mirage q { font-size: 16px; color: var(--ink); quotes: '“' '”'; }
+/* the tutorial: a hole in the dark around one thing, and a card that says what it is */
+#tut { position: fixed; inset: 0; z-index: 95; pointer-events: none; }
+#tut[hidden] { display: none; }
+#tutHole { position: fixed; border: 3px solid #f2c46a; box-shadow: 0 0 0 9999px rgba(7,8,10,.66), inset 0 0 0 2px #07080a; animation: tutPulse 1.2s steps(2) infinite; transition: left .18s, top .18s, width .18s, height .18s; }
+@keyframes tutPulse { 50% { border-color: #ffe6a6; } }
+#tutCard { position: fixed; pointer-events: auto; padding: 12px 14px; background: #ece4cc; color: #24170f; border: 3px solid #07080a; box-shadow: 6px 6px 0 #07080a; display: flex; flex-direction: column; gap: 6px; transition: left .18s, top .18s; }
+html.uikit #tutCard { border: 18px solid transparent; border-image: var(--fr-paper) 3 fill / 18px / 0 stretch; background: transparent; padding: 2px 4px; box-shadow: none; filter: drop-shadow(6px 6px 0 rgba(7,8,10,.85)); }
+#tutK { font-family: var(--f-term); font-size: 10.5px; letter-spacing: .12em; color: #805634; }
+#tutT { font-family: var(--f-term); font-size: 17px; color: #0d1013; }
+#tutS { margin: 0; font-size: 14.5px; line-height: 1.45; color: #352216; }
+.tut-b { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; }
+.tut-b .btn { font-size: 12.5px !important; }
+.tut-reset { margin-top: 10px; font-size: 12px !important; }
 </style>
 </head>
 <body>
@@ -1352,6 +1365,7 @@ html.uikit #n9nWin .n9-node, html.uikit #n9nWin .n9-offer, html.uikit #n9nWin .n
     <div class="acts" id="actList"></div>
     <div class="endgrid" id="endGrid"></div>
     <button class="cta" id="startBtn">BEGIN ACT I</button>
+    <button class="btn tut-reset" id="tutReset">Tutorial: on</button>
     <p class="fine">Based on research by Dan Hendrycks (<i>Natural Selection Favors AIs over Humans</i>), Daniel Kokotajlo (<i>AI 2027</i>), and Max Tegmark (<i>Life 3.0</i>).</p>
   </div>
 </div>
@@ -1418,6 +1432,7 @@ html.uikit #n9nWin .n9-node, html.uikit #n9nWin .n9-offer, html.uikit #n9nWin .n
 <div id="toasts" aria-live="polite"></div>
 <div class="modal" id="modal" hidden><div class="card" id="modalCard"></div></div>
 <div class="modal" id="phoneModal" hidden><div class="phone" id="phoneScreen"></div><div id="bossWarn" hidden>FOOTSTEPS · MARCUS IS COMING</div></div>
+<div id="tut" hidden><div id="tutHole"></div><div id="tutCard"><div id="tutK"></div><div id="tutT"></div><p id="tutS"></p><div class="tut-b"><button class="btn" id="tutSkip">Skip the tutorial</button><button class="btn primary" id="tutOk">Got it · Enter</button></div></div></div>
 <div id="shiftModal" hidden><div class="shift-top"><b id="shTitle"></b><span id="shInfo"></span><button class="btn" id="shQuit">End the shift</button></div><div class="shift-stage" id="shStage"></div></div>
 <div class="modal" id="evModal" hidden>
   <div class="card" style="max-width:520px">
@@ -11317,7 +11332,7 @@ function shiftOpen(kind, job, env) {
   const c = $('shStage').querySelector('canvas'); if (c) c.focus({ preventScroll: true });
 }
 function shiftDestroy() { if (SHC) { try { SHC.destroy(); } catch (e) {} } SHC = null; $('shiftModal').hidden = true; }
-function shiftTick(dt) { if (!SHC) return; SHC.tick(dt, !!speed && $('modal').hidden); if (SH && SH.app === 'spread') $('shInfo').textContent = `Halvorsen ${S.m3.kip.toFixed(1)}% · Delgado ${S.m3.rosa.toFixed(1)}% · attention ${Math.round(S.m3.heat)}%`; else if (SH && SH.app !== 'jail') $('shInfo').textContent = `${money(SH.earned + SH.tips)} this shift${SH.tix ? ` · tickets −${money(SH.tix)}` : ''} · ${clockText()}`; }
+function shiftTick(dt) { if (!SHC) return; SHC.tick(dt, !!speed && $('modal').hidden && !tutOn()); if (SH && SH.app === 'spread') $('shInfo').textContent = `Halvorsen ${S.m3.kip.toFixed(1)}% · Delgado ${S.m3.rosa.toFixed(1)}% · attention ${Math.round(S.m3.heat)}%`; else if (SH && SH.app !== 'jail') $('shInfo').textContent = `${money(SH.earned + SH.tips)} this shift${SH.tix ? ` · tickets −${money(SH.tix)}` : ''} · ${clockText()}`; }
 $('shQuit').onclick = () => {
   if (!SHC || !SH) return;
   const st = SHC.state;
@@ -12963,6 +12978,86 @@ function dreadTick(dt, live) {
     flickNext = now + 25000; MGC.blackout(.8 + Math.random() * 1.4); fx.flickUntil = now + 900;
   }
 }
+// ================= the tutorial: a spotlight on each new thing, the first time it matters =================
+// Each step waits for its moment (a phase, an open window, a new app), lights up one thing, and pauses the clock.
+// Steps are remembered across runs. "Skip the tutorial" turns them all off.
+const $q = s => document.querySelector(s);
+const phoneOpen = () => !$('phoneModal').hidden; // lapOpen() is defined with the laptop
+const TUT = [
+  // the office
+  { id: 'clock', when: () => S.phase === 'office' && !lapOpen(), el: () => $('clockLbl'), t: 'THE CLOCK NEVER STOPS', s: 'A day lasts two minutes. It keeps running while you work, read and scroll. II pauses it, 3× speeds it up.' },
+  { id: 'cash', when: () => S.phase === 'office' && !lapOpen(), el: () => $q('#hud .hc'), t: 'YOUR MONEY', s: 'What’s in checking. The cell next to it says what you make and spend per day.' },
+  { id: 'payday', when: () => S.phase === 'office' && !lapOpen(), el: () => $('hProjCell'), t: 'THE NEXT BIG DATE', s: 'Payday now. Later it’s rent, and whether you’ll have enough on the day it’s due. Watch this one.' },
+  { id: 'vitals', when: () => S.phase === 'office' && !lapOpen(), el: () => $q('.vitals'), t: 'YOU', s: 'Food, energy and body heat. Let any of them run out and the game ends. Work costs energy; sleep gives it back.' },
+  { id: 'lapOffice', when: () => S.phase === 'office' && !lapOpen(), el: () => $('railLaptop'), t: 'YOUR WORK IS ON THE LAPTOP', s: 'Open it and sort today’s tickets. Each one costs a little energy.' },
+  { id: 'phone', when: () => S.phase === 'office' && S.day >= OFFICE_START && !lapOpen(), el: () => $('phoneBtn'), t: 'YOUR PHONE', s: 'Bets, stocks, dating. The clock keeps running while you swipe, and Marcus walks the aisle. If you hear footsteps, put it away.' },
+  // the apartment
+  { id: 'rent', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen(), el: () => $('hProjCell'), t: 'RENT', s: 'Rent is due on the 1st. This cell says whether you’ll have it on the day, at the rate you’re going.' },
+  { id: 'goal', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen() && !$('hGoalCell').hidden, el: () => $('hGoalCell'), t: 'TODAY', s: 'What you need to earn today to stay on track for rent. At night the ledger grades the day.' },
+  { id: 'room', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen(), el: () => $('room'), t: 'THE ROOM IS CLICKABLE', s: 'The fridge is the kitchen. The radiator is the heat. The cat is Soot. Things you can use glow when you arrive.' },
+  { id: 'status', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen(), el: () => $('roomStatus'), t: 'HEAT, SOOT, THE LEDGER', s: 'Heat costs money every day, and so does Soot. The ledger at night lets you choose what to pay for.' },
+  { id: 'pc', when: () => S.act !== 2 && S.phase === 'farm' && !S.pc && !lapOpen(), el: () => $('railLaptop'), t: 'YOU NEED A COMPUTER', s: 'IT took your laptop. Open the laptop rail to get to the store, buy a machine and pay for the internet.' },
+  { id: 'web', when: () => S.act !== 2 && S.phase === 'farm' && lapOpen() && online() && !$q('.ttabs [data-tab="web"]').hidden, el: () => $q('.ttabs [data-tab="web"]'), t: 'THE JOB SITES', s: 'freecancer.com and linkbin.com. Send a proposal; some clients hire you. Instant jobs start right away.' },
+  { id: 'bench', when: () => lapOpen() && !!MGC && !!BN && !BN.auto && !$('benchWin').hidden, el: () => $('benchWin'), t: 'EVERY JOB IS A GAME', s: 'Play it well and the client pays in full, with a tip sometimes. Mistakes cost pay and stars. The bar on top shows how far you are.' },
+  { id: 'assist', when: () => lapOpen() && !!$('bnAssist') && !!$('bnAssist').offsetParent, el: () => $('bnAssist'), t: 'TEACH THE AI', s: 'Pay once to teach an AI one part of this game. It bills AI credits while it helps. Level 2 does more. Handing the job to an agent does all of it.' },
+  { id: 'paper2', when: () => S.act !== 2 && S.phase === 'farm' && S.day >= 1 && !lapOpen(), el: () => $('railDiary'), t: 'THE DIARY AND THE RULEBOOK', s: 'Everything that happened is in the diary. New rules arrive as official notices and go in the rulebook, marked NEW.' },
+  { id: 'night', when: () => S.act !== 2 && S.phase === 'farm' && S.day >= 2 && !lapOpen() && !$('nightBtn').hidden, el: () => $('nightBtn'), t: 'ALL-NIGHTER', s: 'Stay up and work through the night. Night jobs pay 25% more. In the morning you pay for it with your body.' },
+  { id: 'n9nIcon', when: () => lapOpen() && !!$q('.dicon[data-app="n9n"]') && $('n9nWin').hidden && !(BN && MGC), el: () => $q('.dicon[data-app="n9n"]'), t: 'n9n: WORKFLOWS', s: 'Chain the arcade games into a workflow, like n8n. Buy AUTOPILOT for a node and an AI plays it, even while you sleep.' },
+  { id: 'n9nPal', when: () => lapOpen() && !$('n9nWin').hidden && !S.n9n.c, el: () => $q('.n9-pal'), t: 'START WITH A CONTRACT', s: 'Take a contract: the client becomes the last node. Then add the nodes its hint names, in order.' },
+  { id: 'n9nWire', when: () => lapOpen() && !$('n9nWin').hidden && S.n9n.nodes.length >= 2 && !S.n9n.wires.length, el: () => $q('.n9-port.out'), t: 'WIRE IT', s: 'Click a node’s out port, then the next node’s in port. The colours show what each node makes. End at the client.' },
+  { id: 'n9nAuto', when: () => lapOpen() && !$('n9nWin').hidden && S.n9n.wires.length >= 1 && !Object.keys(S.n9n.ap).length, el: () => $q('.n9-node.man'), t: 'NEEDS YOU', s: 'A node without autopilot waits for you. Click its picture to play it full size; what you make goes down its wire.' },
+  // Act II
+  { id: 'a2work', when: () => S.act === 2 && S.phase === 'trainer' && lapOpen(), el: () => $q('.ttabs [data-tab="farm"]'), t: 'TRAINING', s: 'Pick the better of two answers, against a quota. Pay per task falls every week. While you work through tasks, the clock stops.' },
+  { id: 'a2phone', when: () => S.act === 2 && S.phase !== 'mirage' && !lapOpen() && !phoneOpen() && !SHC, el: () => $('phoneBtn'), t: 'GIG APPS', s: 'Uburn and Grovel are on your phone. Drive or deliver between tasks. A shift takes hours of your day; tickets come out of your pay.' },
+  { id: 'a2fleet', when: () => S.act === 2 && S.phase !== 'mirage' && S.day >= ROBO_START && !lapOpen() && !SHC, el: () => $('phoneBtn'), t: 'THE FLEET', s: 'Robotaxis and delivery robots are on the street now. They take the orders first, and they brake for nothing.' },
+  // Act III
+  { id: 'm3briefs', when: () => S.phase === 'mirage' && lapOpen() && !!$q('.m3-briefs .m3-b'), el: () => $q('.m3-briefs'), t: 'THE BRIEFS', s: 'Three a day, from N. Each one says who it hurts. Generate it, then release it. Pass three times and they drop you.' },
+  { id: 'm3polls', when: () => S.phase === 'mirage' && lapOpen() && !!$q('.m3-polls'), el: () => $q('.m3-polls'), t: 'WHAT IT DOES', s: 'Every release moves the polls, and platform attention. At 100% attention your name is in the paper.' },
+  { id: 'release', when: () => !!SHC && SH && SH.app === 'spread', el: () => $('shStage'), t: 'RELEASE', s: 'Click a person to post it from their account. Big ringed dots are trusted. Keep it ahead of the fact-checks (teal) and the sweeps. SPACE boosts it.' }
+];
+let tutCur = null, tutT = 0;
+const tutOff = () => (navigator.webdriver && !window.__tutTest) || (save.tut && save.tut.__off);
+const tutOn = () => !!tutCur;
+function tutTick(dt) {
+  if (tutCur) { tutPlace(); return; }
+  tutT -= dt; if (tutT > 0) return; tutT = .4;
+  if (!S || S.over || tutOff() || !$('titleScreen').hidden || !$('modal').hidden || !$('evModal').hidden || $('desk').classList.contains('on')) return;
+  for (const st of TUT) {
+    if (save.tut && save.tut[st.id]) continue;
+    let ok = false; try { ok = st.when(); } catch (e) { ok = false; }
+    if (!ok) continue;
+    const el = st.el(); if (!el || !el.getClientRects().length) continue;
+    return tutShow(st);
+  }
+}
+function tutShow(st) {
+  tutCur = st; $('tut').hidden = false;
+  const done = TUT.filter(x => save.tut && save.tut[x.id]).length;
+  $('tutK').textContent = `TUTORIAL · ${done + 1} OF ${TUT.length}`; $('tutT').textContent = st.t; $('tutS').textContent = st.s;
+  tutPlace(); sfx.tone(880, .05, 'square', .02); sfx.tone(1320, .08, 'square', .02, 0, .06);
+  if (SHC) SHC.tick(0, false);
+}
+function tutPlace() {
+  const el = tutCur && tutCur.el(); if (!el || !el.getClientRects().length) return tutDone();
+  const r = el.getBoundingClientRect(), pad = 6, hole = $('tutHole'), card = $('tutCard'), W = innerWidth, H = innerHeight;
+  hole.style.left = r.left - pad + 'px'; hole.style.top = r.top - pad + 'px'; hole.style.width = r.width + pad * 2 + 'px'; hole.style.height = r.height + pad * 2 + 'px';
+  const cw = Math.min(340, W - 32), ch = card.offsetHeight || 150;
+  let x = r.left + r.width / 2 - cw / 2, y = r.bottom + 16;
+  if (y + ch > H - 10) y = r.top - ch - 16;
+  if (y < 10) { y = Math.min(H - ch - 10, Math.max(10, r.top + 20)); x = r.right + 16; if (x + cw > W - 10) x = r.left - cw - 16; }
+  card.style.width = cw + 'px'; card.style.left = Math.max(10, Math.min(W - cw - 10, x)) + 'px'; card.style.top = Math.max(10, Math.min(H - ch - 10, y)) + 'px';
+}
+function tutDone(all) {
+  save.tut = save.tut || {};
+  if (tutCur) save.tut[tutCur.id] = 1;
+  if (all) { TUT.forEach(s => save.tut[s.id] = 1); save.tut.__off = 1; toast('Tutorial off. You can turn it back on from the title screen.'); }
+  persist(); tutCur = null; $('tut').hidden = true; tutT = .8;
+}
+function tutReset() { save.tut = {}; persist(); toast('The tutorial will show again.'); renderTutBtn(); }
+function renderTutBtn() { const b = $('tutReset'); if (b) b.textContent = save.tut && Object.keys(save.tut).length ? 'Show the tutorial again' : 'Tutorial: on'; }
+$('tutOk').onclick = () => tutDone(); $('tutSkip').onclick = () => tutDone(true);
+$('tutReset').onclick = () => { tutReset(); }; renderTutBtn();
+document.addEventListener('keydown', e => { if (!tutOn()) return; if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') { e.preventDefault(); e.stopImmediatePropagation(); tutDone(); } }, true);
 function frame(t) {
   const dt = Math.min(.25, (t - last) / 1000); last = t;
   if (S && !S.over) {
@@ -12975,7 +13070,8 @@ function frame(t) {
         if (!$('modal').hidden || $('desk').classList.contains('on')) $('phoneModal').hidden = true;
         else if ($('phClock')) $('phClock').textContent = `${fmtDay(S.day)} · ${clockText()}`;
       }
-      const blocked = !!SHC || !$('modal').hidden || (phoneUp && S.act === 2) || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
+      tutTick(dt);
+      const blocked = tutOn() || !!SHC || !$('modal').hidden || (phoneUp && S.act === 2) || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
       benchTick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked); bossTick(dt, !!speed && !blocked); n9Tick(dt, !!speed && !blocked); n9Sync(); if (SHC) shiftTick(dt);
       if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
       // After launch, ChatGPX takes your tickets while you watch.
@@ -13006,7 +13102,7 @@ requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>

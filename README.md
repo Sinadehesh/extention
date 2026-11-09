@@ -4,6 +4,10 @@ A story game in five acts (2027–2030) about being the human in the loop. Every
 
 Your apartment fills the screen. One bar across the top shows the time, your cash, what you make and spend per day, what you need to earn today, whether you'll have the rent on the day it's due, and three small meters for food, energy and body heat. Everything else is a thing in the room: click the laptop and it opens full screen as a desktop with windows you can drag and resize; the phone lies face up at the edge and slides up beside the room, with a lock screen, notifications and apps; the fridge opens the kitchen; the radiator turns the heat on and off. Your rulebook and diary sit on the left, and the last thing that happened appears as a subtitle. Things you can use glow for a few seconds when you arrive somewhere new. The game goes full screen when you begin. It's made for a computer for now. A day lasts two minutes at 1× (40 seconds at 3×). The clock runs from 7 AM to 9 PM, then a short night ends in the ledger, and it keeps running while you work, read or use the phone. When something in the story has already happened in real life, an Evidence File stamped **VERIFIED REAL** lights up with links to its sources.
 
+## Tutorial
+
+A tutorial walks you through the game one thing at a time, the first time each thing matters: the clock, your money, rent, your body, the room, the job sites, the bench, teaching the AI, n9n and its wires, the phone, the gig apps, the robot fleet, Mirage and the Release game. That's 26 steps across the three acts. Each one lights up the thing it's about, explains it in a sentence or two, and pauses the clock until you press Got it (or Enter). Progress is saved. **Skip the tutorial** turns it off, and the title screen can turn it back on.
+
 ## Play
 
 Open `index.html` in a browser. Everything is in that one file, with no build step. Reading text is set in Atkinson Hyperlegible; the pixel font is kept for labels, numbers and titles. It loads Google Fonts and the Motion animation library from a CDN, and still works without them.
