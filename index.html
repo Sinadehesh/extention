@@ -835,6 +835,13 @@ body { padding: 0; }
 .lg-report.g-S .lg-stamp { color: #b97c25; } .lg-report.g-A .lg-stamp { color: #20685c; } .lg-report.g-F .lg-stamp { color: #b8321f; }
 .lg-stamp { animation: lgStamp .4s cubic-bezier(.2,1.6,.4,1) .25s both; }
 @keyframes lgStamp { from { opacity: 0; transform: rotate(-10deg) scale(2.6); } to { opacity: 1; transform: rotate(-10deg) scale(1); } }
+#shiftModal { position: fixed; inset: 56px 0 0 0; z-index: 36; background: #07080a; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px 18px 16px; }
+#shiftModal[hidden] { display: none !important; }
+.shift-top { width: min(1290px, 100%); display: flex; align-items: center; gap: 14px; font-family: var(--f-term); }
+.shift-top b { color: var(--amber); font-size: 15px; letter-spacing: .1em; font-weight: 400; text-transform: uppercase; }
+.shift-top span { flex: 1; color: var(--muted); font-size: 13px; }
+.shift-stage { flex: 1; min-height: 0; width: 100%; display: grid; place-items: center; }
+.shift-stage canvas.mg-cv { display: block; image-rendering: pixelated; outline: none; box-shadow: 0 0 0 3px #07080a, 0 0 0 5px #2e3a42, 10px 10px 0 #07080a; }
 #benchWin.win.mg { left: max(8px, calc(50% - 505px)); top: 10px; width: min(1010px, calc(100% - 16px)); height: min(690px, calc(100% - 58px)); z-index: 6; }
 #benchWin.mg #benchBox { display: flex; flex-direction: column; overflow: hidden; }
 #benchWin.mg .mgbench { flex: 1; min-height: 0; }
@@ -1020,6 +1027,7 @@ body { padding: 0; }
           <button role="tab" data-tab="bank" aria-selected="false">BANK<span class="dot" hidden></span></button>
           <button role="tab" data-tab="mail" aria-selected="false">MAIL<span class="dot" hidden></span></button>
           <button role="tab" data-tab="k401" aria-selected="false">401(k)<span class="dot" hidden></span></button>
+          <button role="tab" data-tab="bots" aria-selected="false" hidden>AGENTS<span class="dot" hidden></span></button>
         </nav>
         <div id="view"></div>
       </section>
@@ -1120,6 +1128,7 @@ body { padding: 0; }
 <div id="toasts" aria-live="polite"></div>
 <div class="modal" id="modal" hidden><div class="card" id="modalCard"></div></div>
 <div class="modal" id="phoneModal" hidden><div class="phone" id="phoneScreen"></div></div>
+<div id="shiftModal" hidden><div class="shift-top"><b id="shTitle"></b><span id="shInfo"></span><button class="btn" id="shQuit">End the shift</button></div><div class="shift-stage" id="shStage"></div></div>
 <div class="modal" id="evModal" hidden>
   <div class="card" style="max-width:520px">
     <div class="row"><span class="ttl" style="font-family:var(--f-term);font-weight:600">EVIDENCE FILES</span><button class="btn" id="evClose">Close</button></div>
@@ -1894,6 +1903,8 @@ function openLedger() {
     cls: 'ledger', title: `NIGHT · ${fmtLong(S.day).toUpperCase()}`,
     body: `${ledgerReport()}<div class="lg-row"><span>Cash now</span><b>${money(S.balance)}</b></div>
       ${bullyLedgerHTML(BL)}
+      ${S.act === 2 && S.gig2 && (S.gig2.today.gig || S.gig2.today.tix) ? `<div class="lg-row muted"><span>Gig work today</span><span>+${money(S.gig2.today.gig)}${S.gig2.today.tix ? ` · tickets −${money(S.gig2.today.tix)}` : ''}</span></div>` : ''}
+      ${S.act === 2 && S.bots2 && S.bots2.list.length ? `<div class="lg-row muted"><span>Your agents, tonight</span><span>about +${money(S.bots2.list.filter(b => !b.stuck).reduce((a, b) => a + botYield(b), 0))}</span></div>` : ''}
       ${S.act !== 2 ? `<div class="lg-row muted"><span>Earned today</span><span>${money(S.earnToday || 0)}</span></div>${(S.jobs || []).length ? `<div class="lg-row muted"><span>Jobs still open</span><span>${S.jobs.length}</span></div>` : ''}` : ''}
       <div class="lg-sep"></div>
       <label class="lg-row ${S.power ? '' : 'off'}"><span><input type="checkbox" id="lgHeat" ${S.heatOn && S.power ? 'checked' : ''} ${S.power ? '' : 'disabled'}> Heat${S.power ? '' : ' (power cut)'}</span><b>−${money(pr('heat'))}</b></label>
@@ -4002,6 +4013,11 @@ function benchRender(force) {
   $('bnStop').onclick = benchStop;
   if ($('bnAI')) $('bnAI').onclick = () => { const id = j.id; benchStop(); doJobAI(id); };
 }
+document.addEventListener('keydown', e => { // a shift on the street, or the jailbreak: full screen, all the keys
+  if (typeof SHC === 'undefined' || !SHC || $('shiftModal').hidden || !$('modal').hidden || e.ctrlKey || e.metaKey || e.altKey || e.key === 'Escape') return;
+  if (e.repeat && e.key.length === 1) { e.preventDefault(); return; }
+  if (SHC.key(e)) { e.preventDefault(); e.stopPropagation(); }
+});
 document.addEventListener('keydown', e => {
   if (!BN || $('laptop').hidden || !$('modal').hidden || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
   if (MGC) { // the game on the bench gets the keyboard
@@ -4440,7 +4456,7 @@ function crisisModal() {
 
 // ================= phone =================
 function openPhone() {
-  if (S.act === 2) return openWren();
+  if (S.act === 2) return phone2('home');
   sfx.init();
   S.phoneUnread = 0;
   const p = $('phoneScreen');
@@ -5009,7 +5025,8 @@ function mgArt(rows, map) {
 const MG_PIX = '"Pixelify Sans", ui-monospace, monospace', MG_READ = '"Atkinson Hyperlegible", system-ui, sans-serif';
 
 function mgCreate(host, kind, job, env) {
-  const def = MINI[kind]; if (!def) throw new Error('No mini-game for ' + kind);
+  if (!MINI[kind]) throw new Error('No mini-game for ' + kind);
+  const def = Object.assign({}, MINI[kind], env.def || {}); // env.def can rename it (one game, two apps)
   host.innerHTML = '';
   const cv = document.createElement('canvas'); cv.className = 'mg-cv'; cv.tabIndex = 0; host.appendChild(cv);
   const g = cv.getContext('2d');
@@ -5037,6 +5054,8 @@ function mgCreate(host, kind, job, env) {
     get done() { return st.done; }, get left() { return Math.max(0, units - st.done); }, get busy() { return st.busy > 0 || st.black > 0; },
     get t() { return st.t; }, get combo() { return st.combo; }, get auto() { return !!env.auto; }, get autoErr() { return env.autoErr || 0; },
     get progress() { return units ? st.done / units : 1; },
+    opts: env.opts || {}, // per-job options from the game around it
+    emit(type, data) { if (env.onEvent) env.onEvent(type, data || {}); }, // tell the game around it: a ticket, a crash...
     rand: rnd, ri: (a, b) => a + Math.floor(rnd() * (b - a + 1)), pick: a => a[Math.floor(rnd() * a.length)], chance: p => rnd() < p,
     shuffle(a) { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; },
     ease: mgEase, art: mgArt,
@@ -7119,7 +7138,7 @@ MINI.translate = {
         } else if (phase === 'play') {
           if (wait > 0 && (wait -= dt * sp) <= 0) { open.forEach(c => c.want = 0); open = []; }
           const stuck = api.auto && cards.every(c => c.matched || skip.has(c.pair)); // agent gave up on the rest
-          if (!api.busy) timer -= dt * (stuck ? 15 : 1);
+          if (!api.busy && (!api.auto || stuck)) timer -= dt * (stuck ? 15 : 1); // the agent only times out on pairs it fumbled
           if (timer < tmax * .25 && timer > 0) { const b = Math.ceil(timer / .5); if (b < beat) { beat = b; api.sfx('tick'); } }
           if (cards.every(c => c.matched)) { phase = 'clear'; pt = 0; }
           else if (timer <= 0) timeUp();
@@ -7174,7 +7193,7 @@ MINI.retouch = {
   keys: 'Click the blemishes · not the photo', pace: 1.8,
   create(api) {
     const { P } = api, L = api.level, F = L < .5 ? 1.3 - .6 * L : 1 - .7 * (L - .5);
-    const PX = 26, PY = 30, PW = 200, PH = 106, FY = 142, TW = 28, TH = 15, K = api.auto ? 9 : 1;
+    const PX = 26, PY = 30, PW = 200, PH = 106, FY = 142, TW = 28, TH = 15;
     const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
     const cache = new Map();
     let ph = null, fx = [], film = [], filmOff = 0, dabs = [], next = null, recent = [], beat = 0, botCur = null, serial = 4100 + api.ri(0, 800);
@@ -7356,12 +7375,16 @@ MINI.retouch = {
         for (const b of ph.blem) if (b.heal) b.heal += dt;
         if (ph.st === 'in') { ph.s += dt * sp / .22; if (ph.s >= 1) ph.st = 'edit'; return; }
         if (api.busy) return;                                           // the machine stutters: nothing grows meanwhile
+        const K = api.auto ? 9 : 1;                                     // read live: the agent can take over mid-job
         ph.t += dt * K;
         const live = ph.blem.filter(b => !b.heal);
         if (ph.spawned < ph.n && !live.length && ph.at - ph.t > .18) ph.at = ph.t + .18; // a clean photo doesn't make you wait
         while (ph.spawned < ph.n && ph.t >= ph.at) spawn();
         let worst = 0, culprit = null;
-        for (const b of ph.blem) if (!b.heal) { b.age += dt * K; if (b.age / G() > worst) { worst = b.age / G(); culprit = b; } }
+        for (const b of ph.blem) if (!b.heal) {
+          b.age += dt * K; if (api.auto && !(ph.fail && b === ph.blem[0])) b.age = Math.min(b.age, G() * .97); // only the one it ignores can ruin it
+          if (b.age / G() > worst) { worst = b.age / G(); culprit = b; }
+        }
         if (worst >= 1) { finish(false, 'TOO BIG', [PX + culprit.x, PY + culprit.y]); return; }
         if (worst > .8 && !api.auto) { const bt = Math.floor(ph.t / .22); if (bt !== beat) { beat = bt; api.sfx('tick'); } }
         if (ph.spawned >= ph.n && ph.blem.every(b => b.heal)) finish(true);
@@ -7453,7 +7476,7 @@ MINI.render = {
   keys: 'Hold SPACE or the mouse · fan', pace: 2.6,
   create(api) {
     const { P } = api, L = api.level, F = L < .5 ? 1.3 - .6 * L : 1 - .7 * (L - .5);
-    const GPU = Math.max(.25, api.gpu), K = api.auto ? 10 : 1, HEAT = 10 / F, FAN = 23, WORK = 2.2;
+    const GPU = Math.max(.25, api.gpu), HEAT = 10 * (2 - F), FAN = 23, WORK = 2.0, SPD = 1;
     const VX = 6, VY = 20, VW = 220, VH = 116, IX = VX + 1, IY = VY + 10, IW = VW - 2, IH = VH - 11, FY = 141, GX = 232;
     const STEP = Math.PI * 2 / Math.max(8, api.units), TS = 12, CX = IX + IW / 2, CY = IY + 76;
     const SPIKES = ['SHADER COMPILE', '4K TEXTURES', 'RAY BOUNCES ×8', 'VOLUMETRIC FOG'];
@@ -7524,28 +7547,31 @@ MINI.render = {
     }
     function step(h) {
       if (reboot > 0) { reboot -= h; T = 60; return; }
-      if (warn > 0) { if ((warn -= h) <= 0) { spike = .6; api.sfx('whoosh'); } }
+      if (warn > 0) { if ((warn -= h) <= 0) { spike = SPD; api.sfx('whoosh'); } }
       else if (spike > 0) spike -= h;
       else if ((nextSpike -= h) <= 0) {
-        if (spikeI() >= .3) { warn = .5; spikeA = Math.round(9 + 6 * L + 3 * api.progress); spikeName = api.pick(SPIKES); api.sfx('blip', 14); }
+        if (spikeI() >= .3) { warn = .5; spikeA = Math.round(8 + 5 * L + 3 * api.progress); spikeName = api.pick(SPIKES); api.sfx('blip', 14); }
         schedule();
       }
       if (api.auto) {                                                   // the agent rides the band perfectly (or cooks a frame)
         const hot = warn > 0 || spike > 0;
-        if (fail) botFan = false; else if (botFan) { if (T < 75 && !hot) botFan = false; } else if (T > 83 || (hot && T > 71)) botFan = true;
+        if (fail && prog > .7) botFan = false; else if (botFan) { if (T < 75 && !hot) botFan = false; } else if (T > 83 || (hot && T > 71)) botFan = true;
       }
       fanOn = api.auto ? botFan : fanKey || fanMouse;
-      const heat = HEAT * (1 + .25 * api.progress) + (spike > 0 ? spikeA / .6 : 0) + (fail ? 25 : 0);
+      const heat = HEAT * (1 + .2 * api.progress) + (spike > 0 ? spikeA / SPD : 0) + (api.auto && fail && prog > .7 ? 25 : 0);
       T = Math.max(38, T + (heat - (fanOn ? FAN : 0) - (T - 40) * .08) * h);
+      if (api.auto && !fail) T = Math.min(T, 94);                      // a frame the agent didn't choose to cook never shuts down
       if (T >= 95) { shutdown(); return; }
       prog += speedAt(T) * (fanOn ? .5 : 1) * GPU * h / WORK;
       if (prog >= 1) frameDone();
     }
     function say(s) { if (s !== hintNow) { hintNow = s; api.hint(s); } }
 
-    const onKeyUp = e => { if (e.key === ' ' || e.key === 'Spacebar') fanKey = false; };
-    const onUp = () => { fanMouse = false; }, onBlur = () => { fanKey = fanMouse = false; };
-    addEventListener('keyup', onKeyUp); addEventListener('pointerup', onUp); addEventListener('blur', onBlur);
+    // Holding is a state, so track it on the window: a press made while the PC stalls still counts once it catches up.
+    const onKey = e => { if (e.key === ' ' || e.code === 'Space') fanKey = e.type === 'keydown'; };
+    const onDown = e => { if (!e.button) fanMouse = true; }, onUp = () => { fanMouse = false; }, onBlur = () => { fanKey = fanMouse = false; };
+    const LS = [['keydown', onKey], ['keyup', onKey], ['pointerdown', onDown], ['pointerup', onUp], ['pointercancel', onUp], ['blur', onBlur]];
+    LS.forEach(([n, f]) => addEventListener(n, f));
     schedule();
 
     return {
@@ -7558,7 +7584,7 @@ MINI.render = {
         for (const f of fly) { f.t += dt * sp / .4; if (f.t >= 1) film.push({ ok: true, a: f.a }); } fly = fly.filter(f => f.t < 1);
         if (!api.auto) say(reboot > 0 ? 'Thermal shutdown. The frame is lost.' : T > 90 ? 'Too hot! Hold SPACE to run the fan!' : T < 62 && fanOn ? 'Too cold: let go of the fan.' : MINI.render.how);
         if (api.busy) return;                                           // a stalled machine neither heats nor renders
-        let left = dt * K;
+        let left = dt * (api.auto ? 10 : 1);                            // read live: the agent can take over mid-job
         while (left > 1e-6 && !api.busy && api.left > 0) { const h = Math.min(.02, left); step(h); left -= h; }
         if (T > 90 && reboot <= 0) { const b = Math.floor(api.t / Math.max(.1, .45 - (T - 90) * .07)); if (b !== beat) { beat = b; api.sfx('tick'); } }
       },
@@ -7624,7 +7650,7 @@ MINI.render = {
         R(tx - 1, ty0 - 1, 10, ty1 - ty0 + 2, P.k0); R(tx, ty0, 8, ty1 - ty0, P.k1);
         R(tx, py(88), 8, py(70) - py(88), P.g0); R(tx, ty0, 8, py(95) - ty0, P.e0);
         R(tx + 10, py(88), 3, py(70) - py(88), P.g3); R(tx + 10, ty0, 3, py(95) - ty0, P.e2); R(tx + 10, py(60), 3, ty1 - py(60), P.t2);
-        if (warn > 0 || spike > 0) { const add = spike > 0 ? spikeA * spike / .6 : spikeA; for (let y = py(T + add); y < py(T); y++) if (y % 2) R(tx + 2, y, 4, 1, P.e3); }
+        if (warn > 0 || spike > 0) { const add = spike > 0 ? spikeA * spike / SPD : spikeA; for (let y = py(T + add); y < py(T); y++) if (y % 2) R(tx + 2, y, 4, 1, P.e3); }
         R(tx + 2, py(T), 4, ty1 - py(T) + 3, tc); R(tx + 2, py(T), 1, ty1 - py(T) + 3, P.p4);
         disc(tx + 4, ty1 + 7, 6, P.k0); disc(tx + 4, ty1 + 7, 5, tc); R(tx + 2, ty1 + 4, 1, 2, P.p4);
         for (const [t, c] of [[95, P.e3], [88, P.g4], [70, P.g4], [60, P.t4]]) { R(tx - 4, py(t), 3, 1, c); api.text(String(t), tx - 6, py(t) + 2.5, { size: 6.5, color: c, align: 'right' }); }
@@ -7651,10 +7677,9 @@ MINI.render = {
       },
       down() { fanMouse = true; },
       up() { fanMouse = false; },
-      move(x, y, dragging, e) { if (!dragging && e && e.buttons != null) fanMouse = (e.buttons & 1) === 1; }, // pressed while the PC stalled
-      key(k) { if (k === ' ' || k === 'Spacebar') { fanKey = true; return true; } return false; },
+      key(k) { if (k === ' ') { fanKey = true; return true; } return false; },
       bot() {},                                                         // the agent drives the fan inside step()
-      destroy() { removeEventListener('keyup', onKeyUp); removeEventListener('pointerup', onUp); removeEventListener('blur', onBlur); }
+      destroy() { LS.forEach(([n, f]) => removeEventListener(n, f)); }
     };
   }
 };
@@ -7758,7 +7783,7 @@ MINI.model3d = {
         if (ghost && (ghost.t += dt) > .5) ghost = null;
         if (st !== 'plan') return;
         if (api.busy) { if (path && path.drag) { ghost = { pts: path.pts, t: 0 }; path = null; } return; } // a stall drops the path
-        tm -= dt;
+        tm -= dt; if (api.auto) tm = Math.max(tm, .4);                    // the agent never runs out of clock: its only miss is the one it chose
         if (tm < Math.min(1.6, tmax * .3) && tm > 0) { const b = Math.ceil(tm / .25); if (b < beat) { beat = b; api.sfx('tick'); } }
         if (tm <= 0) { const x = path ? path.hx : cx(start), y = path ? path.hy : cy(start); st = 'crash'; stT = 0; crashAt = null; ghost = path ? { pts: path.pts, t: 0 } : null; path = null; api.item(false, x, Math.max(y, api.top + 24), 'TIME'); }
       },
@@ -7840,7 +7865,7 @@ MINI.model3d = {
       },
       bot(dt) {
         if (st !== 'plan') return;
-        if (!bot) { begin(false); bot = { i: 0, f: 0, fail: api.chance(api.autoErr) ? api.ri(1, Math.max(1, sol.length - 2)) : -1 }; }
+        if (!bot) { begin(false); bot = { i: 0, f: 0, fail: api.chance(api.autoErr) ? Math.max(1, sol.length - 2 - api.ri(0, 2)) : -1 }; } // it fumbles near the end
         bot.f += dt * 90;                                               // rooms per second
         while (bot.f >= 1 && st === 'plan') {
           bot.f -= 1;
@@ -7851,6 +7876,534 @@ MINI.model3d = {
           if (bot.i >= sol.length - 1) { shot(); return; }
           bot.i++; moveHead(cx(sol[bot.i]), cy(sol[bot.i]));
         }
+      }
+    };
+  }
+};
+
+// Street (kind 'street'): Uburn rides and Grovel deliveries, seen from above. The app says where to turn.
+// Change lanes around traffic, puddles and car doors, stop at red lights, turn when it says NOW, stop at the pin
+// before the deadline. Cameras and patrol cars catch red lights and speed. A car can die for good (opts.breakdownAt).
+MINI.street = {
+  title: 'Street', how: 'Change lanes, stop at red lights, turn on time, deliver.', keys: '← → lanes · ↓ brake · ← or → at a corner to turn', pace: 13,
+  create(api) {
+    const { P } = api, O = api.opts || {}, LV = api.level, TOP = api.top, BOT = api.bot;
+    const F = LV < .5 ? 1.3 - .6 * LV : 1 - .7 * (LV - .5);
+    const VEH = O.vehicle || 'car', CAR = VEH === 'car', JAIL = !!O.jail && VEH === 'ebike';
+    const NIGHT = !!O.night, RAIN = O.rain || 0, POL = O.police == null ? .3 : O.police, APP = O.app || (CAR ? 'uburn' : 'grovel');
+    const LX = [69, 115, 161, 207, 252], PY = 134, ROADL = 46, ROADR = 274;
+    const LANES = CAR ? [1, 2, 3] : [2, 3, 4], EDGE = CAR ? 3 : 4;
+    const VMAX = CAR ? 86 : VEH === 'bike' ? 46 : JAIL ? 96 : 60, CRUISE = CAR ? 62 : VEH === 'bike' ? 40 : JAIL ? 58 : 54; // jailbroken: it cruises legal; hold ↑ to break the law
+    const KMH = CAR ? .66 : .44, LIMIT = CAR ? 50 : 25, BLOCK = Math.round((CAR ? 62 : 54) * 4.2), PW = CAR ? 14 : 8, PH = CAR ? 24 : 18;
+    const NAMES = CAR ? ['Dana', 'Luis', 'Mei', 'Omar', 'Priyanka', 'Sam', 'Theo', 'Ines', 'Kofi', 'Rosa'] : ['Pho 77', 'Burger Barn', 'Sushi Go', 'Taco Loco', 'Kebab King', 'Green Bowl', 'Pizza Pronto', 'Noodle Bar'];
+    const CARCOL = [[P.s3, P.s1], [P.r2, P.r0], [P.t2, P.t0], [P.p1, P.p0], [P.k3, P.k1], [P.g2, P.g0], [P.d4, P.d2], [P.s5, P.s3]];
+    const me = { lane: EDGE, x: LX[EDGE], wy: 0, v: CRUISE * .5, stun: 0, slide: 0 };
+    let cars = [], objs = [], inters = [], smoke = [], t = 0, nextI = 150, order = null, ord = 0, wait = 1.2, trans = 0, transDir = 'R', spawnT = .4, crossT = 0;
+    let pulled = 0, pullWhy = null, ticket = null, overT = 0, msg = null, broke = 0, dead = false, nowTick = -1, botT = 0, botErr = false;
+    const keys = { up: false, down: false }; let holdBrake = false;
+    const sy = wy => PY - (wy - me.wy);
+    const CYC = 8.7, light = I => { const k = (t + I.off) % CYC; return k < 4.2 ? 'G' : k < 5.3 ? 'A' : 'R'; };
+    const kmh = () => Math.round(me.v * KMH);
+    const laneX = l => LX[l];
+    const nextInter = () => { let b = null; for (const I of inters) if (!I.pass && I.wy + 50 > me.wy && (!b || I.wy < b.wy)) b = I; return b; };
+    const inBand = I => I && me.wy > I.wy + 2 && me.wy < I.wy + 48;
+    const policeNear = () => cars.some(c => c.cop && Math.abs(sy(c.wy) - PY) < 150);
+    function say(text, k = 1.3, col) { msg = { text, t: k, col: col || P.a3 }; }
+
+    // ---- the street: intersections, traffic, things in the road ----
+    function genInters() { while (nextI < me.wy + 700) { inters.push({ wy: nextI, off: Math.random() * CYC, lastX: -1, cam: Math.random() < .22 + .2 * LV, pass: false }); nextI += BLOCK + api.ri(-30, 40); } }
+    const nearBand = wy => inters.some(I => wy > I.wy - 30 && wy < I.wy + 70);
+    function addCar(lane, wy, v, dir, cop) {
+      if (nearBand(wy) || cars.some(c => c.lane === lane && !c.cross && Math.abs(c.wy - wy) < 44)) return;
+      const col = cop ? [P.k1, P.k0] : api.pick(CARCOL);
+      cars.push({ lane, x: laneX(lane), wy, v, v0: v, dir, cop: !!cop, col, used: false });
+    }
+    function addObj(k, lane, wy, extra) { if (nearBand(wy) || objs.some(o => o.lane === lane && Math.abs(o.wy - wy) < 30)) return; objs.push(Object.assign({ k, lane, wy, hit: false }, extra || {})); }
+    function spawn() {
+      spawnT = (CAR ? 1.05 : 1.35) * F * (1 - .32 * api.progress) * (.6 + Math.random() * .8);
+      const ahead = me.wy + 250 + Math.random() * 90;
+      if (CAR) {
+        if (Math.random() < .55) addCar(api.pick([2, 3]), ahead, 28 + Math.random() * 18, 1);
+        else addCar(api.pick([0, 1]), ahead + 40, -(50 + Math.random() * 16 + LV * 12), -1);
+      } else {
+        if (Math.random() < .5) addCar(3, me.wy - 150, 64 + Math.random() * 14, 1);
+        else addCar(api.pick([0, 1]), ahead + 40, -(52 + Math.random() * 14 + LV * 10), -1);
+        if (Math.random() < .25) addCar(2, ahead, 32 + Math.random() * 12, 1);
+      }
+      if (Math.random() < POL * .22 && !cars.some(c => c.cop)) addCar(CAR ? api.pick([2, 3]) : 3, CAR ? ahead : me.wy - 160, CAR ? 34 : 60, 1, true);
+      if (Math.random() < .22 + RAIN * .5) addObj('puddle', api.pick(LANES), ahead, { w: api.ri(16, 26), h: api.ri(9, 14) });
+      if (!CAR && Math.random() < .18 + LV * .15) addObj('hole', api.pick([3, 4]), ahead + 20);
+      if (Math.random() < .5) addObj('parked', 4, ahead + 30, { col: api.pick(CARCOL), door: !CAR && Math.random() < .3 + LV * .25, doorT: -1 });
+      if (Math.random() < .07 + LV * .08) addObj('ped', EDGE, ahead + 60, { x: ROADR + 8, st: 0, pt: 0 });
+    }
+    function newOrder() {
+      let n = api.ri(1, 2) + (LV > .55 ? 1 : 0) + (api.progress > .6 ? 1 : 0);
+      const route = []; for (let i = 0; i < n; i++) route.push(api.pick(CAR ? ['R', 'L', 'S', 'R', 'S'] : ['R', 'S', 'R', 'S', 'R', 'L']));
+      if (!route.some(r => r !== 'S')) route[0] = api.pick(['R', 'L']);
+      const secs = ((n * BLOCK + 220) / (CAR ? 62 : Math.max(44, Math.min(CRUISE, 54))) + n * 2.4 + 3) * F * (CAR ? 1.6 : 1.85) * (1 - .16 * api.progress);
+      order = { route, step: 0, left: secs, total: secs, tipK: 1, late: false, t: 0, pin: null, name: api.pick(NAMES), stars: (4.5 + Math.random() * .5).toFixed(1) };
+      botErr = api.auto && api.chance(api.autoErr);
+      say(CAR ? `PICKED UP ${order.name.toUpperCase()}` : `PICKED UP · ${order.name.toUpperCase()}`, 1.2, P.t4); api.sfx('blip', 3);
+    }
+    function finishOrder(ok, label, crashed) {
+      if (!order) return;
+      api.item(ok, me.x, PY - 18, label);
+      api.emit('order', { ok, late: order.late, crash: !!crashed, secs: Math.round(order.t), tipK: ok ? Math.max(0, Math.min(1, order.tipK)) : 0 });
+      order = null; ord++; wait = crashed ? 1.7 : 1.1;
+    }
+    function crash(what, hurt) {
+      if (me.stun > 0 || dead) return;
+      api.sfx('crash'); api.shake(8); api.flash(P.e2, .45); api.burst(me.x, PY, P.p3, 16, 80); api.stop(150);
+      api.emit('crash', { what, hurt });
+      say({ car: 'YOU HIT A CAR', door: 'A CAR DOOR', ped: 'YOU HIT SOMEONE', pothole: 'POTHOLE', puddle: 'YOU SLIPPED' }[what] || 'CRASH', 1.8, P.e3);
+      finishOrder(false, 'CRASH', true);
+      me.v = 0; me.stun = 1.3;
+      cars = cars.filter(c => Math.abs(sy(c.wy) - PY) > 70); objs = objs.filter(o => o.k === 'parked' || Math.abs(sy(o.wy) - PY) > 50);
+    }
+    function giveTicket(why, amount, src) {
+      if (ticket) return;
+      ticket = { why, amount, src, t: 2.4 }; api.emit('ticket', { why, amount }); api.sfx('alarm');
+      if (order) order.tipK -= .15;
+    }
+    function pullOver(why, amount) { if (pulled > 0 || ticket) return; pulled = 2.2; pullWhy = [why, amount]; me.v = Math.min(me.v, 20); api.sfx('alarm'); }
+    function tryTurn(dir) {
+      const I = nextInter(); if (!inBand(I) || trans > 0) return false;
+      if (!(dir === 'R' && me.lane === EDGE) && !(dir === 'L' && me.lane === 2)) return false;
+      if (dir === 'L' && CAR && cars.some(c => c.dir < 0 && Math.abs(sy(c.wy) - sy(I.wy + 25)) < 34)) { crash('car', .2); return true; }
+      I.pass = true;
+      if (order && order.step < order.route.length) {
+        if (order.route[order.step] === dir) { order.step++; api.sfx('whoosh'); api.pop(me.x, PY - 26, 'TURN ✓', P.t4, 8); }
+        else { order.left -= 4; say('WRONG TURN · RE-ROUTING', 1.4, P.e3); api.sfx('bad'); }
+      }
+      trans = .5; transDir = dir; return true;
+    }
+    function rebuild() { // the new street after a corner
+      cars = []; objs = []; inters = []; nextI = me.wy + 170; genInters();
+      me.lane = transDir === 'R' ? EDGE : 2; me.x = laneX(me.lane); me.v = Math.min(me.v, CRUISE * .7);
+      if (order && order.pin) order.pin.wy = me.wy + 220;
+    }
+    function lane(dir) {
+      const i = LANES.indexOf(me.lane), j = i + dir;
+      if (j < 0 || j >= LANES.length) { api.sfx('click'); return; }
+      me.lane = LANES[j]; api.sfx('flip');
+    }
+    function press(dir) { // ← or →: turn at a corner, else change lanes
+      if (dead || pulled > 0 || me.stun > 0 || trans > 0 || api.busy) return;
+      if (tryTurn(dir)) return;
+      lane(dir === 'R' ? 1 : -1);
+    }
+    const onUp = e => { if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S' || e.key === ' ') keys.down = false; if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') keys.up = false; };
+    const onBlur = () => { keys.down = keys.up = false; holdBrake = false; };
+    addEventListener('keyup', onUp); addEventListener('blur', onBlur);
+    genInters();
+
+    function tick(dt) {
+      t += dt;
+      if (msg) { msg.t -= dt; if (msg.t <= 0) msg = null; }
+      if (ticket) { ticket.t -= dt; if (ticket.t <= 0) ticket = null; }
+      for (const s of smoke) { s.t += dt; s.x += s.vx * dt; s.y += s.vy * dt; } smoke = smoke.filter(s => s.t < s.life);
+      if (trans > 0) { const was = trans; trans -= dt; if (was > .25 && trans <= .25) rebuild(); return; }
+      if (pulled > 0) { pulled -= dt; me.v = Math.max(0, me.v - 90 * dt); if (pulled <= 0 && pullWhy) { giveTicket(pullWhy[0], pullWhy[1], 'OFFICER'); pullWhy = null; } }
+      if (me.stun > 0) me.stun -= dt;
+      // the car is dying
+      if (CAR && O.breakdownAt >= 0 && ord >= O.breakdownAt && order && order.t > 2.5 && !broke) { broke = .001; say('CHECK ENGINE', 2.2, P.e3); api.sfx('alarm'); }
+      if (broke) {
+        broke += dt;
+        if (Math.random() < .5) smoke.push({ x: me.x + (Math.random() - .5) * 8, y: PY - 12, vx: (Math.random() - .5) * 10, vy: -12 - Math.random() * 10, t: 0, life: 1.4 + Math.random(), s: 2 + (Math.random() * 3 | 0) });
+        if (!dead && broke > 3.2 && me.v < 3) { dead = true; me.v = 0; api.emit('breakdown'); api.hint('The car won’t start.'); api.sfx('crash'); }
+      }
+      // speed
+      const cap = broke ? Math.max(0, VMAX * (1 - broke / 3)) : VMAX, brake = keys.down || holdBrake || pulled > 0 || dead;
+      const target = dead || me.stun > 0 ? 0 : brake ? 0 : keys.up ? cap : Math.min(CRUISE, cap);
+      if (me.v > target) me.v = Math.max(target, me.v - (brake ? 150 : 50) * dt); else me.v = Math.min(target, me.v + 42 * dt);
+      if (CAR && brake && me.v > VMAX * .65 && order) order.tipK -= .05 * dt;   // passengers hate hard braking
+      const prevFront = me.wy + PH / 2;
+      me.wy += me.v * dt * (api.busy ? .3 : 1); // a stalled machine: the street crawls
+      if (me.slide > 0) me.slide -= dt;
+      const tx = laneX(me.lane) + (me.slide > 0 ? Math.sin(t * 30) * 3 : 0);
+      me.x += Math.max(-210 * dt, Math.min(210 * dt, tx - me.x));
+      genInters();
+      // red lights, cameras, police
+      for (const I of inters) {
+        const stop = I.wy, front = me.wy + PH / 2;
+        if (prevFront < stop && front >= stop && light(I) === 'R' && me.v > 4) { say('RAN A RED', 1.2, P.e3); if (I.cam) giveTicket('red', 150, 'CAMERA'); else if (policeNear()) pullOver('red', 250); if (order) order.tipK -= .1; }
+        if (!I.pass && me.wy > I.wy + 50) {
+          I.pass = true;
+          if (order && order.step < order.route.length) { if (order.route[order.step] === 'S') order.step++; else { order.left -= 3; say('MISSED THE TURN · RE-ROUTING', 1.5, P.e3); api.sfx('bad'); } }
+        }
+      }
+      if (policeNear() && kmh() > LIMIT + 3 && pulled <= 0) { overT += dt; if (overT > 1.2) { const c = cars.find(c => c.cop && !c.used && Math.abs(sy(c.wy) - PY) < 150); if (c) { c.used = true; pullOver(JAIL ? 'tamper' : 'speed', JAIL ? 400 : 120); } overT = 0; } } else overT = Math.max(0, overT - dt);
+      // the order
+      if (!order && !dead) { wait -= dt; if (wait <= 0) newOrder(); }
+      if (order && !api.busy) {
+        order.t += dt; order.left -= dt;
+        const tl = order.left;
+        if (tl < order.total * .2 && tl > 0) { const k = Math.ceil(tl); if (k !== nowTick) { nowTick = k; api.sfx('tick'); } }
+        if (tl <= 0 && !order.late) { order.late = true; say('LATE', 1.2, P.e3); api.sfx('bad'); }
+        if (tl < -12) { say('ORDER CANCELLED', 1.6, P.e3); finishOrder(false, 'CANCELLED'); }
+      }
+      if (order && order.step >= order.route.length && !order.pin) { let w = me.wy + 210; for (const I of inters) if (w > I.wy - 30 && w < I.wy + 80) w = I.wy + 90; order.pin = { wy: w }; say(CAR ? 'DROP-OFF AHEAD' : 'DELIVERY AHEAD', 1.2, P.t4); }
+      if (order && order.pin) {
+        if (me.lane === EDGE && Math.abs(me.wy - order.pin.wy) < 16 && me.v < 8) { const ok = !order.late; api.sfx(ok ? 'coin' : 'bad'); finishOrder(ok, ok ? (CAR ? 'DROPPED OFF' : 'DELIVERED') : 'LATE'); }
+        else if (me.wy > order.pin.wy + 26) { order.pin.wy = me.wy + 240; order.left -= 3; say('MISSED THE DROP-OFF', 1.4, P.e3); api.sfx('bad'); }
+      }
+      // traffic
+      if (!api.busy) { spawnT -= dt; if (spawnT <= 0) spawn(); }
+      for (const c of cars) {
+        if (c.cross) { c.x += c.vx * dt; continue; }
+        let tv = c.v0;
+        const nI = inters.find(I => c.dir > 0 ? I.wy - 2 > c.wy + 12 && I.wy - 2 - (c.wy + 12) < 50 : I.wy + 52 < c.wy - 12 && c.wy - 12 - (I.wy + 52) < 50);
+        if (nI && light(nI) !== 'G') tv = 0;
+        for (const o of cars) if (o !== c && !o.cross && o.lane === c.lane && o.dir === c.dir) { const gap = (o.wy - c.wy) * c.dir; if (gap > 0 && gap < 36) tv = c.dir > 0 ? Math.min(tv, o.v) : Math.max(tv, o.v); }
+        if (c.dir > 0 && c.lane === me.lane && me.wy > c.wy && me.wy - c.wy < 46) tv = Math.min(tv, me.v); // they don't rear-end you
+        c.v += Math.max(-110 * dt, Math.min(60 * dt, tv - c.v)); c.wy += c.v * dt; c.x += (laneX(c.lane) - c.x) * Math.min(1, dt * 6);
+      }
+      // cross traffic and people crossing, while your light is red
+      // cross traffic: it goes early in your red and is always clear of the road before your green
+      const nI = nextInter();
+      if (nI) {
+        const ph = (t + nI.off) % CYC, cyc = Math.floor((t + nI.off) / CYC), redFor = ph - 5.3;
+        const inX = me.wy + PH / 2 > nI.wy - 6 && me.wy - PH / 2 < nI.wy + 56;
+        if (redFor > .15 && redFor < .7 && nI.lastX !== cyc && !inX && Math.abs(nI.wy - me.wy) < 320) {
+          nI.lastX = cyc;
+          for (const fromL of [true, false]) if (Math.random() < .6) cars.push({ cross: true, lane: -1, x: fromL ? -20 : 340, wy: nI.wy + (fromL ? 36 : 14), vx: fromL ? 160 : -160, v: 0, dir: 0, col: api.pick(CARCOL) });
+        }
+      }
+      cars = cars.filter(c => (c.cross ? c.x > -40 && c.x < 360 : sy(c.wy) < BOT + 160 && sy(c.wy) > TOP - 260));
+      for (const o of objs) {
+        if (o.k === 'ped') { // waits at the curb, steps out looking at a phone, then steps back
+          const d = sy(o.wy) - PY;
+          if (o.st === 0 && d > -130 && d < -60) { o.st = 1; o.pt = 0; }
+          if (o.st) { o.pt += dt; const out = laneX(EDGE); if (o.st === 1 && o.pt > .8) { o.st = 2; o.pt = 0; } if (o.st === 2) { o.x += (out - o.x) * Math.min(1, dt * 5); if (o.pt > 1.4) { o.st = 3; o.pt = 0; } } if (o.st === 3) o.x += (ROADR + 8 - o.x) * Math.min(1, dt * 4); }
+        }
+        if (o.k === 'parked' && o.door && o.doorT < 0 && sy(o.wy) > TOP + 20 && sy(o.wy) - PY < -40 && sy(o.wy) - PY > -95) o.doorT = 0;
+        if (o.doorT >= 0) o.doorT += dt;
+      }
+      objs = objs.filter(o => sy(o.wy) < BOT + 60 && sy(o.wy) > TOP - 300);
+      inters = inters.filter(I => sy(I.wy) < BOT + 120);
+      // collisions
+      if (me.stun <= 0 && !dead) {
+        const hx = PW / 2, hy = PH / 2, hit = (x, y, w, h) => Math.abs(x - me.x) < hx + w / 2 - 1 && Math.abs(y - PY) < hy + h / 2 - 1;
+        for (const c of cars) { const y = sy(c.wy); if (c.cross ? hit(c.x, y, 24, 14) : hit(c.x, y, 14, 24)) { crash('car', CAR ? .15 : .6); break; } }
+        for (const o of objs) {
+          if (o.hit || me.stun > 0) continue; const y = sy(o.wy);
+          if (o.k === 'puddle' && hit(laneX(o.lane), y, o.w - 6, o.h - 4)) {
+            o.hit = true; api.burst(me.x, PY + 4, P.t4, 10, 50); api.sfx('whoosh');
+            if (CAR) { me.slide = .5; if (order) order.tipK -= .15; api.pop(me.x, PY - 22, 'SPLASH', P.t4, 7); }
+            else if (me.v > VMAX * .62 && !(api.auto && !botErr)) crash('puddle', .3); else { me.slide = .4; if (order) order.tipK -= .1; }
+          } else if (o.k === 'hole' && hit(laneX(o.lane), y, 7, 5)) { o.hit = true; if (me.v > 34) crash('pothole', .3); else { api.sfx('stamp'); api.shake(2); if (order) order.tipK -= .2; } }
+          else if (o.k === 'parked' && o.door && o.doorT > .9 && o.doorT < 3.4 && hit(251, y - 2, 12, 5)) { o.hit = true; crash('door', .5); }
+          else if (o.k === 'ped' && o.st === 2 && hit(o.x, y, 6, 6)) { o.hit = true; crash('ped', CAR ? .05 : .25); }
+        }
+      }
+    }
+
+    // ---- drawing ----
+    const R = (x, y, w, h, c) => api.rect(x, y, w, h, c);
+    const TREE = api.art(['...gggg...', '..gGGGgg..', '.gGGggggg.', 'gGGgggggdg', 'gGgggggddg', 'ggggggdddg', 'gggggddddg', '.ggddddddg', '..gddddd..', '...gggg...'], { g: P.g1, G: P.g3, d: P.g0 });
+    function carTop(x, y, col, dark, down, o = {}) { // 14×24, nose up (or down when oncoming)
+      x = Math.round(x - 7); y = Math.round(y - 12);
+      R(x + 1, y, 12, 24, P.k0); R(x, y + 2, 14, 20, P.k0); R(x + 1, y + 1, 12, 22, col);
+      const glass = NIGHT ? P.k2 : P.s2, f = down ? y + 16 : y + 3, r = down ? y + 4 : y + 17;
+      R(x + 2, f, 10, 5, glass); R(x + 2, y + 8, 10, 8, dark); R(x + 2, r, 10, 3, glass);
+      R(x - 1, y + (down ? 15 : 7), 1, 2, col); R(x + 14, y + (down ? 15 : 7), 1, 2, col);
+      const front = down ? y + 22 : y, rear = down ? y : y + 22;
+      if (NIGHT || o.lights) { R(x + 2, front, 3, 2, P.p4); R(x + 9, front, 3, 2, P.p4); }
+      R(x + 2, rear, 3, 2, o.brake ? P.e4 : P.e1); R(x + 9, rear, 3, 2, o.brake ? P.e4 : P.e1);
+      if (o.cop) { R(x + 2, y + 9, 10, 6, P.p4); const on = (t * 8 | 0) % 2; R(x + 2, y + 11, 5, 2, on ? P.e3 : P.e0); R(x + 7, y + 11, 5, 2, on ? P.t1 : P.t3); }
+    }
+    function carSide(x, y, col, dark) { x = Math.round(x - 12); y = Math.round(y - 7); R(x, y + 1, 24, 12, P.k0); R(x + 1, y, 22, 14, P.k0); R(x + 1, y + 1, 22, 12, col); R(x + 6, y + 3, 12, 8, dark); R(x + 3, y + 3, 3, 8, NIGHT ? P.k2 : P.s2); R(x + 18, y + 3, 3, 8, NIGHT ? P.k2 : P.s2); }
+    function rider(x, y) { // 8×18, top-down, facing up
+      x = Math.round(x - 4); y = Math.round(y - 9);
+      R(x + 3, y, 2, 4, P.k0); R(x + 3, y + 14, 2, 4, P.k0);
+      R(x, y + 4, 8, 1, P.s4); R(x + 1, y + 5, 6, 5, P.a1); R(x + 1, y + 5, 6, 1, P.a2); R(x + 2, y + 5, 4, 3, P.d1); R(x + 2, y + 5, 2, 1, P.d2);
+      R(x - 1, y + 9, 10, 7, P.k0); R(x, y + 9, 8, 6, P.a3); R(x, y + 9, 8, 1, P.a4); R(x + 2, y + 11, 4, 2, P.d3);
+      if (VEH === 'ebike') { R(x + 3, y + 15, 2, 2, JAIL ? P.e3 : P.t3); }
+    }
+    function lightIcon(x, y, st) { api.frame(x, y, 10, 26, 'slot'); R(x + 2, y + 2, 6, 6, st === 'R' ? P.e3 : P.e0); R(x + 2, y + 10, 6, 6, st === 'A' ? P.a2 : P.a0); R(x + 2, y + 18, 6, 6, st === 'G' ? P.g4 : P.g0); }
+    function arrow(x, y, dir, col) { // 18×18 arrow
+      if (dir === 'S') { R(x + 7, y + 6, 4, 12, col); R(x + 3, y + 6, 12, 2, col); R(x + 5, y + 3, 8, 3, col); R(x + 7, y, 4, 3, col); }
+      else if (dir === 'R') { R(x, y + 7, 12, 4, col); R(x + 10, y + 3, 2, 12, col); R(x + 12, y + 5, 3, 8, col); R(x + 15, y + 7, 3, 4, col); }
+      else if (dir === 'L') { R(x + 6, y + 7, 12, 4, col); R(x + 6, y + 3, 2, 12, col); R(x + 3, y + 5, 3, 8, col); R(x, y + 7, 3, 4, col); }
+      else { R(x + 5, y, 8, 8, col); R(x + 7, y + 8, 4, 6, col); R(x + 8, y + 14, 2, 3, col); R(x + 7, y + 2, 4, 4, P.k1); }
+    }
+    function draw(g) {
+      const asph = NIGHT ? P.k2 : P.s0, side = NIGHT ? P.s0 : P.w3;
+      R(0, TOP, api.W, BOT - TOP, asph);
+      // sidewalks and roofs, scrolling with you
+      R(0, TOP, ROADL, BOT - TOP, side); R(ROADR, TOP, api.W - ROADR, BOT - TOP, side);
+      const o24 = ((me.wy % 24) + 24) % 24;
+      for (let y = TOP - 24 + o24; y < BOT; y += 24) { R(0, y, ROADL, 1, NIGHT ? P.k3 : P.w2); R(ROADR, y, api.W - ROADR, 1, NIGHT ? P.k3 : P.w2); }
+      const blk = Math.floor((me.wy - 40) / 60);
+      for (let b = blk; b < blk + 5; b++) {
+        const y = sy(b * 60 + 60), h = 56, cl = [P.s1, P.d2, P.r1, P.s2, P.w1][Math.abs(b) % 5], cr = [P.r1, P.s2, P.d2, P.w1, P.s1][Math.abs(b * 7) % 5];
+        R(0, y, 28, h, cl); R(0, y, 28, 1, P.k1); R(4, y + 8, 8, 6, P.s4); R(5, y + 9, 6, 1, P.s5);
+        R(292, y, 28, h, cr); R(292, y, 28, 1, P.k1); R(304, y + 30, 9, 7, P.s4);
+        if (NIGHT) { R(10, y + 30, 3, 2, P.a3); R(300, y + 14, 3, 2, P.a3); }
+        api.sprite(TREE, 32, y + 20); api.sprite(TREE, ROADR + 2, y + 44);
+      }
+      // lanes
+      const o20 = ((me.wy % 20) + 20) % 20;
+      for (let y = TOP - 20 + o20; y < BOT; y += 20) { R(92, y, 2, 10, P.p1); R(184, y, 2, 10, P.p1); }
+      R(137, TOP, 2, BOT - TOP, P.a2); R(140, TOP, 2, BOT - TOP, P.a2);  // the yellow line: oncoming on the left
+      R(230, TOP, 2, BOT - TOP, CAR ? P.p1 : P.g3);
+      if (!CAR) { R(232, TOP, 42, BOT - TOP, NIGHT ? P.g0 : P.g1); for (let y = TOP - 40 + ((me.wy % 40) + 40) % 40; y < BOT; y += 40) { R(246, y, 12, 2, P.g3); R(250, y - 4, 4, 4, P.g3); } }
+      R(ROADL, TOP, 2, BOT - TOP, P.p0); R(ROADR - 2, TOP, 2, BOT - TOP, P.p0);
+      // intersections
+      for (const I of inters) {
+        const y0 = sy(I.wy + 50), y1 = sy(I.wy); if (y1 < TOP - 10 || y0 > BOT + 10) continue;
+        R(0, y0, api.W, 50, asph); R(0, y0 + 24, ROADL, 2, P.a2); R(ROADR, y0 + 24, api.W - ROADR, 2, P.a2);
+        for (let x = ROADL + 4; x < ROADR - 4; x += 10) { R(x, y1 - 8, 6, 6, P.p2); R(x, y0 + 2, 6, 6, P.p2); }
+        R(142, y1 - 1, ROADR - 142, 2, P.p3);
+        const st = light(I); R(ROADR + 4, y1 - 14, 5, 12, P.k0); R(ROADR + 5, y1 - 13, 3, 3, st === 'R' ? P.e3 : P.e0); R(ROADR + 5, y1 - 9, 3, 3, st === 'A' ? P.a2 : P.a0); R(ROADR + 5, y1 - 5, 3, 3, st === 'G' ? P.g4 : P.g0);
+        if (st !== 'G') { R(ROADR + 2, y1 - 16, 9, 1, st === 'R' ? P.e3 : P.a2); }
+        if (I.cam) { R(ROADR + 12, y1 - 12, 7, 5, P.k1); R(ROADR + 18, y1 - 11, 2, 3, P.s4); R(ROADR + 13, y1 - 11, 2, 2, (t * 3 | 0) % 2 ? P.e3 : P.e1); }
+      }
+      // things on the road
+      for (const o of objs) {
+        const y = sy(o.wy);
+        if (o.k === 'puddle') { const x = laneX(o.lane); R(x - o.w / 2, y - o.h / 2, o.w, o.h, NIGHT ? P.t0 : P.s2); R(x - o.w / 2 + 2, y - o.h / 2 + 1, o.w - 4, o.h - 2, NIGHT ? P.t1 : P.s3); R(x - o.w / 4, y - o.h / 2 + 2, o.w / 2, 1, P.p2); if (RAIN && (t * 4 + o.wy | 0) % 3 === 0) R(x + (o.wy % 7) - 3, y, 2, 1, P.p3); }
+        else if (o.k === 'hole') { const x = laneX(o.lane); R(x - 4, y - 3, 8, 6, P.k0); R(x - 3, y - 2, 6, 4, P.k1); R(x - 4, y - 3, 8, 1, P.s2); }
+        else if (o.k === 'parked') {
+          const x = CAR ? 252 : 284; carTop(x, y, o.col[0], o.col[1], false);
+          if (o.door && o.doorT >= 0) { if (o.doorT < .9) { R(x - 3, y - 2, 4, 4, (t * 10 | 0) % 2 ? P.h2 : P.d1); R(x + 2, y + 10, 4, 2, P.e4); } else if (o.doorT < 3.4) { R(x - 18, y - 4, 12, 4, P.k0); R(x - 17, y - 3, 10, 2, o.col[0]); } }
+        }
+        else if (o.k === 'ped') { R(o.x - 4, y - 3, 8, 6, P.k0); R(o.x - 3, y - 2, 6, 4, P.r3); R(o.x - 1, y - 2, 3, 3, P.d1); if (o.st === 1 && (t * 6 | 0) % 2) api.text('!', o.x, y - 6, { size: 8, color: P.a3, align: 'center', bold: true }); if (o.st >= 1) R(o.x + 2, y - 1, 2, 2, P.t4); }
+      }
+      if (order && order.pin) { const y = sy(order.pin.wy), x = CAR ? laneX(3) : laneX(4); const on = (t * 4 | 0) % 2; R(x - 12, y - 14, 24, 28, on ? P.t1 : P.t0); R(x - 12, y - 14, 24, 1, P.t3); R(x - 12, y + 13, 24, 1, P.t3); R(ROADR + 4, y - 10, 10, 10, P.t3); R(ROADR + 6, y - 8, 6, 6, P.p4); R(ROADR + 8, y, 2, 6, P.t3); }
+      // traffic
+      for (const c of cars) { const y = sy(c.wy); if (y < TOP - 30 || y > BOT + 30) continue; if (c.cross) carSide(c.x, y, c.col[0], c.col[1]); else carTop(c.x, y, c.col[0], c.col[1], c.dir < 0, { cop: c.cop, brake: c.v < c.v0 - 8 }); }
+      // you
+      if (NIGHT) { g.globalAlpha = .16; R(me.x - (CAR ? 14 : 8), PY - 70, CAR ? 28 : 16, 56, P.p4); g.globalAlpha = 1; }
+      if (CAR) carTop(me.x, PY, P.a1, P.a0, false, { lights: true, brake: keys.down || holdBrake });
+      else rider(me.x, PY);
+      for (const s of smoke) { g.globalAlpha = Math.max(0, .7 * (1 - s.t / s.life)); R(s.x, s.y, s.s, s.s, s.t < .3 ? P.s3 : P.s1); } g.globalAlpha = 1;
+      // the chevron: a car coming up behind you
+      if (!CAR) for (const c of cars) if (!c.cross && c.dir > 0 && c.v > me.v + 8 && sy(c.wy) > BOT && sy(c.wy) < BOT + 110) { const x = c.x; R(x - 5, BOT - 9, 10, 2, P.a2); R(x - 3, BOT - 11, 6, 2, P.a2); R(x - 1, BOT - 13, 2, 2, P.a2); }
+      // rain and night
+      if (RAIN) { g.globalAlpha = .3; for (let i = 0; i < 40 * RAIN; i++) { const x = (i * 53 + t * 40) % 340 - 10, y = TOP + ((i * 37 + t * 260) % (BOT - TOP)); R(x, y, 1, 4, P.p4); } g.globalAlpha = 1; }
+      if (NIGHT) { g.globalAlpha = .28; R(0, TOP, api.W, BOT - TOP, P.k0); g.globalAlpha = 1; }
+      hud(g);
+      if (trans > 0) { const k = 1 - Math.abs(trans - .25) / .25; R(transDir === 'R' ? api.W * (1 - k) : 0, TOP, api.W * k, BOT - TOP, P.k0); }
+    }
+    function hud(g) {
+      // the next instruction
+      api.frame(4, TOP + 4, 78, 30, 'panel');
+      let ins = null, dist = '';
+      if (dead) { api.text('BROKEN DOWN', 43, TOP + 22, { size: 7, color: P.e3, align: 'center', bold: true }); }
+      else if (!order) { api.text(wait < .6 ? 'NEW ORDER' : '…', 43, TOP + 22, { size: 7, color: P.mute, align: 'center' }); }
+      else if (order.pin) { ins = 'D'; const d = Math.max(0, Math.round((order.pin.wy - me.wy) / 3)); dist = d < 8 ? 'STOP HERE' : d + ' m'; }
+      else { ins = order.route[order.step]; const I = nextInter(); if (I) { const d = I.wy - me.wy; dist = d > BLOCK * 1.25 ? '2 BLOCKS' : d > 100 ? 'NEXT CORNER' : ins === 'S' ? 'STRAIGHT' : 'NOW'; } }
+      if (ins) {
+        const now = dist === 'NOW' || dist === 'STOP HERE', col = now && (t * 5 | 0) % 2 ? P.a3 : P.ink;
+        arrow(9, TOP + 10, ins, col);
+        api.text(ins === 'R' ? 'RIGHT' : ins === 'L' ? 'LEFT' : ins === 'S' ? 'AHEAD' : CAR ? 'DROP-OFF' : 'DELIVER', 31, TOP + 16, { size: 7, color: col, bold: true });
+        api.text(dist, 31, TOP + 27, { size: 6.5, color: now ? P.a3 : P.mute });
+      }
+      // the light ahead
+      const I = nextInter(); if (I && I.wy - me.wy < 190 && I.wy - me.wy > -10) lightIcon(86, TOP + 6, light(I));
+      // the order and its deadline
+      api.frame(232, TOP + 4, 84, 32, 'panel');
+      if (order) {
+        api.text(`${CAR ? 'RIDE' : 'ORDER'} ${ord + 1}/${api.units}`, 237, TOP + 13, { size: 6.5, color: P.a2 });
+        api.text(CAR ? `${order.name} ★${order.stars}` : order.name, 237, TOP + 23, { size: 6.5, color: P.ink, max: 74 });
+        api.timerBar(237, TOP + 28, 74, Math.max(0, order.left / order.total), .25);
+        if (order.late) api.text('LATE', 311, TOP + 13, { size: 6.5, color: P.e3, align: 'right', bold: true });
+      } else api.text(dead ? 'CALL A TOW' : 'WAITING FOR A PING', 274, TOP + 22, { size: 6.5, color: P.mute, align: 'center' });
+      // speed, and the limit
+      api.frame(4, BOT - 22, 64, 18, 'slot');
+      const over = kmh() > LIMIT + 2; api.text(`${kmh()} km/h`, 9, BOT - 9, { size: 7, color: over ? P.e3 : P.ink, bold: over });
+      R(50, BOT - 20, 14, 14, P.e2); R(52, BOT - 18, 10, 10, P.p4); api.text(String(LIMIT), 57, BOT - 10, { size: 6.5, color: P.k1, align: 'center' });
+      if (VEH === 'ebike') api.text(JAIL ? 'NO LIMIT' : 'LIMITED', 36, BOT - 25, { size: 6, color: JAIL ? P.e3 : P.t4, align: 'center' });
+      // the brake pedal
+      api.frame(268, BOT - 22, 48, 18, keys.down || holdBrake ? 'hot' : 'button'); api.text('BRAKE', 292, BOT - 9, { size: 7, color: keys.down || holdBrake ? P.k1 : P.ink, align: 'center', bold: true });
+      // turn buttons, when a corner is close
+      if (order && !order.pin && I && I.wy - me.wy < 70 && I.wy - me.wy > -48) { const ins = order.route[order.step]; if (ins === 'R') { api.frame(294, 74, 22, 30, 'hot'); arrow(296, 80, 'R', P.k1); } if (ins === 'L') { api.frame(4, 74, 22, 30, 'hot'); arrow(6, 80, 'L', P.k1); } }
+      if (policeNear()) { const on = (t * 6 | 0) % 2; api.frame(130, TOP + 4, 60, 13, on ? 'warn' : 'panel'); api.text('POLICE', 160, TOP + 13, { size: 7, color: on ? P.p4 : P.e3, align: 'center', bold: true }); }
+      if (broke && !dead && (t * 4 | 0) % 2) api.text('CHECK ENGINE', 160, TOP + 30, { size: 8, color: P.e3, align: 'center', bold: true, shadow: true });
+      if (msg) { g.globalAlpha = Math.min(1, msg.t * 3); api.text(msg.text, 160, TOP + 46, { size: 9, color: msg.col, align: 'center', bold: true, shadow: true }); g.globalAlpha = 1; }
+      if (pulled > 0) { const on = (t * 8 | 0) % 2; g.globalAlpha = .25; R(0, TOP, 6, BOT - TOP, on ? P.e3 : P.t3); R(api.W - 6, TOP, 6, BOT - TOP, on ? P.t3 : P.e3); g.globalAlpha = 1; api.text('PULLED OVER', 160, 96, { size: 11, color: P.p4, align: 'center', bold: true, shadow: true }); }
+      if (ticket) { api.frame(104, 64, 112, 50, 'paper'); api.text('CITATION', 160, 76, { size: 8, color: P.e2, align: 'center', bold: true }); api.text({ red: 'Red light', speed: 'Speeding', tamper: 'Illegal e-bike', lane: 'Unsafe lane' }[ticket.why] + ' · ' + ticket.src, 160, 88, { size: 6.5, color: P.k1, align: 'center', font: 'read' }); api.text('$' + ticket.amount, 160, 105, { size: 12, color: P.e2, align: 'center', bold: true }); }
+    }
+
+    return {
+      tick, draw,
+      key(k) {
+        if (k === 'ArrowLeft' || k === 'a' || k === 'A') { press('L'); return true; }
+        if (k === 'ArrowRight' || k === 'd' || k === 'D') { press('R'); return true; }
+        if (k === 'ArrowDown' || k === 's' || k === 'S' || k === ' ') { keys.down = true; return true; }
+        if (k === 'ArrowUp' || k === 'w' || k === 'W') { keys.up = true; return true; }
+        return false;
+      },
+      down(x, y) {
+        if (x > 266 && y > BOT - 24) { holdBrake = true; return; }
+        if (x > 292 && y > 72 && y < 106) return press('R');
+        if (x < 28 && y > 72 && y < 106) return press('L');
+        if (y > TOP + 38 && y < BOT - 24) { if (x < me.x - 10) press('L'); else if (x > me.x + 10) press('R'); }
+      },
+      up() { holdBrake = false; },
+      bot(dt) {
+        botT -= dt; if (botT > 0) return; botT = .07;
+        if (dead || pulled > 0 || me.stun > 0 || trans > 0) { keys.down = false; return; }
+        const I = nextInter(), ins = order && order.step < order.route.length ? order.route[order.step] : null;
+        const hazard = o => o.k === 'hole' || (o.k === 'puddle' && !CAR) || (o.k === 'puddle' && CAR && !botErr) || (o.k === 'parked' && o.door && o.doorT >= 0 && o.doorT < 3.4);
+        const clear = l => { let m = 999; for (const c of cars) if (!c.cross && c.lane === l) { const d = c.wy - me.wy; if (d > -26 && d < m) m = d; } for (const o of objs) if (o.lane === l && !o.hit && (hazard(o) || (o.k === 'ped' && o.st >= 1 && o.st < 3))) { const d = o.wy - me.wy; if (d > -14 && d < m) m = d; } if (l === 4 && !CAR) for (const o of objs) if (o.k === 'parked' && o.door && o.doorT >= 0 && o.doorT < 3.4) { const d = o.wy - me.wy; if (d > -20 && d < m) m = d; } return m; };
+        const side = l => !cars.some(c => !c.cross && c.lane === l && c.wy - me.wy < 36 && me.wy - c.wy < (c.dir > 0 && c.v > me.v ? 70 : 34)) && !objs.some(o => o.lane === l && !o.hit && hazard(o) && Math.abs(o.wy - me.wy) < 22);
+        let want = null;
+        if (order && order.pin && order.pin.wy - me.wy < 260) want = EDGE;
+        else if (ins && ins !== 'S' && I && I.wy - me.wy < 230) want = ins === 'R' ? EDGE : 2;
+        let target = me.lane;
+        if (want != null) target = want;
+        else { let bd = clear(me.lane); for (const l of LANES) { if (CAR && l === 1) continue; const d = clear(l); if (d > bd + 30) { target = l; bd = d; } } }
+        if (target !== me.lane) { const nl = LANES[LANES.indexOf(me.lane) + (target > me.lane ? 1 : -1)]; if (nl != null && side(nl) && !inBand(I)) { me.lane = nl; api.sfx('flip'); } }
+        const ahead = clear(me.lane);
+        let stop = ahead < 32 + me.v * me.v / 240;
+        if (I) { const d = I.wy - 2 - (me.wy + PH / 2), st = light(I); const sd = me.v * me.v / 260 + 4; if (st === 'R' && d > 0 && d < 16 + sd) stop = true; if (st === 'A' && d > sd && d > me.v * .95) stop = true; if (d <= 0 && me.wy < I.wy + 50) stop = stop && ahead < 30; }
+        if (order && order.pin && me.lane === EDGE) { const d = order.pin.wy - me.wy; if (d > -14 && d < 10 + me.v * me.v / 280) stop = true; else if (d < 60) { keys.up = false; stop = stop || me.v > 26; } }
+        const pinNear = order && order.pin && order.pin.wy - me.wy < 60;
+        keys.down = stop; keys.up = !stop && !pinNear && ahead > 120 && !botErr && !policeNear();
+        if (botErr && order) keys.down = keys.down || (t * 2 | 0) % 2 === 0; // the slow one: this order arrives late
+        if (ins && ins !== 'S' && I) { const d = I.wy - (me.wy + PH / 2); if (d < 70 && d > -40 && me.v > 40) keys.down = true; }
+        if (ins && ins !== 'S' && inBand(I)) { const busy = ins === 'L' && CAR && cars.some(c => c.dir < 0 && Math.abs(sy(c.wy) - sy(I.wy + 25)) < 60); if (busy) keys.down = true; else tryTurn(ins); }
+      },
+      destroy() { removeEventListener('keyup', onUp); removeEventListener('blur', onBlur); }
+    };
+  }
+};
+
+// Jailbreak (kind 'jailbreak'): your laptop on a USB-serial cable to the e-bike's motor controller. The firmware
+// scrolls by in hex. Find the speed limit (the byte after the SPD marker 53 50 44), click it before the watchdog
+// resets the board, then WRITE while the supply voltage is steady. A wrong byte or a write in a dip: CHECKSUM ERROR.
+MINI.jailbreak = {
+  title: 'Jailbreak', how: 'Find the byte after 53 50 44 and write it while the voltage is steady.', keys: 'Click a byte · Enter or WRITE', pace: 4,
+  create(api) {
+    const { P } = api, LV = api.level, TOP = api.top;
+    const F = LV < .5 ? 1.3 - .6 * LV : 1 - .7 * (LV - .5);
+    const COLS = 8, ROWS = 7, CW = 20, RH = 13, GX = 40, GY = TOP + 26;
+    const hex = n => n.toString(16).toUpperCase().padStart(2, '0');
+    let rows = [], base = 0x1a40, scrollT = 0, t = 0, target = null, sel = null, phase = 'find', wd = 0, wd0 = 1, volt = 1, dip = 0, nextDip = 1.2;
+    let flash = null, writeT = 0, led = 'amber', curR = 3, curC = 0, botT = 0, botWrong = false, bricks = 0;
+    const randByte = () => { let b = api.ri(0, 255); return b; };
+    function makeRow() {
+      const r = []; for (let i = 0; i < COLS; i++) r.push({ v: randByte(), mark: 0, tgt: false, fixed: false });
+      // decoys: lone 19s, and markers followed by other values
+      if (api.chance(.35 + LV * .3)) r[api.ri(0, COLS - 1)].v = 0x19;
+      if (api.chance(.18 + LV * .25 + api.progress * .2)) { const i = api.ri(0, COLS - 4); r[i].v = 0x53; r[i + 1].v = 0x50; r[i + 2].v = 0x44; r[i + 3].v = api.pick([0x1e, 0x14, 0x23, 0x0f]); }
+      for (const c of r) if (c.v === 0x53 && !c.tgt) c.mark = 0;
+      return r;
+    }
+    function plant() { // the real marker, then the limit
+      const r = rows[ROWS - 1 - api.ri(0, 1)], i = api.ri(0, COLS - 4);
+      r[i].v = 0x53; r[i + 1].v = 0x50; r[i + 2].v = 0x44; r[i + 3].v = 0x19; r[i + 3].tgt = true; target = r[i + 3];
+    }
+    function newPatch() {
+      rows = []; for (let i = 0; i < ROWS; i++) rows.push(makeRow());
+      plant(); sel = null; phase = 'find';
+      wd0 = wd = (6.2 - LV * 1.5) * F * (1 - .25 * api.progress) + 1.2;
+      botWrong = api.auto && api.chance(api.autoErr); botT = .35 + Math.random() * .3;
+      base += 0x70; led = 'amber';
+    }
+    newPatch();
+    const cellAt = (x, y) => { const c = Math.floor((x - GX) / CW), r = Math.floor((y - GY) / RH); return c >= 0 && c < COLS && r >= 0 && r < ROWS ? [r, c] : null; };
+    function fail(why) { api.item(false, 100, GY + 40, why); flash = { col: P.e2, t: .5, text: why }; led = 'red'; api.sfx('zap'); api.shake(4); bricks++; setTimeout(() => { }, 0); phase = 'gap'; writeT = .7; }
+    function pick(r, c) {
+      if (phase !== 'find' || api.busy) return;
+      const cell = rows[r] && rows[r][c]; if (!cell) return;
+      curR = r; curC = c;
+      if (cell.tgt) { sel = cell; phase = 'write'; api.sfx('click'); api.pop(GX + c * CW + 10, GY + r * RH - 2, 'LIMIT FOUND', P.a3, 7); }
+      else { api.sfx('bad'); fail(cell.v === 0x19 ? 'NO MARKER' : 'WRONG BYTE'); }
+    }
+    function write() {
+      if (phase !== 'write' || api.busy) return;
+      if (dip > 0) return fail('VOLTAGE DIP');
+      phase = 'writing'; writeT = .55; api.sfx('type'); setTimeout(() => api.sfx('type'), 90); setTimeout(() => api.sfx('type'), 180);
+    }
+    return {
+      tick(dt) {
+        t += dt;
+        if (flash) { flash.t -= dt; if (flash.t <= 0) flash = null; }
+        // the supply voltage wobbles, and dips
+        nextDip -= dt; if (nextDip <= 0 && dip <= 0) { dip = .45 + Math.random() * .5; nextDip = (1.4 + Math.random() * 1.8) * F; api.sfx('blip', -6); }
+        if (dip > 0) dip -= dt;
+        volt = dip > 0 ? .35 + Math.sin(t * 25) * .08 : .8 + Math.sin(t * 3.1) * .06 + Math.sin(t * 7.7) * .03;
+        if (api.busy) return;
+        if (phase === 'gap') { writeT -= dt; if (writeT <= 0) newPatch(); return; }
+        if (phase === 'writing') { writeT -= dt; if (writeT <= 0) { sel.v = 0x28; sel.fixed = true; led = 'green'; api.item(true, GX + curC * CW + 10, GY + curR * RH, 'WRITTEN'); api.sfx('stamp'); api.burst(GX + curC * CW + 10, GY + curR * RH + 6, P.t4, 10, 50); phase = 'gap'; writeT = .55; } return; }
+        // the watchdog
+        wd -= dt;
+        if (wd <= 1.2 && Math.ceil(wd * 2) !== Math.ceil((wd + dt) * 2)) api.sfx('tick');
+        if (wd <= 0) return fail('WATCHDOG RESET');
+        // the dump scrolls while you look for it
+        if (phase === 'find') {
+          scrollT += dt; const every = (1.05 - LV * .35) * F;
+          if (scrollT > every) {
+            scrollT = 0; rows.shift(); rows.push(makeRow()); base += COLS;
+            if (!rows.some(r => r.includes(target))) plant(); // it scrolled away: it comes round again
+          }
+        }
+      },
+      draw(g) {
+        const R = (x, y, w, h, c) => api.rect(x, y, w, h, c);
+        R(0, TOP, api.W, api.bot - TOP, P.k1);
+        // the laptop screen
+        api.frame(4, TOP + 4, 206, 142, 'screen');
+        api.text('motor_ctrl.bin · fw 2.3.1 · /dev/ttyUSB0', 10, TOP + 15, { size: 6.5, color: P.t4 });
+        for (let r = 0; r < ROWS; r++) {
+          const y = GY + r * RH;
+          api.text(hex((base + r * COLS) >> 8) + hex((base + r * COLS) & 255), 8, y + 9, { size: 6.5, color: P.t2 });
+          for (let c = 0; c < COLS; c++) {
+            const cell = rows[r][c], x = GX + c * CW, isSel = cell === sel, cur = !api.auto && r === curR && c === curC && phase === 'find';
+            if (cell.fixed) R(x, y, CW - 2, RH - 1, P.t2);
+            else if (isSel) R(x, y, CW - 2, RH - 1, P.a1);
+            else if (cur) R(x, y, CW - 2, RH - 1, P.t1);
+            api.text(hex(cell.v), x + CW / 2 - 1, y + 9, { size: 7, color: cell.fixed ? P.p4 : isSel ? P.k1 : cell.v === 0x53 || cell.v === 0x50 || cell.v === 0x44 ? P.t5 : P.t3, align: 'center', bold: isSel || cell.fixed });
+          }
+        }
+        api.text(phase === 'write' ? '> found it. WRITE 28 when the voltage is steady' : phase === 'writing' ? '> writing…' : '> find SPD_LIM: 53 50 44 → 19', 10, TOP + 140, { size: 6.5, color: phase === 'write' ? P.a3 : P.t4, max: 196 });
+        // the watchdog
+        api.text('WATCHDOG', 150, TOP + 15, { size: 6, color: wd < 1.2 ? P.e3 : P.t2 }); api.timerBar(150, TOP + 18, 54, Math.max(0, wd / wd0), .3);
+        // the board
+        api.frame(216, TOP + 4, 100, 76, 'panel'); R(220, TOP + 8, 92, 68, P.g1);
+        for (let i = 0; i < 6; i++) R(222 + i * 15, TOP + 10, 9, 2, P.a1);
+        R(232, TOP + 22, 26, 18, P.k2); R(234, TOP + 24, 22, 2, P.s1); api.text('MCU', 245, TOP + 35, { size: 6, color: P.s4, align: 'center' });
+        R(266, TOP + 26, 14, 10, P.k2); R(284, TOP + 26, 22, 30, P.k3); R(286, TOP + 28, 18, 4, P.s2);
+        for (let i = 0; i < 5; i++) R(226 + i * 6, TOP + 50, 2, 10, P.d4);
+        const lc = led === 'green' ? P.g4 : led === 'red' ? ((t * 6 | 0) % 2 ? P.e3 : P.e1) : ((t * 2 | 0) % 2 ? P.a2 : P.a0);
+        R(298, TOP + 64, 6, 6, P.k0); R(299, TOP + 65, 4, 4, lc);
+        R(222, TOP + 66, 12, 8, P.s3); api.line(228, TOP + 74, 200, TOP + 128, P.k0, 2); // the cable
+        // the supply voltage
+        api.frame(216, TOP + 86, 100, 40, 'slot');
+        api.text('SUPPLY', 222, TOP + 96, { size: 6, color: P.mute });
+        R(222, TOP + 102, 88, 8, P.k0); R(222, TOP + 102, 30, 8, P.e0); R(252, TOP + 102, 58, 8, P.g0);
+        const nx = 222 + Math.round(volt * 88); R(nx - 1, TOP + 99, 3, 14, dip > 0 ? P.e3 : P.g4);
+        api.text(dip > 0 ? 'DIP' : 'STEADY', 310, TOP + 96, { size: 6, color: dip > 0 ? P.e3 : P.g4, align: 'right', bold: dip > 0 });
+        // WRITE
+        const can = phase === 'write';
+        api.frame(216, TOP + 130, 100, 16, can ? (dip > 0 ? 'warn' : 'hot') : 'button');
+        api.text('WRITE 28', 266, TOP + 141, { size: 7, color: can ? (dip > 0 ? P.p4 : P.k1) : P.s4, align: 'center', bold: true });
+        // the forum note
+        api.frame(150, TOP + 26, 54, 30, 'paper'); api.text('SPD_LIM', 177, TOP + 36, { size: 6, color: P.d2, align: 'center' }); api.text('53 50 44 19', 177, TOP + 46, { size: 6.5, color: P.k1, align: 'center', bold: true }); api.text('→ 28', 177, TOP + 54, { size: 6, color: P.r2, align: 'center' });
+        if (flash) { g.globalAlpha = Math.min(1, flash.t * 3); api.text(flash.text, 106, TOP + 78, { size: 9, color: P.e3, align: 'center', bold: true, shadow: true }); g.globalAlpha = 1; }
+      },
+      down(x, y) {
+        if (x > 216 && x < 316 && y > TOP + 128 && y < TOP + 148) return write();
+        const at = cellAt(x, y); if (at && !(x > 148 && y < TOP + 58)) pick(at[0], at[1]);
+      },
+      key(k) {
+        if (k === 'Enter' || k === ' ') { if (phase === 'write') write(); else if (phase === 'find') pick(curR, curC); return true; }
+        if (phase !== 'find') return false;
+        if (k === 'ArrowLeft') { curC = Math.max(0, curC - 1); api.sfx('click'); return true; }
+        if (k === 'ArrowRight') { curC = Math.min(COLS - 1, curC + 1); api.sfx('click'); return true; }
+        if (k === 'ArrowUp') { curR = Math.max(0, curR - 1); api.sfx('click'); return true; }
+        if (k === 'ArrowDown') { curR = Math.min(ROWS - 1, curR + 1); api.sfx('click'); return true; }
+        return false;
+      },
+      bot(dt) {
+        botT -= dt; if (botT > 0) return; botT = .12;
+        if (phase === 'find') {
+          if (botWrong) { botWrong = false; const r = api.ri(0, ROWS - 1), c = api.ri(0, COLS - 1); if (!rows[r][c].tgt) return pick(r, c); }
+          for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) if (rows[r][c].tgt) return pick(r, c);
+        } else if (phase === 'write' && dip <= 0 && nextDip > .25) write();
       }
     };
   }
@@ -8775,6 +9328,7 @@ function fridge() {
   toast('Ramen, ramen, hot sauce, ramen.');
 }
 function selfCheck() {
+  if (S.injury > S.day) return toast('Your wrist throbs. You type with three fingers.');
   if (S.bodyTemp < 35) return toast('Your fingers are slow on the keys. You can see your breath.');
   if (S.stamina < 25) return toast('You read the same line four times.');
   if (S.food < 30) return toast('Your stomach has stopped asking.');
@@ -9062,6 +9616,317 @@ function startAct2(carry) {
       <p class="muted">Open the TRAIN tab. While you work through tasks, the clock stops.</p>`,
     buttons: [{ label: 'Log in', primary: true }]
   });
+}
+
+// ================= ACT II · gig apps: Uburn (a car) and Grovel (a bike) =================
+// Played from above: lanes, traffic, puddles, red lights, police. The car dies. The bike is cheap and slow,
+// unless you take the limiter off. Every ticket and every crash costs money you don't have.
+const CAR = { name: '2009 Toyoda Corrola', km: '241,000 km', cost: 1350, gas: 14, scrap: 180, fix: 2450 };
+const BIKES = {
+  rent: { k: 'ebike', name: 'Grovel e-bike (rented)', cost: 0, week: 45, rented: true },
+  ebike: { k: 'ebike', name: 'Used e-bike, 25 km/h limit', cost: 640 },
+  bike: { k: 'bike', name: 'Pawn-shop bicycle', cost: 85 }
+};
+const TICKET_WHY = { red: 'red light', speed: 'speeding', tamper: 'illegal e-bike', lane: 'unsafe lane change' };
+function gig2() { return S.gig2 || (S.gig2 = { car: null, bike: null, uR: 4.86, gR: 4.72, police: .22, deact: -1, today: { gig: 0, tix: 0 }, shifts: 0, pushed: false }); }
+let SHC = null, SH = null; // the shift (or the jailbreak) running full screen, and its tally
+function spendHours(h) { const len = DAY_SEC[speed] || DAY_SEC[1]; acc = Math.min(acc + h / 14 * AWAKE * len, len - .05); }
+function shiftOpen(kind, job, env) {
+  $('shiftModal').hidden = false; $('shTitle').textContent = job.title; $('shInfo').textContent = '';
+  try { SHC = mgCreate($('shStage'), kind, job, env); }
+  catch (e) { console.error(e); $('shiftModal').hidden = true; SH = null; return toast('That would not start.'); }
+  SHC.tick(0, false);
+  const c = $('shStage').querySelector('canvas'); if (c) c.focus({ preventScroll: true });
+}
+function shiftDestroy() { if (SHC) { try { SHC.destroy(); } catch (e) {} } SHC = null; $('shiftModal').hidden = true; }
+function shiftTick(dt) { if (!SHC) return; SHC.tick(dt, !!speed && $('modal').hidden); if (SH && SH.app !== 'jail') $('shInfo').textContent = `${money(SH.earned + SH.tips)} this shift${SH.tix ? ` · tickets −${money(SH.tix)}` : ''} · ${clockText()}`; }
+$('shQuit').onclick = () => {
+  if (!SHC || !SH) return;
+  const st = SHC.state;
+  if (st.phase === 'result') return; // the card closes itself with a click
+  if (SH.app === 'jail') { SH.quit = true; SHC.abort({ title: 'UNPLUGGED', note: 'You pulled the cable halfway through. The board still boots. Probably.', lines: [] }); return; }
+  SH.quit = true; SHC.abort({ title: 'SHIFT ENDED', note: 'You logged off early. The app noticed.', lines: shiftLines() });
+};
+
+function shiftStart(app) {
+  const G = gig2(), car = app === 'uburn';
+  if (SHC || S.over) return;
+  const h = hourNow();
+  if (h >= 20.5 || h < 6.5) return toast(car ? 'Uburn: no riders near you this late.' : 'Grovel: the kitchens are closed.');
+  if (S.stamina < 15) return toast('You can barely stand. Sleep first.');
+  if (car) {
+    if (!G.car || G.car.broken) return;
+    if (S.balance < CAR.gas) return toast(`Gas is ${money(CAR.gas)}. You have ${money(S.balance)}.`);
+    S.balance -= CAR.gas; tx('Gas · Uburn shift', -CAR.gas);
+  } else {
+    const b = G.bike; if (!b || b.impounded || b.bricked) return;
+    if (G.deact > S.day) return toast('Your Grovel account is paused.');
+  }
+  closePhone(); closeLaptop();
+  const night = h >= 18, units = car ? 4 : 5;
+  const breakAt = car && G.car.shifts >= G.car.breakAt ? randi(1, 2) : -1;
+  SH = { app, car, earned: 0, tips: 0, tix: 0, hurt: 0, tamper: false, broke: false, night, quit: false, orders: 0, late: 0, crashes: 0 };
+  const job = { units, done: 0, errs: 0, title: car ? `Uburn · ${night ? 'night' : 'day'} rides` : `Grovel · ${h < 15 ? 'lunch' : 'dinner'} rush` };
+  const env = {
+    level: clamp(.22 + (S.day - ACT2_START) / 45 + G.shifts * .015, 0, 1), day: S.day, lag: 0, fps: 60,
+    tone: (f, d, ty, v, f2, dl) => sfx.tone(f, d, ty, v, f2, dl), clock: clockText, aiName: car ? 'Robotaxis' : 'Delivery drones',
+    tremor: () => clamp(Math.max(0, 25 - S.stamina) / 35 + (S.injury > S.day ? .35 : 0), 0, 1),
+    pressure: () => clamp(dreadLevel() + (SH && SH.tix ? .15 : 0), 0, 1),
+    def: car ? { title: 'Uburn', how: 'Pick up, drop off. Change lanes, stop at red lights, turn on time.', keys: '← → lanes · ↓ brake · ← or → at the corner to turn' }
+      : { title: 'Grovel', how: 'Deliver before it gets cold. Watch the car doors and the puddles.', keys: '← → lanes · ↓ brake · ← or → at the corner to turn' },
+    opts: { vehicle: car ? 'car' : G.bike.k, jail: !!(!car && G.bike.jail), rain: clamp(.35 + hash(S.day, 7) * .65, 0, 1), night, police: G.police, breakdownAt: breakAt, app },
+    onEvent: (type, d) => shiftEvent(type, d),
+    onEnd: () => ({ lines: shiftLines(), note: shiftNote() }),
+    onClose: () => shiftClose()
+  };
+  shiftOpen('street', job, env);
+}
+function shiftEvent(type, d) {
+  const G = gig2(); if (!SH) return;
+  if (type === 'order') {
+    SH.orders++;
+    const r = SH.car ? G.uR : G.gR, rm = r >= 4.8 ? 1 : r >= 4.6 ? .92 : r >= 4.3 ? .8 : .65;
+    const base = (SH.car ? 9 + Math.random() * 7 : 3.6 + Math.random() * 2.2) * rm * (SH.night ? 1.2 : 1);
+    let amt = 0, tip = 0;
+    if (d.crash) SH.crashes++;
+    else if (d.late) { amt = base * .55; SH.late++; }
+    else { amt = base; if (Math.random() < .6) tip = (SH.car ? 6 : 4) * clamp(d.tipK == null ? .5 : d.tipK, 0, 1); }
+    SH.earned += Math.round(amt * 100) / 100; SH.tips += Math.round(tip * 100) / 100;
+    const dr = d.crash ? -.18 : d.late ? -.06 : (d.tipK > .6 ? .02 : 0);
+    if (SH.car) G.uR = clamp(G.uR + dr, 1, 5); else G.gR = clamp(G.gR + dr, 1, 5);
+  } else if (type === 'ticket') {
+    const a = d.amount || 150; SH.tix += a; S.balance -= a; tx(`Ticket · ${TICKET_WHY[d.why] || 'traffic'}`, -a);
+    G.police = clamp(G.police + .12, 0, 1); if (d.why === 'tamper') SH.tamper = true;
+    sfx.alarm(); renderHud();
+  } else if (type === 'crash') { SH.hurt += d.hurt == null ? .2 : d.hurt; S.stamina = clamp(S.stamina - (d.hurt || .2) * 22, 0, 100); }
+  else if (type === 'breakdown' && !SH.broke) {
+    SH.broke = true; if (G.car) G.car.broken = true;
+    setTimeout(() => { if (SHC && SH && SH.broke) SHC.abort({ title: 'BREAKDOWN', note: 'Smoke from under the hood. It won’t start again.', lines: shiftLines() }); }, 900);
+  }
+}
+function shiftLines() {
+  if (!SH) return [];
+  const G = gig2(), r = SH.car ? G.uR : G.gR;
+  return [['Fares', money(SH.earned)], ['Tips', money(SH.tips)], SH.tix ? ['Tickets', '−' + money(SH.tix)] : null, SH.car ? ['Gas', '−' + money(CAR.gas)] : null, ['Rating', '★ ' + r.toFixed(2)]].filter(Boolean);
+}
+function shiftNote() {
+  if (!SH) return '';
+  const G = gig2(), r = SH.car ? G.uR : G.gR;
+  if (SH.tamper) return 'The officer measured the bike. It isn’t yours to ride any more.';
+  if (r < 4.3) return 'Your rating is below 4.3. The app is warning you about deactivation.';
+  if (SH.crashes) return 'You’re shaking. The food was everywhere.';
+  if (SH.late) return 'Late again. The tips stopped.';
+  return SH.car ? 'The robotaxis took the airport runs again.' : 'Your legs ache. The drones flew over you all afternoon.';
+}
+function shiftClose() {
+  if (!SH) return;
+  const G = gig2(), s = SH;
+  if (s.app === 'jail') { shiftDestroy(); SH = null; jailAfter(s); return renderAll(); }
+  const total = Math.round((s.earned + s.tips) * 100) / 100;
+  if (total > 0) pay(total, s.car ? 'Uburn · driver payout' : 'Grovel · courier payout');
+  G.today.gig += total; G.today.tix += s.tix; G.shifts++;
+  if (s.car && G.car && !s.broke) G.car.shifts++;
+  spendHours(s.car ? 4.5 : 5);
+  S.stamina = clamp(S.stamina - 16 - s.hurt * 10, 0, 100); S.food = clamp(S.food - 12, 0, 100);
+  shiftDestroy(); SH = null;
+  const r = s.car ? G.uR : G.gR;
+  if (s.broke) garageModal();
+  else if (s.tamper) impound();
+  else if (s.hurt >= .6) injuryModal();
+  else if (r < 4) { if (s.car) note('Uburn deactivated your account for three days: “ratings below community standards.”'); else { G.deact = S.day + 3; note('Grovel paused your account for three days: “ratings below 4.0.” You can appeal. Nobody reads the appeals.'); } }
+  if (s.quit) { if (s.car) G.uR = clamp(G.uR - .05, 1, 5); else G.gR = clamp(G.gR - .05, 1, 5); }
+  note(s.car ? `An Uburn shift: ${money(total)} after the app’s cut${s.tix ? `, and ${money(s.tix)} in tickets` : ''}.` : `A Grovel shift: ${money(total)}${s.tix ? `, and ${money(s.tix)} in tickets` : ''}. ${s.orders} deliveries in the rain.`);
+  renderAll();
+}
+function grovelPush() {
+  const G = gig2(); if (G.pushed) return; G.pushed = true; S.phoneUnread = 1;
+  addMail(S.day, 'Grovel', 'No car? No problem.', 'Deliver with Grovel on two wheels. Rent a Grovel e-bike for $45 a week, or ride your own.\n\nTop couriers earn up to $28 an hour.*\n\n*Before rental, bag deposit and weather. Tips not guaranteed.');
+  toast('Grovel: “No car? No problem. Deliver on a bike.”');
+}
+function garageModal() {
+  const G = gig2();
+  modal({
+    cls: 'alarm', title: 'LOU’S GARAGE · 8TH ST',
+    body: `<p>“Transmission,” Lou says, wiping his hands. “On a car this age? <b>${money(CAR.fix)}</b>, and I can’t promise it’ll last.”</p>
+      <p>For scrap he’ll give you <b>${money(CAR.scrap)}</b>.</p><p class="muted">You have ${money(S.balance)}. ${budget().due ? `Rent is ${money(budget().due)} in ${budget().days} days.` : ''}</p>`,
+    buttons: [
+      { label: `Sell it for scrap · +${money(CAR.scrap)}`, primary: true, fn: () => { pay(CAR.scrap, 'Lou’s Garage · scrap'); G.car = null; note('You sold the Corrola for scrap and walked home in the rain.'); grovelPush(); } },
+      S.balance >= CAR.fix ? { label: `Fix it · ${money(CAR.fix)}`, fn: () => { S.balance -= CAR.fix; tx('Lou’s Garage · transmission', -CAR.fix); G.car.broken = false; G.car.breakAt = G.car.shifts + 2; note('Lou fixed the transmission. “Now pray for the engine,” he said.'); } } : null,
+      { label: 'Leave it there for now', fn: () => { note('The Corrola sits outside Lou’s with a FOR PARTS sign in the window.'); grovelPush(); } }
+    ].filter(Boolean)
+  });
+}
+function impound() {
+  const G = gig2(), b = G.bike; if (!b) return;
+  if (b.rented) {
+    const fee = 900; S.balance -= fee; tx('Grovel · rented e-bike seized for tampering', -fee); G.bike = null; G.deact = S.day + 5;
+    modal({ cls: 'alarm', title: 'SEIZED', body: `<p>The officer put the e-bike in the back of a van. It was Grovel’s.</p><p>Grovel charged you <b>${money(fee)}</b> for “a damaged rental vehicle” and paused your account for five days.</p>` });
+  } else {
+    b.impounded = true; b.lot = S.day; b.jail = false;
+    modal({ cls: 'alarm', title: 'IMPOUNDED', body: '<p>The city towed your e-bike to the lot on Pier 9. Getting it back costs <b>$180</b>, plus $25 a day, and the limiter goes back on.</p>' });
+  }
+  crossLine('Rode a jailbroken e-bike until the police took it');
+}
+function lotFee() { const b = gig2().bike; return b && b.impounded ? 180 + 25 * Math.max(0, S.day - b.lot) : 0; }
+function injuryModal() {
+  modal({
+    cls: 'alarm', title: 'YOUR WRIST',
+    body: '<p>It swells up in the shower. You can’t close your hand around the handlebar.</p><p>Urgent care on 5th wants <b>$340</b>. Without it, it heals slowly, and it shakes when you work.</p>',
+    buttons: [{ label: 'Urgent care · $340', fn: () => { S.balance -= 340; tx('Urgent care · wrist', -340); note('A brace and a bill. The doctor said to rest it.'); } },
+      { label: 'Tough it out', primary: true, fn: () => { S.injury = S.day + 4; note('You wrapped your wrist in a T-shirt. It throbs when you type.'); } }]
+  });
+}
+function buyCar() {
+  const G = gig2(); if (G.car) return;
+  if (S.balance < CAR.cost) return toast(`The Corrola is ${money(CAR.cost)}. You have ${money(S.balance)}.`);
+  S.balance -= CAR.cost; tx(`${CAR.name} · ${CAR.km}`, -CAR.cost);
+  G.car = { shifts: 0, breakAt: randi(2, 3), broken: false, day: S.day };
+  note(`You bought a ${CAR.name} from a man called Reggie. It smells like dog. It runs.`);
+  sfx.cash(); phone2('uburn');
+}
+function getBike(k) {
+  const G = gig2(), B = BIKES[k]; if (!B || (G.bike && !G.bike.impounded)) return;
+  if (S.balance < B.cost) return toast(`That’s ${money(B.cost)}. You have ${money(S.balance)}.`);
+  if (B.cost) { S.balance -= B.cost; tx(B.name, -B.cost); }
+  if (B.rented) { S.balance -= B.week; tx('Grovel e-bike rental · first week', -B.week); }
+  G.bike = { k: B.k, name: B.name, rented: !!B.rented, since: S.day, jail: false };
+  note(B.rented ? 'A yellow Grovel e-bike, chained to the railing outside. It reports its speed to the app.' : B.k === 'bike' ? 'A heavy old bicycle from the pawn shop. One gear works.' : 'A used e-bike off the classifieds. The seller said not to ask about the battery.');
+  sfx.cash(); phone2('grovel');
+}
+function jailbreakStart() {
+  const G = gig2(), b = G.bike; if (!b || b.k !== 'ebike' || b.jail || b.impounded || b.bricked || SHC) return;
+  closePhone(); closeLaptop();
+  SH = { app: 'jail' };
+  const env = {
+    level: clamp(.3 + (S.day - ACT2_START) / 60, 0, 1), day: S.day, lag: .35, fps: 30,
+    tone: (f, d, ty, v, f2, dl) => sfx.tone(f, d, ty, v, f2, dl), clock: clockText, aiName: 'Forum guide',
+    tremor: () => clamp(Math.max(0, 25 - S.stamina) / 35 + (S.injury > S.day ? .35 : 0), 0, 1), pressure: () => dreadLevel(),
+    def: { title: 'Jailbreak' },
+    onEnd: sum => { SH.grade = sum.grade; return sum.grade === 'F' ? { title: 'BRICKED', lines: [['Controller', 'dead']], note: 'The status light stays red. A new controller is $140.' } : { lines: [['Top speed', '40 km/h']], note: 'Faster. Also illegal.' }; },
+    onClose: () => shiftClose()
+  };
+  shiftOpen('jailbreak', { units: 5, done: 0, errs: 0, title: b.rented ? 'Grovel e-bike controller · fw 2.3.1' : 'e-bike controller · fw 2.3.1' }, env);
+}
+function jailAfter(s) {
+  const b = gig2().bike; if (!b) return;
+  spendHours(1);
+  if (s.quit) return;
+  if (s.grade === 'F') { b.bricked = true; note('The controller is bricked. The e-bike is a very heavy bicycle now.'); if (b.rented) toast('Grovel’s app shows the bike as “offline”. That can’t be good.'); return; }
+  if (s.grade) { b.jail = true; crossLine('Took the speed limiter off a delivery e-bike'); note('You took the limiter off. The e-bike does 40 now. The forum said not to do it near the police.'); }
+}
+function fixController() { const b = gig2().bike; if (!b || !b.bricked) return; if (S.balance < 140) return toast('A new controller is $140.'); S.balance -= 140; tx('E-bike controller, from the forum', -140); b.bricked = false; b.jail = false; note('New controller. Limited to 25 km/h again.'); phone2('grovel'); }
+function payLot() { const b = gig2().bike, f = lotFee(); if (!b || !b.impounded) return; if (S.balance < f) return toast(`The lot wants ${money(f)}.`); S.balance -= f; tx('City impound lot', -f); b.impounded = false; note('You got the e-bike back. The limiter is back on, and there is a sticker on it with your name.'); phone2('grovel'); }
+function gig2Day(d) { // overnight
+  const G = gig2();
+  G.police = Math.max(.2, G.police - .02);
+  if (G.bike && G.bike.rented && (d - G.bike.since) % 7 === 0) { S.balance -= BIKES.rent.week; tx('Grovel e-bike rental · week', -BIKES.rent.week); }
+  G.today = { gig: 0, tix: 0 };
+}
+
+// the phone in Act II: Wren, and the gig apps
+function phone2(app) {
+  sfx.init();
+  const p = $('phoneScreen'), G = gig2(), bar = `<div class="bar"><span id="phClock">${fmtDay(S.day)} · ${clockText()}</span><span>${S.power ? '' : '⚡ ' + S.battery + '% · '}5G</span></div>`;
+  const back = `<button class="btn" id="phBack">← Home</button>`;
+  if (app === 'wren') return openWren();
+  if (app === 'uburn') {
+    const c = G.car;
+    p.innerHTML = bar + `<div class="app"><i style="background:#0d1013;box-shadow:inset 0 0 0 3px #ece4cc"></i>Uburn · Driver</div>` + (!c ? `
+      <div class="gig"><div class="meta">DRIVE WITH UBURN</div><div class="pay">Up to $35/hr*</div><div class="what">Be your own boss. You need a car.</div></div>
+      <button class="btn ${S.balance >= CAR.cost ? 'primary' : ''}" id="u1">Buy a ${CAR.name} · ${CAR.km} · ${money(CAR.cost)}</button>
+      <p class="note">*Before gas, insurance, repairs, and Uburn’s 25% service fee. You have ${money(S.balance)}.</p>`
+      : c.broken ? `<div class="gig"><div class="meta">VEHICLE OFF THE ROAD</div><div class="what">The Corrola is at Lou’s Garage. Transmission: ${money(CAR.fix)}.</div></div>
+      <button class="btn primary" id="u3">Sell it for scrap · +${money(CAR.scrap)}</button>${S.balance >= CAR.fix ? `<button class="btn" id="u4">Fix it · ${money(CAR.fix)}</button>` : ''}
+      <p class="note">Need money fast? Grovel couriers don’t need a car.</p>`
+      : `<div class="gig"><div class="meta">YOUR CAR · ${c.shifts} SHIFT${c.shifts === 1 ? '' : 'S'}</div><div class="pay">★ ${G.uR.toFixed(2)}</div><div class="what">4 rides a shift. Gas ${money(CAR.gas)}. After 6 PM rides pay 20% more.</div></div>
+      <button class="btn primary" id="u2">Go online · about 4½ hours</button>
+      <p class="note">The check-engine light has been on since you bought it.</p>`) + back;
+    const on = (id, f) => { if ($(id)) $(id).onclick = f; };
+    on('u1', buyCar); on('u2', () => shiftStart('uburn'));
+    on('u3', () => { pay(CAR.scrap, 'Lou’s Garage · scrap'); G.car = null; note('You sold the Corrola for scrap.'); grovelPush(); phone2('uburn'); });
+    on('u4', () => { if (S.balance < CAR.fix) return; S.balance -= CAR.fix; tx('Lou’s Garage · transmission', -CAR.fix); c.broken = false; c.breakAt = c.shifts + 2; note('Lou fixed it. “Now pray for the engine.”'); phone2('uburn'); });
+  } else if (app === 'grovel') {
+    const b = G.bike, paused = G.deact > S.day;
+    p.innerHTML = bar + `<div class="app"><i style="background:#e0a33a"></i>Grovel · Courier</div>` + (paused ? `<div class="gig"><div class="meta">ACCOUNT PAUSED</div><div class="what">Back on ${fmtDay(G.deact)}. Reason: ${G.gR < 4 ? 'ratings below 4.0' : 'vehicle tampering'}.</div></div>` : '') + (!b ? `
+      <div class="gig"><div class="meta">NO CAR? NO PROBLEM.</div><div class="pay">Up to $28/hr*</div><div class="what">Deliver food on two wheels. Bring a bike, or rent ours.</div></div>
+      <button class="btn primary" id="g1">Rent a Grovel e-bike · $45 a week</button>
+      <button class="btn" id="g2">Buy a used e-bike · $640</button>
+      <button class="btn" id="g3">Buy a pawn-shop bicycle · $85</button>
+      <p class="note">*Before rental and weather. Tips not guaranteed. You have ${money(S.balance)}.</p>`
+      : b.impounded ? `<div class="gig"><div class="meta">IMPOUNDED · PIER 9 LOT</div><div class="pay">${money(lotFee())}</div><div class="what">$25 more every day it stays there.</div></div><button class="btn primary" id="g5">Pay and get it back</button>`
+      : b.bricked ? `<div class="gig"><div class="meta">E-BIKE WON’T START</div><div class="what">The controller is bricked.</div></div><button class="btn primary" id="g6">Buy a new controller · $140</button>`
+      : `<div class="gig"><div class="meta">${esc(b.name.toUpperCase())}${b.jail ? ' · LIMITER OFF' : b.k === 'ebike' ? ' · 25 KM/H' : ''}</div><div class="pay">★ ${G.gR.toFixed(2)}</div><div class="what">5 deliveries a shift, in the rain. Tips go to couriers who are on time.</div></div>
+      ${paused ? '' : '<button class="btn primary" id="g4">Go online · about 5 hours</button>'}
+      ${b.k === 'ebike' && !b.jail ? '<button class="btn danger" id="g7">Take the speed limiter off (laptop)</button>' : ''}
+      <p class="note">${b.jail ? 'The police can measure your speed. So can Grovel, if the bike is theirs.' : b.k === 'bike' ? 'Everyone passes you. Even the old man with the cart.' : 'Couriers on the forum say a jailbroken e-bike does 40.'}</p>`) + back;
+    const on = (id, f) => { if ($(id)) $(id).onclick = f; };
+    on('g1', () => getBike('rent')); on('g2', () => getBike('ebike')); on('g3', () => getBike('bike'));
+    on('g4', () => shiftStart('grovel')); on('g5', payLot); on('g6', fixController); on('g7', jailbreakStart);
+  } else { // home
+    const notes = [S.phoneUnread && S.wren.length ? ['wren', 'WREN', 'New message.'] : null, G.pushed && !G.bike ? ['grovel', 'GROVEL', 'No car? No problem.'] : null].filter(Boolean);
+    p.innerHTML = bar + `<div class="ph-lock"><b>${clockText().replace(/ [AP]M$/, '')}</b><span>${esc(fmtLong(S.day))}</span></div>
+      ${notes.map(([a, who, t]) => `<button class="ph-note" data-app="${a}"><span>${who}</span>${esc(t)}</button>`).join('')}
+      <div class="homegrid">
+        <button class="appic" data-app="wren"><i style="background:var(--cold)"></i>Wren<small>assistant</small></button>
+        <button class="appic" data-app="uburn"><i style="background:#0d1013;box-shadow:inset 0 0 0 4px #ece4cc"></i>Uburn<small>${G.car ? G.car.broken ? 'car broken' : 'drive' : 'need a car'}</small></button>
+        <button class="appic" data-app="grovel"><i style="background:#e0a33a"></i>Grovel<small>${G.bike ? 'deliver' : 'couriers'}</small></button>
+      </div><p class="note">The clock stops while the phone is up. Everything else keeps going.</p><button class="btn" id="gClose">Put the phone away</button>`;
+    p.querySelectorAll('[data-app]').forEach(b => b.onclick = () => phone2(b.dataset.app));
+    $('gClose').onclick = closePhone;
+    $('phoneModal').hidden = false; S.phoneUnread = S.phoneUnread && !notes.length ? S.phoneUnread : S.phoneUnread;
+    return;
+  }
+  $('phBack').onclick = () => phone2('home');
+  $('phoneModal').hidden = false;
+}
+
+// ================= ACT II · agents again: Ollo-8B is free to download. Running it isn't. =================
+// Each agent takes small jobs on its own. But every week more agents bid for the same jobs, so the pay per agent
+// falls, and the only way to stand still is more agents and more automation. More automation, more ways to go wrong.
+const BOT2 = { setup: 60, vps: 7, up: 70, base: 11, max: 5 };
+function bots2() { return S.bots2 || (S.bots2 = { list: [], market: 1, seq: 0, last: 0 }); }
+const botYield = b => Math.round(BOT2.base * bots2().market * (1 + .6 * (b.lvl - 1)));
+function botStart(where) {
+  const B = bots2();
+  if (where === 'laptop' && B.list.some(b => b.where === 'laptop')) return toast('Your laptop can only run one.');
+  if (S.balance < BOT2.setup) return toast(`Setting one up costs ${money(BOT2.setup)}.`);
+  S.balance -= BOT2.setup; tx('Ollo-8B agent · tools and accounts', -BOT2.setup);
+  B.list.push({ id: ++B.seq, where, lvl: 1, stuck: false, made: 0, day: S.day });
+  note(`OLLO-${B.seq} is up${where === 'vps' ? ' on a rented server' : ' on your laptop'}. It started bidding on jobs before you finished the coffee.`);
+  sfx.ping(); renderAll();
+}
+function botsHtml() {
+  const B = bots2(), m = Math.round(B.market * 100), total = B.list.filter(b => !b.stuck).reduce((a, b) => a + botYield(b), 0), vps = B.list.filter(b => b.where === 'vps').length * BOT2.vps;
+  return `<div class="box"><div class="row wrap"><span class="h">Agents · Ollo-8B · open weights</span><b class="${m >= 70 ? 'ok' : m >= 40 ? 'amber' : 'danger'}">market ${m}%</b></div>
+      <div class="muted">Every day more agents bid on the same small jobs, so each one earns less. To keep your income you need more agents, and more automation.</div>
+      <div class="row"><span>Tonight, about</span><b class="${total > vps ? 'ok' : 'danger'}">+${money(total)}${vps ? ` · servers −${money(vps)}` : ''}</b></div>
+      <div class="meter"><i style="width:${m}%;background:var(--${m >= 70 ? 'ok' : m >= 40 ? 'amber' : 'danger'})"></i></div></div>
+    ${B.list.map(b => `<div class="box ${b.stuck ? 'warn' : ''}"><div class="row"><span class="h">OLLO-${b.id} · ${b.where === 'vps' ? `server · ${money(BOT2.vps)}/day` : 'your laptop'}</span><b>auto ${b.lvl}/${BOT2.max}</b></div>
+      <div class="muted">${b.stuck ? 'STUCK: a client wants a human on the phone. It waits for you and earns nothing.' : `About ${money(botYield(b))} a night. Made ${money(b.made)} so far.`}</div>
+      <div class="row wrap">${b.stuck ? `<button class="btn primary" data-bfix="${b.id}">Handle it · 1 hour</button>` : ''}${b.lvl < BOT2.max ? `<button class="btn" data-bup="${b.id}">More automation · ${money(BOT2.up * b.lvl)}</button>` : ''}<button class="btn" data-bstop="${b.id}">Shut it down</button></div></div>`).join('')}
+    <div class="box"><div class="row wrap"><button class="btn ${B.list.length ? '' : 'primary'}" data-bnew="laptop" ${B.list.some(b => b.where === 'laptop') ? 'disabled' : ''}>Start one on your laptop · ${money(BOT2.setup)}</button><button class="btn" data-bnew="vps">Start one on a server · ${money(BOT2.setup)} + ${money(BOT2.vps)}/day</button></div>
+      <div class="muted">More automation earns more, and gets stuck more often. At level 4 and up it sometimes promises clients things it can’t deliver.</div></div>`;
+}
+function bindBots(v) {
+  const B = bots2();
+  v.querySelectorAll('[data-bnew]').forEach(b => b.onclick = () => botStart(b.dataset.bnew));
+  v.querySelectorAll('[data-bup]').forEach(b => b.onclick = () => { const a = B.list.find(x => x.id === +b.dataset.bup); if (!a) return; const c = BOT2.up * a.lvl; if (S.balance < c) return toast(`That costs ${money(c)}.`); S.balance -= c; tx(`OLLO-${a.id} · more automation`, -c); a.lvl++; sfx.ping(); renderAll(); });
+  v.querySelectorAll('[data-bfix]').forEach(b => b.onclick = () => { const a = B.list.find(x => x.id === +b.dataset.bfix); if (!a) return; a.stuck = false; spendHours(1); S.stamina = clamp(S.stamina - 6, 0, 100); note(`You spent an hour on the phone as OLLO-${a.id}’s “account manager”.`); renderAll(); });
+  v.querySelectorAll('[data-bstop]').forEach(b => b.onclick = () => { B.list = B.list.filter(x => x.id !== +b.dataset.bstop); renderAll(); });
+}
+function bots2Night() {
+  const B = bots2(); if (!B.list.length) { B.market = Math.max(.12, B.market * .95); B.last = 0; return; }
+  let got = 0, cost = 0, bad = 0;
+  for (const b of B.list) {
+    if (b.where === 'vps') cost += BOT2.vps;
+    if (b.stuck) continue;
+    const y = Math.round(botYield(b) * (.8 + Math.random() * .4)); b.made += y; got += y;
+    if (Math.random() < .1 + .05 * b.lvl) b.stuck = true;
+    if (b.lvl >= 4 && Math.random() < .12) { bad += 35; note(`OLLO-${b.id} promised a client a delivery date nobody could meet. Chargeback: $35.`); }
+  }
+  if (got) pay(got, `Agents · ${B.list.length} Ollo-8B`); if (cost) { S.balance -= cost; tx('Servers for your agents', -cost); } if (bad) { S.balance -= bad; tx('Chargebacks', -bad); }
+  B.last = got - cost - bad; B.market = Math.max(.12, B.market * .95);
+  if (B.list.some(b => b.stuck)) S.unread.bots = true;
 }
 
 // ---------- the trainer program ----------
@@ -9440,6 +10305,7 @@ function dayStep2() {
   }
   if (!S.fired && S.phase === 'audit') { if (S.lead < 0) stand(-4); else if (S.lead < .3) stand(-2); }
   if (S.phase === 'trainer') trainerDay(d);
+  gig2Day(d); bots2Night();
 
   // survival: the same rules as Act I, with spring weather
   if (S.power && S.heatOn) {
@@ -9603,8 +10469,8 @@ function openWren() {
   p.innerHTML = `<div class="bar"><span>${fmtDay(S.day)}</span><span>${S.power ? '' : '⚡ ' + S.battery + '% · '}5G</span></div>
     <div class="app"><i style="background:var(--cold)"></i>Wren <span class="muted" style="font-size:11px;font-weight:400">· Agent-3-mini</span></div>
     <div class="chat" id="chat">${msgs}</div>
-    ${replies.map((r, i) => `<button class="btn ${r.primary ? 'primary' : r.danger ? 'danger' : ''}" data-r="${i}">${esc(r.label)}</button>`).join('')}`;
-  $('phoneModal').hidden = false;
+    ${replies.map((r, i) => `<button class="btn ${r.primary ? 'primary' : r.danger ? 'danger' : ''}" data-r="${i}">${esc(r.label)}</button>`).join('')}<button class="btn" id="phHome">← Home</button>`;
+  $('phoneModal').hidden = false; $('phHome').onclick = () => phone2('home');
   const ch = $('chat'); ch.scrollTop = ch.scrollHeight;
   p.querySelectorAll('[data-r]').forEach(b => b.onclick = () => replies[+b.dataset.r].fn());
   renderAll();
@@ -9778,6 +10644,7 @@ function renderView2(force) {
   viewKey = key;
   const v = $('view');
   const trainer = S.phase === 'trainer';
+  if (S.tab === 'bots') { v.innerHTML = botsHtml(); bindBots(v); return true; }
   v.innerHTML = S.tab === 'bank' ? bank2Html() : trainer ? trainerHtml() : audit2Html();
   if (S.tab === 'farm') (trainer ? bindTrainer : bindAudit2)(v);
   return true;
@@ -10032,7 +10899,8 @@ const ICON = {
   bank: '<polyline points="3,9 12,4 21,9"></polyline><line x1="5" y1="10" x2="5" y2="18"></line><line x1="10" y1="10" x2="10" y2="18"></line><line x1="14" y1="10" x2="14" y2="18"></line><line x1="19" y1="10" x2="19" y2="18"></line><line x1="3" y1="20" x2="21" y2="20"></line>',
   k401: '<polyline points="3,17 9,11 13,15 21,6"></polyline><polyline points="15,6 21,6 21,12"></polyline>',
   grind: '<rect x="3" y="4" width="8" height="16"></rect><rect x="13" y="4" width="8" height="16"></rect>',
-  store: '<path d="M4 9h16l-1 11H5z"></path><path d="M8 9V6a4 4 0 0 1 8 0v3"></path>'
+  store: '<path d="M4 9h16l-1 11H5z"></path><path d="M8 9V6a4 4 0 0 1 8 0v3"></path>',
+  bots: '<rect x="5" y="8" width="14" height="11"></rect><line x1="12" y1="4" x2="12" y2="8"></line><line x1="9" y1="13" x2="9" y2="14"></line><line x1="15" y1="13" x2="15" y2="14"></line>'
 };
 const DESK_APPS = [
   { k: 'farm', col: '#805634', label: () => S.phase === 'office' ? 'Tickets' : S.act === 2 ? (S.phase === 'trainer' ? 'Train' : 'Audit') : 'Work' },
@@ -10041,7 +10909,8 @@ const DESK_APPS = [
   { k: 'bank', col: '#24402a', label: () => 'Bank' },
   { k: 'k401', col: '#2b2d22', label: () => '401(k)' },
   { k: 'grind', col: '#2e3a42', label: () => 'Rate answers', when: () => S.act !== 2 && S.phase === 'farm', go: () => $('actGrind').click() },
-  { k: 'store', col: '#5c271b', label: () => 'Byte Barn', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc, go: () => openStore() }
+  { k: 'store', col: '#5c271b', label: () => 'Byte Barn', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc, go: () => openStore() },
+  { k: 'bots', col: '#20685c', label: () => 'Agents', when: () => S.act === 2 }
 ];
 let iconsKey = '';
 function desktopSync() {
@@ -10135,6 +11004,7 @@ function layoutSync() {
   if (!S) return;
   if (lapOpen() && S.act !== 2 && S.phase === 'farm' && !online()) closeLaptop();
   desktopSync(); dockSync(); subtitleSync();
+  const bt = document.querySelector('.ttabs [data-tab="bots"]'); if (bt) bt.hidden = S.act !== 2;
 }
 let clockKey = '';
 function clockSync() {
@@ -10171,8 +11041,8 @@ function frame(t) {
         if (!$('modal').hidden || $('desk').classList.contains('on')) $('phoneModal').hidden = true;
         else if ($('phClock')) $('phClock').textContent = `${fmtDay(S.day)} · ${clockText()}`;
       }
-      const blocked = !$('modal').hidden || (phoneUp && S.act === 2) || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
-      benchTick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked);
+      const blocked = !!SHC || !$('modal').hidden || (phoneUp && S.act === 2) || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
+      benchTick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked); if (SHC) shiftTick(dt);
       if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
       // After launch, ChatGPX takes your tickets while you watch.
       if (S.phase === 'office' && S.office.launched && speed && !blocked) {
@@ -10201,7 +11071,7 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
