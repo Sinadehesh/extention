@@ -1260,6 +1260,7 @@ body.has-ticker #subtitle { bottom: 46px !important; }
 html.uikit .lscreen { background-image: linear-gradient(rgba(7,8,10,.25), rgba(7,8,10,.45)), var(--wall, none) !important; background-size: cover !important; background-position: center bottom !important; image-rendering: pixelated; }
 html.uikit .lscreen::before { display: none !important; } /* the wallpaper says enough */
 html.uikit .lscreen { border-image-slice: 3 !important; } /* the frame without its fill, or it paints over the wallpaper */
+html.uikit #phoneModal .phone:has(.ph-lock) { border-image-slice: 6 !important; background-color: #0d1013 !important; background-image: linear-gradient(rgba(7,8,10,.25), rgba(7,8,10,.72) 55%, rgba(7,8,10,.86)), var(--wall, none) !important; background-size: cover !important; background-position: 62% center !important; image-rendering: pixelated; }
 /* the machines in the store */
 .pc { position: relative; }
 .pc .pc-art { align-self: center; width: 128px; height: 80px; image-rendering: pixelated; margin: 0 0 4px; filter: drop-shadow(3px 3px 0 rgba(7,8,10,.7)); }
@@ -13442,7 +13443,7 @@ function makeWall(mood) {
 function wallSync() {
   if (!S) return; const mood = S.phase === 'mirage' ? 'red' : S.act === 2 ? 'cold' : 'dusk';
   if (wallKey === mood) return; wallKey = mood;
-  const el = $('lscreen'); if (el) el.style.setProperty('--wall', `url(${makeWall(mood)})`);
+  document.documentElement.style.setProperty('--wall', `url(${makeWall(mood)})`); // the desktop and the phone's home screen
 }
 function frame(t) {
   const dt = Math.min(.25, (t - last) / 1000); last = t;
@@ -13479,7 +13480,7 @@ function frame(t) {
       }
     }
   }
-  paintRoom(t); logoDraw(t); if (S && !$('laptop').hidden) wallSync(); if (S && (t | 0) % 4 === 0) tickerSync();
+  paintRoom(t); logoDraw(t); if (S) wallSync(); if (S && (t | 0) % 4 === 0) tickerSync();
   if (S) { paintBots(t); deskTick(t); clockSync(); }
   requestAnimationFrame(frame);
 }
