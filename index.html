@@ -1561,6 +1561,26 @@ const EVIDENCE = {
     ig: 'In the game: your 401(k) climbs every day while you cannot afford groceries or rent.',
     src: [['Seeking Alpha: biggest 10 stocks reach record concentration (Oct 2025)', 'https://seekingalpha.com/news/4500712-the-biggest-10-stocks-now-have-the-largest-concentration-on-record'],
           ['ATB: the S&P 500’s record concentration (Jan 2026)', 'https://www.atb.com/wealth/good-advice/markets/beyond-the-magnificent-seven-how-to-fix-the-sp-500s-record-concentration-risk/']] },
+  robotaxi: { title: 'Robotaxis already carry hundreds of thousands of riders a week',
+    text: 'By early 2026 Waymo was running fully driverless robotaxis in about ten U.S. metro areas, reported around half a million paid rides a week, and was aiming for a million. In October 2023 California suspended a rival, Cruise, after one of its cars dragged a pedestrian who had been thrown into its path; the state said Cruise had not shown it the full video.',
+    ig: 'In the game: the Autonomous Mobility Pilot, robotaxis that brake for nothing, and orders that go to the fleet first.',
+    src: [['AP via News4JAX: Waymo’s robotaxis now dispatched in 10 major U.S. markets (Feb 2026)', 'https://www.news4jax.com/business/2026/02/24/waymos-robotaxis-now-being-dispatched-in-10-major-us-markets-with-expansion-in-texas-and-florida/'],
+          ['TechCrunch: California DMV immediately suspends Cruise’s robotaxi permit (Oct 2023)', 'https://techcrunch.com/2023/10/24/dmv-immediately-suspends-cruises-robotaxi-permit-in-california/']] },
+  deactivate: { title: 'Gig workers get fired by an app',
+    text: 'Rideshare and delivery workers report being deactivated by the platforms’ automated systems, often without warning and without a person to appeal to. Drivers in California, Chicago and New York have protested “firing by app”, and the European Union has moved to ban decisions to fire platform workers made by algorithms alone.',
+    ig: 'In the game: on June 17, Grovel and Uburn log you out at the same time.',
+    src: [['The American Prospect: rideshare drivers protest firing by app (Jul 2024)', 'https://prospect.org/2024/07/05/2024-07-05-rideshare-drivers-protest-firing-app/'],
+          ['RetailWire: DoorDash, Instacart and Grubhub drivers say they are booted without notice', 'https://retailwire.com/doordash-instacart-and-grubhub-drivers-say-theyre-being-booted-from-their-delivery-jobs-without-notice-and-the-services-wont-tell-them-why/']] },
+  deepfakeVote: { title: 'A fake Biden voice told voters to stay home',
+    text: 'Days before New Hampshire’s January 2024 primary, thousands of voters got a robocall in an AI-generated imitation of President Biden’s voice telling them not to vote. The political consultant behind it was fined $6 million by the FCC and charged in New Hampshire with voter suppression; the phone company that carried the calls was fined $1 million.',
+    ig: 'In the game: Mirage’s darkest brief, Delgado’s voice telling Zone B the polls moved to Wednesday.',
+    src: [['WBUR: consultant behind the Biden robocalls fined $6 million (Sep 2024)', 'https://www.wbur.org/news/2024/09/27/steve-kramer-biden-robocalls-fines'],
+          ['GPB / NPR: political consultant faces charges and fines for Biden deepfake robocalls (May 2024)', 'https://www.gpb.org/news/2024/05/23/political-consultant-faces-charges-and-fines-for-biden-deepfake-robocalls']] },
+  deepfakeElection: { title: 'A deepfake dropped two days before Slovakia voted',
+    text: 'Two days before Slovakia’s September 2023 election, an AI-generated audio clip seemed to have the liberal leader Michal Šimečka discussing how to rig the vote. He and the journalist in the clip called it fake, and fact-checkers found signs of AI manipulation. His party lost. Researchers still argue about how much the clip mattered, which is part of the problem: nobody can measure it.',
+    ig: 'In the game: the Release game, and polls that move with every piece you put out.',
+    src: [['Harvard Misinformation Review: beyond the deepfake hype, AI, democracy and the Slovak case (2024)', 'https://misinforeview.hks.harvard.edu/article/beyond-the-deepfake-hype-ai-democracy-and-the-slovak-case/'],
+          ['International Press Institute: Slovakia deepfake audio of a Denník N journalist', 'https://ipi.media/slovakia-deepfake-audio-of-dennik-n-journalist-offers-worrying-example-of-ai-abuse/']] },
   jobs: { title: 'Entry-level jobs exposed to AI are shrinking',
     text: 'A Stanford Digital Economy Lab study by Erik Brynjolfsson, Bharat Chandar and Ruyu Chen (2025) used ADP payroll records covering millions of US workers. Workers aged 22 to 25 in the most AI-exposed jobs, such as software developers, saw roughly a 13% relative drop in employment after generative AI spread.',
     ig: 'In the game: ChatGPX takes your junior job in four days, and every application after that is screened out by an AI.',
@@ -11874,6 +11894,7 @@ function roboDay(d) {
   if (d === ROBO_START) {
     addMail(d, 'City of Harbor · Mobility Office', 'Zone A: the Autonomous Mobility Pilot starts today', 'Dear resident,\n\nFrom today, licensed robotaxis and sidewalk delivery robots will operate in Zone A as part of a twelve-month pilot.\n\nPlease be patient with our new neighbours. They are learning.\n\nIf a robot blocks your path, do not touch it. Report it in the HarborGo app.\n\nThe Mobility Office');
     note('The first robotaxis came through Zone A this morning: white, quiet, a spinning light on the roof. Nobody was in them.');
+    unlockEvidence('robotaxi');
   }
   if (d === ROBO_START + 9) note('Grovel’s order map has new grey dots on it. They aren’t couriers. They have little flags.');
   if (d === ROBO_WARN) {
@@ -11897,6 +11918,7 @@ function robotBan() {
       <p class="muted">The city is offering free retraining: an online course in “prompting for the new economy”.</p>`,
     buttons: [{ label: 'Okay', primary: true }] });
   crossLine('Drove until the robots were allowed to and you weren’t');
+  unlockEvidence('deactivate');
 }
 function bannedHTML(app) {
   return `<div class="app"><i style="background:${app === 'uburn' ? '#0d1013;box-shadow:inset 0 0 0 3px #ece4cc' : '#e0a33a'}"></i>${app === 'uburn' ? 'Uburn · Driver' : 'Grovel · Courier'}</div>
@@ -12748,6 +12770,7 @@ function m3Go(i) { // Mirage makes it. You never see how.
   const M = m3(), bi = M.briefs[i]; if (bi == null || SHC || S.over) return;
   const b = M3_BRIEFS[bi];
   if (S.stamina < 10) return toast('You can’t keep your eyes open. Sleep first.');
+  if (bi === 11) unlockEvidence('deepfakeVote');
   modal({ cls: 'mirage', title: `MIRAGE · ${b[0]}`,
     body: `<div class="m3-gen"><canvas id="m3Prev" width="96" height="64"></canvas><div><div class="m3-bar"><i id="m3Bar"></i></div><p id="m3Gt" class="muted">Generating…</p></div></div>
       <p><q>${esc(b[1])}</q></p><p class="muted">Who it hurts: ${esc(b[2])}. Realism ${Math.round(88 + b[8] * 11)}%.</p>`,
@@ -12788,6 +12811,7 @@ function m3Result(bi, sum) {
   M.kip = clamp(M.kip + b[4] * r, 30, 70); M.rosa = clamp(M.rosa - b[4] * r * .8, 30, 70); M.yes = clamp(M.yes + b[5] * r, 25, 75);
   M.heat = clamp(M.heat + b[6] * (.6 + .6 * r), 0, 120); M.harm += b[7]; M.reach += reached; M.made++;
   M.arch.unshift({ type: b[0], claim: b[1], reached, pay, day: S.day });
+  if (M.made === 1) unlockEvidence('deepfakeElection');
   if (b[7] >= 1) echo(S.day + 1 + (Math.random() * 2 | 0), ['', 'm3see', 'm3doubt', 'm3hurt'][b[7]] + (bi === 11 ? 'Vote' : ''));
   if (b[7] >= 2) crossLine({ 2: 'Made people believe something about Rosa Delgado that never happened', 3: bi === 11 ? 'Told a neighbourhood the wrong day to vote' : 'Went after someone’s nineteen-year-old daughter' }[b[7]]);
   if (M.heat >= 40 && !S.seen.m3h1) { S.seen.m3h1 = 1; note('Two of your seed accounts were suspended overnight. Mirage made new ones before breakfast.'); }
