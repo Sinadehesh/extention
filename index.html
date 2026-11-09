@@ -855,6 +855,8 @@ body { padding: 0; }
 .tb-os { color: var(--amber); border: 2px solid var(--line); padding: 3px 8px; }
 .tb-apps { display: flex; gap: 6px; flex: 1; min-width: 0; }
 .tb-app { font-family: var(--f-term); font-size: 13px; color: var(--ink); background: #232c33; border: 2px solid #07080a; padding: 3px 10px; }
+.tb-app.on { background: #12171b; color: #e0a33a; }
+html.uikit .taskbar .tb-app.on { border-image: var(--fr-btnDown) 3 fill / 6px / 0 stretch !important; color: #e0a33a !important; transform: translateY(1px); }
 .tb-right { display: flex; align-items: center; gap: 14px; color: var(--muted); }
 .tb-right b { color: var(--amber); font-weight: 400; }
 
@@ -1004,6 +1006,9 @@ html.uikit .lscreen { border: 6px solid transparent !important; border-image: va
   background: repeating-linear-gradient(0deg, rgba(7,8,10,.22) 0 2px, transparent 2px 4px), radial-gradient(ellipse 80% 70% at 50% 38%, #174540 0%, #0e2724 55%, #0d1013 100%) !important; }
 html.uikit .lscreen::before { content: 'LoopOS'; position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); font-family: var(--f-term); font-size: 92px; letter-spacing: .08em; color: rgba(127,216,192,.06); pointer-events: none; white-space: nowrap; }
 html.uikit .win > .osbar { background: #2e3a42 !important; box-shadow: inset 0 2px 0 #3d4c55, inset 0 -2px 0 #1d242b !important; border-bottom: 3px solid #07080a !important; color: #a6a690 !important; font-family: var(--f-term); letter-spacing: .06em; padding: 6px 10px 5px !important; position: relative; }
+#lscreen.multi > .win:not(.active) > :not(.osbar) { filter: brightness(.6) saturate(.55); transition: filter .12s; }
+#lscreen.multi > .win:not(.active) > .osbar { filter: brightness(.8); }
+#lscreen.multi > .win:not(.active) { cursor: default; }
 html.uikit .win.active > .osbar { background: #174540 !important; box-shadow: inset 0 2px 0 #20685c, inset 0 -2px 0 #0e2724 !important; color: #c4f0e4 !important; }
 html.uikit .win > .osbar::before { content: ''; display: inline-block; width: 9px; height: 9px; margin-right: 8px; background: #e04a34; box-shadow: 12px 0 0 #e0a33a, 24px 0 0 #2fb589, 0 0 0 2px #07080a, 12px 0 0 2px #07080a, 24px 0 0 2px #07080a; vertical-align: -1px; margin-right: 34px; }
 html.uikit .win > .osbar { display: flex; align-items: center; }
@@ -1286,6 +1291,25 @@ html.uikit #pauseMenu .pm-card { border: 18px solid transparent; border-image: v
 #pauseMenu .btn[data-armed] { animation: pmArm .9s steps(2) infinite; }
 @keyframes pmArm { 50% { filter: brightness(1.35); } }
 #pauseMenu .pm-f { margin: 4px 0 0; font-size: 12px; color: var(--muted); line-height: 1.4; }
+/* the desk: wood under the lamp; the trays are wire baskets, the header and the buttons sit on dark plates */
+html #desk.on { background: #07080a var(--deskwood) center / cover no-repeat !important; image-rendering: pixelated; }
+#desk .desk-top { align-self: center; background: rgba(7,8,10,.82); padding: 8px 14px; border: 3px solid #07080a; box-shadow: 4px 4px 0 rgba(7,8,10,.55); }
+#desk .desk-clock { box-shadow: 0 0 0 3px #07080a, 4px 4px 0 3px rgba(7,8,10,.5); }
+#desk .desk-clock span { right: -50px; top: -5px; background: rgba(7,8,10,.82); padding: 1px 5px; color: var(--ink); }
+#desk .desk-acts { align-self: center; background: rgba(7,8,10,.72); padding: 10px 14px; border: 3px solid #07080a; box-shadow: 4px 4px 0 rgba(7,8,10,.55); }
+html #desk .tray { border-style: solid !important; border-width: 3px !important; border-radius: 0; border-color: #07080a !important;
+  background-color: rgba(7,8,10,.58);
+  background-image: repeating-linear-gradient(90deg, rgba(221,214,193,.08) 0 2px, transparent 2px 12px), repeating-linear-gradient(0deg, rgba(221,214,193,.08) 0 2px, transparent 2px 12px);
+  box-shadow: inset 0 0 0 2px rgba(221,214,193,.1), inset 0 14px 18px rgba(0,0,0,.55), 5px 5px 0 rgba(7,8,10,.6) !important; }
+#desk .tray .big { font-size: 22px; }
+#desk .tray .sl { background: #b97c25; color: #24170f; padding: 2px 7px; border: 2px solid #07080a; box-shadow: inset 0 1px 0 #f2c46a; font-size: 11px; letter-spacing: .14em; }
+#desk .tray.no .big { color: #e04a34; } #desk .tray.yes .big { color: #87b85a; }
+#desk .tray.hot { transform: scale(1.06); }
+html #desk .tray.no.hot { box-shadow: inset 0 0 0 3px #e04a34, inset 0 14px 18px rgba(0,0,0,.55), 0 0 30px -4px #e04a34 !important; }
+html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18px rgba(0,0,0,.55), 0 0 30px -4px #87b85a !important; }
+#desk .doc { box-shadow: 0 2px 0 #b4aa8c, 8px 10px 0 rgba(7,8,10,.45), 0 22px 40px -12px #07080a; }
+#desk .doc-hint { background: rgba(7,8,10,.72); padding: 4px 8px; color: var(--ink); }
+#desk .tray { position: relative; z-index: 1; } #desk .doc-wrap { position: relative; z-index: 3; } /* the paper in your hand is always on top */
 </style>
 </head>
 <body>
@@ -3518,7 +3542,7 @@ function startDeskDay(force) {
   DESK = { q: buildQueue(S.day), i: 0, earned: 0, scammed: 0, failed: 0, killed: 0, caught: 0, spotted: 0, cites: [], auto: S.deskAuto, t0: 0, open: false };
   S.deskOpenDay = S.day; S.dayStrikes = 0;
   if (DESK.auto && !force && S.agents.length) return runDeskAuto();
-  $('desk').classList.add('on'); DESK.open = true; DESK.t0 = performance.now(); $('deskClock').parentElement.style.visibility = '';
+  deskSync(); $('desk').classList.add('on'); DESK.open = true; DESK.t0 = performance.now(); $('deskClock').parentElement.style.visibility = '';
   setAutoSeg(); showCard();
 }
 
@@ -13286,9 +13310,15 @@ function desktopSync() {
   if ($('tbApps').dataset.k !== apps2) { $('tbApps').dataset.k = apps2; $('tbApps').innerHTML = apps2; $('tbApps').querySelectorAll('[data-win]').forEach(b => b.onclick = () => raiseWin($(b.dataset.win))); }
   $('tbMail').textContent = S.unread.mail ? 'New mail' : '';
   $('tbCash').textContent = money(S.balance);
+  // windows behind the one you're using step back; close the top one and the next comes forward
+  const wins = [...$('lscreen').querySelectorAll(':scope > .win')].filter(w => !w.hidden);
+  $('lscreen').classList.toggle('multi', wins.length > 1);
+  if (wins.length && !wins.some(w => w.classList.contains('active'))) raiseWin(wins.reduce((a, b) => (+b.style.zIndex || 0) > (+a.style.zIndex || 0) ? b : a));
+  else tbSync();
 }
 let winZ = 5;
-function raiseWin(w) { if (!w) return; w.style.zIndex = ++winZ; document.querySelectorAll('.win.active').forEach(x => x !== w && x.classList.remove('active')); w.classList.add('active'); }
+function raiseWin(w) { if (!w) return; w.style.zIndex = ++winZ; document.querySelectorAll('.win.active').forEach(x => x !== w && x.classList.remove('active')); w.classList.add('active'); tbSync(); }
+function tbSync() { const a = document.querySelector('#lscreen > .win.active'); document.querySelectorAll('#tbApps [data-win]').forEach(b => b.classList.toggle('on', !!a && b.dataset.win === a.id)); } // the taskbar button of the window you're in stays pressed
 let wdrag = null;
 document.addEventListener('pointerdown', e => {
   const h = e.target.closest('[data-drag]'); if (!h || e.target.closest('button, a, input')) return;
@@ -13594,6 +13624,44 @@ function makeWall(mood) {
   G = g0;
   return c.toDataURL();
 }
+// ---- the desk under the morning queue: wood, the lamp, the things that live on it ----
+let deskKey = '';
+function makeDesk() {
+  const c = document.createElement('canvas'); c.width = 320; c.height = 180;
+  const g = c.getContext('2d'), g0 = G; G = g;
+  const lamp = P.a3, wood = [P.d1, P.d2, P.d3];
+  for (let y = 0, i = 0; y < 180; y += 20, i++) { // planks, each with its own grain
+    px(0, y, 320, 20, i % 2 ? wood[0] : wood[1]);
+    for (let k = 0; k < 6; k++) {
+      const gy = y + 3 + (k * 3 + i * 5) % 15, f = 16 + k * 4, ph = i * 37 + k * 19;
+      for (let x = 0; x < 320; x++) if (((x * 7 + k * 11 + i * 3) % 17) < 12) px(x, gy + Math.round(Math.sin((x + ph) / f) * 1.4), 1, 1, rgba(k % 2 ? P.k0 : wood[2], k % 2 ? .22 : .3));
+    }
+    if (i % 3 === 1) { const kx = 24 + (i * 89) % 260, ky = y + 9; for (let r = 4; r > 0; r--) { g.strokeStyle = rgba(P.k0, .16 + (4 - r) * .07); g.lineWidth = 1; g.beginPath(); g.ellipse(kx + .5, ky + .5, r * 2, r * .8, 0, 0, Math.PI * 2); g.stroke(); } }
+    const sx = (i * 113 + 40) % 300 + 10; px(sx, y + 1, 1, 19, rgba(P.k0, .55)); px(sx + 1, y + 1, 1, 19, rgba(wood[2], .25)); // where two boards meet
+    px(0, y, 320, 1, rgba(P.k0, .7)); px(0, y + 1, 320, 1, rgba(wood[2], .18));
+  }
+  for (let k = 0; k < 7; k++) { g.fillStyle = rgba(lamp, .028 + k * .004); g.beginPath(); g.ellipse(160, 84, 176 - k * 21, 104 - k * 12, 0, 0, Math.PI * 2); g.fill(); } // the lamp, in steps
+  for (let k = 0; k < 9; k++) { const a = .1; px(0, 0, 320, 4 + k * 2, rgba(P.k0, a)); px(0, 180 - 4 - k * 2, 320, 4 + k * 2, rgba(P.k0, a)); px(0, 0, 6 + k * 3, 180, rgba(P.k0, a)); px(320 - 6 - k * 3, 0, 6 + k * 3, 180, rgba(P.k0, a)); } // the room beyond it, dark
+  const ring = (x, y, rx, ry, a) => { for (let t = 0; t < 64; t++) { if (t > 50 && t < 56) continue; const an = t / 64 * Math.PI * 2; px(Math.round(x + Math.cos(an) * rx), Math.round(y + Math.sin(an) * ry), 1, 1, rgba(P.d0, a)); } };
+  // top left: the mug, seen from above, steam long gone
+  px(30, 30, 1, 1, P.k0); g.fillStyle = rgba(P.k0, .45); g.beginPath(); g.ellipse(36, 39, 12, 11, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = P.p2; g.beginPath(); g.ellipse(33, 36, 11, 10, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = P.p0; g.beginPath(); g.ellipse(33, 37, 9, 8, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = P.d0; g.beginPath(); g.ellipse(33, 37, 7, 6, 0, 0, Math.PI * 2); g.fill(); px(30, 35, 3, 1, rgba(P.p4, .35));
+  px(44, 33, 4, 2, P.p2); px(46, 35, 2, 4, P.p2); px(44, 39, 4, 2, P.p2);
+  ring(282, 40, 12, 10, .5); ring(290, 50, 11, 9, .3); // top right: where the last one stood
+  // bottom left: a sticky note, a list nobody finished
+  px(28, 136, 32, 30, rgba(P.k0, .5)); px(26, 134, 32, 30, P.a3); px(26, 134, 32, 5, P.a2);
+  for (let l = 0; l < 4; l++) px(30, 143 + l * 5, [22, 17, 24, 12][l], 1, rgba(P.k1, .7));
+  px(30, 158, 12, 1, rgba(P.e2, .8)); px(29, 157, 1, 3, rgba(P.e2, .8));
+  // bottom right: the pen
+  for (let t = 0; t < 40; t++) { const x = 258 + t, y = 158 - Math.round(t * .45); px(x, y + 2, 1, 2, rgba(P.k0, .45)); px(x, y, 1, 2, t < 4 ? P.p3 : t > 34 ? P.a1 : P.s3); }
+  px(296, 140, 2, 1, P.a3);
+  for (let i = 0; i < 26; i++) { const x = (i * 131 + 17) % 316 + 2, y = (i * 71 + 9) % 176 + 2; if (Math.abs(x - 160) > 70 || Math.abs(y - 90) > 70) px(x, y, 1, 1, rgba(i % 3 ? P.k0 : P.p1, i % 3 ? .35 : .18)); } // crumbs, dust
+  G = g0;
+  return c.toDataURL();
+}
+function deskSync() { if (!deskKey) { deskKey = 'wood'; $('desk').style.setProperty('--deskwood', `url(${makeDesk()})`); } }
 function wallSync() {
   if (!S) return; const mood = S.phase === 'mirage' ? 'red' : S.act === 2 ? 'cold' : 'dusk';
   if (wallKey === mood) return; wallKey = mood;
