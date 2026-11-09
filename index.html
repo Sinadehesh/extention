@@ -1116,6 +1116,60 @@ html.uikit #roomStatus #nightBtn.on.late { border-image-source: var(--fr-hot) !i
 .bn-assist #bnBuyAs { font-size: 12px; }
 html.uikit #benchWin .bn-assist .as-seg button.on { border-image: var(--fr-teal) 3 fill / 6px / 0 stretch !important; border-width: 6px !important; color: #c4f0e4 !important; transform: translateY(2px); }
 html.uikit #benchWin .bn-assist .as-seg button[data-asu="0"].on { border-image-source: var(--fr-btnDown) !important; color: var(--ink) !important; }
+/* ================= n9n: the workflow board ================= */
+#n9nWin.win { left: 96px; top: 10px; width: min(1180px, calc(100% - 120px)); height: calc(100% - 60px); z-index: 6; }
+#n9Body { flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; }
+.n9-top { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #12261f; border-bottom: 3px solid #07080a; font-size: 13px; flex-wrap: wrap; }
+.n9-deal { flex: 1; min-width: 200px; } .n9-deal b { color: #7fd8c0; font-family: var(--f-term); font-weight: 400; }
+.n9-prog { width: 140px; height: 8px; background: #07080a; border: 2px solid #07080a; box-shadow: 0 0 0 2px #20685c; display: block; }
+.n9-prog i { display: block; height: 100%; background: #2fb589; }
+.n9-num { font-family: var(--f-term); color: #ffe6a6; }
+.n9-cr { font-family: var(--f-term); font-size: 12px; }
+.n9-main { flex: 1; min-height: 0; display: flex; }
+.n9-pal { width: 232px; flex: none; overflow-y: auto; padding: 8px; background: #0d1013; border-right: 3px solid #07080a; display: flex; flex-direction: column; gap: 6px; }
+.n9-h2 { font-family: var(--f-term); font-size: 11px; letter-spacing: .1em; color: #e0a33a; margin-top: 4px; }
+.n9-offer, .n9-kind { background: #161b20; border: 2px solid #07080a; box-shadow: 2px 2px 0 #07080a; padding: 7px 8px; display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; line-height: 1.35; }
+.n9-offer b, .n9-kind b { font-family: var(--f-term); font-weight: 400; color: var(--ink); font-size: 13px; }
+.n9-kind small { color: var(--muted); font-size: 11px; }
+.n9-hint { color: #7fd8c0; font-size: 11.5px; font-family: var(--f-term); }
+.n9-io { font-size: 11.5px; color: var(--muted); }
+.n9-io i, .n9-kind i { display: inline-block; width: 8px; height: 8px; border: 1px solid #07080a; vertical-align: 0; margin-right: 2px; }
+.n9-kb { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; margin-top: 2px; } .n9-kb .btn { font-size: 11.5px !important; padding: 2px 8px 0 !important; }
+.n9-ap { font-family: var(--f-term); font-size: 10.5px; color: #2fb589; }
+.n9-tip { font-size: 11.5px; line-height: 1.4; }
+.n9-cv { flex: 1; min-width: 0; position: relative; overflow: auto; background-color: #0b0e10; background-image: radial-gradient(#232c33 1px, transparent 1.3px); background-size: 16px 16px; }
+.n9-wires { position: absolute; left: 0; top: 0; width: 2000px; height: 1200px; pointer-events: none; z-index: 0; }
+.n9-wires path[data-wfrom] { pointer-events: stroke; cursor: pointer; }
+@keyframes n9dash { to { stroke-dashoffset: -10; } }
+.n9-node { position: absolute; width: 176px; z-index: 1; background: #161b20; border: 3px solid #07080a; box-shadow: 4px 4px 0 #07080a; display: flex; flex-direction: column; }
+.n9-node.auto { box-shadow: 4px 4px 0 #07080a, 0 0 0 2px #20685c; }
+.n9-nh { display: flex; align-items: center; gap: 4px; padding: 3px 4px 3px 6px; background: #232c33; font-family: var(--f-term); font-size: 11px; color: var(--ink); cursor: grab; user-select: none; }
+.n9-nh > span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.n9-st { font-weight: 400; font-size: 9.5px; letter-spacing: .06em; padding: 1px 4px; background: #07080a; color: #9aaab1; }
+.n9-st.s-running { color: #0d1013; background: #2fb589; } .n9-st.s-needs { color: #0d1013; background: #e0a33a; animation: bossBlink .6s steps(2) infinite; }
+.n9-st.s-no { color: #fbf6e8; background: #b8321f; } .n9-st.s-you { color: #0d1013; background: #f2c46a; }
+.n9-x { border: 0 !important; background: none !important; box-shadow: none !important; color: #71858f; font-size: 13px; padding: 0 3px !important; cursor: pointer; }
+.n9-x:hover { color: #e04a34; }
+.n9-gs { height: 90px; position: relative; background: #07080a; display: grid; place-items: center; cursor: zoom-in; }
+.n9-gs::after { content: ''; position: absolute; inset: 0; }
+.n9-g { width: 160px; height: 90px; display: grid; place-items: center; }
+.n9-g canvas { image-rendering: pixelated; display: block; }
+.n9-nf { display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 3px 0; font-family: var(--f-term); font-size: 10px; color: #9aaab1; min-height: 20px; }
+.n9-port { width: 16px; height: 16px; padding: 0 !important; border: 3px solid #07080a !important; background: var(--pc) !important; box-shadow: none !important; border-radius: 50% !important; cursor: crosshair; flex: none; }
+.n9-port.in { margin-left: -10px; } .n9-port.out { margin-right: -10px; }
+.n9-port:hover { transform: scale(1.25); }
+.n9-node.sink { width: 132px; box-shadow: 4px 4px 0 #07080a, 0 0 0 2px #8a5a1c; }
+.n9-node.sink .n9-nh { background: #4a2f1c; }
+.n9-sb { padding: 10px 8px; text-align: center; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.n9-sb b { font-family: var(--f-term); font-weight: 400; } .n9-sb span { font-family: var(--f-term); color: #ffe6a6; font-size: 16px; }
+.n9-empty { position: absolute; left: 30px; top: 40px; color: var(--muted); font-size: 14px; max-width: 300px; line-height: 1.5; }
+.n9-focus { position: absolute; inset: 0; z-index: 5; background: rgba(7,8,10,.94); display: flex; flex-direction: column; }
+.n9-focus[hidden] { display: none; }
+.n9-fh { display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 13.5px; color: var(--ink); }
+.n9-fh span { flex: 1; }
+#n9FocusHost { flex: 1; min-height: 0; display: grid; place-items: center; padding: 8px; }
+#n9FocusHost .n9-g { width: 100%; height: 100%; }
+html.uikit #n9nWin .n9-node, html.uikit #n9nWin .n9-offer, html.uikit #n9nWin .n9-kind { border-radius: 0; }
 </style>
 </head>
 <body>
@@ -1227,6 +1281,10 @@ html.uikit #benchWin .bn-assist .as-seg button[data-asu="0"].on { border-image-s
           <button role="tab" data-tab="bots" aria-selected="false" hidden>AGENTS<span class="dot" hidden></span></button>
         </nav>
         <div id="view"></div>
+      </section>
+      <section id="n9nWin" class="win" hidden aria-label="n9n workflows">
+        <div class="osbar" data-drag="n9nWin"><span>n9n · WORKFLOWS · free plan</span><span><button class="btn" id="n9Close">Close</button></span></div>
+        <div id="n9Body"></div>
       </section>
       <section id="benchWin" class="win" hidden aria-label="Work bench">
         <div class="osbar" data-drag="benchWin"><span>WORK BENCH</span><span>drag me</span></div>
@@ -2403,6 +2461,8 @@ function dayStep() {
   S.heartStrain = Math.max(0, S.heartStrain - 10);
   applyPrices(d);
   hoodNight();
+  if (S.n9n) { n9Offers(d); n9Render(true); }
+  if (d === 3) addMail(d, 'n9n', 'Your gigs, on autopilot ✨', 'Hi freelancer!\n\nn9n turns the work you already do into workflows. A crawler feeds a deduper, the deduper feeds a packer, the packer feeds the client. Wire them together once.\n\nThen add AUTOPILOT to any node and an AI plays it for you, around the clock, while you sleep.\n\nYour free plan includes six nodes. n9n is on your desktop.\n\nThe n9n team');
   jobsTick(d);
   bullyNight(); bullyOpen(d);
   netBill(d); if (S.net) { lbTick(d); webRefresh(d); }
@@ -4086,6 +4146,223 @@ function assistSync() {
   el.querySelectorAll('[data-asu]').forEach(b => b.onclick = () => setAssistUse(j.kind, +b.dataset.asu));
   const bb = $('bnBuyAs'); if (bb) bb.onclick = () => buyAssist(j.kind);
 }
+// ================= n9n: workflows. Wire the games together, then let the AI run them =================
+// Every node is one of the arcade games. It takes one kind of item in and makes another. A node with AUTOPILOT
+// plays itself (you can watch it in the node); a node without it waits for you to play it. Credits pay for the AI.
+const N9_IO = {
+  crawl: { in: null, out: 'raw' }, catch: { in: null, out: 'files' },
+  merge: { in: ['raw', 'files'], out: 'clean' }, stack: { in: ['clean', 'raw'], out: 'batch' },
+  launch: { in: ['clean', 'batch'], out: 'sent' }, rank: { in: ['sent', 'batch'], out: 'ranked' }
+};
+const N9_TYPE = { raw: 'raw pages', files: 'uploads', clean: 'clean records', batch: 'batches', sent: 'deliveries', ranked: 'ranked results' };
+const N9_TCOL = { raw: '#e0a33a', files: '#ddd6c1', clean: '#7fd8c0', batch: '#87b85a', sent: '#cf7a4f', ranked: '#ffe6a6' };
+const N9_GAME = { crawl: 'snake', catch: 'catcher', merge: '2048', stack: 'blocks', launch: 'launcher', rank: 'pinball' };
+const AUTOPILOT = 140, N9_CREDIT_EVERY = 5, N9_MAX = 6, NW = 176, NH = 140;
+const N9_DEALS = [
+  { client: 'ShopNow', title: 'A search index for a shopping app', want: 'ranked', n: [26, 36], per: 8.4, hint: 'Crawler → Deduper → Packer → Ranker' },
+  { client: 'OpenBrain Data', title: 'Training batches for a chatbot', want: 'batch', n: [28, 38], per: 4.6, hint: 'Crawler → Deduper → Packer' },
+  { client: 'SnapHaus', title: 'Deliver a photo feed to a client', want: 'sent', n: [24, 32], per: 5.8, hint: 'Uploader → Deduper → Shipper' },
+  { client: 'Daily Pulse News', title: 'A ranked news feed, overnight', want: 'ranked', n: [30, 40], per: 9.2, hint: 'Uploader → Deduper → Shipper → Ranker' }
+];
+const N9 = { ctl: {}, env: {}, flow: [], focus: null, pick: null, built: '', drag: null };
+function n9() { return S.n9n || (S.n9n = { nodes: [], wires: [], c: null, offers: [], seq: 0, run: true, ap: {}, day: -1 }); }
+const n9Node = id => n9().nodes.find(n => n.id === id);
+function n9Offers(d) {
+  const W = n9(); if (W.day === d) return W.offers; W.day = d;
+  W.offers = api3(N9_DEALS).map(x => { const n = randi(x.n[0], x.n[1]); return { ...x, n, pay: Math.round(n * x.per * rand(.9, 1.15)), due: d + 2 }; });
+  return W.offers;
+}
+function api3(a) { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [b[i], b[j]] = [b[j], b[i]]; } return b.slice(0, 3); }
+function n9Take(i) {
+  const W = n9(), o = W.offers[i]; if (!o || W.c) return;
+  W.c = { ...o, got: 0 }; W.offers.splice(i, 1);
+  note(`n9n: you took ${o.client}’s contract. ${o.n} ${N9_TYPE[o.want]} by ${fmtDay(o.due)} for ${money(o.pay)}.`);
+  sfx.tone(880, .05, 'square', .02); n9Render(true);
+}
+function n9Add(kind) {
+  const W = n9(); if (W.nodes.length >= N9_MAX) return toast(`n9n’s free plan allows ${N9_MAX} nodes.`);
+  const i = W.nodes.length, nd = { id: ++W.seq, kind, x: 16 + (i % 3) * (NW + 66), y: 16 + Math.floor(i / 3) * (NH + 46), inQ: 0, outN: 0, lost: 0, cr: 0 };
+  W.nodes.push(nd); sfx.tone(660, .05, 'square', .02); n9Render(true);
+}
+function n9Del(id) {
+  const W = n9(); if (N9.focus === id) n9Unfocus();
+  if (N9.ctl[id]) { N9.ctl[id].destroy(); delete N9.ctl[id]; delete N9.env[id]; }
+  W.nodes = W.nodes.filter(n => n.id !== id); W.wires = W.wires.filter(w => w.from !== id && w.to !== id);
+  N9.flow = N9.flow.filter(f => f.from !== id && f.to !== id); n9Render(true);
+}
+function n9Reaches(from, to) { const W = n9(); const st = [from], seen = new Set(); while (st.length) { const a = st.pop(); if (a === to) return true; if (seen.has(a)) continue; seen.add(a); W.wires.filter(w => w.from === a).forEach(w => st.push(w.to)); } return false; }
+function n9Wire(from, to) { // the out port of one node into the in port of another, if the item fits
+  const W = n9(), a = n9Node(from); if (!a || from === to) return;
+  const out = N9_IO[a.kind].out;
+  if (to === 'sink') { if (!W.c) return toast('Take a contract first. The client is the last node.'); if (W.c.want !== out) return toast(`${W.c.client} wants ${N9_TYPE[W.c.want]}. ${MINI[a.kind].title} makes ${N9_TYPE[out]}.`); }
+  else { const b = n9Node(to); if (!b) return; const ins = N9_IO[b.kind].in; if (!ins) return toast(`${MINI[b.kind].title} starts a workflow. Nothing goes into it.`); if (!ins.includes(out)) return toast(`${MINI[b.kind].title} takes ${ins.map(t => N9_TYPE[t]).join(' or ')}. ${MINI[a.kind].title} makes ${N9_TYPE[out]}.`); if (n9Reaches(to, from)) return toast('That would make a loop.'); }
+  W.wires = W.wires.filter(w => w.from !== from); W.wires.push({ from, to });
+  sfx.tone(990, .04, 'square', .02); sfx.tone(1320, .06, 'square', .02, 0, .05); n9Render(true);
+}
+function buyAutopilot(kind) {
+  const W = n9(); if (W.ap[kind]) return;
+  if (S.balance < AUTOPILOT) return toast(`You need ${money(AUTOPILOT)}.`);
+  S.balance -= AUTOPILOT; tx(`n9n · AUTOPILOT for ${MINI[kind].title}`, -AUTOPILOT); W.ap[kind] = true;
+  for (const nd of W.nodes) if (nd.kind === kind && N9.env[nd.id]) { N9.env[nd.id].auto = true; N9.env[nd.id].autoErr = n9Err(kind); }
+  note(`You bought AUTOPILOT for ${MINI[kind].title}. An AI plays it now, in its node, without you. It bills a credit every ${N9_CREDIT_EVERY} items.`);
+  sfx.cash(); n9Render(true); renderHud();
+}
+const n9Err = kind => [.2, .1, .04][assistOwned(kind)] || .04; // what you taught it on the bench makes it better
+function n9Paused(nd) {
+  const W = n9(), io = N9_IO[nd.kind], auto = !!W.ap[nd.kind];
+  if (!W.run) return 'WORKFLOW PAUSED';
+  if (auto && !S.credits) return 'OUT OF CREDITS';
+  if (io.in && nd.inQ <= 0) return 'WAITING FOR INPUT';
+  if (!io.in && n9Backlog(nd)) return 'BACKLOG · WAITING';
+  if (!auto) return N9.focus === nd.id ? 'TIME IS PAUSED' : 'NEEDS YOU';
+  return 'TIME IS PAUSED';
+}
+function n9Backlog(nd) { const w = n9().wires.find(w => w.from === nd.id); if (!w) return false; const b = w.to === 'sink' ? null : n9Node(w.to); return b ? b.inQ + N9.flow.filter(f => f.to === b.id).length >= 10 : false; }
+function n9Out(nd, ok) { // an item came out of a node's game
+  const W = n9(), io = N9_IO[nd.kind];
+  if (io.in) nd.inQ = Math.max(0, nd.inQ - 1);
+  if (!ok) { nd.lost++; return; }
+  nd.outN++;
+  if (W.ap[nd.kind] && N9.focus !== nd.id) { nd.cr++; if (nd.cr % N9_CREDIT_EVERY === 0) S.credits = Math.max(0, S.credits - 1); }
+  const w = W.wires.find(w => w.from === nd.id);
+  if (w) N9.flow.push({ from: nd.id, to: w.to, t: 0, type: io.out }); else nd.dropped = (nd.dropped || 0) + 1;
+}
+function n9Mount(nd) {
+  const host = $('n9g-' + nd.id); if (!host || N9.ctl[nd.id]) return;
+  const W = n9(), auto = !!W.ap[nd.kind];
+  const env = {
+    level: .45, day: S.day, lag: 0, gpu: 1, fps: 30, auto, autoErr: n9Err(nd.kind), endless: true,
+    assist: 0, assistName: '', aiName: 'ChatGPX', tone: null, clock: clockText, pausedText: () => n9Paused(nd),
+    onItem: ok => n9Out(nd, ok), onEnd: () => ({ lines: [] }), onClose: () => {}
+  };
+  N9.env[nd.id] = env;
+  try { N9.ctl[nd.id] = mgCreate(host, nd.kind, { units: 99999, done: 0, errs: 0, title: 'n9n' }, env); } catch (e) { console.error(e); }
+}
+function n9Tick(dt, live) {
+  const W = S && S.n9n; if (!W || S.over || S.act === 2) return;
+  for (const f of N9.flow) f.t += dt / .9;
+  const arrived = N9.flow.filter(f => f.t >= 1); N9.flow = N9.flow.filter(f => f.t < 1);
+  for (const f of arrived) {
+    if (f.to === 'sink') { if (W.c && f.type === W.c.want) { W.c.got++; if (W.c.got >= W.c.n) n9Done(); } }
+    else { const b = n9Node(f.to); if (b) b.inQ++; }
+  }
+  for (const nd of W.nodes) {
+    const ctl = N9.ctl[nd.id], env = N9.env[nd.id]; if (!ctl) continue;
+    const io = N9_IO[nd.kind], auto = !!W.ap[nd.kind], mine = N9.focus === nd.id;
+    env.auto = auto && !mine; env.autoErr = n9Err(nd.kind);
+    env.assist = mine && !auto ? assistUse(nd.kind) : 0; env.assistName = env.assist ? ASSIST[nd.kind][env.assist - 1] : '';
+    env.tone = mine ? (f, d, ty, v, f2, dl) => sfx.tone(f, d, ty, v, f2, dl) : null; env.fps = mine ? 60 : 30;
+    const go = live && W.run && (!io.in || nd.inQ > 0) && !(io.in == null && n9Backlog(nd)) && (mine || (auto && S.credits > 0));
+    ctl.tick(dt, go);
+  }
+  if (W.c && S.day > W.c.due) n9Fail();
+}
+function n9Done() {
+  const W = n9(), c = W.c; W.c = null;
+  earn(c.pay, `n9n · ${c.client}: ${c.title}`); rate(.08, `${c.client} got what they asked for`);
+  note(`n9n delivered ${c.n} ${N9_TYPE[c.want]} to ${c.client}. ${money(c.pay)}. ${Object.values(W.ap).filter(Boolean).length >= 3 ? 'You didn’t touch most of it.' : 'Some of it was you.'}`);
+  toast(`n9n · ${c.client} paid ${money(c.pay)}`); sfx.cash(); sfx.tone(1320, .12, 'square', .03, 0, .12);
+  W.wires = W.wires.filter(w => w.to !== 'sink'); n9Render(true);
+}
+function n9Fail() {
+  const W = n9(), c = W.c; W.c = null;
+  rate(-.2, `${c.client}’s workflow ran late`); note(`${c.client} cancelled the contract. ${c.got} of ${c.n} ${N9_TYPE[c.want]}, late. No pay.`);
+  toast(`n9n · ${c.client} cancelled. Too late.`); sfx.alarm();
+  W.wires = W.wires.filter(w => w.to !== 'sink'); n9Render(true);
+}
+function n9Focus(id) {
+  const nd = n9Node(id), host = $('n9g-' + id); if (!nd || !host) return;
+  if (N9.focus) n9Unfocus();
+  N9.focus = id; $('n9Focus').hidden = false; $('n9FocusHost').appendChild(host);
+  $('n9FocusT').textContent = `${MINI[nd.kind].title} · you’re playing this node. Everything you make goes down its wire.`;
+  const c = host.querySelector('canvas'); if (c) c.focus({ preventScroll: true });
+}
+function n9Unfocus() {
+  const id = N9.focus; N9.focus = null; $('n9Focus').hidden = true;
+  const host = $('n9FocusHost').firstElementChild, slot = document.querySelector(`.n9-node[data-nid="${id}"] .n9-gs`);
+  if (host && slot) slot.appendChild(host);
+}
+function openN9n() {
+  if (!N9.bound) { N9.bound = true; $('n9Close').onclick = () => { if (N9.focus) n9Unfocus(); $('n9nWin').hidden = true; desktopSync(); }; }
+  sfx.init(); const w = $('n9nWin'); w.hidden = false; raiseWin(w); n9Offers(S.day); n9Render(true); desktopSync();
+  if (!S.seen.n9n) { S.seen.n9n = 1; toast('n9n: add a node, wire its out port to the next one’s in port, end at the client.'); }
+}
+function n9Render(force) {
+  const W = n9(), box = $('n9Body'); if (!box || $('n9nWin').hidden && !force) return;
+  const key = W.nodes.map(n => n.id + n.kind).join(',') + '|' + (W.c ? W.c.client + W.c.n : '-') + '|' + Object.keys(W.ap).join(',') + '|' + W.offers.length + '|' + W.run + '|' + Object.keys(S.assist || {}).map(k => k + S.assist[k]).join();
+  if (key !== N9.built || force) {
+    // keep the running games: lift their hosts out, rebuild around them, put them back
+    const keep = {}; for (const nd of W.nodes) { const h = $('n9g-' + nd.id); if (h) keep[nd.id] = h; } // wherever it is, even in the big view
+    N9.built = key;
+    const c = W.c, kinds = ARCADE_KINDS;
+    box.innerHTML = `<div class="n9-top">${c ? `<span class="n9-deal"><b>${esc(c.client)}</b> · ${esc(c.title)}</span><span class="n9-prog"><i id="n9Bar" style="width:${Math.round(c.got / c.n * 100)}%"></i></span><span id="n9Got" class="n9-num">${c.got}/${c.n} ${N9_TYPE[c.want]}</span><span class="muted">${money(c.pay)} · due ${fmtDay(c.due)}</span>`
+        : `<span class="n9-deal">No contract. Pick one: the client becomes the last node.</span>`}
+        <button class="btn ${W.run ? '' : 'primary'}" id="n9Run">${W.run ? 'Pause all' : 'Run ▶'}</button><span class="n9-cr" id="n9Cr"></span></div>
+      <div class="n9-main"><div class="n9-pal">
+        ${!c ? `<div class="n9-h2">CONTRACTS</div>${W.offers.map((o, i) => `<div class="n9-offer"><b>${esc(o.client)}</b><span>${esc(o.title)}</span><span class="muted">${o.n} ${N9_TYPE[o.want]} · ${money(o.pay)} · 2 days</span><span class="n9-hint">${esc(o.hint)}</span><button class="btn primary" data-n9take="${i}">Take it</button></div>`).join('') || '<p class="muted">New contracts tomorrow.</p>'}` : ''}
+        <div class="n9-h2">NODES</div>
+        ${kinds.map(k => { const io = N9_IO[k]; return `<div class="n9-kind"><div><b>${JOB_KINDS[k].icon} ${MINI[k].title}</b> <small>${N9_GAME[k]}</small></div><div class="n9-io">${io.in ? io.in.map(t => `<i style="background:${N9_TCOL[t]}"></i>`).join('') + ' ' + io.in.map(t => N9_TYPE[t]).join(' / ') : 'starts it'} → <i style="background:${N9_TCOL[io.out]}"></i> ${N9_TYPE[io.out]}</div>
+          <div class="n9-kb"><button class="btn" data-n9add="${k}">+ Add</button>${W.ap[k] ? `<span class="n9-ap">AUTOPILOT · ${Math.round(n9Err(k) * 100)}% errors</span>` : `<button class="btn" data-n9ap="${k}">Autopilot · ${money(AUTOPILOT)}</button>`}</div></div>`; }).join('')}
+        <p class="muted n9-tip">Teach a game on your bench (AI assist) and its autopilot makes fewer mistakes.</p>
+      </div><div class="n9-cv" id="n9Cv"><svg class="n9-wires" id="n9Wires"></svg>
+        ${W.nodes.map(nd => { const io = N9_IO[nd.kind]; return `<div class="n9-node ${W.ap[nd.kind] ? 'auto' : 'man'}" data-nid="${nd.id}" style="left:${nd.x}px;top:${nd.y}px">
+          <div class="n9-nh" data-n9drag="${nd.id}"><span>${JOB_KINDS[nd.kind].icon} ${MINI[nd.kind].title}</span><b class="n9-st" id="n9st-${nd.id}"></b><button class="n9-x" data-n9del="${nd.id}" title="Delete node">×</button></div>
+          <div class="n9-gs"></div>
+          <div class="n9-nf">${io.in ? `<button class="n9-port in" data-n9in="${nd.id}" style="--pc:${N9_TCOL[io.in[0]]}" title="In: ${io.in.map(t => N9_TYPE[t]).join(' or ')}"></button>` : '<span></span>'}<span id="n9q-${nd.id}"></span><button class="n9-port out" data-n9out="${nd.id}" style="--pc:${N9_TCOL[io.out]}" title="Out: ${N9_TYPE[io.out]}. Click, then click an in port."></button></div></div>`; }).join('')}
+        ${c ? `<div class="n9-node sink" id="n9Sink"><div class="n9-nh"><span>CLIENT · ${esc(c.client)}</span></div><div class="n9-sb">wants<br><b style="color:${N9_TCOL[c.want]}">${N9_TYPE[c.want]}</b><br><span id="n9Sg">${c.got}/${c.n}</span></div><div class="n9-nf"><button class="n9-port in" data-n9in="sink" style="--pc:${N9_TCOL[c.want]}" title="In: ${N9_TYPE[c.want]}"></button><span></span><span></span></div></div>` : ''}
+        ${!W.nodes.length ? '<div class="n9-empty">Add a node from the left. A workflow starts with Crawler or Uploader.</div>' : ''}
+      </div></div>
+      <div class="n9-focus" id="n9Focus" hidden><div class="n9-fh"><span id="n9FocusT"></span><button class="btn primary" id="n9Back">Back to the board · Esc</button></div><div id="n9FocusHost"></div></div>`;
+    for (const nd of W.nodes) {
+      const slot = box.querySelector(`.n9-node[data-nid="${nd.id}"] .n9-gs`); if (!slot) continue;
+      if (keep[nd.id]) slot.appendChild(keep[nd.id]); else if (!N9.ctl[nd.id]) { const h = document.createElement('div'); h.className = 'n9-g'; h.id = 'n9g-' + nd.id; slot.appendChild(h); n9Mount(nd); }
+    }
+    if (N9.focus) { const id = N9.focus; N9.focus = null; n9Focus(id); }
+    box.querySelectorAll('[data-n9take]').forEach(b => b.onclick = () => n9Take(+b.dataset.n9take));
+    box.querySelectorAll('[data-n9add]').forEach(b => b.onclick = () => n9Add(b.dataset.n9add));
+    box.querySelectorAll('[data-n9ap]').forEach(b => b.onclick = () => buyAutopilot(b.dataset.n9ap));
+    box.querySelectorAll('[data-n9del]').forEach(b => b.onclick = e => { e.stopPropagation(); n9Del(+b.dataset.n9del); });
+    box.querySelectorAll('[data-n9out]').forEach(b => b.onclick = e => { e.stopPropagation(); N9.pick = N9.pick === +b.dataset.n9out ? null : +b.dataset.n9out; sfx.tone(760, .03, 'square', .02); });
+    box.querySelectorAll('[data-n9in]').forEach(b => b.onclick = e => { e.stopPropagation(); const to = b.dataset.n9in === 'sink' ? 'sink' : +b.dataset.n9in; if (N9.pick != null) { n9Wire(N9.pick, to); N9.pick = null; } else toast('Click an out port first, then this in port.'); });
+    box.querySelectorAll('.n9-node[data-nid] .n9-gs').forEach(s => s.onclick = () => { const id = +s.closest('.n9-node').dataset.nid; n9Focus(id); });
+    $('n9Run').onclick = () => { W.run = !W.run; n9Render(true); };
+    $('n9Back').onclick = n9Unfocus;
+    $('n9Wires').onclick = e => { const p = e.target.closest('[data-wfrom]'); if (p) { W.wires = W.wires.filter(w => w.from !== +p.dataset.wfrom); n9Render(true); } };
+  }
+  n9Sync();
+}
+function n9Sync() { // every frame: wires, items in flight, the numbers on the nodes
+  const W = S && S.n9n; if (!W || $('n9nWin').hidden) return;
+  const cv = $('n9Cv'); if (!cv) return;
+  const sink = $('n9Sink'); if (sink) { sink.style.left = Math.max(cv.clientWidth - 150, 16 + 3 * (NW + 66)) + 'px'; sink.style.top = '60px'; }
+  const portXY = (id, side) => { const el = id === 'sink' ? sink : cv.querySelector(`.n9-node[data-nid="${id}"]`); if (!el) return null; return [el.offsetLeft + (side === 'out' ? el.offsetWidth : 0), el.offsetTop + el.offsetHeight - 10]; };
+  const bez = (a, b, t) => { const c1 = [a[0] + 60, a[1]], c2 = [b[0] - 60, b[1]], u = 1 - t; return [u * u * u * a[0] + 3 * u * u * t * c1[0] + 3 * u * t * t * c2[0] + t * t * t * b[0], u * u * u * a[1] + 3 * u * u * t * c1[1] + 3 * u * t * t * c2[1] + t * t * t * b[1]]; };
+  let svg = '';
+  for (const w of W.wires) { const a = portXY(w.from, 'out'), b = portXY(w.to, 'in'), nd = n9Node(w.from); if (!a || !b || !nd) continue; const col = N9_TCOL[N9_IO[nd.kind].out];
+    svg += `<path d="M${a[0]} ${a[1]} C${a[0] + 60} ${a[1]} ${b[0] - 60} ${b[1]} ${b[0]} ${b[1]}" stroke="#07080a" stroke-width="7" fill="none"/><path data-wfrom="${w.from}" d="M${a[0]} ${a[1]} C${a[0] + 60} ${a[1]} ${b[0] - 60} ${b[1]} ${b[0]} ${b[1]}" stroke="${col}" stroke-width="3" fill="none" stroke-dasharray="6 4" style="animation:n9dash .6s linear infinite"/>`; }
+  for (const f of N9.flow) { const a = portXY(f.from, 'out'), b = portXY(f.to, 'in'); if (!a || !b) continue; const [x, y] = bez(a, b, f.t); svg += `<rect x="${Math.round(x) - 4}" y="${Math.round(y) - 4}" width="8" height="8" fill="${N9_TCOL[f.type]}" stroke="#07080a" stroke-width="2"/>`; }
+  if (N9.pick != null) { const a = portXY(N9.pick, 'out'); if (a) svg += `<circle cx="${a[0]}" cy="${a[1]}" r="9" fill="none" stroke="#f2c46a" stroke-width="2" stroke-dasharray="3 3"/>`; }
+  const ws = $('n9Wires'); if (ws.innerHTML !== svg) ws.innerHTML = svg;
+  for (const nd of W.nodes) {
+    const st = $('n9st-' + nd.id), q = $('n9q-' + nd.id); if (!st) continue;
+    const p = n9Paused(nd), auto = !!W.ap[nd.kind], io = N9_IO[nd.kind], running = W.run && (!io.in || nd.inQ > 0) && !(!io.in && n9Backlog(nd)) && (N9.focus === nd.id || (auto && S.credits > 0)) && !!speed;
+    const label = N9.focus === nd.id ? 'YOU' : running ? 'RUNNING' : p === 'NEEDS YOU' ? 'NEEDS YOU' : p === 'OUT OF CREDITS' ? 'NO CREDITS' : p === 'WAITING FOR INPUT' ? 'WAITING' : p === 'BACKLOG · WAITING' ? 'BACKLOG' : 'PAUSED';
+    if (st.textContent !== label) { st.textContent = label; st.className = 'n9-st s-' + label.split(' ')[0].toLowerCase(); }
+    const txt = `${io.in ? `in ${nd.inQ}` : 'source'} · out ${nd.outN}${nd.lost ? ` · lost ${nd.lost}` : ''}`; if (q.textContent !== txt) q.textContent = txt;
+  }
+  const cr = $('n9Cr'); if (cr) { const t = `${S.credits} AI credits`; if (cr.textContent !== t) cr.textContent = t; cr.className = 'n9-cr ' + (S.credits ? 'muted' : 'danger'); }
+  if (W.c) { const g = $('n9Got'), bar = $('n9Bar'), sg = $('n9Sg'); if (g) g.textContent = `${W.c.got}/${W.c.n} ${N9_TYPE[W.c.want]}`; if (bar) bar.style.width = Math.round(W.c.got / W.c.n * 100) + '%'; if (sg) sg.textContent = `${W.c.got}/${W.c.n}`; }
+}
+document.addEventListener('keydown', e => { // the node you're playing gets the keyboard
+  if (!N9.focus || $('laptop').hidden || $('n9nWin').hidden || !$('modal').hidden || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); return n9Unfocus(); }
+  const ctl = N9.ctl[N9.focus]; if (!ctl) return;
+  if (e.repeat && e.key.length === 1) { e.preventDefault(); e.stopImmediatePropagation(); return; }
+  if (ctl.key(e)) { e.preventDefault(); e.stopImmediatePropagation(); }
+}, true);
+document.addEventListener('pointerdown', e => { const h = e.target.closest('[data-n9drag]'); if (!h || e.target.closest('button')) return; const nd = n9Node(+h.dataset.n9drag), el = h.closest('.n9-node'); if (!nd || !el) return; N9.drag = { nd, el, x0: e.clientX - nd.x, y0: e.clientY - nd.y }; h.setPointerCapture(e.pointerId); e.preventDefault(); });
+document.addEventListener('pointermove', e => { const d = N9.drag; if (!d) return; d.nd.x = clamp(e.clientX - d.x0, 0, 2000); d.nd.y = clamp(e.clientY - d.y0, 0, 1200); d.el.style.left = d.nd.x + 'px'; d.el.style.top = d.nd.y + 'px'; });
+document.addEventListener('pointerup', () => { N9.drag = null; });
 function mgItem(j, ok, st) {
   j.done = st.done; j.errs = st.errs;
   if (!BN.auto && BN.env && BN.env.assist) { // the assist bills by the item
@@ -5718,17 +5995,20 @@ function mgCreate(host, kind, job, env) {
     hud();
     if (st.phase === 'intro') introCard();
     if (st.phase === 'result') resultCard();
-    if (!live && !st.closed) { g.fillStyle = 'rgba(7,8,10,.72)'; g.fillRect(0, 0, MG.W, MG.H); mgText(g, env.pausedText ? env.pausedText() : 'PAUSED', MG.W / 2, MG.H / 2, { size: 12, color: PAL.ink, align: 'center', shadow: true }); }
+    if (!live && !st.closed) { g.fillStyle = env.endless ? 'rgba(7,8,10,.5)' : 'rgba(7,8,10,.72)'; g.fillRect(0, 0, MG.W, MG.H); mgText(g, env.pausedText ? env.pausedText() : 'PAUSED', MG.W / 2, MG.H / 2, { size: env.endless ? 16 : 12, color: env.endless ? PAL.a3 : PAL.ink, align: 'center', shadow: true, bold: !!env.endless }); }
   }
 
   function hud() {
     g.fillStyle = PAL.k2; g.fillRect(0, 0, MG.W, MG.TOP); g.fillStyle = PAL.k0; g.fillRect(0, MG.TOP - 1, MG.W, 1);
     mgText(g, (def.title || kind).toUpperCase(), 5, 12, { size: 7, color: PAL.a2, max: 104 });
     const bx = 112, bw = 80, k = units ? st.done / units : 0;
+    if (env.endless) mgText(g, `${st.done - st.errs} OUT${st.errs ? ` · ${st.errs} LOST` : ''}`, bx, 12, { size: 7, color: PAL.t4 });
+    else {
     g.fillStyle = PAL.k0; g.fillRect(bx, 6, bw, 6); g.fillStyle = PAL.t3; g.fillRect(bx, 6, Math.round(bw * k), 6);
     if (st.errs) { g.fillStyle = PAL.e2; g.fillRect(bx + Math.round(bw * k) - Math.min(Math.round(bw * k), Math.round(bw * st.errs / units)), 6, Math.min(Math.round(bw * k), Math.round(bw * st.errs / units)), 6); }
     for (let i = 1; i < 10; i++) { g.fillStyle = PAL.k1; g.fillRect(bx + Math.round(bw * i / 10), 6, 1, 6); }
     mgText(g, `${st.done}/${units}`, bx + bw + 4, 12, { size: 7, color: PAL.ink });
+    }
     const cs = 7 + st.pulse * 2, cc = st.combo >= 25 ? PAL.e4 : st.combo >= 12 ? PAL.a3 : st.combo >= 5 ? PAL.t4 : PAL.mute;
     mgText(g, st.combo >= 2 ? `COMBO ×${st.combo}` : 'COMBO —', 254, 12, { size: cs, color: cc, align: 'center', bold: st.combo >= 5, max: 52 });
     mgText(g, env.clock ? env.clock() : '', MG.W - 4, 12, { size: 7, color: PAL.a3, align: 'right' });
@@ -12162,7 +12442,8 @@ const ICON = {
   k401: '<polyline points="3,17 9,11 13,15 21,6"></polyline><polyline points="15,6 21,6 21,12"></polyline>',
   grind: '<rect x="3" y="4" width="8" height="16"></rect><rect x="13" y="4" width="8" height="16"></rect>',
   store: '<path d="M4 9h16l-1 11H5z"></path><path d="M8 9V6a4 4 0 0 1 8 0v3"></path>',
-  bots: '<rect x="5" y="8" width="14" height="11"></rect><line x1="12" y1="4" x2="12" y2="8"></line><line x1="9" y1="13" x2="9" y2="14"></line><line x1="15" y1="13" x2="15" y2="14"></line>'
+  bots: '<rect x="5" y="8" width="14" height="11"></rect><line x1="12" y1="4" x2="12" y2="8"></line><line x1="9" y1="13" x2="9" y2="14"></line><line x1="15" y1="13" x2="15" y2="14"></line>',
+  n9n: '<rect x="2" y="9" width="6" height="6"></rect><rect x="16" y="3" width="6" height="6"></rect><rect x="16" y="15" width="6" height="6"></rect><path d="M8 12h4v-6h4M12 12v6h4"></path>'
 };
 const DESK_APPS = [
   { k: 'farm', col: '#805634', label: () => S.phase === 'office' ? 'Tickets' : S.act === 2 ? (S.phase === 'trainer' ? 'Train' : 'Audit') : 'Work' },
@@ -12172,7 +12453,8 @@ const DESK_APPS = [
   { k: 'k401', col: '#2b2d22', label: () => '401(k)' },
   { k: 'grind', col: '#2e3a42', label: () => 'Rate answers', when: () => S.act !== 2 && S.phase === 'farm', go: () => $('actGrind').click() },
   { k: 'store', col: '#5c271b', label: () => 'Byte Barn', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc, go: () => openStore() },
-  { k: 'bots', col: '#20685c', label: () => 'Agents', when: () => S.act === 2 }
+  { k: 'bots', col: '#20685c', label: () => 'Agents', when: () => S.act === 2 },
+  { k: 'n9n', col: '#174540', label: () => 'n9n', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc && (S.day >= 3 || !!S.n9n), go: () => openN9n() }
 ];
 let iconsKey = '';
 function desktopSync() {
@@ -12185,7 +12467,7 @@ function desktopSync() {
   }
   const tabName = (document.querySelector(`.ttabs [data-tab="${S.tab}"]`) || {}).firstChild;
   const j = typeof benchJob === 'function' ? benchJob() : null;
-  const apps2 = `<button class="tb-app" data-win="term">${esc(tabName ? tabName.nodeValue : 'Work')}</button>${j && BN ? `<button class="tb-app" data-win="benchWin">Bench · ${j.done} of ${j.units}</button>` : ''}`;
+  const apps2 = `<button class="tb-app" data-win="term">${esc(tabName ? tabName.nodeValue : 'Work')}</button>${j && BN ? `<button class="tb-app" data-win="benchWin">Bench · ${j.done} of ${j.units}</button>` : ''}${!$('n9nWin').hidden ? '<button class="tb-app" data-win="n9nWin">n9n</button>' : ''}`;
   if ($('tbApps').dataset.k !== apps2) { $('tbApps').dataset.k = apps2; $('tbApps').innerHTML = apps2; $('tbApps').querySelectorAll('[data-win]').forEach(b => b.onclick = () => raiseWin($(b.dataset.win))); }
   $('tbMail').textContent = S.unread.mail ? 'New mail' : '';
   $('tbCash').textContent = money(S.balance);
@@ -12305,7 +12587,7 @@ function frame(t) {
         else if ($('phClock')) $('phClock').textContent = `${fmtDay(S.day)} · ${clockText()}`;
       }
       const blocked = !!SHC || !$('modal').hidden || (phoneUp && S.act === 2) || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
-      benchTick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked); bossTick(dt, !!speed && !blocked); if (SHC) shiftTick(dt);
+      benchTick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked); bossTick(dt, !!speed && !blocked); n9Tick(dt, !!speed && !blocked); n9Sync(); if (SHC) shiftTick(dt);
       if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
       // After launch, ChatGPX takes your tickets while you watch.
       if (S.phase === 'office' && S.office.launched && speed && !blocked) {
@@ -12334,7 +12616,7 @@ newAct1(); renderAll(); fitRoom();
 requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>

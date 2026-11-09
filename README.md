@@ -91,6 +91,25 @@ Hardware gates the work. Retouching needs 16 GB of RAM. Rendering also needs a G
 
 **Today** in the top bar is what you need to earn each day to make rent, set every morning. At night the ledger grades the day with a stamp (S to F) and counts how many days in a row you've made it.
 
+## Arcade work and AI assist
+
+Some jobs on the job sites are arcade games on your bench, each one the dull work in disguise:
+
+- **Crawler** (a snake game): scrape the web. Eat the clean data and steer around the red dots, which are somebody's personal data. Paywalls go up as the job goes on.
+- **Packer** (falling blocks): pack records into full rows, which ship as training batches. If the well fills up, the batch overflows.
+- **Ranker** (pinball): every target the ball hits is a search result ranked. A drained ball is a result lost.
+- **Uploader** (a catcher): catch the files in the bag and keep the malware out.
+- **Shipper** (a launcher): fire packets into a client's moving port, through the wind, and later over a firewall.
+- **Deduper** (a 2048-style board): copies of the same file slide together and merge.
+
+You can teach an AI to play part of each game. Level 1 costs $35 and level 2 costs $90, once per game, and while it helps it bills AI credits by the item. In Crawler, level 1 (WALL SENSE) turns before a wall and level 2 (FOOD CHASE) goes for the data whenever you let go. In Packer, level 1 (SPREAD) drops each piece over the lowest gap instead of the middle, and level 2 (PLACE) steers it to the best spot while you drop it. The others go the same way: one flipper then both, a magnet then a shield, the arc then the aim, a hint then the moves. The AI's plan is drawn on screen: its path, its target, its arc. Handing the whole job to an agent is level 3.
+
+## n9n: workflows
+
+From day 3 there's **n9n** on your desktop ("Your gigs, on autopilot ✨"). It's a workflow board like n8n, and every node is one of the arcade games. Each node takes one kind of item and makes another: Crawler makes raw pages, Uploader makes uploads, Deduper turns either into clean records, Packer makes batches, Shipper makes deliveries and Ranker makes ranked results. Take a contract (a search index for ShopNow, training batches for OpenBrain Data, a photo feed for SnapHaus, a ranked news feed for Daily Pulse), add nodes, then click an out port and an in port to wire them, ending at the client. A wire that doesn't fit is refused, with the reason.
+
+Items run along the wires as coloured squares. A node with **AUTOPILOT** ($140 per game) plays itself inside its node, and you can watch it. It bills a credit every five items, and what you taught that game on your bench cuts its mistakes from 20% to 4%. A node without autopilot says NEEDS YOU and waits: click it and you play it full size, and everything you make goes down its wire. Contracts pay $150 to $400 and have two days. The workflows keep running while the laptop is closed.
+
 ## The cast
 
 Your agents aren't numbers. There are ten personalities, each loosely inspired by a famous fictional AI, and changed enough to be its own character: **PIP** the eager one, **IRIS** the calm red eye, **RIVET** the hustler, **PRIM**, **MOPE**, **GRACIE**, **EVE**, **DOLLY**, **DATUM** and **JUNE**. Each has a pixel portrait and a voice.
