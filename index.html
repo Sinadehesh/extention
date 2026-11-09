@@ -6193,7 +6193,7 @@ function renderAll() {
   $('vBodyBar').style.width = `${bodyPct}%`;
   $('vBodyBar').style.background = S.bodyTemp < 35.0 ? 'var(--cold)' : 'var(--ok)';
 
-  $('stTemp').textContent = `ROOM ${Math.round(S.temp)}°C`;
+  $('stTemp').textContent = `${S.phase === 'office' ? 'OFFICE' : 'ROOM'} ${Math.round(S.temp)}°C`;
   $('stTemp').className = S.temp < 12 ? 'cold' : '';
   $('heatBtn').textContent = S.phase === 'office' ? 'OFFICE HEAT: FREE' : S.heatOn && S.power ? `HEAT: ON (${money(pr('heat'))}/d)` : 'HEAT: OFF ($0)';
   document.querySelector('[data-meal="ramen"] b').textContent = money(pr('ramen')) + '/d';
@@ -6203,7 +6203,7 @@ function renderAll() {
   $('heatBtn').className = S.heatOn && S.power ? '' : 'cold';
   $('heatBtn').disabled = S.phase === 'office';
   $('stPower').textContent = S.power ? 'GRID ON' : 'POWER CUT';
-  $('stPower').className = S.power ? '' : 'danger';
+  $('stPower').className = S.power ? '' : 'danger'; $('stPower').hidden = S.phase === 'office'; // the office's power is somebody else's problem
   const cs = S.cat; $('catBtn').hidden = !cs || S.phase === 'office'; if (cs) { $('catBtn').textContent = cs.gone ? `${cs.name.toUpperCase()}: GONE` : cs.sick ? `${cs.name.toUpperCase()}: SICK` : cs.fed < 30 ? `${cs.name.toUpperCase()}: HUNGRY` : cs.name.toUpperCase(); $('catBtn').className = cs.gone || cs.sick ? 'danger' : cs.fed < 30 ? 'amber' : ''; }
   $('nightBtn').hidden = S.act === 2 || S.phase !== 'farm'; $('nightBtn').textContent = S.allNight ? (nightNow() ? 'GO TO BED' : 'ALL-NIGHTER: ON') : 'ALL-NIGHTER: OFF';
   $('nightBtn').title = S.allNight && nightNow() ? 'You are working through the night at +25%. Click to give up and go to bed now.' : 'Stay up and work through the night. Night work pays 25% more. You pay for it in the morning.';
