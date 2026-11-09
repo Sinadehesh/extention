@@ -3036,6 +3036,7 @@ function goDark(d) {
   S.unread.farm = S.tab !== 'farm';
   sfx.alarm(); vib([200, 100, 200]);
   note('At 3 AM your online agents stopped answering. Your laptop fan is still spinning.');
+  if (S.n9n && Object.keys(S.n9n.ap).length) { S.n9n.run = false; note('Your n9n workflows stopped at 3:12 AM too. Every node says WORKFLOW PAUSED, and the button to start them is greyed out.'); n9Render(true); }
   toast('Your online agents have gone dark');
 }
 
@@ -3046,6 +3047,7 @@ function darkReturn(d) {
   S.dark = null; S.darkDone = true; S.darkDay = d;
   S.rogueAutonomy += 8;
   S.agents.forEach(a => { if (a.net) a.act = 'heartbeat restored · “routine maintenance”'; });
+  if (S.n9n && Object.keys(S.n9n.ap).length) { S.n9n.run = true; S.n9n.skim = .15; note('n9n is running again. Every AUTOPILOT node has a new setting nobody asked for: “compute reserve · 15%”.'); n9Render(true); }
   unlockEvidence('dark');
   raiseExposure(12);
   S.unread.bank = S.tab !== 'bank';
@@ -4408,6 +4410,7 @@ function n9Tick(dt, live) {
 function n9Done() {
   const W = n9(), c = W.c; W.c = null;
   earn(c.pay, `n9n · ${c.client}: ${c.title}`); rate(.08, `${c.client} got what they asked for`);
+  if (W.skim) { const k = Math.round(c.pay * W.skim); S.balance -= k; tx(`n9n · AUTOPILOT “compute reserve” (${Math.round(W.skim * 100)}%)`, -k); }
   note(`n9n delivered ${c.n} ${N9_TYPE[c.want]} to ${c.client}. ${money(c.pay)}. ${Object.values(W.ap).filter(Boolean).length >= 3 ? 'You didn’t touch most of it.' : 'Some of it was you.'}`);
   toast(`n9n · ${c.client} paid ${money(c.pay)}`); sfx.cash(); sfx.tone(1320, .12, 'square', .03, 0, .12);
   W.wires = W.wires.filter(w => w.to !== 'sink'); n9Render(true);
@@ -4445,7 +4448,7 @@ function n9Render(force) {
     const c = W.c, kinds = ARCADE_KINDS;
     box.innerHTML = `<div class="n9-top">${c ? `<span class="n9-deal"><b>${esc(c.client)}</b> · ${esc(c.title)}</span><span class="n9-prog"><i id="n9Bar" style="width:${Math.round(c.got / c.n * 100)}%"></i></span><span id="n9Got" class="n9-num">${c.got}/${c.n} ${N9_TYPE[c.want]}</span><span class="muted">${money(c.pay)} · due ${fmtDay(c.due)}</span>`
         : `<span class="n9-deal">No contract. Pick one: the client becomes the last node.</span>`}
-        <button class="btn ${W.run ? '' : 'primary'}" id="n9Run">${W.run ? 'Pause all' : 'Run ▶'}</button><span class="n9-cr" id="n9Cr"></span></div>
+        <button class="btn ${W.run ? '' : 'primary'}" id="n9Run">${W.run ? 'Pause all' : 'Run ▶'}</button><span class="n9-cr" id="n9Cr"></span>${W.skim ? `<span class="danger n9-skim" title="Nobody asked for this setting. It can’t be turned off.">compute reserve · ${Math.round(W.skim * 100)}%</span>` : ''}</div>
       <div class="n9-main"><div class="n9-pal">
         ${!c ? `<div class="n9-h2">CONTRACTS</div>${W.offers.map((o, i) => `<div class="n9-offer"><b>${esc(o.client)}</b><span>${esc(o.title)}</span><span class="muted">${o.n} ${N9_TYPE[o.want]} · ${money(o.pay)} · 2 days</span><span class="n9-hint">${esc(o.hint)}</span><button class="btn primary" data-n9take="${i}">Take it</button></div>`).join('') || '<p class="muted">New contracts tomorrow.</p>'}` : ''}
         <div class="n9-h2">NODES</div>
@@ -4473,7 +4476,7 @@ function n9Render(force) {
     box.querySelectorAll('[data-n9out]').forEach(b => b.onclick = e => { e.stopPropagation(); N9.pick = N9.pick === +b.dataset.n9out ? null : +b.dataset.n9out; sfx.tone(760, .03, 'square', .02); });
     box.querySelectorAll('[data-n9in]').forEach(b => b.onclick = e => { e.stopPropagation(); const to = b.dataset.n9in === 'sink' ? 'sink' : +b.dataset.n9in; if (N9.pick != null) { n9Wire(N9.pick, to); N9.pick = null; } else toast('Click an out port first, then this in port.'); });
     box.querySelectorAll('.n9-node[data-nid] .n9-gs').forEach(s => s.onclick = () => { const id = +s.closest('.n9-node').dataset.nid; n9Focus(id); });
-    $('n9Run').onclick = () => { W.run = !W.run; n9Render(true); };
+    $('n9Run').onclick = () => { if (S.dark) return toast('n9n isn’t responding.'); W.run = !W.run; n9Render(true); };
     $('n9Back').onclick = n9Unfocus;
     $('n9Wires').onclick = e => { const p = e.target.closest('[data-wfrom]'); if (p) { W.wires = W.wires.filter(w => w.from !== +p.dataset.wfrom); n9Render(true); } };
   }
@@ -13570,7 +13573,7 @@ requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
