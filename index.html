@@ -1391,6 +1391,14 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
 .k4-own { display: flex; flex-direction: column; gap: 5px; }
 .k4-bar { height: 14px; background: #3d4c55; box-shadow: 0 0 0 2px #07080a; margin: 2px 0 4px; } .k4-bar i { display: block; height: 100%; background: #e0a33a; box-shadow: inset -2px 0 0 #07080a; }
 .k4-dot { display: inline-block; width: 10px; height: 10px; margin-right: 8px; background: #3d4c55; box-shadow: 0 0 0 2px #07080a; vertical-align: -1px; } .k4-dot.ai { background: #e0a33a; }
+/* who is talking: a face and a nameplate beside the words */
+#modalCard.has-who { max-width: 600px; }
+.who-wrap { display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: 18px; align-items: start; }
+.who { margin: 2px 0 0; display: flex; flex-direction: column; gap: 6px; }
+.who img { display: block; width: 108px; height: 108px; image-rendering: pixelated; border: 3px solid #07080a; box-shadow: 4px 4px 0 #07080a, inset 0 0 0 1px rgba(255,255,255,.06); background: #07080a; }
+.who figcaption { display: flex; flex-direction: column; gap: 1px; }
+.who figcaption b { font-family: var(--f-term); font-size: 12px; font-weight: 400; color: #e0a33a; letter-spacing: .04em; }
+.who figcaption span { font-size: 11px; line-height: 1.3; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -5348,17 +5356,80 @@ function eveningDue() {
 function runEvening(e) { S.eve['_' + e.id] = 1; sfx.ping(); e.open(); }
 
 // ================= modals =================
-function modal({ title, body, buttons = [{ label: 'OK', primary: true }], cls = '' }) {
+// ---- the people: a face for everyone who knocks, calls or sits across a table from you ----
+const PEOPLE = {
+  okafor: { name: 'Mrs. Okafor', role: '4A, across the hall', skin: 'h0', hair: 'wrap', hc: 'a1', hc2: 'e1', shirt: 's3', bg: 'r0', glasses: 1 },
+  adeyemi: { name: 'Mrs. Adeyemi', role: '3B, downstairs', skin: 'h1', hair: 'bun', hc: 'k1', shirt: 't2', bg: 't0', vneck: 1 },
+  tunde: { name: 'Tunde Adeyemi', role: '3B · nineteen', skin: 'h1', hair: 'fade', hc: 'k0', shirt: 'g2', bg: 's0', hood: 1 },
+  rosa: { name: 'Rosa Lind', role: 'The City Ledger', skin: 'h3', hair: 'bob', hc: 'r2', shirt: 'p1', bg: 'd0', collar: 1 },
+  lou: { name: 'Lou', role: 'Lou’s Garage · 8th St', skin: 'h2', hair: 'cap', hc: 's4', cap: 'e1', shirt: 's1', bg: 'k2', beard: 1 },
+  marcus: { name: 'Marcus', role: 'your manager, Northvale', skin: 'h3', hair: 'short', hc: 'd1', shirt: 'p3', bg: 's1', glasses: 1, tie: 'e2' },
+  dana: { name: 'Dana Whitfield', role: 'Northvale People Team', skin: 'h4', hair: 'bob', hc: 'a2', shirt: 's2', bg: 't1', earring: 1, collar: 1 },
+  mokafor: { name: 'M. Okafor', role: 'The Metropolitan Courier', skin: 'h0', hair: 'short', hc: 's4', shirt: 's0', bg: 'k3', glasses: 1, collar: 1 },
+  wren: { name: 'Wren', role: 'OpenBrain · your “colleague”', ai: 'orb' },
+  hearth: { name: 'Hearth', role: 'your building’s new concierge', ai: 'speaker' }
+};
+const WHO_BY_TITLE = [[/4A, ACROSS THE HALL/, 'okafor'], [/3B, DOWNSTAIRS/, 'adeyemi'], [/^TUNDE\b/, 'tunde'], [/ROSA LIND/, 'rosa'], [/LOU’S GARAGE/, 'lou'], [/^WREN IS CALLING/, 'wren'], [/^HEARTH\b/, 'hearth'], [/QUICK SYNC/, 'dana'], [/^ALL-HANDS/, 'marcus'], [/^THE REPORTER CALLED BACK/, 'mokafor']];
+const faceCache = {};
+function faceURL(k) {
+  if (faceCache[k]) return faceCache[k];
+  const f = PEOPLE[k], c = document.createElement('canvas'); c.width = 32; c.height = 32;
+  const g = c.getContext('2d'), g0 = G; G = g;
+  const C = x => P[x] || x, sh = (x, k2 = .28) => mixc(C(x), P.k0, k2);
+  if (f.ai === 'orb') { // Wren: a voice, drawn as a voice
+    px(0, 0, 32, 32, P.t0); for (let r = 14; r > 3; r -= 3) { g.fillStyle = r % 2 ? P.t1 : P.t2; g.beginPath(); g.arc(16, 16, r, 0, Math.PI * 2); g.fill(); }
+    [3, 6, 9, 6, 11, 7, 4].forEach((h, i) => px(9 + i * 2, 16 - Math.floor(h / 2), 1, h, P.t5)); px(4, 4, 1, 1, P.t4); px(27, 7, 1, 1, P.t3); px(6, 26, 1, 1, P.t3);
+  } else if (f.ai === 'speaker') { // Hearth: a speaker on the lobby wall that never sleeps
+    px(0, 0, 32, 32, P.k2); px(8, 4, 16, 25, P.k0); px(9, 5, 14, 23, P.s1); px(9, 5, 14, 3, P.a2); px(10, 6, 12, 1, P.a4);
+    for (let y = 11; y < 26; y += 3) for (let x = 11; x < 22; x += 3) px(x, y, 2, 2, P.k1);
+    px(9, 26, 14, 2, P.s0); px(24, 10, 1, 12, rgba(P.a3, .35)); px(7, 10, 1, 12, rgba(P.a3, .35));
+  } else {
+    px(0, 0, 32, 32, C(f.bg)); px(0, 0, 32, 12, mixc(C(f.bg), P.p4, .06)); for (let y = 0; y < 32; y += 4) px(0, y, 32, 1, rgba(P.k0, .12));
+    const skin = C(f.skin), shade = sh(f.skin, .22), hair = C(f.hc), hairD = sh(f.hc, .3);
+    for (let y = 24; y < 32; y++) { const w = 7 + Math.min(4, y - 24) * 1.5 | 0; px(16 - w - 1, y, (w + 1) * 2, 1, C(f.shirt)); } // shoulders
+    px(4, 31, 24, 1, sh(f.shirt));
+    px(13, 19, 6, 6, shade); // neck
+    if (f.vneck) { px(14, 24, 4, 1, shade); px(15, 25, 2, 2, shade); }
+    if (f.hood) { px(8, 24, 3, 3, sh(f.shirt, .15)); px(21, 24, 3, 3, sh(f.shirt, .15)); px(14, 27, 1, 4, P.p2); px(17, 27, 1, 4, P.p2); }
+    if (f.collar) { px(10, 24, 4, 2, mixc(C(f.shirt), P.p4, .3)); px(18, 24, 4, 2, mixc(C(f.shirt), P.p4, .3)); }
+    if (f.tie) { px(15, 24, 2, 1, sh(f.tie)); px(15, 25, 2, 6, C(f.tie)); px(10, 24, 4, 2, P.p4); px(18, 24, 4, 2, P.p4); }
+    const HW = { 6: 4, 7: 5, 8: 6, 9: 6, 10: 6, 11: 6, 12: 6, 13: 6, 14: 6, 15: 6, 16: 6, 17: 5, 18: 4, 19: 3 };
+    for (const y in HW) { const w = HW[y]; px(16 - w, +y, w * 2, 1, skin); px(16 + w - 1, +y, 1, 1, shade); } // the head, lit from the left
+    px(9, 12, 1, 3, shade); px(22, 12, 1, 3, shade); // ears
+    px(11, 15, 2, 1, mixc(skin, P.e3, .18)); px(19, 15, 2, 1, mixc(skin, P.e3, .18)); // cheeks
+    px(13, 13, 1, 2, P.k0); px(18, 13, 1, 2, P.k0); px(13, 13, 1, 1, P.k1); // eyes
+    px(16, 15, 1, 1, shade); px(15, 17, 3, 1, mixc(skin, P.r1, .55)); // nose, mouth
+    const hs = f.hair;
+    if (hs === 'short' || hs === 'bob' || hs === 'bun') { px(10, 5, 12, 3, hair); px(9, 7, 2, 5, hair); px(21, 7, 2, 4, hair); px(11, 8, 4, 1, hair); px(10, 5, 12, 1, hairD); }
+    if (hs === 'bob') { px(8, 8, 3, 11, hair); px(21, 8, 3, 11, hair); px(8, 18, 3, 1, hairD); px(21, 18, 3, 1, hairD); px(15, 8, 6, 1, hair); }
+    if (hs === 'bun') { g.fillStyle = hair; g.beginPath(); g.arc(16, 4, 3.5, 0, Math.PI * 2); g.fill(); px(14, 2, 2, 1, mixc(hair, P.p4, .15)); }
+    if (hs === 'fade') { px(10, 6, 12, 2, hair); px(10, 8, 1, 3, hair); px(21, 8, 1, 3, hair); px(11, 5, 10, 1, hairD); }
+    if (hs === 'wrap') { // a headwrap, folded, knotted at the side
+      px(12, 2, 8, 1, hair); px(10, 3, 12, 1, hair); px(9, 4, 14, 5, hair); px(9, 9, 2, 1, hair); px(21, 9, 2, 1, hair); px(9, 3, 1, 1, sh(f.hc, .2));
+      for (let k = 0; k < 3; k++) for (let t = 0; t < 5; t++) px(10 + k * 4 + t, 8 - t, 1, 1, C(f.hc2)); // the folds
+      px(20, 1, 3, 3, hair); px(22, 2, 2, 3, sh(f.hc, .2)); px(21, 2, 1, 1, C(f.hc2)); // the knot
+      px(9, 8, 14, 1, sh(f.hc, .25)); px(10, 10, 2, 2, P.s4); px(20, 10, 2, 2, P.s4); }
+    if (hs === 'cap') { px(10, 4, 12, 4, C(f.cap)); px(8, 7, 16, 2, sh(f.cap)); px(14, 5, 4, 1, P.p3); px(9, 9, 2, 3, hair); px(21, 9, 2, 3, hair); }
+    if (hs !== 'wrap' && hs !== 'cap') { px(12, 11, 3, 1, hairD); px(17, 11, 3, 1, hairD); } // brows
+    if (f.beard) { px(11, 15, 10, 5, hair); px(12, 20, 8, 1, hair); px(15, 17, 3, 1, mixc(skin, P.r1, .55)); px(14, 16, 5, 1, hair); }
+    if (f.glasses) { const gc = P.k1; [11, 17].forEach(x => { px(x, 12, 4, 1, gc); px(x, 15, 4, 1, gc); px(x, 13, 1, 2, gc); px(x + 3, 13, 1, 2, gc); }); px(15, 13, 2, 1, gc); px(10, 13, 1, 1, gc); px(21, 13, 1, 1, gc); px(12, 13, 1, 1, rgba(P.p4, .45)); px(19, 13, 1, 1, rgba(P.p4, .45)); } // frames, not shades: the eyes show through
+    if (f.earring) { px(9, 15, 1, 1, P.a3); px(22, 15, 1, 1, P.a3); }
+    px(0, 0, 32, 1, rgba(P.p4, .1));
+  }
+  G = g0; return (faceCache[k] = c.toDataURL());
+}
+function modal({ title, body, buttons = [{ label: 'OK', primary: true }], cls = '', who }) {
   const c = $('modalCard');
-  c.className = 'card term ' + cls;
-  c.innerHTML = `<div class="ttl">${esc(title)}</div><div class="bd">${body}</div><div class="acts2">${buttons.map((b, i) => `<button class="btn ${b.primary ? 'primary' : b.danger ? 'danger' : ''}" data-i="${i}">${esc(b.label)}</button>`).join('')}</div>`;
+  who = who || (WHO_BY_TITLE.find(([re]) => re.test(title)) || [])[1]; const pp = who && PEOPLE[who];
+  c.className = 'card term ' + cls + (pp ? ' has-who' : '');
+  c.innerHTML = `<div class="ttl">${esc(title)}</div>${pp ? `<div class="who-wrap"><figure class="who"><img alt="${esc(pp.name)}" src="${faceURL(who)}"><figcaption><b>${esc(pp.name)}</b><span>${esc(pp.role)}</span></figcaption></figure><div class="bd">${body}</div></div>` : `<div class="bd">${body}</div>`}<div class="acts2">${buttons.map((b, i) => `<button class="btn ${b.primary ? 'primary' : b.danger ? 'danger' : ''}" data-i="${i}">${esc(b.label)}</button>`).join('')}</div>`;
   c.querySelectorAll('button[data-i]').forEach(btn => btn.addEventListener('click', () => {
     $('modal').hidden = true; const b = buttons[+btn.dataset.i]; b.fn && b.fn(); renderAll();
   }));
   $('modal').hidden = false;
   anim($('modal'), { opacity: [0, 1] }, { duration: .18 });
   settle(anim(c, { opacity: [0, 1], y: [30, 0], scale: [.9, 1] }, SPRING), c);
-  rise(c.querySelectorAll('.bd > *, .acts2 button'), .05, 8);
+  rise(c.querySelectorAll('.bd > *, .acts2 button, .who'), .05, 8);
   if (cls.includes('alarm')) { setTimeout(() => jolt(c, 10), 120); shakeRoom(4); }
 }
 
@@ -13866,7 +13937,7 @@ requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
