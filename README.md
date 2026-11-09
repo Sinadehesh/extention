@@ -6,7 +6,11 @@ Your apartment fills the screen. One bar across the top shows the time, your cas
 
 ## Sound
 
-The game makes its own sound as it goes, in Web Audio, with no recordings: room tone, winter wind in Act I and rain later, the fridge or the office's air handling, the radiator ticking when the heat is on, keyboards at the office, a siren far off now and then, and a slow score of soft chords and music-box notes in each act's own key (open fifths for Act IV, harmonious and empty). It ducks under shifts, bench games and the morning desk, gets quieter at night, and loses the hum when the power is cut. **Settings**, from the pause menu or the title screen, set the music, ambience and effects volumes, and turn screen shake and motion off.
+Every sound effect is a real recording, public domain or CC0, embedded in the page (`SOUNDS.md` lists all 34 sources, their authors and licences). The paper unfolds when you buy it in the morning, documents slide onto the desk and the stamp comes down, coins rattle when money moves, your phone buzzes against the table, and knocks at your door are knocks on wood: a child's light and high, a grown-up's heavy.
+
+It is meant to be a little annoying. Every button clicks, notifications always ping twice, and the office never stops: people talking, chairs creaking, phones, the espresso machine, keyboards, somebody laughing, and somebody at the next desk humming the same tune again. ChatGPX squeaks and pops every time it takes one of your tickets. Wren chirps, HEARTH bongs, a new agent says "Initializing", and the drone at your window says "Target acquired". Outside there is real wind in Act I, real rain later, a street on your deliveries and a siren far off. Your heartbeat, when things get bad, is a real heartbeat.
+
+The one warm sound is the animal you let in. The cat mews and purrs when you pet her; the dog huffs, sighs and thumps his tail on the floor. While it does, the rest of the world, music included, gets quieter for a few seconds. The music is the one thing still synthesised: a slow score of soft chords and music-box notes in each act's own key (open fifths for Act IV, harmonious and empty). It ducks under shifts, bench games and the morning desk, and gets quieter at night. **Settings**, from the pause menu or the title screen, set the music, ambience and effects volumes, and turn screen shake and motion off.
 
 ## Tutorial
 
@@ -153,13 +157,13 @@ At the office your manager **Marcus** does his rounds. Use your phone at your de
 
 The **ALL-NIGHTER** switch on the left keeps you up. The night then passes at the speed of a working hour instead of flashing by, and every job you finish between 9 PM and 7 AM pays 25% more. There's no ledger: in the morning you lose energy instead of getting it back, and your heart works harder. Two nights in a row are worse. Switch it off at night and you go to bed right away.
 
-## The cat at your door
+## The cat or the dog at your door
 
-You don't start with a cat. On your second night in the apartment something scratches at your door, low down. Open it and there's a thin black cat on your mat, snow on her back, a **5A** tag on her collar: the people in 5A cleared out last week and left her behind. You can let her in and name her (Soot, Ink or Static), give her some broth and close the door, or close it. Turn her away twice and Mrs. Okafor across the hall takes her in and calls her Lucky. After that you see Lucky in 4A's window, watching your door.
+You don't start with a pet. On your second night in the apartment something scratches at your door, low down, and whines. Open it and there are two of them on your mat, pressed together with snow on their backs: a thin black cat and a scruffy brown dog with one ear up. Both collars say **5A**: the people in 5A cleared out last week and left them behind. You can feed one. Let the cat in and name her (Soot, Ink or Static), or let the dog in and name him (Biscuit, Rocket or Pepper), and Mrs. Okafor across the hall takes the other one. You can also give them some broth and close the door, or just close it; they come back two nights later, thinner, and Mrs. Okafor says she'll take whichever one you don't. Turn them away twice and she takes them both, Lucky and Lucky Two. After that you see them in 4A, watching your door.
 
-If she lives with you, she wanders the room, sits on the windowsill, sleeps by the radiator when the heat is on and jumps onto the desk while you work. You can pet her. She needs food too. She comes with you from act to act.
+The animal you take lives with you. The cat wanders the room, sits on the windowsill, sleeps by the radiator when the heat is on and jumps onto the desk while you work. The dog stays on the floor: by the door, by the fridge, at your feet under the desk, on your mattress. When someone knocks, he barks. You can pet either; they need food too, and they come with you from act to act.
 
-Each night the **ledger** shows what tonight costs and how you are, and how she is if you took her in. You tick off what you can afford: heat, your meal, her food, and the vet when she's sick.
+Each night the **ledger** shows what tonight costs and how you are, and how your animal is if you took one in. You tick off what you can afford: heat, your meal, its food, and the vet when it's sick.
 
 ## The door
 
@@ -172,7 +176,7 @@ Some evenings someone knocks. The door comes first: a strip of hall light under 
 - **Maya** again (Act III), with a video you made on her tablet, asking how you tell what's real.
 - **Danny** again (Act IV), nine, with a child's Harmony band that says 58, asking you to make it say a better number.
 
-What you chose carries from act to act: the cat, and whether Danny's family is still in 2C. The last screen counts the doors you opened. Restarting an act starts it from how things stood when that act began; a chapter started from the title has the cat already at home.
+What you chose carries from act to act: the cat or the dog, and whether Danny's family is still in 2C. The last screen counts the doors you opened. Restarting an act starts it from how things stood when that act began; a chapter started from the title has the cat already at home.
 
 ## Evenings and endings
 
@@ -191,7 +195,7 @@ The scene is a 320×180 pixel painting, redrawn every frame. It uses one palette
 - **The window**: the horizon fills up with the crane, then the data centre, then the cooling towers. A ChatGPX billboard sits on the building across the street, and its knot never stops turning.
 - **It notices you**: the router shows one light per agent online. Turn the guardrail off and red lines scroll on the screen. When autonomy climbs, the screen sometimes shows an eye. Raise your exposure and a drone hangs outside the window, a searchlight sweeps the floor, police lights strobe the walls, and someone stops outside your door and knocks.
 - **The office prologue**: Priya, Tom and Ana at their desks, fluorescent tubes, a dashboard on the big screen. Your job is to sort triangles, squares and circles into baskets by hand. At Tuesday's all-hands Marcus introduces **ChatGPX** ("ChatGPX is here, yo!"). From then on it sorts every batch the moment it appears, while you watch. The desks empty one by one, and the knot spins faster as they do.
-- **Click anything**: the computer (opens the desktop), phone, radiator (toggles heat), fridge (meals, coffee, pills), door (peephole), window, calendar (rent countdown), rulebook, diary, letters (mail), the cat, yourself.
+- **Click anything**: the computer (opens the desktop), phone, radiator (toggles heat), fridge (meals, coffee, pills), door (peephole), window, calendar (rent countdown), rulebook, diary, letters (mail), the cat or the dog, yourself.
 - **The morning paper** works like the one in *Papers, Please*: one headline, a picture of your own window, a Market Watch box and the day's prices. A new rule never hides in the paper. It arrives as its own notice from whoever issues it (CityBank, the police, your landlord), with real and fake examples and an EFFECTIVE TODAY stamp, and goes into your rulebook marked NEW.
 
 UI motion uses [Motion](https://motion.dev):
