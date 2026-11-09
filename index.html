@@ -1006,8 +1006,7 @@ html.uikit .lscreen { border: 6px solid transparent !important; border-image: va
   background: repeating-linear-gradient(0deg, rgba(7,8,10,.22) 0 2px, transparent 2px 4px), radial-gradient(ellipse 80% 70% at 50% 38%, #174540 0%, #0e2724 55%, #0d1013 100%) !important; }
 html.uikit .lscreen::before { content: 'LoopOS'; position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); font-family: var(--f-term); font-size: 92px; letter-spacing: .08em; color: rgba(127,216,192,.06); pointer-events: none; white-space: nowrap; }
 html.uikit .win > .osbar { background: #2e3a42 !important; box-shadow: inset 0 2px 0 #3d4c55, inset 0 -2px 0 #1d242b !important; border-bottom: 3px solid #07080a !important; color: #a6a690 !important; font-family: var(--f-term); letter-spacing: .06em; padding: 6px 10px 5px !important; position: relative; }
-#lscreen.multi > .win:not(.active) > :not(.osbar) { filter: brightness(.6) saturate(.55); transition: filter .12s; }
-#lscreen.multi > .win:not(.active) > .osbar { filter: brightness(.8); }
+#lscreen.multi > .win:not(.active)::after { content: ''; position: absolute; inset: 0; z-index: 50; background: rgba(7,8,10,.46); pointer-events: none; } /* an overlay, not a filter: the window behind doesn't repaint every frame */
 #lscreen.multi > .win:not(.active) { cursor: default; }
 html.uikit .win.active > .osbar { background: #174540 !important; box-shadow: inset 0 2px 0 #20685c, inset 0 -2px 0 #0e2724 !important; color: #c4f0e4 !important; }
 html.uikit .win > .osbar::before { content: ''; display: inline-block; width: 9px; height: 9px; margin-right: 8px; background: #e04a34; box-shadow: 12px 0 0 #e0a33a, 24px 0 0 #2fb589, 0 0 0 2px #07080a, 12px 0 0 2px #07080a, 24px 0 0 2px #07080a; vertical-align: -1px; margin-right: 34px; }
