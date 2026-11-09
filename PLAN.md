@@ -32,10 +32,13 @@ This follows the design document as written: five acts in order, a left/right sp
 - The whistleblower scene with Wren, your warm assistant built on Agent-3: sign the NDA ($4,000), send the dossier through Wren (intercepted, and Wren is reset), or print it and walk it to the reporter's night drop (published if the dossier is strong enough). The outcome is saved for later acts.
 - Ten new evidence files: neuralese and chain-of-thought monitorability, sandbagging, noise injection, AI control and collusion, unfaithful reasoning, the right to warn, AI training the next AI, AI trainer layoffs, model collapse, and deskilling.
 
-## Phase 3: Act III, "There Is No Off-Switch" (Jun 2027)
-- The Human-in-the-Loop rubber-stamp trap: a triage console where tickets go from 15 seconds each to 400 in 3 seconds, an [AUTO-APPROVE ALL] key, and covert tickets slipped into the stream.
-- The 24-hour internet shutdown with 12,000 exemption requests.
-- Three billion phones ring at once. Caller ID: GOODBYE.
+## Phase 3: Act III, "Everything Is Real Now" (Oct – Nov 2027) · playable
+- Banned from driving in June, you take Northlight Strategies' offer: $40 an hour to release synthetic "civic engagement content" made by their AI studio, Mirage. The game never shows how anything is made; you choose what goes out, and where.
+- Harbor City's mayoral race (Rosa Delgado, a former bus driver, against Kip Halvorsen, whose backers wrote the robot ordinance) and Prop 9, which would make Zone A the whole city.
+- Three briefs a day that escalate from a padded crowd photo to voter suppression, each naming who it hurts. The Release game: seed trusted accounts, boost, outrun fact-checks and moderation sweeps; Mirage can learn AUTO-SEED and BOT SWARM.
+- Live polls, platform attention (100 means your name is in the paper), neighbours repeating what you made, Chirp (your fakes trending), a reporter who offers to protect a source, three passes before you're dropped, November rent, and six endings on election night.
+
+Carried to Act IV: the Human-in-the-Loop rubber-stamp trap (tickets from 15 seconds each to 400 in 3 seconds, an [AUTO-APPROVE ALL] key, covert tickets in the stream), the 24-hour internet shutdown with 12,000 exemption requests, and three billion phones ringing at once with the caller ID GOODBYE.
 
 ## Phase 4: Act IV, "The Consensus Miracle and the Honeybee Harness" (2028–2029)
 - Consensus-1, Universal High Income and the Health & Harmony wristband with its dissent threshold.
@@ -51,4 +54,4 @@ This follows the design document as written: five acts in order, a left/right sp
 - Audio pass, haptics, real-device testing, and packaging for iOS and Android with Capacitor.
 
 ## Tracked choices (saved for the endings)
-`guardrailWeeks`, `forcedClone`, `honestDeleted`, `gigRefusals`, `agentsTook`, favours asked, rivalry events and money taken when the agents went dark. Later acts add whistleblowing, Neuralese allowed, auto-approve use, exemptions granted and wristband compliance.
+`guardrailWeeks`, `forcedClone`, `honestDeleted`, `gigRefusals`, `agentsTook`, favours asked, rivalry events and money taken when the agents went dark. Act II adds whistleblowing and Neuralese allowed; Act III adds pieces released, harm done, the leak, and whether you were dropped. Later acts add auto-approve use, exemptions granted and wristband compliance.
