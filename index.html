@@ -1104,9 +1104,10 @@ html.uikit #roomStatus #nightBtn.on.late { border-image-source: var(--fr-hot) !i
 /* the top bar never cuts your cash off. Under 1560px the evidence and full-screen buttons become icons. */
 #hud .hc:first-child { flex-shrink: 0; }
 @media (max-width: 1560px) {
-  html.uikit #top :is(#fsBtn, #evBtn) { font-size: 0 !important; letter-spacing: 0; width: 46px; min-width: 46px; height: 34px; padding: 0 !important; position: relative; }
-  html.uikit #top :is(#fsBtn, #evBtn)::before { content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; margin: -11px 0 0 -10px; background: var(--ic-fs) center / 20px 20px no-repeat; image-rendering: pixelated; }
+  html.uikit #top :is(#fsBtn, #evBtn, #menuBtn) { font-size: 0 !important; letter-spacing: 0; width: 46px; min-width: 46px; height: 34px; padding: 0 !important; position: relative; }
+  html.uikit #top :is(#fsBtn, #evBtn, #menuBtn)::before { content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; margin: -11px 0 0 -10px; background: var(--ic-fs) center / 20px 20px no-repeat; image-rendering: pixelated; }
   html.uikit #top #evBtn::before { background-image: var(--ic-files); }
+  html.uikit #top #menuBtn::before { background-image: var(--ic-menu); }
 }
 /* the AI assist row on the bench */
 .bn-assist { flex-wrap: wrap; gap: 6px 8px; align-items: center; justify-content: flex-start !important; }
@@ -1274,6 +1275,17 @@ html.uikit #phoneModal .phone:has(.ph-lock) { border-image-slice: 6 !important; 
 #phoneModal .ch-n { font-family: var(--f-term); font-size: 10.5px; color: var(--muted); }
 #phoneModal .ch-r { font-size: 12.5px; color: #b4aa8c; border-left: 2px solid #2e3a42; padding-left: 6px; line-height: 1.35; } #phoneModal .ch-r b { font-weight: 400; font-family: var(--f-term); font-size: 11px; color: #9aaab1; }
 html.uikit .appic[data-app="chirp"] { --gl: var(--gl-chirp); }
+/* the pause menu */
+#pauseMenu { position: fixed; inset: 0; z-index: 97; background: rgba(7,8,10,.78); display: grid; place-items: center; }
+#pauseMenu[hidden] { display: none; }
+#pauseMenu .pm-card { width: min(380px, 90vw); display: flex; flex-direction: column; gap: 9px; padding: 18px 20px; background: #161b20; border: 3px solid #07080a; box-shadow: 6px 6px 0 #07080a; }
+html.uikit #pauseMenu .pm-card { border: 18px solid transparent; border-image: var(--fr-win) 3 fill / 18px / 0 stretch; background: transparent; padding: 4px 6px; box-shadow: none; filter: drop-shadow(6px 6px 0 rgba(7,8,10,.85)); }
+#pauseMenu .pm-k { font-family: var(--f-term); font-size: 12px; letter-spacing: .14em; color: #e0a33a; }
+#pauseMenu .pm-t { font-family: var(--f-term); font-size: 22px; color: var(--ink); margin-bottom: 6px; }
+#pauseMenu .btn { width: 100%; }
+#pauseMenu .btn[data-armed] { animation: pmArm .9s steps(2) infinite; }
+@keyframes pmArm { 50% { filter: brightness(1.35); } }
+#pauseMenu .pm-f { margin: 4px 0 0; font-size: 12px; color: var(--muted); line-height: 1.4; }
 </style>
 </head>
 <body>
@@ -1317,6 +1329,7 @@ html.uikit .appic[data-app="chirp"] { --gl: var(--gl-chirp); }
         <button data-speed="3" aria-pressed="false">3×</button>
         <button id="muteBtn" aria-pressed="false" aria-label="Mute">♪</button>
       </div>
+      <button id="menuBtn" class="fs" title="Menu: pause, tutorial, sound, restart (Esc)">MENU</button>
       <button id="fsBtn" class="fs" aria-pressed="false" title="Full screen">FULL SCREEN</button>
     </div>
   </header>
@@ -1492,6 +1505,10 @@ html.uikit .appic[data-app="chirp"] { --gl: var(--gl-chirp); }
 <div class="modal" id="modal" hidden><div class="card" id="modalCard"></div></div>
 <div class="modal" id="phoneModal" hidden><div class="phone" id="phoneScreen"></div><div id="bossWarn" hidden>FOOTSTEPS · MARCUS IS COMING</div></div>
 <div id="tut" hidden><div id="tutHole"></div><div id="tutCard"><div id="tutK"></div><div id="tutT"></div><p id="tutS"></p><div class="tut-b"><button class="btn" id="tutSkip">Skip the tutorial</button><button class="btn primary" id="tutOk">Got it · Enter</button></div></div></div>
+<div id="pauseMenu" hidden><div class="pm-card"><div class="pm-k" id="pmK">PAUSED</div><div class="pm-t">The clock has stopped.</div>
+  <button class="btn primary" id="pmResume">Resume · Esc</button><button class="btn" id="pmTut"></button><button class="btn" id="pmSound"></button>
+  <button class="btn" id="pmRestart"></button><button class="btn danger" id="pmTitle">Quit to the title screen</button>
+  <p class="pm-f">Progress inside an act isn’t saved. Endings, evidence and the tutorial are.</p></div></div>
 <div id="actCard" hidden><div class="ac-in"><div class="ac-k" id="acK"></div><div class="ac-n" id="acN"></div><div class="ac-t" id="acT"></div><div class="ac-d" id="acD"></div><p class="ac-l" id="acL"></p><div class="ac-go">click or press any key</div></div></div>
 <div id="shiftModal" hidden><div class="shift-top"><b id="shTitle"></b><span id="shInfo"></span><button class="btn" id="shQuit">End the shift</button></div><div class="shift-stage" id="shStage"></div></div>
 <div class="modal" id="evModal" hidden>
@@ -10577,6 +10594,7 @@ document.querySelectorAll('canvas.rail-ic').forEach(c => { const g = c.getContex
     body: [['....oo....', '...oppo...', '...oppo...', '...oeeo...', '...oeeo...', '...oeeo...', '..oeeeeo..', '..oeeeeo..', '...oooo...', '..........'], { o: P.k0, p: P.p3, e: P.e3 }],
     clock: [['...oooo...', '.oopppoo..', '.oppkpppo.', 'opppkpppo.', 'opppkkkpo.', 'oppppppo..', '.oppppppo.', '.oopppoo..', '...oooo...', '..........'], { o: P.k0, p: P.p3, k: P.k1 }],
     fs: [['oooo..oooo', 'oppo..oppo', 'opo....opo', 'oo......oo', '..........', '..........', 'oo......oo', 'opo....opo', 'oppo..oppo', 'oooo..oooo'], { o: P.k0, p: P.p3 }],
+    menu: [['..........', 'oooooooooo', 'oppppppppo', 'oooooooooo', '..........', 'oooooooooo', 'oppppppppo', 'oooooooooo', '..........', '..........'], { o: P.k0, p: P.p3 }],
     files: [['.oooo.....', 'oaaaao....', 'oaaaaooooo', 'oAAAAAAAAo', 'oApppppAAo', 'oAAAAAAAAo', 'oApppAAAAo', 'oAAAAAAAAo', 'oAAAAAAAAo', 'oooooooooo'], { o: P.k0, a: P.e1, A: P.e2, p: P.p3 }]
   };
   for (const [k, [rows, map]] of Object.entries(I)) css.setProperty('--ic-' + k, url(scaled(mgArt(rows, map), 1)));
@@ -13326,19 +13344,47 @@ function dockSync() {
 }
 
 // ---- full screen: it's a game, not a web page ----
-function goFull() { const d = document.documentElement; if (!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(() => {}); }
+function goFull() { const d = document.documentElement; if (!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().then(() => { try { navigator.keyboard && navigator.keyboard.lock && navigator.keyboard.lock(['Escape']).catch(() => {}); } catch (e) {} }).catch(() => {}); }
 $('fsBtn').onclick = () => { sfx.init(); document.fullscreenElement ? document.exitFullscreen() : goFull(); };
 document.addEventListener('fullscreenchange', () => { $('fsBtn').setAttribute('aria-pressed', String(!!document.fullscreenElement)); $('fsBtn').textContent = document.fullscreenElement ? 'WINDOW' : 'FULL SCREEN'; setTimeout(fitRoom, 60); });
 $('startBtn').addEventListener('click', goFull);
 $('narrowX').onclick = () => { $('narrowNote').hidden = true; };
 
 addEventListener('keydown', e => {
-  if (e.key !== 'Escape' || !$('modal').hidden || !S) return;
+  if (e.key !== 'Escape' || !S) return;
+  if (!$('pauseMenu').hidden) return pauseClose();
+  if (!$('modal').hidden) return;
   if (!$('popKitchen').hidden) return closeKitchen();
   if (!$('phoneModal').hidden) return closePhone();
   if (lapOpen()) return closeLaptop();
-  if (!$('gateModal').hidden) { S.gateOpen = false; gateSync(); }
+  if (!$('gateModal').hidden) { S.gateOpen = false; gateSync(); return; }
+  if (!SHC && $('titleScreen').hidden && $('endScreen').hidden && $('troubleScreen').hidden && $('actCard').hidden && !tutOn() && !S.over) pauseOpen();
 });
+// ---- the pause menu ----
+let pauseSpeed = 1;
+function pauseOpen() {
+  for (const o of document.querySelectorAll('#pauseMenu [data-armed]')) { delete o.dataset.armed; o.textContent = o.dataset.was; }
+  pauseSpeed = speed || pauseSpeed || 1; setSpeed(0);
+  const a3 = S.phase === 'mirage', a2 = S.act === 2;
+  $('pmK').textContent = `PAUSED · ${a3 ? 'ACT III' : a2 ? 'ACT II' : 'ACT I'} · ${fmtLong(S.day).toUpperCase()}`;
+  $('pmTut').textContent = save.tut && save.tut.__off ? 'Tutorial: off · turn it on' : 'Tutorial: on · turn it off';
+  $('pmSound').textContent = sfx.muted ? 'Sound: off · turn it on' : 'Sound: on · turn it off';
+  $('pmRestart').textContent = a3 ? 'Restart Act III from October 4' : a2 ? 'Restart Act II from May 1' : S.phase === 'office' ? 'Restart Act I from January 25' : 'Restart Act I from February 1';
+  $('pauseMenu').hidden = false; sfx.tone(440, .06, 'square', .02);
+}
+function pauseClose() { $('pauseMenu').hidden = true; setSpeed(pauseSpeed || 1); }
+$('pmResume').onclick = pauseClose;
+$('menuBtn').onclick = () => { sfx.init(); if (!$('pauseMenu').hidden) return pauseClose(); if (!S || SHC || !$('modal').hidden || !$('titleScreen').hidden || S.over) return; closeLaptop(); closePhone(); pauseOpen(); };
+$('pmTut').onclick = () => { if (save.tut && save.tut.__off) tutReset(); else { save.tut = save.tut || {}; save.tut.__off = 1; persist(); } pauseOpen(); };
+$('pmSound').onclick = () => { $('muteBtn').click(); pauseOpen(); };
+// restart and quit throw away this act's progress, so each asks once more on the button itself
+function pmArm(b, sure, go) {
+  if (b.dataset.armed) { delete b.dataset.armed; return go(); }
+  for (const o of document.querySelectorAll('#pauseMenu [data-armed]')) { delete o.dataset.armed; o.textContent = o.dataset.was; }
+  b.dataset.was = b.textContent; b.dataset.armed = '1'; b.textContent = sure; sfx.tone(220, .07, 'square', .02);
+}
+$('pmRestart').onclick = e => pmArm(e.currentTarget, 'Sure? Click again to restart', () => { const a3 = S.phase === 'mirage', a2 = S.act === 2, office = S.phase === 'office'; $('pauseMenu').hidden = true; if (a3) startAct3(); else if (a2) startAct2(); else startAct1(!office); });
+$('pmTitle').onclick = e => pmArm(e.currentTarget, 'Sure? This act’s progress is lost', () => { $('pauseMenu').hidden = true; closeLaptop(); closePhone(); setSpeed(0); renderActList(); renderTutBtn(); $('titleScreen').hidden = false; $('titleScreen').scrollTop = 0; });
 $('gateClose').onclick = () => { S.gateOpen = false; gateSync(); };
 
 // ---- kept in step with the game every render, and the clock every frame ----
@@ -13414,7 +13460,7 @@ const tutOn = () => !!tutCur;
 function tutTick(dt) {
   if (tutCur) { tutPlace(); return; }
   tutT -= dt; if (tutT > 0) return; tutT = .4;
-  if (!S || S.over || tutOff() || !$('titleScreen').hidden || !$('modal').hidden || !$('evModal').hidden || $('desk').classList.contains('on')) return;
+  if (!S || S.over || tutOff() || !$('titleScreen').hidden || !$('modal').hidden || !$('evModal').hidden || !$('pauseMenu').hidden || $('desk').classList.contains('on')) return;
   for (const st of TUT) {
     if (save.tut && save.tut[st.id]) continue;
     let ok = false; try { ok = st.when(); } catch (e) { ok = false; }
@@ -13597,7 +13643,7 @@ requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
