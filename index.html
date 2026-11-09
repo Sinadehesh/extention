@@ -1256,6 +1256,10 @@ html.uikit #tutCard { border: 18px solid transparent; border-image: var(--fr-pap
 #ticker .tk-run { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; white-space: nowrap; color: #ece4cc; letter-spacing: .04em; animation: tkRun var(--tkd, 40s) linear infinite; }
 @keyframes tkRun { from { transform: translateX(0); } to { transform: translateX(-50%); } } /* the text is in there twice: a seamless loop */
 body.has-ticker #subtitle { bottom: 46px !important; }
+/* the wallpaper under the desktop */
+html.uikit .lscreen { background-image: linear-gradient(rgba(7,8,10,.25), rgba(7,8,10,.45)), var(--wall, none) !important; background-size: cover !important; background-position: center bottom !important; image-rendering: pixelated; }
+html.uikit .lscreen::before { display: none !important; } /* the wallpaper says enough */
+html.uikit .lscreen { border-image-slice: 3 !important; } /* the frame without its fill, or it paints over the wallpaper */
 </style>
 </head>
 <body>
@@ -13382,6 +13386,31 @@ function tickerSync() {
   const sep = '<i style="color:#b8321f;font-style:normal;padding:0 18px">◆</i>', text = lines.map(l => esc(l)).join(sep) + sep;
   const run = $('tkRun'); run.innerHTML = `<span style="padding-left:14px">${text}</span><span>${text}</span>`; run.style.setProperty('--tkd', Math.max(30, Math.round(text.length * .09)) + 's');
 }
+// ---- the laptop's wallpaper: Harbor City over the water, in the act's colours ----
+let wallKey = '';
+function makeWall(mood) {
+  const c = document.createElement('canvas'); c.width = 320; c.height = 180;
+  const g = c.getContext('2d'), g0 = G; G = g;
+  const T = { dusk: [P.t0, P.k1, P.a2, P.s0], cold: [P.s0, P.k1, P.t3, P.k2], red: [P.e0, P.k0, P.e3, P.k1] }[mood];
+  for (let y = 0; y < 120; y++) { const k = y / 120; px(0, y, 320, 1, mixc(T[0], T[1], Math.floor(k * 8) / 7)); } // the sky, in bands
+  for (let i = 0; i < 90; i++) { const x = (i * 97) % 320, y = (i * 53) % 80; if ((i * 7) % 3) px(x, y, 1, 1, rgba(P.p3, .25 + (i % 4) * .1)); }
+  g.fillStyle = rgba(T[2], .13); g.beginPath(); g.arc(250, 44, 26, 0, Math.PI * 2); g.fill(); g.fillStyle = rgba(T[2], .1); g.beginPath(); g.arc(250, 44, 40, 0, Math.PI * 2); g.fill();
+  let x = -4, i = 0; // the skyline: two rows of towers, lit windows
+  while (x < 330) { const w = 10 + (i * 37) % 18, h = 24 + (i * 53) % 46; px(x, 120 - h, w, h, mixc(T[3], P.k0, .35)); x += w + 1; i++; }
+  x = -2; i = 3;
+  while (x < 330) { const w = 12 + (i * 29) % 22, h = 14 + (i * 41) % 34, top = 124 - h; px(x, top, w, h + 2, T[3]); px(x, top, w, 1, mixc(T[3], P.s3, .35));
+    for (let yy = top + 3; yy < 120; yy += 4) for (let xx = x + 2; xx < x + w - 2; xx += 3) if (((xx * 7 + yy * 13 + i) % 11) < 2) px(xx, yy, 1, 2, rgba(T[2], .75)); x += w + 2; i++; }
+  px(0, 124, 320, 56, mixc(T[1], P.k0, .4)); // the harbour: the city upside down, broken by the water
+  for (let y = 125; y < 180; y += 2) for (let xx = (y * 13) % 7; xx < 320; xx += 9 + (y % 5)) px(xx, y, 3 + (xx % 4), 1, rgba(T[2], .1 + (180 - y) / 900));
+  px(0, 124, 320, 1, rgba(T[2], .35));
+  G = g0;
+  return c.toDataURL();
+}
+function wallSync() {
+  if (!S) return; const mood = S.phase === 'mirage' ? 'red' : S.act === 2 ? 'cold' : 'dusk';
+  if (wallKey === mood) return; wallKey = mood;
+  const el = $('lscreen'); if (el) el.style.setProperty('--wall', `url(${makeWall(mood)})`);
+}
 function frame(t) {
   const dt = Math.min(.25, (t - last) / 1000); last = t;
   if (S && !S.over) {
@@ -13417,7 +13446,7 @@ function frame(t) {
       }
     }
   }
-  paintRoom(t); logoDraw(t); if (S && (t | 0) % 4 === 0) tickerSync();
+  paintRoom(t); logoDraw(t); if (S && !$('laptop').hidden) wallSync(); if (S && (t | 0) % 4 === 0) tickerSync();
   if (S) { paintBots(t); deskTick(t); clockSync(); }
   requestAnimationFrame(frame);
 }
@@ -13426,7 +13455,7 @@ requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
