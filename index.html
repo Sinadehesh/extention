@@ -1261,7 +1261,8 @@ html.uikit #tutCard { border: 18px solid transparent; border-image: var(--fr-pap
 #ticker .tk-win { flex: 1; min-width: 0; overflow: hidden; position: relative; }
 #ticker .tk-run { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; white-space: nowrap; color: #ece4cc; letter-spacing: .04em; animation: tkRun var(--tkd, 40s) linear infinite; }
 @keyframes tkRun { from { transform: translateX(0); } to { transform: translateX(-50%); } } /* the text is in there twice: a seamless loop */
-body.has-ticker #subtitle { bottom: 46px !important; }
+#subtitle { bottom: calc(var(--subB, 0px) + 22px); }
+body.has-ticker #subtitle { bottom: calc(var(--subB, 0px) + 44px) !important; }
 /* the wallpaper under the desktop */
 html.uikit .lscreen { background-image: linear-gradient(rgba(7,8,10,.25), rgba(7,8,10,.45)), var(--wall, none) !important; background-size: cover !important; background-position: center bottom !important; image-rendering: pixelated; }
 html.uikit .lscreen::before { display: none !important; } /* the wallpaper says enough */
@@ -11616,6 +11617,10 @@ function fitRoom() {
   const w = Math.floor(vw * s), h = Math.floor(H * s), dpr = Math.min(window.devicePixelRatio || 1, 2.5);
   cv.style.width = w + 'px'; cv.style.height = h + 'px';
   cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  requestAnimationFrame(() => { // the subtitle sits on the scene, above the news ticker, wherever the letterbox puts the canvas
+    const rr = $('room').getBoundingClientRect(), wr = $('room').querySelector('.cvwrap').getBoundingClientRect();
+    $('room').style.setProperty('--subB', Math.max(0, Math.round(rr.bottom - wr.bottom)) + 'px');
+  });
 }
 new ResizeObserver(fitRoom).observe($('room'));
 function shakeRoom(n) { cam.shake = Math.max(cam.shake, n); }
