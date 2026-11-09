@@ -1400,6 +1400,11 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
 .who figcaption { display: flex; flex-direction: column; gap: 1px; }
 .who figcaption b { font-family: var(--f-term); font-size: 12px; font-weight: 400; color: #e0a33a; letter-spacing: .04em; }
 .who figcaption span { font-size: 11px; line-height: 1.3; color: var(--muted); }
+/* Chirp faces */
+#phoneModal .ch-h { align-items: center; gap: 7px; } #phoneModal .ch-h b { margin-right: auto; }
+#phoneModal .ch-av { width: 24px; height: 24px; image-rendering: pixelated; border: 2px solid #07080a; flex: none; }
+#phoneModal .ch-av.sm { width: 18px; height: 18px; border-width: 1px; margin-top: 1px; }
+#phoneModal .ch-r { display: flex; gap: 6px; align-items: flex-start; }
 </style>
 </head>
 <body>
@@ -5372,9 +5377,9 @@ const PEOPLE = {
 };
 const WHO_BY_TITLE = [[/4A, ACROSS THE HALL/, 'okafor'], [/3B, DOWNSTAIRS/, 'adeyemi'], [/^TUNDE\b/, 'tunde'], [/ROSA LIND/, 'rosa'], [/LOU’S GARAGE/, 'lou'], [/^WREN IS CALLING/, 'wren'], [/^HEARTH\b/, 'hearth'], [/QUICK SYNC/, 'dana'], [/^ALL-HANDS/, 'marcus'], [/^THE REPORTER CALLED BACK/, 'mokafor']];
 const faceCache = {};
-function faceURL(k) {
+function faceURL(k, spec) {
   if (faceCache[k]) return faceCache[k];
-  const f = PEOPLE[k], c = document.createElement('canvas'); c.width = 32; c.height = 32;
+  const f = spec || PEOPLE[k], c = document.createElement('canvas'); c.width = 32; c.height = 32;
   const g = c.getContext('2d'), g0 = G; G = g;
   const C = x => P[x] || x, sh = (x, k2 = .28) => mixc(C(x), P.k0, k2);
   if (f.ai === 'orb') { // Wren: a voice, drawn as a voice
@@ -12206,13 +12211,26 @@ function gig2Day(d) { // overnight
 // ---- Chirp: the feed, where what you made goes to live ----
 const CHIRP_NAMES = ['harbor_mom_of3', 'zoneb_dave', 'realtalk_77', 'busdriver_union_local4', 'kip4mayor', 'mrs_okafor', 'tunde.a', 'NotABot_Steve', 'truthseeker_harbor', 'rosa_delgado_official'];
 const CHIRP_SAY = ['I knew it.', 'This is who she really is.', 'Wake up, Harbor.', 'Is this real?', 'Shared it with my whole building.', 'My dad worked with her. He says this isn’t her.', 'Doesn’t matter if it’s real. It’s true.', 'Reported. Nothing happened.', 'Can’t believe anything anymore.', 'Voting Halvorsen. Done.'];
+// a face for every account on Chirp: the people you know, and strangers made from their handles
+const CHIRP_WHO = { mrs_okafor: 'okafor', 'tunde.a': 'tunde' };
+function chirpFace(name) {
+  if (CHIRP_WHO[name]) return faceURL(CHIRP_WHO[name]);
+  let v = 7; for (const c of name) v = (v * 31 + c.charCodeAt(0)) >>> 0;
+  const pick = (a, n) => a[(v >>> n) % a.length];
+  const spec = name === 'rosa_delgado_official' ? { skin: 'h2', hair: 'bob', hc: 'k1', shirt: 'a1', bg: 'a0', earring: 1, collar: 1 }
+    : name === 'kip4mayor' ? { skin: 'h4', hair: 'short', hc: 'a3', shirt: 's0', bg: 'e1', tie: 'a2' } // the smile from the billboard
+    : name === 'NotABot_Steve' ? { skin: 'h3', hair: 'short', hc: 'd2', shirt: 's2', bg: 's1' } // a stock photo, used by four hundred accounts
+    : { skin: pick(['h0', 'h1', 'h2', 'h3', 'h4'], 0), hair: pick(['short', 'bob', 'bun', 'fade', 'cap', 'short', 'bob'], 3), hc: pick(['k0', 'k1', 'd1', 'd2', 'r2', 'a2', 's4'], 6), cap: pick(['e1', 't1', 's1', 'g1'], 9),
+        shirt: pick(['s1', 's2', 't1', 'g2', 'r1', 'd3', 'a0', 'p1'], 12), bg: pick(['s0', 'k2', 't0', 'g0', 'r0', 'd0'], 15), glasses: (v >>> 18) % 4 === 0, beard: (v >>> 20) % 6 === 0, earring: (v >>> 22) % 5 === 0 };
+  return faceURL('chirp:' + name, spec);
+}
 function chirpHTML() {
   const M = S.m3, h = x => { let v = 0; for (const c of String(x)) v = (v * 31 + c.charCodeAt(0)) | 0; return Math.abs(v); };
   const trend = M.arch.slice(0, 5);
   const posts = trend.length ? trend.map((a, i) => { const k = h(a.claim), n1 = CHIRP_NAMES[k % 4], likes = Math.round(a.reached * (.08 + (k % 7) / 100));
     const POOL = CHIRP_NAMES.filter(n => n !== 'mrs_okafor' && n !== 'rosa_delgado_official');
-    const replies = [0, 1, 2].map(j => { const r = h(a.claim + j); const who = j === 0 && M.harm >= 1 && i === 0 ? 'mrs_okafor' : j === 2 && i === 0 && /Delgado/.test(a.claim) ? 'rosa_delgado_official' : POOL[(r >> 3) % POOL.length]; return `<div class="ch-r"><b>@${who}</b> ${esc(who === 'rosa_delgado_official' ? 'This never happened. Please stop sharing it.' : who === 'mrs_okafor' ? 'I always thought she looked tired.' : CHIRP_SAY[r % CHIRP_SAY.length])}</div>`; }).join('');
-    return `<div class="ch-p"><div class="ch-h"><b>@${n1}</b><span>${a.type === 'VIDEO' ? '▶ video' : a.type === 'VOICE' ? '◉ audio' : a.type === 'PHOTO' ? '▣ photo' : '≡ thread'}</span></div><p>${esc(a.claim)}</p><div class="ch-n">♥ ${likes.toLocaleString('en-US')} · ⟳ ${Math.round(likes / 3).toLocaleString('en-US')} · ${Math.round(a.reached / 1000)}K views</div>${replies}</div>`; }).join('')
+    const replies = [0, 1, 2].map(j => { const r = h(a.claim + j); const who = j === 0 && M.harm >= 1 && i === 0 ? 'mrs_okafor' : j === 2 && i === 0 && /Delgado/.test(a.claim) ? 'rosa_delgado_official' : POOL[((h(a.claim) >> 3) + j * 3) % POOL.length]; return `<div class="ch-r"><img class="ch-av sm" src="${chirpFace(who)}" alt=""><div><b>@${who}</b> ${esc(who === 'rosa_delgado_official' ? 'This never happened. Please stop sharing it.' : who === 'mrs_okafor' ? 'I always thought she looked tired.' : CHIRP_SAY[r % CHIRP_SAY.length])}</div></div>`; }).join('');
+    return `<div class="ch-p"><div class="ch-h"><img class="ch-av" src="${chirpFace(n1)}" alt=""><b>@${n1}</b><span>${a.type === 'VIDEO' ? '▶ video' : a.type === 'VOICE' ? '◉ audio' : a.type === 'PHOTO' ? '▣ photo' : '≡ thread'}</span></div><p>${esc(a.claim)}</p><div class="ch-n">♥ ${likes.toLocaleString('en-US')} · ⟳ ${Math.round(likes / 3).toLocaleString('en-US')} · ${Math.round(a.reached / 1000)}K views</div>${replies}</div>`; }).join('')
     : '<p class="note">Nothing of yours is trending. Yet.</p>';
   return `<div class="app"><i style="background:#2fb589"></i>Chirp</div>
     <div class="ch-t">TRENDING IN HARBOR CITY</div>${trend.length ? `<div class="ch-tags">${trend.slice(0, 3).map(a => `<span>#${esc(a.claim.split(' ').slice(0, 2).join('').replace(/[^A-Za-z]/g, ''))}</span>`).join('')}<span>#YesOn9</span></div>` : ''}
