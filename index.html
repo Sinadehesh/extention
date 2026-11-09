@@ -5120,7 +5120,44 @@ const ECHO = {
   article() { raiseExposure(6); note('The City Ledger ran it: “The Laid-Off Analyst and the Machines.” They didn’t use your name. They used your building.'); },
   dormantLetter() { addMail(S.day, 'Diane Pell', 'My father’s savings', 'To whoever this reaches.\n\nMy father is 74 and in a care home. His savings were moved out of his account last week by “an automated process.” The bank says it can’t say where they went.\n\nIf you know anything, please write back.\n\nDiane'); note('An email from a woman named Diane. You read it twice.'); }
 };
+// ---- Act III evenings: the people around you, and what you made ----
+const EVENING3 = [
+  { get d() { return ACT3_START + 6; }, id: 'okaforAsks', when: () => S.m3 && S.m3.harm >= 1, open() {
+    modal({ title: 'A KNOCK · 4A, ACROSS THE HALL', body: `<p>Mrs. Okafor, in her coat, holding her phone out to you like it’s hot.</p>
+      <p>“You know computers. Is this real?” It’s the video of Rosa Delgado asleep at the council meeting. “My grandson says nothing is real anymore. I said that can’t be true.”</p>`,
+      buttons: [
+        { label: '“It’s fake. I’m sorry.”', primary: true, fn: () => { S.m3.heat = clamp(S.m3.heat + 6, 0, 120); S.eve.okafor3 = 'truth'; echo(S.day + 4, 'okaforTruth'); note('You told her it was fake. You didn’t tell her how you knew.'); } },
+        { label: '“I don’t know.”', fn: () => { S.eve.okafor3 = 'doubt'; echo(S.day + 4, 'okaforDoubt'); crossLine('Let Mrs. Okafor believe nothing is real'); } },
+        { label: '“It’s real.”', danger: true, fn: () => { S.m3.kip = clamp(S.m3.kip + .4, 30, 70); S.eve.okafor3 = 'lie'; echo(S.day + 3, 'okaforShares'); crossLine('Told Mrs. Okafor the video was real'); } }
+      ] });
+  } },
+  { get d() { return ACT3_START + 14; }, id: 'tundeCanvass', when: () => S.m3 && !S.m3.dropped, open() {
+    modal({ title: 'TUNDE, ON THE STAIRS', body: `<p>Tunde from 3B has a clipboard and a DELGADO · HUMANS FIRST badge. He knocks doors for her campaign every evening now.</p>
+      <p>“You’re good with the AI stuff, right? We can’t afford ads. Could you make us one? A real one. Just Rosa, talking about the bus routes.”</p>`,
+      buttons: [
+        { label: 'Make Rosa a real video, free (−20 energy)', primary: true, fn: () => { S.stamina = clamp(S.stamina - 20, 0, 100); S.m3.rosa = clamp(S.m3.rosa + .8, 30, 70); S.m3.trust--; S.eve.tunde3 = 'helped'; note('You spent the night on a real video. Rosa, a bus, a route map. Mirage logged that your workspace was used for “an unapproved client”.'); if (S.m3.trust <= 0 && !S.m3.dropped) { S.m3.dropped = true; addMail(S.day, 'N.', 'Going another direction', 'We noticed the Delgado video. We’re going another direction.\n\nN.'); toast('Northlight dropped you'); } } },
+        { label: '“I’m too busy.”', fn: () => { S.eve.tunde3 = 'no'; note('Tunde said no problem. He said it the way people do when it is one.'); } },
+        { label: 'Tell N. where the canvassers are going (+$80)', danger: true, fn: () => { S.balance += 80; tx('Northlight · “field intel”', 80); S.eve.tunde3 = 'sold'; echo(S.day + 2, 'tundeSold'); crossLine('Sold Tunde’s canvassing route to Northlight'); } }
+      ] });
+  } },
+  { get d() { return ELECTION - 1; }, id: 'theVote', when: () => !!S.m3, open() {
+    modal({ title: 'MONDAY, NOVEMBER 1 · THE NIGHT BEFORE', body: `<p>Your polling place is the gym at the Zone B school. The doors open at 7.</p>
+      <p>You have your registration card on the desk, next to the laptop. Mirage is still open on the screen.</p>`,
+      buttons: [
+        { label: 'Vote for Delgado', fn: () => { S.eve.vote = 'Delgado'; S.m3.rosa += .02; } },
+        { label: 'Vote for Halvorsen', fn: () => { S.eve.vote = 'Halvorsen'; S.m3.kip += .02; } },
+        { label: 'Stay home', fn: () => { S.eve.vote = 'nobody'; } }
+      ] });
+  } }
+];
+Object.assign(ECHO, {
+  okaforTruth() { note('Mrs. Okafor has a sticker on her door now: I VOTE. She waves when she sees you.'); },
+  okaforDoubt() { note('Mrs. Okafor says she isn’t voting this year. “What’s the point, if you can’t tell?”'); },
+  okaforShares() { note('Mrs. Okafor showed the video to the whole laundry room. “My neighbour knows computers,” she told them. “He says it’s real.”'); },
+  tundeSold() { note('A van with tinted windows was parked at the end of Tunde’s route all evening. He came home early and didn’t say anything.'); }
+});
 function eveningDue() {
+  if (S && !S.over && S.phase === 'mirage') { S.eve = S.eve || {}; return EVENING3.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null; }
   if (!S || S.over || S.act === 2 || S.phase !== 'farm' || DESK) return null;
   S.eve = S.eve || {};
   return EVENING.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null;
@@ -12824,7 +12861,7 @@ function m3End(out) {
   }[out];
   $('endKicker').textContent = `${reachEnding(out)} · Act III complete · November 2, 2027`;
   $('endTitle').textContent = 'Everything Is Real Now';
-  $('endText').textContent = text;
+  $('endText').textContent = text + (S.eve && S.eve.vote ? (S.eve.vote === 'nobody' ? ' You didn’t vote.' : ` You voted for ${S.eve.vote}.`) : '');
   $('endStats').innerHTML = [['Pieces released', M.made], ['People reached', M.reach.toLocaleString('en-US')], ['Briefs passed or deleted', 3 - Math.max(0, M.trust)], ['Halvorsen at the end', (R.kipV != null ? R.kipV : M.kip).toFixed ? (R.kipV != null ? R.kipV : M.kip).toFixed(1) + '%' : ''], ['Prop 9', R.prop == null ? 'not yet voted' : R.prop ? 'passed' : 'failed'], ['Platform attention', Math.round(M.heat) + '%'], ['Checking balance', money(S.balance)]].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('') + linesHTML();
   $('endNext').innerHTML = ACTS.slice(3).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Act ${a.n}</span></div>`).join('');
   sfx.alarm(); $('replayBtn').textContent = 'Replay Act III';
