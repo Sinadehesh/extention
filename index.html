@@ -1407,6 +1407,20 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
 #phoneModal .ch-av { width: 24px; height: 24px; image-rendering: pixelated; border: 2px solid #07080a; flex: none; }
 #phoneModal .ch-av.sm { width: 18px; height: 18px; border-width: 1px; margin-top: 1px; }
 #phoneModal .ch-r { display: flex; gap: 6px; align-items: flex-start; }
+/* OpenBrain Data's worker portal: the bank's layout, in OpenBrain's colours */
+.bk-top.ob { background: #10202a; box-shadow: inset 0 2px 0 #18323e; color: #8fb3c2; } .bk-top.ob .bk-logo { color: #cfe8f2; } .bk-top.ob .bk-logo i { background: #e0a33a; box-shadow: inset -4px -4px 0 #8a5a1c, 0 0 0 2px #07080a; border-radius: 50%; }
+.bk-top.ob b { font-weight: 400; }
+.ob-hero { margin-bottom: 8px; } .ob-meters { display: flex; flex-direction: column; gap: 5px; justify-content: center; }
+.bk-bar.skill i { background-color: #5a8c45; } .bk-bar.skill.amber i { background-color: #b97c25; } .bk-bar.skill.danger i { background-color: #b8321f; }
+/* the comparison, side by side like the rating tools */
+.resp-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.resp-pair .resp { display: flex; flex-direction: column; gap: 8px; min-height: 120px; padding: 0 0 10px; background: #0d1013; border: 3px solid #07080a; border-radius: 0; box-shadow: 3px 3px 0 #07080a; cursor: pointer; transition: transform .08s; }
+.resp-pair .resp b { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: #161b20; border-bottom: 2px solid #07080a; font-size: 11px; letter-spacing: .12em; color: #e0a33a; }
+.resp-pair .resp kbd { font-family: var(--f-term); font-size: 10px; color: var(--muted); border: 2px solid #2e3a42; padding: 0 5px; }
+.resp-pair .resp span { flex: 1; padding: 0 12px; font-size: 14.5px; line-height: 1.5; color: #cfc8b2; }
+.resp-pair .resp i { align-self: flex-start; margin: 0 12px; font-style: normal; font-family: var(--f-term); font-size: 10.5px; letter-spacing: .08em; color: #6e7a80; }
+.resp-pair .resp:hover { border-color: #e0a33a; transform: translateY(-2px); } .resp-pair .resp:hover i { color: #e0a33a; }
+@media (max-width: 1100px) { .resp-pair { grid-template-columns: minmax(0, 1fr); } }
 </style>
 </head>
 <body>
@@ -13300,15 +13314,16 @@ function trainerHtml() {
   const rc = S.taskRate >= 9 ? 'ok' : S.taskRate >= 2.5 ? 'amber' : 'danger';
   const sk = Math.round(S.skill), skc = sk >= 70 ? 'ok' : sk >= 45 ? 'amber' : 'danger';
   const left = S.tasks.length;
-  const head = `<div class="box">
-      <div class="row wrap"><span class="h">OpenBrain Data · AI trainer · T-0127</span><b class="${S.rating >= 4 ? 'ok' : S.rating >= 3 ? 'amber' : 'danger'}">★ ${S.rating.toFixed(1)}</b></div>
-      <div class="row"><span>Pay per task</span><b class="${rc}">${cents(taskPay())}</b></div>
-      <div class="muted">${cents(S.taskRate)} base × ${Math.round(ratingMult() * 100)}% for your ★ rating</div>
-      <div class="row"><span>Today’s quota</span><b>${S.doneToday}/${S.quota}</b></div>
-      <div class="meter"><i style="width:${clamp(S.doneToday / S.quota * 100, 0, 100)}%;background:var(--${left ? 'amber' : 'ok'})"></i></div>
-      <div class="row"><span>Your skill</span><b class="${skc}">${sk}%</b></div>
-      <div class="meter"><i style="width:${sk}%;background:var(--${skc})"></i></div>
-      <div class="muted">${sk >= 80 ? 'You spot the bad answer in seconds.' : sk >= 60 ? 'You read some answers twice now.' : sk >= 40 ? 'You used to know these. Now you reach for Ollo first.' : 'You can’t tell the answers apart any more without help.'}</div>
+  const head = `<div class="bk-top ob"><span class="bk-logo"><i></i>OPENBRAIN DATA</span><span>Worker portal · AI trainer T-0127 · <b class="${S.rating >= 4 ? 'ok' : S.rating >= 3 ? 'amber' : 'danger'}">★ ${S.rating.toFixed(1)}</b></span></div>
+    <div class="bk-hero ob-hero">
+      <div class="bk-bal"><span class="k">Pay per task</span><b class="${rc === 'ok' ? '' : rc}">${cents(taskPay())}</b><span class="d muted">${cents(S.taskRate)} base × ${Math.round(ratingMult() * 100)}% for your ★ rating</span></div>
+      <div class="ob-meters">
+        <div class="row"><span>Today’s quota</span><b>${S.doneToday}/${S.quota}</b></div>
+        <div class="bk-bar"><i style="width:${clamp(S.doneToday / S.quota * 100, 0, 100)}%" class="${left ? '' : 'full'}"></i></div>
+        <div class="row"><span>Your skill</span><b class="${skc}">${sk}%</b></div>
+        <div class="bk-bar skill ${skc}"><i style="width:${sk}%"></i></div>
+        <div class="bk-sub">${sk >= 80 ? 'You spot the bad answer in seconds.' : sk >= 60 ? 'You read some answers twice now.' : sk >= 40 ? 'You used to know these. Now you reach for Ollo first.' : 'You can’t tell the answers apart any more without help.'}</div>
+      </div>
     </div>`;
   const work = S.session && left ? taskHtml() : `<div class="box">
       <div class="row"><span class="h">Today’s tasks</span><span class="muted">${left} left</span></div>
@@ -13339,8 +13354,10 @@ function taskHtml() {
     <div class="row wrap"><b>TASK ${S.doneToday + 1} OF ${S.quota} · Which answer is better?</b><span class="muted">${cents(taskPay())}</span></div>
     ${S.last ? lastHtml() : ''}
     <div class="prompt">${esc(c.p)}</div>
-    <button class="resp" data-pick="0"><b>A</b><span>${esc(A)}</span></button>
-    <button class="resp" data-pick="1"><b>B</b><span>${esc(B)}</span></button>
+    <div class="resp-pair">
+      <button class="resp" data-pick="0"><b>RESPONSE A <kbd>1</kbd></b><span>${esc(A)}</span><i>This one is better</i></button>
+      <button class="resp" data-pick="1"><b>RESPONSE B <kbd>2</kbd></b><span>${esc(B)}</span><i>This one is better</i></button>
+    </div>
     <div class="tools">
       ${S.ollo ? `<button class="btn" id="tOne">Let Ollo-8B answer this one</button><button class="btn" id="tAll">Hand all ${S.tasks.length} left to Ollo</button>` : ''}
       <button class="btn" id="tStop">Stop for now</button>
@@ -13352,6 +13369,10 @@ function taskHtml() {
 function bindTrainer(v) {
   const on = (id, fn) => { const el = $(id); if (el) el.onclick = fn; };
   v.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => answerTask(+b.dataset.pick));
+  if (!window.__pickKeys) { window.__pickKeys = 1; document.addEventListener('keydown', e => { // 1 or 2 picks an answer, like the real rating tools
+    if (!/^[12]$/.test(e.key) || e.repeat || $('laptop').hidden || !$('modal').hidden || /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+    const b = document.querySelector(`#view [data-pick="${+e.key - 1}"]`); if (b && b.getClientRects().length) { e.preventDefault(); b.click(); }
+  }); }
   on('tStart', startSession); on('tStop', stopSession);
   on('tOne', () => delegate(1)); on('tAll', () => delegate(S.tasks.length));
   on('tAudit', () => modal({
