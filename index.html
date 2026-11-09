@@ -1363,7 +1363,7 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
 .bk-bal { display: flex; flex-direction: column; justify-content: center; gap: 3px; }
 .bk-bal .k { font-family: var(--f-term); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .bk-bal b { font-family: var(--f-term); font-weight: 400; font-size: 38px; line-height: 1.05; color: var(--ink); text-shadow: 3px 3px 0 #07080a; }
-.bk-bal .d { font-size: 13px; }
+.bk-bal .d { font-size: 13px; } .bk-bal b.danger { color: var(--danger); } .bk-bal b.ok { color: var(--ok); }
 .bk-chart { display: flex; flex-direction: column; justify-content: flex-end; gap: 3px; min-height: 76px; }
 .bk-chart span { font-family: var(--f-term); font-size: 10px; color: #6e7a80; text-align: right; }
 .bk-spark { width: 100%; height: 64px; display: block; background: repeating-linear-gradient(0deg, transparent 0 15px, rgba(221,214,193,.04) 15px 16px); }
@@ -1386,6 +1386,11 @@ html #desk .tray.yes.hot { box-shadow: inset 0 0 0 3px #87b85a, inset 0 14px 18p
 .bk-tx b { font-family: var(--f-term); font-weight: 400; font-size: 12px; }
 .bk-chip { width: 20px; height: 20px; display: grid; place-items: center; font-style: normal; font-family: var(--f-term); font-size: 11px; color: #fbf6e8; border: 2px solid #07080a; box-shadow: inset 0 2px 0 rgba(255,255,255,.16); }
 .bk-alert { border-color: var(--danger) !important; }
+/* the 401(k): the bank's layout, in green, and what the fund owns */
+.bk-top.k4 { background: #16261a; box-shadow: inset 0 2px 0 #24402a; color: #a6c08e; } .bk-top.k4 .bk-logo { color: #d6ecc0; } .bk-top.k4 .bk-logo i { background: #87b85a; box-shadow: inset -4px -4px 0 #3a6438, 0 0 0 2px #07080a; }
+.k4-own { display: flex; flex-direction: column; gap: 5px; }
+.k4-bar { height: 14px; background: #3d4c55; box-shadow: 0 0 0 2px #07080a; margin: 2px 0 4px; } .k4-bar i { display: block; height: 100%; background: #e0a33a; box-shadow: inset -2px 0 0 #07080a; }
+.k4-dot { display: inline-block; width: 10px; height: 10px; margin-right: 8px; background: #3d4c55; box-shadow: 0 0 0 2px #07080a; vertical-align: -1px; } .k4-dot.ai { background: #e0a33a; }
 </style>
 </head>
 <body>
@@ -5835,10 +5840,17 @@ function renderView(force) {
     const h = S.kHist.slice(-60), lo = Math.min(...h), hi = Math.max(...h);
     const pts = h.map((x, i) => `${(i / Math.max(1, h.length - 1) * 300).toFixed(1)},${(52 - (x - lo) / Math.max(1, hi - lo) * 46).toFixed(1)}`).join(' ');
     const chg = (S.k401 / S.kStart - 1) * 100;
-    v.innerHTML = `<div class="box"><div class="h">401(k) · S&P 500 Index Fund (Locked)</div><div class="big ok">${money(S.k401)}</div><div class="ok">▲ +${chg.toFixed(1)}% since Feb 1</div>
-        <svg class="spark" viewBox="0 0 300 56" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="var(--ok)" stroke-width="2" vector-effect="non-scaling-stroke"/></svg></div>
-      <div class="box"><div class="h">Your Portfolio</div><div class="row"><span>Top 10 AI & Cloud Giants</span><b>≈ 40%</b></div><div class="muted">Your retirement savings automatically buy the GPUs and data centers that took your job and raised your electric bill.</div></div>
-      <button class="btn" id="kWd">Request Hardship Withdrawal</button>`;
+    const kp = h.map((x, i) => `${(i / Math.max(1, h.length - 1) * 300).toFixed(1)},${(58 - (x - lo) / Math.max(1, hi - lo) * 50).toFixed(1)}`).join(' ');
+    v.innerHTML = `<div class="bk">
+      <div class="bk-top k4"><span class="bk-logo"><i></i>STEADFAST RETIREMENT</span><span>Northvale 401(k) plan · locked until you’re 59½</span></div>
+      <div class="bk-hero"><div class="bk-bal"><span class="k">Plan balance · S&P 500 index fund</span><b class="ok">${money(S.k401)}</b><span class="d ok">▲ +${chg.toFixed(1)}% since Feb 1</span></div>
+        <div class="bk-chart"><svg class="bk-spark" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,60 ${kp} 300,60" fill="rgba(135,184,90,.13)"/><polyline points="${kp}" fill="none" stroke="#87b85a" stroke-width="2" vector-effect="non-scaling-stroke"/></svg><span>${h.length} trading days</span></div></div>
+      <div class="box k4-own"><div class="h">What your savings own</div>
+        <div class="k4-bar" aria-hidden="true"><i style="width:40%"></i></div>
+        <div class="row"><span><i class="k4-dot ai"></i>The ten biggest AI & cloud companies</span><b>≈ 40%</b></div>
+        <div class="row"><span><i class="k4-dot"></i>The other 490</span><b>≈ 60%</b></div>
+        <div class="muted">Your retirement savings automatically buy the GPUs and data centers that took your job and raised your electric bill.</div></div>
+      <button class="btn" id="kWd">Request Hardship Withdrawal</button></div>`;
     $('kWd').onclick = () => modal({ title: 'HARDSHIP WITHDRAWAL BLOCKED', body: `<p>Plan rules require a 6-to-8-week review period before any hardship disbursement.</p><p>You will starve or be evicted long before a check arrives.</p>`, buttons: [{ label: 'Close', primary: true }] });
   }
 }
