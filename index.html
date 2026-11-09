@@ -1432,6 +1432,23 @@ html.uikit .t-cta .cta#startBtn.alt:hover { border-image-source: var(--fr-btnHi)
 #phoneModal .bub-row .bub { margin: 0; }
 #phoneModal .bub-av { flex: none; width: 20px; height: 20px; image-rendering: pixelated; border: 1px solid #07080a; }
 #phoneModal i.bub-av { border-color: transparent; }
+/* settings */
+#setMenu { position: fixed; inset: 0; z-index: 98; background: rgba(7,8,10,.55); display: grid; place-items: center; }
+#setMenu[hidden] { display: none; }
+#setMenu .pm-card { width: min(400px, 90vw); display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; background: #161b20; border: 3px solid #07080a; box-shadow: 6px 6px 0 #07080a; }
+html.uikit #setMenu .pm-card { border: 18px solid transparent; border-image: var(--fr-win) 3 fill / 18px / 0 stretch; background: transparent; padding: 4px 6px; box-shadow: none; filter: drop-shadow(6px 6px 0 rgba(7,8,10,.85)); }
+#setMenu .pm-k { font-family: var(--f-term); font-size: 12px; letter-spacing: .14em; color: #e0a33a; }
+#setMenu .pm-t { font-family: var(--f-term); font-size: 22px; color: var(--ink); margin-bottom: 6px; }
+.set-row { display: grid; grid-template-columns: 88px minmax(0, 1fr) 34px; gap: 10px; align-items: center; font-family: var(--f-term); font-size: 13px; color: var(--ink); }
+.set-row b { font-weight: 400; color: #e0a33a; text-align: right; font-size: 12px; }
+.set-row input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 14px; background: #07080a; box-shadow: inset 0 0 0 2px #2e3a42; margin: 0; cursor: pointer; }
+.set-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 22px; background: #e0a33a; border: 3px solid #07080a; box-shadow: inset -2px -2px 0 #8a5a1c, inset 2px 2px 0 #f2c46a; cursor: pointer; }
+.set-row input[type=range]::-moz-range-thumb { width: 12px; height: 18px; background: #e0a33a; border: 3px solid #07080a; border-radius: 0; cursor: pointer; }
+.set-chk { display: flex; align-items: center; gap: 10px; font-family: var(--f-term); font-size: 13px; color: var(--ink); cursor: pointer; }
+.set-chk input { width: 18px; height: 18px; accent-color: #e0a33a; margin: 0; }
+#setMenu .btn { width: 100%; margin-top: 6px; }
+/* reduce motion: no loops, no slides */
+html.calm *, html.calm *::before, html.calm *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
 </style>
 </head>
 <body>
@@ -1577,7 +1594,7 @@ html.uikit .t-cta .cta#startBtn.alt:hover { border-image-source: var(--fr-btnHi)
     <canvas id="logoCv" width="118" height="64" aria-hidden="true"></canvas>
     <div class="kicker">A story game in five acts · 2027–2030 · about being the human in the loop</div>
     <p class="lede">You are the human in the loop. It is January 2027 and you are a junior analyst at a logistics company, the week a new AI called ChatGPX arrives. By February you have $480, an old laptop, three stars on a freelance site, and a black cat called Soot. Rent is $1,800.</p>
-    <div class="t-cta"><button class="cta" id="contBtn" hidden></button><button class="cta" id="startBtn">BEGIN ACT I</button><button class="btn tut-reset" id="tutReset">Tutorial: on</button></div>
+    <div class="t-cta"><button class="cta" id="contBtn" hidden></button><button class="cta" id="startBtn">BEGIN ACT I</button><button class="btn tut-reset" id="tutReset">Tutorial: on</button><button class="btn tut-reset" id="titleSet">Settings</button></div>
     <p class="fine">The bar across the top tells you, at a glance, whether you will have the rent on the day it is due. What you do about it is up to you.</p>
     <p class="fine t-warn">Fiction about AI catastrophe, for adults. Made for a computer screen.</p>
     </div><div class="t-side">
@@ -1657,8 +1674,15 @@ html.uikit .t-cta .cta#startBtn.alt:hover { border-image-source: var(--fr-btnHi)
 <div class="modal" id="modal" hidden><div class="card" id="modalCard"></div></div>
 <div class="modal" id="phoneModal" hidden><div class="phone" id="phoneScreen"></div><div id="bossWarn" hidden>FOOTSTEPS · MARCUS IS COMING</div></div>
 <div id="tut" hidden><div id="tutHole"></div><div id="tutCard"><div id="tutK"></div><div id="tutT"></div><p id="tutS"></p><div class="tut-b"><button class="btn" id="tutSkip">Skip the tutorial</button><button class="btn primary" id="tutOk">Got it · Enter</button></div></div></div>
+<div id="setMenu" hidden><div class="pm-card set-card"><div class="pm-k">SETTINGS</div><div class="pm-t">Sound and motion</div>
+  <label class="set-row"><span>Music</span><input type="range" min="0" max="100" step="5" id="setMusic"><b id="setMusicV"></b></label>
+  <label class="set-row"><span>Ambience</span><input type="range" min="0" max="100" step="5" id="setAmb"><b id="setAmbV"></b></label>
+  <label class="set-row"><span>Effects</span><input type="range" min="0" max="100" step="5" id="setFx"><b id="setFxV"></b></label>
+  <label class="set-chk"><input type="checkbox" id="setShake"><span>Screen shake</span></label>
+  <label class="set-chk"><input type="checkbox" id="setCalm"><span>Reduce motion</span></label>
+  <button class="btn primary" id="setDone">Done</button></div></div>
 <div id="pauseMenu" hidden><div class="pm-card"><div class="pm-k" id="pmK">PAUSED</div><div class="pm-t">The clock has stopped.</div>
-  <button class="btn primary" id="pmResume">Resume · Esc</button><button class="btn" id="pmTut"></button><button class="btn" id="pmSound"></button>
+  <button class="btn primary" id="pmResume">Resume · Esc</button><button class="btn" id="pmTut"></button><button class="btn" id="pmSound"></button><button class="btn" id="pmSet">Settings · sound, shake, motion</button>
   <button class="btn" id="pmRestart"></button><button class="btn danger" id="pmTitle">Save and quit to the title screen</button>
   <p class="pm-f">Your run is saved as you play. CONTINUE on the title screen picks it up where you left it.</p></div></div>
 <div id="actCard" hidden><div class="ac-in"><div class="ac-k" id="acK"></div><div class="ac-n" id="acN"></div><div class="ac-t" id="acT"></div><div class="ac-d" id="acD"></div><p class="ac-l" id="acL"></p><div class="ac-go">click or press any key</div></div></div>
@@ -1911,15 +1935,20 @@ function actionFor(h, guard) {
 }
 
 // ================= sound =================
+const SET = { music: .7, amb: .7, fx: .8, shake: true, calm: false }; // filled from the save below
 const sfx = {
-  ctx: null, muted: false,
-  init() { if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; } try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} },
+  ctx: null, muted: false, out: null,
+  init() {
+    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
+    try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); this.out = this.ctx.createGain(); this.out.gain.value = SET.fx; this.out.connect(this.ctx.destination); } catch (e) {}
+    try { amb.start(); } catch (e) {}
+  },
   tone(f, d, type = 'sine', v = .06, f2 = 0, delay = 0) {
     const c = this.ctx; if (!c || this.muted) return;
     const t = c.currentTime + delay, o = c.createOscillator(), g = c.createGain();
     o.type = type; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
     g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.0008, t + d);
-    o.connect(g).connect(c.destination); o.start(t); o.stop(t + d + .02);
+    o.connect(g).connect(this.out || c.destination); o.start(t); o.stop(t + d + .02);
   },
   ping() { this.tone(880, .1, 'sine', .04); this.tone(1320, .12, 'sine', .03, 0, .06); },
   cash() { this.tone(1400, .05, 'square', .03); this.tone(1900, .08, 'square', .03, 0, .05); },
@@ -1937,6 +1966,7 @@ const SAVE_KEY = 'the-loop-save-v2';
 let save = { evidence: [], acts: [], deaths: [] };
 try { save = Object.assign(save, JSON.parse(localStorage.getItem(SAVE_KEY)) || {}); } catch (e) {}
 function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+Object.assign(SET, save.settings || {});
 
 function mkAgent(id, h, skill, earned, act, net) {
   return { id, h, skill, strikes: 0, earned: earned || 0, act: act || actionFor(h, true), net: !!net, wasNet: !!net, supervised: true, sab: 0, sabBy: '' };
@@ -6247,14 +6277,14 @@ function toast(msg) {
 
 // ================= motion: springs, staggers, counters (Motion, when it loaded) =================
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-function M() { return reduceMotion ? null : (window.Motion || null); }
+function M() { return reduceMotion || SET.calm ? null : (window.Motion || null); }
 function anim(el, kf, opts) { const m = M(); if (!m || !el || el.length === 0) return null; try { return m.animate(el, kf, opts); } catch (e) { return null; } }
 const SPRING = { type: 'spring', stiffness: 380, damping: 24 }, SNAP = { type: 'spring', stiffness: 640, damping: 30 };
 // hand transforms back to the stylesheet afterwards, so pixel buttons still press in
 function settle(a, els) { if (a && a.finished) a.finished.then(() => { for (const e of (els.length !== undefined ? els : [els])) e.style.transform = ''; }, () => {}); }
 function pop(el) { settle(anim(el, { scale: [1, 1.03, 1] }, { duration: .32 }), el); }
 function rise(els, gap = .045, from = 12) { const m = M(); if (!m || !els || !els.length) return; settle(anim(els, { opacity: [0, 1], y: [from, 0] }, { delay: m.stagger(gap), duration: .34, ease: [.2, .9, .3, 1.2] }), els); }
-function jolt(el, n = 6) { settle(anim(el, { x: [0, -n, n, -n * .7, n * .7, -n * .3, 0] }, { duration: .42 }), el); }
+function jolt(el, n = 6) { if (!SET.shake) return; settle(anim(el, { x: [0, -n, n, -n * .7, n * .7, -n * .3, 0] }, { duration: .42 }), el); }
 // money rolls like an odometer, and the change floats up off the cell
 function rollMoney(el, v) {
   if (el._v === undefined || !M()) { el._v = el._shown = v; el.textContent = money(v); return; }
@@ -6382,7 +6412,7 @@ function mgCreate(host, kind, job, env) {
     miss(x, y, label) { return item(false, x, y, label || 'MISSED'); },
     pop(x, y, text, color, size) { st.pops.push({ x, y, text, color: color || PAL.ink, size: size || 8, t: 0 }); },
     burst(x, y, color, n = 10, speed = 60) { for (let i = 0; i < n; i++) { const a = rnd() * Math.PI * 2, v = speed * (.4 + rnd() * .8); st.parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 20, life: .5 + rnd() * .5, t: 0, color: color || PAL.a3, s: rnd() < .3 ? 2 : 1 }); } },
-    shake(n) { st.shake = Math.max(st.shake, n); },
+    shake(n) { if (SET.shake) st.shake = Math.max(st.shake, n); },
     flash(color, a = .35) { st.flash = { color, a }; },
     stop(ms) { st.stop = Math.max(st.stop, ms); },
     sfx(name, k) { mgSound(env, name, k); },
@@ -11658,7 +11688,7 @@ function fitRoom() {
   });
 }
 new ResizeObserver(fitRoom).observe($('room'));
-function shakeRoom(n) { cam.shake = Math.max(cam.shake, n); }
+function shakeRoom(n) { if (SET.shake) cam.shake = Math.max(cam.shake, n); }
 function paintRoom(t) {
   if (!S) return;
   cam.tx = 262;
@@ -13685,6 +13715,7 @@ $('startBtn').addEventListener('click', goFull);
 $('narrowX').onclick = () => { $('narrowNote').hidden = true; };
 
 addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !$('setMenu').hidden) return setClose();
   if (e.key !== 'Escape' || !S) return;
   if (!$('pauseMenu').hidden) return pauseClose();
   if (!$('modal').hidden) return;
@@ -13732,6 +13763,128 @@ $('startBtn').addEventListener('click', e => { // beginning again replaces the s
   setTimeout(() => { delete b.dataset.armed; b.textContent = 'BEGIN ACT I'; }, 3500);
 }, true);
 contSync();
+// ---- the sound of the place: room tone, weather, the fridge, a slow score that follows the act ----
+const SCORE = { // chords as MIDI notes; each act has its own colour
+  title: [[45, 52, 60, 67, 71], [41, 48, 57, 64], [48, 55, 59, 64], [40, 47, 55, 62]],
+  office: [[48, 55, 64, 71], [53, 57, 64, 69], [45, 52, 60, 67], [43, 55, 62, 64]],
+  a1: [[45, 52, 60, 67, 71], [41, 48, 57, 64], [48, 55, 59, 64], [40, 47, 55, 62]],
+  a2: [[38, 45, 53, 60, 64], [46, 53, 57, 64], [43, 50, 58, 62], [45, 52, 57, 62]],
+  a3: [[36, 43, 51, 62], [44, 51, 55, 60], [41, 48, 56, 63], [43, 50, 55, 62]],
+  end: [[45, 52, 57, 64], [41, 48, 57, 60]]
+};
+const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+const amb = {
+  n: null, mood: '', ci: 0, tChord: 0, tPluck: 2, tSpot: 0, tGust: 0, tKeys: 4, tSiren: 50,
+  start() {
+    const c = sfx.ctx; if (!c || this.n) return;
+    const len = c.sampleRate * 3, buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+    let b = 0; for (let i = 0; i < len; i++) { b = (b + .02 * (Math.random() * 2 - 1)) / 1.02; d[i] = b * 3.5; } // brown noise
+    const loop = (at) => { const x = c.createBufferSource(); x.buffer = buf; x.loop = true; x.start(c.currentTime + at); return x; };
+    const master = c.createGain(); master.gain.value = 0; master.connect(c.destination);
+    const music = c.createGain(); music.gain.value = 0; music.connect(master);
+    const air = c.createGain(); air.gain.value = 0; air.connect(master);
+    const room = c.createBiquadFilter(); room.type = 'lowpass'; room.frequency.value = 300; const roomHp = c.createBiquadFilter(); roomHp.type = 'highpass'; roomHp.frequency.value = 55; // no rumble under the floor
+    const roomG = c.createGain(); roomG.gain.value = 0; loop(0).connect(roomHp).connect(room).connect(roomG).connect(air);
+    const wx = c.createBiquadFilter(); wx.type = 'bandpass'; wx.frequency.value = 600; wx.Q.value = .6; const wxG = c.createGain(); wxG.gain.value = 0; loop(1.3).connect(wx).connect(wxG).connect(air);
+    const hum = c.createOscillator(), humG = c.createGain(); hum.type = 'sine'; hum.frequency.value = 58; humG.gain.value = 0; hum.connect(humG).connect(air); hum.start();
+    const hum2 = c.createOscillator(); hum2.type = 'sine'; hum2.frequency.value = 116.5; hum2.connect(humG); hum2.start();
+    const tone = c.createBiquadFilter(); tone.type = 'lowpass'; tone.frequency.value = 1700; const toneHp = c.createBiquadFilter(); toneHp.type = 'highpass'; toneHp.frequency.value = 70; tone.connect(toneHp).connect(music);
+    const echo = c.createDelay(1.5); echo.delayTime.value = .46; const fb = c.createGain(); fb.gain.value = .3; const wet = c.createGain(); wet.gain.value = .5;
+    echo.connect(fb).connect(echo); echo.connect(wet).connect(tone);
+    this.n = { c, buf, master, music, air, room, roomG, wx, wxG, humG, tone, echo };
+  },
+  set(param, v, k = .8) { const c = this.n.c; param.cancelScheduledValues(c.currentTime); param.setTargetAtTime(v, c.currentTime, k); },
+  sceneNow() {
+    if (!S || !$('titleScreen').hidden) return 'title';
+    if (S.over || !$('endScreen').hidden || !$('troubleScreen').hidden) return 'end';
+    if (S.phase === 'office') return 'office';
+    return S.phase === 'mirage' ? 'a3' : S.act === 2 ? 'a2' : 'a1';
+  },
+  tick() {
+    const N = this.n; if (!N) return;
+    const c = N.c, now = c.currentTime, mood = this.sceneNow();
+    const inside = mood === 'office', night = S && typeof hourNow === 'function' && (hourNow() >= 21 || hourNow() < 7);
+    const busy = !!SHC || (!!MGC && lapOpen()) || $('desk').classList.contains('on'), power = !S || S.power !== false;
+    this.set(N.master.gain, sfx.muted ? 0 : 1, sfx.muted ? .03 : .4); // mute cuts at once, unmute fades in
+    this.set(N.music.gain, SET.music * (busy ? .35 : night ? .6 : 1) * (mood === 'end' ? .8 : 1), 1.2);
+    this.set(N.air.gain, SET.amb * (SHC ? .2 : 1), 1.2);
+    // room tone and the hum: the office's air handling, the apartment's fridge and the city; nothing when the power's cut
+    this.set(N.roomG.gain, mood === 'title' ? .02 : inside ? .06 : power ? .038 : .018, 2);
+    this.set(N.room.frequency, inside ? 220 : 320, 2);
+    this.set(N.humG.gain, !power || mood === 'title' || mood === 'end' ? 0 : inside ? .006 : .0035, 1.5);
+    // weather: winter wind in Act I, rain in Acts II and III, none indoors at work
+    const rain = mood === 'a2' || mood === 'a3';
+    if (now > this.tGust) {
+      this.tGust = now + 2.5 + Math.random() * 4;
+      if (mood === 'a1') { this.set(N.wxG.gain, .012 + Math.random() * .05, 1.6); this.set(N.wx.frequency, 380 + Math.random() * 520, 2); N.wx.Q.value = .7; }
+      else if (rain) { this.set(N.wxG.gain, (mood === 'a3' ? .03 : .022) + Math.random() * .01, 2); this.set(N.wx.frequency, 1900 + Math.random() * 500, 2); N.wx.Q.value = .35; }
+      else this.set(N.wxG.gain, 0, 1.5);
+    }
+    // the score: a chord every nine seconds, soft notes from it in between
+    if (mood !== this.mood) { this.mood = mood; this.ci = 0; this.tChord = Math.min(this.tChord, now + .5); }
+    const prog = SCORE[mood] || SCORE.a1;
+    if (now > this.tChord) { this.chord(prog[this.ci % prog.length], mood === 'end' ? 14 : 10); this.ci++; this.tChord = now + (mood === 'end' ? 12 : 9); }
+    if (now > this.tPluck && mood !== 'end') {
+      this.tPluck = now + (night ? 3.4 : 1.8) + Math.random() * 3.2;
+      const ch = prog[(this.ci + prog.length - 1) % prog.length], m = ch[1 + Math.floor(Math.random() * (ch.length - 1))] + 12 * (Math.random() < .5 ? 1 : 2);
+      if (Math.random() < .78) this.pluck(m);
+    }
+    // the room itself: the radiator ticking, keyboards at the office, a siren far off
+    if (now > this.tSpot) {
+      this.tSpot = now + 1.5 + Math.random() * 6;
+      if (S && !inside && mood !== 'title' && mood !== 'end' && S.heatOn && power && Math.random() < .7) this.tick1(2600 + Math.random() * 1200, .03);
+    }
+    if (inside && now > this.tKeys) { this.tKeys = now + 6 + Math.random() * 14; const k = 4 + Math.floor(Math.random() * 9); for (let i = 0; i < k; i++) this.tick1(2800 + Math.random() * 900, .012, i * (.07 + Math.random() * .09)); }
+    if ((mood === 'a1' || mood === 'a3') && now > this.tSiren) { this.tSiren = now + 70 + Math.random() * 110; if (Math.random() < .6) this.siren(); }
+  },
+  chord(notes, dur) {
+    const N = this.n, c = N.c, t = c.currentTime;
+    for (const m of notes) for (const det of [-5, 5]) {
+      const o = c.createOscillator(), g = c.createGain(); o.type = 'triangle'; o.frequency.value = hz(m); o.detune.value = det;
+      const v = .019 * (m < 48 ? 1.25 : 1);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 2.6); g.gain.setValueAtTime(v, t + dur - 4); g.gain.linearRampToValueAtTime(0, t + dur);
+      o.connect(g).connect(N.tone); o.start(t); o.stop(t + dur + .1);
+    }
+  },
+  pluck(m) {
+    const N = this.n, c = N.c, t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+    o.type = 'sine'; o.frequency.value = hz(m);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.034, t + .012); g.gain.exponentialRampToValueAtTime(.0006, t + 1.6);
+    o.connect(g); g.connect(N.tone); g.connect(N.echo); o.start(t); o.stop(t + 1.7);
+  },
+  tick1(f, v, dl = 0) {
+    const N = this.n, c = N.c, t = c.currentTime + dl, x = c.createBufferSource(), bp = c.createBiquadFilter(), g = c.createGain();
+    x.buffer = N.buf; bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = 4;
+    g.gain.setValueAtTime(v * 8, t); g.gain.exponentialRampToValueAtTime(.0004, t + .035);
+    x.connect(bp).connect(g).connect(N.air); x.start(t, Math.random() * 2, .05);
+  },
+  siren() { // far away, behind the buildings
+    const N = this.n, c = N.c, t = c.currentTime, o = c.createOscillator(), lp = c.createBiquadFilter(), g = c.createGain();
+    o.type = 'sawtooth'; lp.type = 'lowpass'; lp.frequency.value = 900;
+    for (let i = 0; i < 4; i++) { o.frequency.setValueAtTime(640, t + i * 1.4); o.frequency.linearRampToValueAtTime(880, t + i * 1.4 + .7); o.frequency.linearRampToValueAtTime(640, t + i * 1.4 + 1.4); }
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.0045, t + 1.5); g.gain.linearRampToValueAtTime(0, t + 5.6);
+    o.connect(lp).connect(g).connect(N.air); o.start(t); o.stop(t + 5.7);
+  }
+};
+setInterval(() => { try { amb.tick(); } catch (e) {} }, 250);
+
+// ---- settings: how loud, how much shaking, how much movement ----
+function setSync() {
+  for (const [k, id] of [['music', 'setMusic'], ['amb', 'setAmb'], ['fx', 'setFx']]) { $(id).value = Math.round(SET[k] * 100); $(id + 'V').textContent = Math.round(SET[k] * 100); }
+  $('setShake').checked = !!SET.shake; $('setCalm').checked = !!SET.calm;
+  document.documentElement.classList.toggle('calm', !!SET.calm);
+  if (sfx.out) sfx.out.gain.value = SET.fx;
+}
+function setSave() { save.settings = Object.assign({}, SET); persist(); setSync(); }
+function setOpen() { setSync(); $('setMenu').hidden = false; }
+function setClose() { $('setMenu').hidden = true; }
+for (const [k, id] of [['music', 'setMusic'], ['amb', 'setAmb'], ['fx', 'setFx']]) $(id).addEventListener('input', e => { SET[k] = +e.target.value / 100; if (k === 'fx') { sfx.init(); sfx.tone(880, .05, 'square', .03); } setSave(); });
+$('setShake').onchange = e => { SET.shake = e.target.checked; setSave(); if (SET.shake) jolt($('setMenu').querySelector('.pm-card'), 5); };
+$('setCalm').onchange = e => { SET.calm = e.target.checked; setSave(); };
+$('setDone').onclick = setClose;
+$('pmSet').onclick = () => { sfx.init(); setOpen(); };
+$('titleSet').onclick = () => { sfx.init(); setOpen(); };
+setSync();
 let pauseSpeed = 1;
 function pauseOpen() {
   if (runCalm()) runSave();
@@ -14053,7 +14206,7 @@ requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
 
-window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
