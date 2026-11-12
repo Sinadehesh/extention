@@ -1113,6 +1113,9 @@ html.uikit #top .act { font-family: var(--f-term); color: #e0a33a; border: 6px s
 html.uikit #room .cvwrap { border: 9px solid transparent !important; border-image: var(--fr-win) 3 fill / 9px / 0 stretch !important; box-shadow: none !important; filter: drop-shadow(8px 8px 0 rgba(7,8,10,.75)); }
 html.uikit #roomStatus span, html.uikit #roomStatus button { border: 6px solid transparent !important; border-image: var(--fr-chip) 3 fill / 6px / 0 stretch !important; background: transparent !important; font-family: var(--f-term); font-size: 12px; letter-spacing: .06em; padding: 1px 4px !important; }
 html.uikit #roomStatus button { border-image: var(--fr-btn) 3 3 4 3 fill / 6px 6px 8px / 0 stretch !important; border-width: 6px 6px 8px !important; }
+html.uikit #roomStatus > :is(span, button) { position: relative; padding-left: 20px !important; padding-right: 2px !important; text-align: left !important; letter-spacing: .06em !important; font-size: 11.5px !important; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+html.uikit #roomStatus > :is(span, button)::before { content: ''; position: absolute; left: 1px; top: 50%; width: 12px; height: 12px; margin-top: -6px; background: var(--ic) center / 12px 12px no-repeat; image-rendering: pixelated; }
+#stTemp { --ic: var(--ic-body); } #stPower { --ic: var(--ic-energy); } #heatBtn { --ic: var(--ic-heat, var(--ic-body)); } #catBtn { --ic: var(--ic-paw); } #ledgerBtn { --ic: var(--ic-files); } #nightBtn { --ic: var(--ic-moon); } #stSick { --ic: var(--ic-sick); }
 html.uikit .rail-item span { font-size: 12px; letter-spacing: .12em; text-shadow: 2px 2px 0 #07080a; }
 html.uikit #subtitle { border: 9px solid transparent !important; border-image: var(--fr-chip) 3 fill / 9px / 0 stretch !important; background: transparent !important; box-shadow: none !important; filter: drop-shadow(4px 4px 0 rgba(7,8,10,.7)); padding: 6px 14px !important; }
 html.uikit .toast { border: 6px solid transparent !important; border-image: var(--fr-chip) 3 fill / 6px / 0 stretch !important; background: transparent !important; box-shadow: none !important; filter: drop-shadow(3px 3px 0 rgba(7,8,10,.7)); display: flex; align-items: center; gap: 8px; font-size: 13px !important; padding: 4px 10px !important; color: #ddd6c1; }
@@ -3291,6 +3294,7 @@ function dayStep() {
   const slept = S.sleepH == null ? 10 : S.sleepH; S.sleepH = null; S.sleepLoss = 0;
   S.stamina = clamp(S.stamina + nightMorning(d, slept), 0, 100); // what the night gave back, or took
   bodyNight(d, slept); gymTick(d);
+  S.plantHp = clamp((S.plantHp ?? .9) + (d - (S.plantDay ?? -9) <= 2 ? .08 : -.05), 0, 1); // the plant, watered or not
   if (S.food <= 0) {
     S.starveDays++;
     S.bodyTemp = clamp(S.bodyTemp - 0.35, 29.0, 37.0);
@@ -7041,7 +7045,7 @@ const nightNow = () => { const h = hourNow(); return h >= 21 || h < 7; };
 const nightRate = () => upLate() && S.act !== 2 && nightNow() ? 1.25 : 1;
 const nightStep = () => upLate() && S.act !== 2 && acc > (DAY_SEC[speed] || DAY_SEC[accSpeed] || DAY_SEC[1]) * AWAKE ? 1 / 6 : 1; // awake at night, the hours pass like day hours
 function hoursToSeven() { const h = hourNow(); return h < 7 ? 7 - h : h >= 12 ? 31 - h : 0; }
-const fmtH = h => (Math.round(h * 2) / 2) + ' H';
+const fmtH = h => (Math.round(h * 2) / 2) + 'H';
 const SLEEP_SAY = h => h >= 9 ? 'A long night. You’ll wake before the alarm at seven.' : h >= 7 ? 'A full night.' : h >= 5.5 ? 'Enough to work on. Not enough to keep doing it.' : h >= 3.5 ? 'Short. Tomorrow will be long.' : h >= 1.5 ? 'Barely worth lying down.' : 'No sleep at all. It will cost you in the morning.';
 const mindNow = () => S.mind == null ? 72 : S.mind;
 const strain = () => (S.sick ? 1.4 : 1) * (mindNow() < 25 ? 1.3 : 1); // work costs more of you when you're ill or coming apart
@@ -7791,7 +7795,7 @@ function renderAll() {
   $('stPower').className = S.power ? '' : 'danger'; $('stPower').hidden = S.phase === 'office'; // the office's power is somebody else's problem
   const cs = S.cat; $('catBtn').hidden = !cs || S.phase === 'office'; if (cs) { $('catBtn').textContent = cs.gone ? `${cs.name.toUpperCase()}: GONE` : cs.sick ? `${cs.name.toUpperCase()}: SICK` : cs.fed < 30 ? `${cs.name.toUpperCase()}: HUNGRY` : cs.name.toUpperCase(); $('catBtn').className = cs.gone || cs.sick ? 'danger' : cs.fed < 30 ? 'amber' : ''; }
   const upNow = upLate() && nightNow();
-  $('nightBtn').hidden = S.act === 2 || S.phase !== 'farm'; $('nightBtn').textContent = upNow ? 'GO TO BED' : S.lastSleep == null ? 'BED: AT NINE' : S.lastSleep < 1 ? 'NO SLEEP LAST NIGHT' : `SLEPT ${fmtH(S.lastSleep)}`;
+  $('nightBtn').hidden = S.act === 2 || S.phase !== 'farm'; $('nightBtn').textContent = upNow ? 'GO TO BED' : S.lastSleep == null ? 'BED AT 9' : S.lastSleep < 1 ? 'NO SLEEP' : `SLEPT ${fmtH(S.lastSleep)}`;
   $('nightBtn').title = upNow ? 'You are up late, and night work pays 25% more. Click to go to bed now.' : 'How you slept. At nine the ledger asks when you’re going to bed. Click to see how you are.';
   $('nightBtn').classList.toggle('on', upNow || (S.lastSleep != null && S.lastSleep < 5.5)); $('nightBtn').classList.toggle('late', upNow);
   $('stSick').hidden = !S.sick || S.phase === 'office';
@@ -7799,7 +7803,7 @@ function renderAll() {
   $('vMindCell').classList.toggle('crit', mn < 20);
   const hurt = S.act !== 2 && S.injury != null && S.injury >= S.day;
   $('vStamBar').parentElement.parentElement.classList.toggle('hurt', hurt); $('vStamBar').parentElement.parentElement.title = hurt ? 'Bruised ribs. You sleep badly: energy comes back slowly for two nights.' : '';
-  $('ledgerBtn').hidden = S.phase === 'office'; $('ledgerBtn').textContent = S.ledgerAuto ? 'LEDGER: OFF' : 'LEDGER: ON';
+  $('ledgerBtn').hidden = S.phase === 'office'; $('ledgerBtn').textContent = S.ledgerAuto ? 'LEDGER OFF' : 'LEDGER ON';
   $('phoneBtn').classList.toggle('buzz', !!S.phoneUnread);
 
   document.querySelectorAll('[data-meal]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.meal === (S.meal || 'ramen'))); b.disabled = S.over || S.phase === 'office'; });
@@ -12500,6 +12504,9 @@ document.querySelectorAll('canvas.rail-ic').forEach(c => { const g = c.getContex
     food: [['..s..s....', '...s..s...', '..s..s....', '..........', 'oooooooooo', 'opppeepppo', '.oppppppo.', '..oppppo..', '...oooo...', '..........'], { o: P.k0, p: P.p2, e: P.e2, s: P.s4 }],
     energy: [['.....ooo..', '....oAAo..', '...oAAo...', '..oAAoooo.', '.oAAAAAAo.', '.ooooAAo..', '...oAAo...', '..oAAo....', '..oAo.....', '..oo......'], { o: P.k0, A: P.a3 }],
     body: [['....oo....', '...oppo...', '...oppo...', '...oeeo...', '...oeeo...', '...oeeo...', '..oeeeeo..', '..oeeeeo..', '...oooo...', '..........'], { o: P.k0, p: P.p3, e: P.e3 }],
+    moon: [['...oooo...', '..ooAAoo..', '.oAAoo....', '.oAo......', 'oAAo......', 'oAAo......', '.oAAo.....', '.oAAAoooo.', '..ooAAAAo.', '....oooo..'], { o: P.k0, A: P.a3 }],
+    paw: [['..o....o..', '.oPo..oPo.', '.oPo..oPo.', 'o.o.oo.o.o', 'oPooPPooPo', '.o.oPPo.o.', '..oPPPPo..', '..oPPPPo..', '...oooo...', '..........'], { o: P.k0, P: P.p3 }],
+    sick: [['....oo....', '...oeeo...', '..oeeeeo..', '..oeppeo..', '..oeppeo..', '..oeeeeo..', '..oeeeeo..', '...oeeo...', '....oo....', '..........'], { o: P.k0, e: P.e3, p: P.p4 }],
     mind: [['...oooo...', '..otttto..', '.ottTtTto.', '.otTtttto.', '.otttTtto.', '.ottTttto.', '..ottttoo.', '..otttto..', '...oooo...', '..........'], { o: P.k0, t: P.t3, T: P.t5 }],
     clock: [['...oooo...', '.oopppoo..', '.oppkpppo.', 'opppkpppo.', 'opppkkkpo.', 'oppppppo..', '.oppppppo.', '.oopppoo..', '...oooo...', '..........'], { o: P.k0, p: P.p3, k: P.k1 }],
     fs: [['oooo..oooo', 'oppo..oppo', 'opo....opo', 'oo......oo', '..........', '..........', 'oo......oo', 'opo....opo', 'oppo..oppo', 'oooo..oooo'], { o: P.k0, p: P.p3 }],
@@ -12784,7 +12791,7 @@ function buildRoomStatic() {
   px(170, 22, 2, 74, P.p0); px(170, 22, 1, 74, P.p1); px(140, 57, 62, 2, P.p0); px(140, 57, 62, 1, P.p1);
   px(140, 59, 62, 1, rgba(P.k0, .3)); px(172, 22, 1, 74, rgba(P.k0, .25)); px(140, 34, 1, 62, rgba(P.k0, .3));
   px(132, 96, 78, 3, P.p1); px(132, 96, 78, 1, P.p2); px(132, 99, 78, 2, P.p0); px(134, 101, 74, 2, P.k3);
-  const plant = clamp(1 - d / 70, 0, 1), leaf = plant > .6 ? P.g3 : plant > .3 ? P.g2 : P.d4, leaf2 = plant > .6 ? P.g2 : plant > .3 ? P.w4 : P.d3;
+  const plant = S.plantHp != null ? S.plantHp : clamp(1 - d / 70, 0, 1), leaf = plant > .6 ? P.g3 : plant > .3 ? P.g2 : P.d4, leaf2 = plant > .6 ? P.g2 : plant > .3 ? P.w4 : P.d3;
   const nl = 2 + Math.round(plant * 5), droop = Math.round((1 - plant) * 6);
   for (let i = 0; i < nl; i++) { const lx = 183 + i * 3, ly = 76 + (i % 2) * 3 + droop; line(191, 88, lx, ly, i % 2 ? leaf : leaf2); px(lx - 1, ly, 3, 2, i % 2 ? leaf : leaf2); }
   px(186, 88, 11, 8, P.r2); px(186, 88, 11, 1, P.r3); px(187, 95, 9, 1, P.r1);
@@ -12867,7 +12874,7 @@ function drawScreen(t, on) {
 // ---- the apartment ----
 function drawRoom(t) {
   const hr = hourNow(), n = nightness(hr), dread = dreadLevel();
-  const key = [S.act, S.day, Math.round(S.temp), S.letters, S.pkg, S.owed > 0, S.fired, S.meal, S.power, S.heatOn, machKey(), S.cat && !S.cat.gone && S.cat.fed > 30, S.phase].join('|');
+  const key = [S.act, S.day, Math.round(S.temp), S.letters, S.pkg, S.owed > 0, S.fired, S.meal, S.power, S.heatOn, machKey(), S.cat && !S.cat.gone && S.cat.fed > 30, S.phase, Math.round((S.plantHp ?? 1) * 10)].join('|');
   if (key !== statKey) { statKey = key; buildRoomStatic(); }
   G = L; L.clearRect(0, 0, W, H);
   drawOutside(t, hr);
@@ -12941,15 +12948,20 @@ function drawRoom(t) {
   const sun = (hr - 12) * 5;
   carvePoly([[140, 96], [202, 96], [214 + sun, 178], [128 + sun, 178]], .2 * (1 - n));
   carvePoly([[136 + sun * .8, 142], [206 + sun * .8, 142], [216 + sun, 178], [126 + sun, 178]], .18 * (1 - n));
-  if (bulbOn) lamp(bx, 38, 150, .88, 6);
+  if (bulbOn) lamp(bx, 38, 150 - 42 * n, .88, 6);
   if (scr) { const [sx, sy, sw, sh] = MACH[machKey()].scr; lamp(sx + sw / 2, sy + sh / 2 + 4, 70, .78, 5); }
   lampE(31, 131, 26, 7, hallOn ? .6 : .25);
   if (S.phoneUnread) lamp(310, 91, 16, .65, 3);
   if (S.act === 2 && S.auditOn && scene === 'room') lamp(227, 94, 40, .7, 4);
   const spx = 140 + Math.round((Math.sin(t / 1700) * .5 + .5) * 140);
   if (S.heat > 62) lampE(spx, 158, 30, 9, .8);
+  if (n > .3) lampE(171, 152, 42, 10, .22 * n); // the street through the window, on the floor
   endLight();
-  if (bulbOn) glow(bx, 38, 60, rgbOf(P.a3), .14);
+  if (n > .05 && scene === 'room') { // lamp-lit and warm, or blue and cold
+    L.globalCompositeOperation = 'multiply'; L.fillStyle = bulbOn ? `rgba(255,212,158,${(.34 * n).toFixed(3)})` : `rgba(140,164,206,${(.42 * n).toFixed(3)})`; L.fillRect(0, 0, W, H); L.globalCompositeOperation = 'source-over';
+    if (n > .3) glowE(171, 150, 40, 9, rgbOf(P.t4), .05 * n);
+  }
+  if (bulbOn) glow(bx, 38, 60 + 20 * n, rgbOf(P.a3), .14 + .06 * n);
   if (scr) { const [sx, sy, sw, sh] = MACH[machKey()].scr; glow(sx + sw / 2, sy + sh / 2, 34, rgbOf(scr), .14); }
   if (S.power && S.heatOn) glow(172, 116, 34, rgbOf(P.r3), .09, 3);
   glowE(31, 131, 20, 5, rgbOf(P.a2), .1);
@@ -13377,6 +13389,20 @@ function coworker(i) {
   if (o.launched) return toast(['Priya is quietly updating her CV.', 'Tom: “Did you get a calendar invite from HR?”', 'Ana: “It closes my tickets before I can open them.”'][i]);
   toast(['Priya: “Morning! The coffee machine’s broken again.”', 'Tom is on a call about a late pallet.', 'Ana: “Big announcement tomorrow, apparently.”'][i]);
 }
+function waterPlant() {
+  const hp = S.plantHp ?? .9;
+  if (S.plantDay === S.day) return toast(pick(['It’s had enough for today.', 'The soil is still dark from this morning.']));
+  S.plantDay = S.day; S.mind = clamp(mindNow() + 1.5, 0, 100); snd('pour', { v: .3 }) || sfx.tone(300, .08, 'sine', .02);
+  toast(hp <= 0.02 ? 'It’s gone. You water it anyway.' : hp < .3 ? 'Brown at the edges. It might come back, if you keep at it.' : pick(['You give it a glass of water. It doesn’t say anything. It doesn’t need to.', 'A glass of water for the plant. One thing in here that is doing fine.', 'There’s a new leaf, small and very green.']));
+  renderAll();
+}
+function stretch() {
+  if (S.stretchDay === S.day) return toast('Again? Your back has opinions.');
+  S.stretchDay = S.day; spendHours(.4);
+  S.stamina = clamp(S.stamina + 4, 0, 100); S.mind = clamp(mindNow() + 3, 0, 100); S.bodyTemp = clamp(S.bodyTemp + .2, 30, 37);
+  toast(pick(['Ten minutes on the rug. Your back clicks in three places.', 'You lie on the rug and look at the stain on the ceiling. It looks like a dog.', 'Twenty push-ups, then twelve, then lying still for a while.']));
+  renderAll();
+}
 const SPOTS = {
   room: [
     { r: [303, 82, 14, 18], label: () => S.phoneUnread ? 'PHONE · NEW' : 'PHONE', go: () => openPhone() },
@@ -13384,6 +13410,8 @@ const SPOTS = {
     { r: [143, 104, 60, 25], label: () => S.heatOn && S.power ? 'RADIATOR · ON' : 'RADIATOR · OFF', go: () => toggleHeat() },
     { r: [10, 42, 42, 88], label: () => 'DOOR', go: peep },
     { r: [136, 18, 70, 78], label: () => 'WINDOW', go: lookOut },
+    { r: [180, 72, 22, 24], label: () => (S.plantHp ?? .9) <= .02 ? 'PLANT · GONE' : S.plantDay === S.day ? 'PLANT' : 'PLANT · WATER IT', go: waterPlant, when: () => S.act !== 2 },
+    { r: [216, 146, 96, 24], label: () => S.stretchDay === S.day ? 'RUG' : 'RUG · STRETCH', go: stretch, when: () => S.act !== 2 },
     { r: [217, 17, 33, 36], label: () => 'CALENDAR', go: () => { const B = budget(); toast(B.due ? `Circled in red: ${money(B.due)} ${B.what}, ${fmtLong(B.dueDay)}. ${B.days} days.` : 'Nothing left circled.'); } },
     { r: [101, 52, 26, 78], label: () => 'FRIDGE · MEALS, COFFEE', go: () => { fridge(); toggleKitchen(); } },
     { r: [10, 130, 44, 12], label: () => `LETTERS · ${S.letters}`, when: () => S.letters > 0, go: () => openLaptop('mail') },
@@ -15913,7 +15941,7 @@ if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
 if (location.hash === '#act4') startAct4();
 
-window.__loop = { get S() { return S; }, askAgents, askText, aiNight, drift, guardFlip, wildTick, stopMoney, WILD, ASKS, MEALS, MEAL_KEYS, mealCost, mealTick, bodyNight, restFor, sleepNow, stayUp, goToBed, bedTick, openYou, joinGym, quitGym, takeMeds, mindNow, hoursToSeven, dinnerTick, kitchenSync, hourNow, petCat, sfx, SND, snd, BEDS, petSnd, sndInit, peep, eveningDue, EVENING2, EVENING3, DOORS1, DOORS3, DOORS4, catAdopt, petAdopt, doorKnock, doorOpen, DOG_SPOTS, keepRun, applyKeep, doorStats, ECHO, runEchoes, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, get tutWait() { return tutWait; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, waterPlant, stretch, askAgents, askText, aiNight, drift, guardFlip, wildTick, stopMoney, WILD, ASKS, MEALS, MEAL_KEYS, mealCost, mealTick, bodyNight, restFor, sleepNow, stayUp, goToBed, bedTick, openYou, joinGym, quitGym, takeMeds, mindNow, hoursToSeven, dinnerTick, kitchenSync, hourNow, petCat, sfx, SND, snd, BEDS, petSnd, sndInit, peep, eveningDue, EVENING2, EVENING3, DOORS1, DOORS3, DOORS4, catAdopt, petAdopt, doorKnock, doorOpen, DOG_SPOTS, keepRun, applyKeep, doorStats, ECHO, runEchoes, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, get tutWait() { return tutWait; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
