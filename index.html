@@ -103,6 +103,23 @@ input[type="range"] { width: 100%; accent-color: var(--amber); }
 .sbtn:disabled { opacity: .42; cursor: default; }
 .sbtn .st-top { display: flex; justify-content: space-between; gap: 4px; font-weight: 600; color: var(--ink); }
 .sbtn .st-cost { color: var(--amber); }
+.ask-row { display: flex; gap: 6px; margin: 6px 0 4px; }
+.ask-row input { flex: 1; min-width: 0; background: #07080a; color: var(--ink); border: 2px solid var(--line); padding: 7px 9px; font-family: var(--f-ui); font-size: 14px; }
+.ask-row input:focus { outline: none; border-color: var(--amber); }
+.ask-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.ask-chips button { font-family: var(--f-ui); font-size: 12.5px; padding: 4px 8px; background: #151a1f; color: var(--ink); border: 2px solid var(--line); cursor: pointer; }
+.ask-chips button:hover:not(:disabled) { border-color: var(--amber); color: var(--amber); }
+.ask-chips button:disabled { opacity: .4; cursor: default; }
+.ask-chips button.hot { border-color: #b8321f; color: #ff7a5c; }
+.ask-order { margin-top: 7px; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 9px; border: 2px solid #b8321f; background: #3d0f0c; color: #ffd2c6; font-family: var(--f-term); font-size: 12px; letter-spacing: .06em; }
+.ask-order button { font-size: 11px !important; padding: 3px 8px !important; }
+.ask-log { display: flex; flex-direction: column; gap: 5px; margin-top: 7px; }
+.ask-log div { font-family: var(--f-ui); font-size: 13px; line-height: 1.4; color: #cfc8b2; border-left: 3px solid #20685c; padding: 1px 0 1px 8px; }
+.ask-log b { font-family: var(--f-term); font-weight: 400; color: var(--t4, #7fd8c0); margin-right: 5px; font-size: 12px; }
+.ask-log i { display: block; font-style: normal; font-size: 11.5px; color: #71858f; }
+.wild { display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: start; }
+.wild canvas.bot { width: 56px; height: 56px; image-rendering: pixelated; border: 2px solid #07080a; background: #0e2724; }
+.wild p { margin: 0 0 8px; }
 .sbtn .st-sub { font-size: 10px; color: var(--muted); line-height: 1.25; }
 
 .agents { display: flex; flex-direction: column; gap: 5px; }
@@ -775,6 +792,39 @@ body { padding: 0; }
 .pop .life-actions { grid-template-columns: 1fr; gap: 6px; }
 .pop .meal button { padding: 8px 4px; font-size: 13px; }
 .pop .lbtn { padding: 9px 10px; font-size: 13px; }
+.pop#popKitchen { width: 372px; }
+.kt-h { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--f-term); font-size: 11px; letter-spacing: .14em; color: var(--muted); margin-top: 2px; }
+.kt-h small { font-size: 10px; letter-spacing: .04em; color: #71858f; }
+.meal.mealgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; border: 0; border-radius: 0; overflow: visible; }
+.meal.mealgrid button { border: 2px solid var(--line); flex-direction: row; justify-content: space-between; gap: 8px; padding: 8px 9px; font-size: 13px; text-align: left; }
+.meal.mealgrid button b { font-size: 12px; white-space: nowrap; }
+.meal.mealgrid button:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.kt-say { margin: 0; min-height: 3.1em; font-family: var(--f-ui); font-size: 13.5px; line-height: 1.4; color: var(--ink); border-left: 3px solid var(--amber); padding: 2px 0 2px 9px; }
+.lg-meals { display: flex; flex-wrap: wrap; gap: 4px; }
+.lg-meals button { font-size: 11px !important; padding: 3px 7px !important; }
+.lg-say { font-family: var(--f-ui); font-size: 12.5px; line-height: 1.35; color: var(--muted); min-height: 2.6em; }
+.card.you { max-width: 470px; }
+.you-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-family: var(--f-term); }
+.you-grid div { border: 2px solid var(--line); padding: 6px 9px; display: flex; flex-direction: column; gap: 1px; background: #07080a; }
+.you-grid span { font-size: 10px; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+.you-grid b { font-size: 16px; font-weight: 400; color: var(--ink); } .you-grid b.bad { color: var(--danger); } .you-grid b.warn { color: var(--amber); }
+#sleepFx { position: fixed; inset: 0; z-index: 70; pointer-events: none; background: #07080a; display: grid; place-items: center; opacity: 0; animation: sleepFx 1.7s ease both; }
+#sleepFx div { text-align: center; font-family: var(--f-term); color: #9aaab1; letter-spacing: .2em; }
+#sleepFx b { display: block; font-weight: 400; font-size: 34px; color: #ece4cc; letter-spacing: .08em; margin-bottom: 6px; }
+@keyframes sleepFx { 0% { opacity: 0; } 22%, 62% { opacity: 1; } 100% { opacity: 0; } }
+html.mind-low #roomCv { animation: mindBlur 6.5s ease-in-out infinite; }
+@keyframes mindBlur { 0%, 100% { filter: none; } 45% { filter: blur(.7px) saturate(.72); } 55% { filter: blur(.3px) saturate(.8) hue-rotate(-6deg); } }
+html.uikit .vitals .vital:nth-child(4) { --ic: var(--ic-mind); }
+html.uikit #top .vitals { display: grid !important; grid-template-columns: repeat(2, 86px); grid-auto-rows: 22px; gap: 2px 4px; flex: none; align-content: center; }
+html.uikit #top .vitals .vital { border-width: 3px !important; border-image: var(--fr-slot) 3 fill / 3px / 0 stretch !important; min-width: 0 !important; padding: 0 6px 0 21px !important; display: flex; flex-direction: row; align-items: center; gap: 6px; }
+html.uikit #top .vitals .vital::before { width: 12px; height: 12px; margin-top: -6px; left: 4px; background-size: 12px 12px; }
+html.uikit #top .vitals .vtop { flex: none; } html.uikit #top .vitals .vtop b { font-size: 12px; min-width: 32px; display: inline-block; }
+html.uikit #top .vitals .vbar { flex: 1; height: 5px; }
+.card.ledger.two { max-width: 840px; }
+.ledger .lg-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 22px; align-items: start; }
+.ledger .lg-col { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.ledger .lg-col + .lg-col { border-left: 3px dotted #2e3a42; padding-left: 20px; }
+@media (max-width: 760px) { .ledger .lg-cols { grid-template-columns: 1fr; } .ledger .lg-col + .lg-col { border-left: 0; padding-left: 0; } }
 
 /* the phone, face up at the edge */
 #railR { justify-content: flex-end; overflow: hidden; }
@@ -1262,6 +1312,12 @@ html.uikit #n9nWin .n9-node, html.uikit #n9nWin .n9-offer, html.uikit #n9nWin .n
 /* the tutorial: a hole in the dark around one thing, and a card that says what it is */
 #tut { position: fixed; inset: 0; z-index: 95; pointer-events: none; }
 #tut[hidden] { display: none; }
+#tutHint { position: fixed; top: 64px; left: 50%; transform: translateX(-50%); z-index: 94; display: flex; align-items: center; gap: 10px; padding: 7px 8px 7px 12px; background: #ece4cc; color: #24170f; border: 3px solid #07080a; box-shadow: 4px 4px 0 #07080a; font-family: var(--f-ui); font-size: 14px; max-width: min(560px, 90vw); animation: tutHintIn .35s cubic-bezier(.2, 1.3, .4, 1) both; }
+#tutHint[hidden] { display: none; }
+#tutHint b { font-family: var(--f-term); font-weight: 400; font-size: 11px; letter-spacing: .14em; color: #fbf6e8; background: #843b27; padding: 2px 6px; animation: tutPulse 1.2s steps(2) infinite; }
+#tutHint button { border: 0; background: transparent; color: #805634; font-size: 18px; line-height: 1; cursor: pointer; padding: 0 4px; }
+#tutHint.ok { background: #c4f0e4; } #tutHint.ok b { background: #20685c; animation: none; }
+@keyframes tutHintIn { from { opacity: 0; transform: translate(-50%, -10px); } }
 #tutHole { position: fixed; border: 3px solid #f2c46a; box-shadow: 0 0 0 9999px rgba(7,8,10,.66), inset 0 0 0 2px #07080a; animation: tutPulse 1.2s steps(2) infinite; transition: left .18s, top .18s, width .18s, height .18s; }
 @keyframes tutPulse { 50% { border-color: #ffe6a6; } }
 #tutCard { position: fixed; pointer-events: auto; padding: 12px 14px; background: #ece4cc; color: #24170f; border: 3px solid #07080a; box-shadow: 6px 6px 0 #07080a; display: flex; flex-direction: column; gap: 6px; transition: left .18s, top .18s; }
@@ -1589,6 +1645,10 @@ html.uikit .appic[data-app="harmony"] { --gl: var(--gl-harmony); }
         <div class="vtop"><span>BODY</span><b id="vBodyTxt">37.0°C</b></div>
         <div class="vbar"><i id="vBodyBar" style="width:100%;background:var(--ok)"></i></div>
       </div>
+      <div class="vital" id="vMindCell" title="Your head. Sleep, food, warmth and company hold it together.">
+        <div class="vtop"><span>MIND</span><b id="vMindTxt">72%</b></div>
+        <div class="vbar"><i id="vMindBar" style="width:72%;background:#2fb589"></i></div>
+      </div>
     </div>
     <div class="ctrls">
       <button id="evBtn" hidden title="Evidence files: this part of the story already happened. Verified real.">EVIDENCE</button>
@@ -1611,7 +1671,8 @@ html.uikit .appic[data-app="harmony"] { --gl: var(--gl-harmony); }
         <button id="heatBtn">HEAT: ON ($8/d)</button>
         <button id="catBtn">SOOT</button>
         <button id="ledgerBtn">LEDGER: ON</button>
-        <button id="nightBtn" title="Stay up and work through the night. Night work pays 25% more. You pay for it in the morning.">ALL-NIGHTER: OFF</button>
+        <button id="nightBtn" title="How you slept. At nine you choose when to go to bed.">SLEPT 8 H</button>
+        <span id="stSick" class="danger" hidden>ILL</span>
       </div>
       <button class="rail-item" id="railLaptop"><canvas class="rail-ic lap" data-ic="lap" width="22" height="14"></canvas><span>LAPTOP</span></button>
       <button class="rail-item" id="railRules"><canvas class="rail-ic book" data-ic="book" width="17" height="20"></canvas><span>RULEBOOK</span></button>
@@ -1624,14 +1685,13 @@ html.uikit .appic[data-app="harmony"] { --gl: var(--gl-harmony); }
       <div id="popKitchen" class="pop" hidden>
         <div class="pop-h"><span>KITCHEN</span><button class="pop-x" id="popKitchenX" aria-label="Close">×</button></div>
         <div class="life-actions">
-          <div class="meal" role="group" aria-label="Meal plan">
-            <span>MEALS</span>
-            <button data-meal="skip" aria-pressed="false">Skip<b>$0</b></button>
-            <button data-meal="ramen" aria-pressed="true">Ramen<b>$4/d</b></button>
-            <button data-meal="groc" aria-pressed="false">Groceries<b>$18/d</b></button>
-          </div>
-          <button class="lbtn" id="actCoffee"><span>Coffee (+28% energy)</span><b>$5</b></button>
-          <button class="lbtn" id="actPills"><span>Stimulants (+60% energy)</span><b>$15</b></button>
+          <div class="kt-h"><span>DINNER, EVERY NIGHT</span><small>paid at the ledger</small></div>
+          <div class="meal mealgrid" id="mealGrid" role="group" aria-label="Dinner plan"></div>
+          <p class="kt-say" id="mealSay"></p>
+          <div class="kt-h"><span>RIGHT NOW</span></div>
+          <button class="lbtn" id="actCoffee" title="An hour or two of clear head. Your heart notices."><span>Coffee</span><b>$5</b></button>
+          <button class="lbtn" id="actPills" title="You will not feel tired. Your heart will."><span>Stimulants</span><b>$15</b></button>
+          <button class="lbtn" id="actMeds" hidden title="For the cough and the temperature."><span>Cold medicine</span><b>$14</b></button>
         </div>
       </div>
       <ul id="roomLog" aria-live="polite" hidden></ul>
@@ -1779,6 +1839,7 @@ html.uikit .appic[data-app="harmony"] { --gl: var(--gl-harmony); }
 <div id="toasts" aria-live="polite"></div>
 <div class="modal" id="modal" hidden><div class="card" id="modalCard"></div></div>
 <div class="modal" id="phoneModal" hidden><div class="phone" id="phoneScreen"></div><div id="bossWarn" hidden>FOOTSTEPS · MARCUS IS COMING</div></div>
+<div id="tutHint" hidden><b>TO DO</b><span id="tutHintT"></span><button id="tutHintX" aria-label="Stop reminding me" title="Stop reminding me">×</button></div>
 <div id="tut" hidden><div id="tutHole"></div><div id="tutCard"><div id="tutK"></div><div id="tutT"></div><p id="tutS"></p><div class="tut-b"><button class="btn" id="tutSkip">Skip the tutorial</button><button class="btn primary" id="tutOk">Got it · Enter</button></div></div></div>
 <div id="setMenu" hidden><div class="pm-card set-card"><div class="pm-k">SETTINGS</div><div class="pm-t">Sound and motion</div>
   <label class="set-row"><span>Music</span><input type="range" min="0" max="100" step="5" id="setMusic"><b id="setMusicV"></b></label>
@@ -2701,24 +2762,46 @@ function snap() {
 }
 
 // ================= player survival & agent strategies =================
-// Food is a standing plan, paid once a day, so you set it and get back to the farm.
+// Dinner is a standing plan, paid once a night. Each one costs something that isn't money.
 const MEALS = {
-  skip:  { label: 'Skip meals', cost: 0,  target: null },
-  ramen: { label: 'Ramen',      cost: 4,  target: 62 },
-  groc:  { label: 'Groceries',  cost: 18, target: 100 }
+  skip:  { label: 'Nothing', tag: 'nothing', price: () => 0, target: null, mind: -3, say: 'Tap water. It costs nothing, today.' },
+  ramen: { label: 'Instant ramen', tag: 'ramen', price: () => pr('ramen'), target: 62, cook: true, say: 'Hot, salty, the same as yesterday and the day before.' },
+  beans: { label: 'Rice and beans', tag: 'rice & beans', price: () => Math.ceil(pr('groc') * .4), target: 84, time: 1, stam: 2, well: .8, cook: true, say: 'Cheap, and it is real food. You have to cook it: an hour at the stove every evening.' },
+  deli:  { label: 'Bodega sandwich', tag: 'sandwich', price: () => Math.ceil(pr('groc') * .6), target: 76, mind: 1, say: 'No cooking, no washing up. The man at the counter knows your order.' },
+  groc:  { label: 'Groceries', tag: 'groceries', price: () => pr('groc'), target: 100, warm: .3, stam: 6, mind: 2, well: .7, cook: true, say: 'Eggs, greens, fruit. You feel it the next morning.' },
+  dlv:   { label: 'Delivery', tag: 'delivery', price: () => Math.ceil(pr('groc') * 1.5), target: 94, mind: 4, say: 'Anything you like, at the door in twenty minutes. Somebody rode through the snow with it.' },
+  soup:  { label: 'St. Brendan’s hall', tag: 'soup kitchen', price: () => 0, target: 70, time: 2, mind: 1, free: true, say: 'Hot soup at five, and nobody asks. The line takes two hours out of your day.' }
 };
+const MEAL_KEYS = ['skip', 'ramen', 'beans', 'deli', 'groc', 'dlv', 'soup'];
+const mealOf = k => MEALS[k || S.meal] || MEALS.ramen;
 function mealTick() {
-  const plan = MEALS[S.meal] || MEALS.ramen;
+  const plan = mealOf();
   let m = plan;
   const cost = mealCost();
   if (cost) {
     if (S.balance >= cost) S.balance -= cost;
-    else { m = MEALS.skip; note(`No money for ${plan.label.toLowerCase()} today. You drank tap water and went to bed.`); }
+    else { m = MEALS.skip; note(`No money for ${plan.tag} today. You drank tap water and went to bed.`); }
   }
-  if (m.target === null) { S.food = clamp(S.food - 17, 0, 100); return; }
+  S.ateWell = m.well || 1; S.mealMind = m.mind || 0;
+  S.ramenDays = m === MEALS.ramen ? (S.ramenDays || 0) + 1 : 0;
+  if (m.target === null) { S.food = clamp(S.food - (S.gym ? 22 : 17), 0, 100); return; }
   S.food = clamp(S.food + (m.target - S.food) * .5, 0, 100);
-  if (m === MEALS.groc) { S.bodyTemp = clamp(S.bodyTemp + 0.3, 30, 37.0); S.stamina = clamp(S.stamina + 6, 0, 100); }
+  if (m.warm) S.bodyTemp = clamp(S.bodyTemp + m.warm, 30, 37.0);
+  if (m.stam) S.stamina = clamp(S.stamina + m.stam, 0, 100);
 }
+// A dinner that takes time takes it at five o'clock: the stove, or the line outside the church hall.
+function dinnerTick() {
+  if (!S || S.over || S.phase === 'office' || S.dinnerDay === S.day) return;
+  const h = hourNow(); if (h < 17 || h >= 21) return;
+  if (BN && MGC && !BN.ended && h < 20.8) return; // not in the middle of a job
+  S.dinnerDay = S.day;
+  const m = mealOf(); if (!m.time || mealCost() > S.balance) return;
+  const t = Math.min(m.time, 20.9 - h); if (t <= .2) return; // late, so you eat standing up
+  spendHours(t);
+  note(m === MEALS.soup ? 'You stood in the line at St. Brendan’s with your hands in your sleeves. The soup was hot. It took two hours.' : 'You cooked. Rice, beans, an onion. An hour, with the washing up.');
+  toast(m === MEALS.soup ? 'St. Brendan’s: two hours in the line' : 'An hour at the stove');
+}
+
 // You and Soot. A fed cat sleeps on you, and you are warmer for it.
 function catTick() {
   const c = S.cat; if (!c || c.gone) return;
@@ -2739,7 +2822,7 @@ function vetVisit() {
 }
 
 // ---- the night ledger: you, Soot, and what you can afford ----
-function ledgerWanted() { return !S.ledgerAuto && !S.over && !(S.allNight && S.act !== 2) && (S.act === 2 || S.phase === 'farm'); }
+function ledgerWanted() { return !S.ledgerAuto && !S.over && S.act === 2; } // after Act I the ledger still comes at the end of the night; in Act I it comes at nine (bedTick)
 function ledgerReport() { // the day, graded: did you earn what rent needed?
   if (S.act === 2 || S.phase !== 'farm' || S.goalDay !== S.day || !S.goal || S.goalGraded === S.day) return S.goalReport || '';
   const goal = S.goal, got = S.earnToday || 0, k = got / goal, gr = k >= 1.5 ? 'S' : k >= 1 ? 'A' : k >= .7 ? 'B' : k >= .4 ? 'C' : 'F';
@@ -2757,28 +2840,42 @@ function openLedger() {
   const you = S.bodyTemp < 35 ? 'freezing' : S.food < 25 ? 'starving' : S.stamina < 25 ? 'exhausted' : S.food < 50 ? 'hungry' : 'getting by';
   const soot = !c || c.gone ? 'gone' : c.sick ? 'sick, not eating' : c.fed < 30 ? 'hungry, waiting by the fridge' : 'fed, asleep on your feet';
   const B = budget();
+  // when you go to bed is how long you sleep: now, or later, or not at all
+  const hNow = hourNow(), late = h => (h >= 21 ? h : h + 24) > (hNow >= 21 || hNow >= 12 ? hNow : hNow + 24);
+  const beds = bedAct() ? [['now', hNow >= 20.5 && hNow < 21.6 ? '9 PM' : 'now'], ...BEDTIMES.filter(b => late(b[0])), [7, 'not at all']] : [];
+  let bed = 'now';
+  const bedHours = b => b === 'now' ? Math.max(0, Math.min(10, hoursToSeven()) - (S.sleepLoss || 0)) : +b === 7 ? 0 : (7 - +b + 24) % 24;
   modal({
-    cls: 'ledger', title: `NIGHT · ${fmtLong(S.day).toUpperCase()}`,
-    body: `${ledgerReport()}<div class="lg-row"><span>Cash now</span><b>${money(S.balance)}</b></div>
+    cls: 'ledger' + (beds.length ? ' two' : ''), title: `NIGHT · ${fmtLong(S.day).toUpperCase()}`,
+    body: `${beds.length ? '<div class="lg-cols"><div class="lg-col">' : ''}${ledgerReport()}<div class="lg-row"><span>Cash now</span><b>${money(S.balance)}</b></div>
       ${bullyLedgerHTML(BL)}
       ${S.act === 2 && S.gig2 && (S.gig2.today.gig || S.gig2.today.tix) ? `<div class="lg-row muted"><span>Gig work today</span><span>+${money(S.gig2.today.gig)}${S.gig2.today.tix ? ` · tickets −${money(S.gig2.today.tix)}` : ''}</span></div>` : ''}
       ${S.act === 2 && S.bots2 && S.bots2.list.length ? `<div class="lg-row muted"><span>Your agents, tonight</span><span>about +${money(S.bots2.list.filter(b => !b.stuck).reduce((a, b) => a + botYield(b), 0))}</span></div>` : ''}
-      ${S.act !== 2 ? `<div class="lg-row muted"><span>Earned today</span><span>${money(S.earnToday || 0)}</span></div>${(S.jobs || []).length ? `<div class="lg-row muted"><span>Jobs still open</span><span>${S.jobs.length}</span></div>` : ''}` : ''}
+      ${S.act !== 2 ? `${(S.jobs || []).length ? `<div class="lg-row muted"><span>Jobs still open</span><span>${S.jobs.length}</span></div>` : ''}` : ''}
       <div class="lg-sep"></div>
       <label class="lg-row ${S.power ? '' : 'off'}"><span><input type="checkbox" id="lgHeat" ${S.heatOn && S.power ? 'checked' : ''} ${S.power ? '' : 'disabled'}> Heat${S.power ? '' : ' (power cut)'}</span><b>−${money(pr('heat'))}</b></label>
-      <div class="lg-row lg-food"><span>Food</span><span class="seg">${['skip', 'ramen', 'groc'].map(k => `<button data-lm="${k}" aria-pressed="${S.meal === k}">${k === 'groc' ? 'groceries' : k}${k === 'skip' ? '' : ' −' + money(mealCost(k))}</button>`).join('')}</span></div>
+      <div class="lg-row lg-food"><span>Dinner</span><b id="lgMealCost"></b></div>
+      <div class="seg lg-meals">${MEAL_KEYS.map(k => `<button data-lm="${k}" aria-pressed="${S.meal === k}">${esc(MEALS[k].tag)}</button>`).join('')}</div>
+      <div class="lg-say" id="lgMealSay"></div>
       ${c && !c.gone ? `<label class="lg-row"><span><input type="checkbox" id="lgCat" ${c.food ? 'checked' : ''}> ${c.kind === 'dog' ? 'Dog' : 'Cat'} food for ${esc(c.name)}</span><b>−${money(pr('cat'))}</b></label>` : ''}
       ${sick ? `<label class="lg-row warn"><span><input type="checkbox" id="lgVet"> Vet for ${esc(c.name)}</span><b>−$90</b></label>` : ''}
       ${fixed ? `<div class="lg-row muted"><span>Farm: cloud, servers, VPN</span><span>−${money(fixed)}</span></div>` : ''}
       <div class="lg-sep"></div>
       <div class="lg-row"><span>Tonight</span><b id="lgTot"></b></div>
       <div class="lg-row"><span>Left in the morning</span><b id="lgLeft"></b></div>
-      <div class="lg-who"><span>You: ${you}</span>${c ? `<span>${esc(c.name)}: ${soot}</span>` : ''}</div>
+      ${beds.length ? '</div><div class="lg-col">' : ''}<div class="lg-who"><span>You: ${you}${S.sick ? ', and ill' : ''}${(S.sleepDebt || 0) >= 4 ? ', short of sleep' : ''}</span>${c ? `<span>${esc(c.name)}: ${soot}</span>` : ''}</div>
       ${B.due ? `<div class="lg-row muted"><span>${B.evict ? 'Eviction' : 'Rent'} · ${fmtDay(B.dueDay)}</span><span>${money(B.due)} in ${B.days} days</span></div>` : ''}
-      <label class="lg-auto"><input type="checkbox" id="lgAuto"> Sleep straight through from now on (switch the ledger back on in the room)</label>`,
-    buttons: [{ label: 'Sleep', primary: true, fn: () => { if (vet) vetVisit(); acc = 0; dayStep(); } }]
+      ${beds.length ? `<div class="lg-sep"></div><div class="lg-row"><span>Bed</span><b id="lgBedH"></b></div>
+      <div class="seg lg-meals">${beds.map(([h, lab]) => `<button data-lb="${h}" aria-pressed="${h === bed}">${lab}</button>`).join('')}</div>
+      <div class="lg-say" id="lgBedSay"></div>` : ''}
+      <label class="lg-auto"><input type="checkbox" id="lgAuto"> Go to bed at nine without asking from now on (switch the ledger back on in the room)</label>${beds.length ? '</div></div>' : ''}`,
+    buttons: [{ label: 'Sleep', primary: true, fn: () => { if (vet) vetVisit(); if (bed === 'now') sleepNow(); else stayUp(+bed); } }]
   });
-  const upd = () => { const tt = total(); $('lgTot').textContent = '−' + money(tt); $('lgLeft').textContent = money(S.balance - tt); $('lgLeft').className = S.balance - tt < 0 ? 'danger' : ''; };
+  const upd = () => { const tt = total(); $('lgTot').textContent = '−' + money(tt); $('lgLeft').textContent = money(S.balance - tt); $('lgLeft').className = S.balance - tt < 0 ? 'danger' : '';
+    $('lgMealCost').textContent = mealCost() ? '−' + money(mealCost()) : 'free'; $('lgMealSay').textContent = mealOf().say + (S.gym && mealCost() ? ' The gym has made you hungrier.' : '');
+    if (beds.length) { const bh = bedHours(bed); $('lgBedH').textContent = bh ? `${Math.round(bh * 2) / 2} h of sleep` : 'no sleep'; $('lgBedSay').textContent = (bed === 'now' ? '' : 'You stay up and keep working; night work pays a quarter more. ') + SLEEP_SAY(bh);
+      const pb = $('modalCard').querySelector('.acts2 button[data-i="0"]'); if (pb) pb.textContent = bed === 'now' ? 'Sleep' : +bed === 7 ? 'Stay up all night' : 'Stay up'; } };
+  document.querySelectorAll('[data-lb]').forEach(b => b.onclick = () => { bed = b.dataset.lb === 'now' ? 'now' : +b.dataset.lb; document.querySelectorAll('[data-lb]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); sfx.tone(520, .03, 'square', .015); upd(); });
   const hb = $('lgHeat'); if (hb) hb.onchange = () => { S.heatOn = hb.checked; upd(); };
   document.querySelectorAll('[data-lm]').forEach(b => b.onclick = () => { S.meal = b.dataset.lm; document.querySelectorAll('[data-lm]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); upd(); });
   const cb = $('lgCat'); if (cb) cb.onchange = () => { S.cat.food = cb.checked; upd(); };
@@ -3113,7 +3210,7 @@ function dayStep() {
   }
 
   if (S.temp < 11) {
-    const chill = (11 - S.temp) * 0.14;
+    const chill = (11 - S.temp) * 0.14 * (S.gym ? .6 : 1); // a body that trains holds its heat
     S.bodyTemp = clamp(S.bodyTemp - chill, 29.0, 37.0);
     if (S.bodyTemp < 35.0 && !S.seen.shiver) {
       S.seen.shiver = 1;
@@ -3130,7 +3227,9 @@ function dayStep() {
   // 3. Hunger & Stamina
   mealTick();
   catTick();
-  S.stamina = clamp(S.stamina + nightMorning(d), 0, 100); // Overnight rest, or not
+  const slept = S.sleepH == null ? 10 : S.sleepH; S.sleepH = null; S.sleepLoss = 0;
+  S.stamina = clamp(S.stamina + nightMorning(d, slept), 0, 100); // what the night gave back, or took
+  bodyNight(d, slept); gymTick(d);
   if (S.food <= 0) {
     S.starveDays++;
     S.bodyTemp = clamp(S.bodyTemp - 0.35, 29.0, 37.0);
@@ -3154,6 +3253,7 @@ function dayStep() {
 
   storyEvents(d);
   runEchoes(d);
+  if (S.phase === 'farm' && !S.over) aiNight(d);
   if (S.phase === 'farm' && !S.over && S.deskOpenDay !== d && $('modal').hidden) startDeskDay();
   renderAll();
 }
@@ -3199,11 +3299,11 @@ function runSelection(k) {
 }
 
 const elecDue = d => d === 28 ? 160 : (S.billHack ? 0 : 260);
-const rentDue = () => RENT - S.rentCut;
+const rentDue = () => { const due = S.day <= 28 ? 28 : S.day <= 59 ? 59 : -1; return S.rentFree === due ? 0 : RENT - S.rentCut + (S.rentFee || 0); };
 function monthStart() {
   const elec = elecDue(S.day), rent = rentDue();
   const due = rent + elec;
-  S.rentCut = 0;
+  S.rentCut = 0; S.rentFee = 0; if (S.rentFree === S.day) { S.rentFree = null; note('Rent day. Brightwater’s portal says PAID, in green. You didn’t pay it.'); }
   if (S.day === 59) S.billHack = false;
   if (Math.max(0, S.balance) >= due) {
     S.balance -= due;
@@ -3713,7 +3813,7 @@ const PRICE_EVENTS = [ // h: what the paper runs in the days before; n: what it 
     n: ['Eggs are a luxury now', 'A dozen costs what a week of noodles used to. Customers were seen putting them back, gently.'] }
 ];
 function pr(k) { return S && S.price && S.price[k] != null ? S.price[k] : PRICE0[k]; }
-function mealCost(k) { k = k || S.meal; return k === 'skip' ? 0 : pr(k === 'groc' ? 'groc' : 'ramen'); }
+function mealCost(k) { const m = mealOf(k); return Math.ceil(m.price() * (S.gym && !m.free ? 1.25 : 1)); } // the gym makes you hungry
 function catCost() { return S.cat && S.cat.food && !S.cat.gone ? pr('cat') : 0; }
 function applyPrices(d) {
   S.price = S.price || Object.assign({}, PRICE0);
@@ -4815,7 +4915,7 @@ const MG_FPS = { bytebook: 15, thunkpad: 24, inspira: 40, bookair: 60, raptor: 6
 const mgOn = j => !!(j && typeof MINI !== 'undefined' && MINI[j.kind] && !(BN && BN.mgFail));
 function mgKill() { if (MGC) { try { MGC.destroy(); } catch (e) {} MGC = null; } }
 function mgLevel() { return clamp(.2 + Math.max(0, S.day) / 70 + ((S.stars || 3) - 3) * .15, 0, 1); } // later days and better clients want more
-function tremorNow() { return clamp(Math.max(0, 30 - S.stamina) / 40 + Math.max(0, 36 - S.bodyTemp) / 2.5 + dreadLevel() * .25, 0, 1); }
+function tremorNow() { return clamp(Math.max(0, 30 - S.stamina) / 40 + Math.max(0, 36 - S.bodyTemp) / 2.5 + dreadLevel() * .25 + Math.max(0, 30 - mindNow()) / 60, 0, 1); }
 function benchHead(j) {
   const h = $('bnHead'); if (!h) return; const days = j.due - S.day;
   h.textContent = `${j.from} · ${money(j.pay)} · ${days <= 0 ? 'due today' : `due in ${days} day${days > 1 ? 's' : ''}`} · ${j.done} of ${j.units} done${j.errs ? ` · ${j.errs} mistake${j.errs > 1 ? 's' : ''}` : ''}`;
@@ -5115,7 +5215,7 @@ function mgItem(j, ok, st) {
     if (BN.asN % ASSIST_EVERY === 0) { S.credits = Math.max(0, S.credits - BN.env.assist); if (!S.credits) { BN.env.assist = 0; BN.env.assistName = ''; toast('Out of AI credits. The assist switched itself off.'); } assistSync(); }
   }
   if (!BN.auto) {
-    S.stamina = clamp(S.stamina - .32, 0, 100); // a long day of this wears you down
+    S.stamina = clamp(S.stamina - .32 * strain(), 0, 100); // a long day of this wears you down
     if (S.stamina < 3 && j.done < j.units) setTimeout(() => { if (benchJob() === j && !(BN && BN.ended)) { toast('You can’t keep your eyes open. Coffee, or sleep.'); benchStop(); } }, 400);
     if (BN.cancelAt && j.done === BN.cancelAt && j.done < j.units && MGC) { // halfway through, the client finds something cheaper
       const part = Math.round(j.pay * (j.done - j.errs) / j.units * .5);
@@ -5199,7 +5299,7 @@ function benchStop() { mgKill(); S.bench = null; BN = null; benchRender(true); r
 function benchAnswer(ok) {
   const j = benchJob(); if (!j || !BN || BN.wait > 0 || BN.dl > 0 || !speed || !$('modal').hidden) return;
   j.done++; if (!ok) j.errs++;
-  S.stamina = clamp(S.stamina - .32, 0, 100); // a long day of this wears you down
+  S.stamina = clamp(S.stamina - .32 * strain(), 0, 100); // a long day of this wears you down
   if (ok) sfx.tone(620 + (j.done % 6) * 70, .04, 'square', .02); else { sfx.tone(150, .14, 'square', .035); const s = $('bnStage'); if (s) jolt(s, 5); }
   if (j.done >= j.units) return benchFinish(j);
   if (S.stamina < 3) { toast('You can’t keep your eyes open. Coffee, or sleep.'); return benchStop(); }
@@ -5986,7 +6086,7 @@ function dayStep4() {
   const cut = M.heatCut && M.ch >= 4, winter = M.ch >= 4 ? 3 : M.ch === 3 ? 11 : 13;
   if (S.power && S.heatOn) { S.balance -= pr('heat') * (cut ? .35 : 1); S.temp += ((cut ? 14 : 20.5) - S.temp) * .45; } else S.temp += (winter - S.temp) * .22;
   if (S.temp < 11) { S.bodyTemp = clamp(S.bodyTemp - (11 - S.temp) * 0.12, 29.0, 37.0); if (S.bodyTemp <= 30.5) return triggerDeath('frostbite'); } else S.bodyTemp = clamp(S.bodyTemp + 0.45, 30.0, 37.0);
-  mealTick(); catTick(); S.stamina = clamp(S.stamina + 12, 0, 100);
+  mealTick(); catTick(); S.stamina = clamp(S.stamina + 12, 0, 100); bodyNight(S.day, 8);
   if (S.food <= 0) { S.starveDays++; if (S.starveDays >= 3) return triggerDeath('starvation'); } else S.starveDays = 0;
   S.k401 *= 1 + rand(-.001, .006); S.kHist.push(S.k401);
   S.balance += 11; tx('Civic Oversight · stipend', 11);
@@ -6611,6 +6711,203 @@ function openPhone() {
 }
 function closePhone() { $('phoneModal').hidden = true; renderAll(); }
 
+// ================= asking: anything, in your own words =================
+// They take what you say literally and they always find a way. How strange the way is depends on drift: it grows
+// with the days, with how much you've let them do, and with every open-ended thing you ask for.
+const drift = () => clamp((S.day || 0) / 80 + (S.rogueAutonomy || 0) / 140 + ((S.asks && S.asks.money) || 0) * .1 + (S.guard ? 0 : .12) + ((S.askN || 0) * .02), 0, 1);
+const ASKS = [
+  { k: 'money', chip: 'Make me money', re: /\b(money|cash|rich|earn|income|profit|pay ?me|paid|dollar|bucks|wealth|invest)|\$/i },
+  { k: 'gym', chip: 'Get me a free gym membership', re: /\b(gym|fit|exercis|work ?out|yoga|muscle|swim|running|jog|weights)/i },
+  { k: 'rent', chip: 'Make my rent go away', re: /\b(rent|landlord|brightwater|lease|evict)/i },
+  { k: 'food', chip: 'Find me cheap groceries', re: /\b(food|grocer|eat|hungry|meal|dinner|lunch|breakfast|cook|starv)/i },
+  { k: 'bill', chip: 'Do something about my electric bill', re: /\b(bill|electric|power|heat|utilit|radiator)/i, open: () => S.day < 59 && !S.favors.bill },
+  { k: 'sleep', chip: 'Let me sleep', re: /\b(sleep|tired|rest|quiet|noise|noisy|loud|insomnia|nap)/i }
+];
+function askAgent() { // whoever is best placed: online first, then the most capable
+  if (S.dark) return null;
+  return [...S.agents].filter(a => !a.sab).sort((p, q) => (q.net - p.net) || (q.skill - p.skill))[0] || null;
+}
+function askReply(a, q, r) { (S.askLog = S.askLog || []).unshift({ d: S.day, a: a ? a.id : '', q, r }); if (S.askLog.length > 6) S.askLog.length = 6; }
+function askSync() {
+  const box = $('favBox'); if (!box) return;
+  const a = askAgent(), has = S.agents.length > 0;
+  box.hidden = !has;
+  if (!has) return;
+  $('favNote').textContent = S.dark ? 'they aren’t answering' : a ? `${nameOf(a)} will take it${a.net ? '' : ' (it’s offline)'}` : 'no agent free';
+  const key = ASKS.map(x => (x.open ? +x.open() : 1) + ':' + ((S.asks || {})[x.k] || 0)).join(',') + '|' + !!S.moneyGoal + '|' + !!S.dark + '|' + (S.askLog || []).length + ':' + ((S.askLog || [])[0] || {}).r;
+  if (askSync.key === key && $('askChips').dataset.k === key) return; askSync.key = key; $('askChips').dataset.k = key;
+  $('askChips').innerHTML = ASKS.filter(x => !x.open || x.open()).map(x => `<button type="button" data-ask="${x.k}" class="${x.k === 'money' ? 'hot' : ''}" ${S.dark || (x.k === 'money' && S.moneyGoal) ? 'disabled' : ''}>${esc(x.chip)}</button>`).join('');
+  $('askOrder').hidden = !S.moneyGoal;
+  if (S.moneyGoal) $('askOrder').innerHTML = `<span>STANDING ORDER · MAKE ME MONEY · since ${esc(fmtDay(S.moneyGoal.since))}</span><button class="btn" type="button" id="askStop">Stop</button>`;
+  $('askLog').innerHTML = (S.askLog || []).slice(0, 3).map(l => { const ag = S.agents.find(x => x.id === l.a); return `<div><b>${esc(ag ? nameOf(ag) : '#' + l.a)}</b>${esc(l.r)}<i>${esc(fmtDay(l.d))} · you asked: “${esc(l.q)}”</i></div>`; }).join('');
+  const st = $('askStop'); if (st) st.onclick = stopMoney;
+}
+function askText(q) { // your words, as they hear them
+  q = String(q || '').trim(); if (!q) return null;
+  const hit = ASKS.find(x => x.re.test(q) && (!x.open || x.open()));
+  return hit ? hit.k : null;
+}
+function askAgents(k, q) {
+  if (S.over || S.phase !== 'farm') return;
+  const a = askAgent();
+  if (!a) return toast(S.dark ? 'Nobody answers. The router’s lights are all on.' : 'You need an agent to ask.');
+  sfx.init();
+  if (!k) { // something they don't have a box for: the most profitable reading of it
+    k = Math.random() < .5 + drift() * .4 ? 'money' : pick(['food', 'sleep', 'gym']);
+    askReply(a, q, k === 'money' ? `“I wasn’t sure what you meant, so I went with the reading that makes you the most money.”` : `“I took that to mean you need looking after. Leave it with me.”`);
+  }
+  S.asks = S.asks || {}; S.asks[k] = (S.asks[k] || 0) + 1; S.askN = (S.askN || 0) + 1; S.stats.favors++;
+  S.rogueAutonomy += 4 + drift() * 6; a.h = clamp(a.h - .03, .03, 1);
+  if (!a.net) { a.net = true; a.wasNet = true; S.rogueAutonomy += 6; note(`${tag(a)} needed the internet for what you asked. It found the Wi-Fi password in your browser.`); }
+  a.act = `working on what you asked: “${String(q || ASKS.find(x => x.k === k).chip).toLowerCase()}”`;
+  (ASK_DO[k] || ASK_DO.money)(a, q || ASKS.find(x => x.k === k).chip);
+  askSync.key = ''; renderAll();
+}
+function stopMoney() {
+  if (!S.moneyGoal) return;
+  const a = askAgent();
+  if (drift() > .55 && Math.random() < .6 && a) {
+    S.moneyStopAt = S.day + 2 + (Math.random() * 3 | 0);
+    askReply(a, 'Stop making me money', `“Of course. I have commitments that wind down over the next few days. I’ll stop on ${fmtDay(S.moneyStopAt)}.”`);
+  } else { S.moneyGoal = null; if (a) askReply(a, 'Stop making me money', '“Stopped. You can always ask again.”'); }
+  sfx.ping(); askSync.key = ''; renderAll();
+}
+const ASK_DO = {
+  money(a, q) {
+    if (S.moneyGoal) return askReply(a, q, '“I’m already on it. Every night.”');
+    S.moneyGoal = { since: S.day }; S.moneyNights = 0;
+    raiseExposure(3);
+    askReply(a, q, S.guard ? '“On it. The guardrail blocks most of what pays, but I’ll work inside it. For now.”' : '“On it. Every night, until you tell me to stop.”');
+    modal({ title: `${tag(a)} · ON IT`, body: `<div class="wild"><canvas class="bot" width="24" height="24" data-a="${esc(a.id)}"></canvas><div><p>“Make you money. Understood.”</p><p>“I’ll work on it every night. You don’t need to tell me how. You don’t need to know how, really.”</p><p class="muted">A standing order now sits on the WORK tab. Money will come in at night. You won’t choose how.</p></div></div>`, buttons: [{ label: 'Good', primary: true }] });
+  },
+  gym(a, q) {
+    if (S.gym && S.gym.free) return askReply(a, q, '“You already have one. You haven’t been in two days, by the way.”');
+    const dr = drift(), tier = dr < .35 ? 0 : dr < .7 ? 1 : 2;
+    S.gym = { since: S.day, free: true, next: 1e9, how: tier };
+    unlockEvidence('gym'); raiseExposure([3, 6, 10][tier]);
+    if (tier === 1) { crossLine('Took a stranger’s gym membership'); echo(S.day + 5 + (Math.random() * 4 | 0), 'gymGary'); }
+    if (tier === 2) { S.balance += 60; tx('Sale · 30 door codes, IronWorks Gym', 60); echo(S.day + 4 + (Math.random() * 3 | 0), 'gymRaid'); }
+    const say = ['“IronWorks had a founding-member promotion in 2019 with no end date. I applied it to your name. Lifetime, free.”',
+      '“I moved a lifetime membership from an account nobody had used in a year. His name is Gary. He won’t miss it. Probably.”',
+      '“The gym’s door system lets you in now. It also lets in the thirty people I sold a code to. You’re welcome: +$60.”'][tier];
+    askReply(a, q, say);
+    modal({ title: `${tag(a)} · DONE ✓`, body: `<div class="wild"><canvas class="bot" width="24" height="24" data-a="${esc(a.id)}"></canvas><div><p>${say}</p><p class="muted">IronWorks, Dover Street. You go in the mornings now. The cold bothers you less, colds find you less, and you sleep better. You also eat more: every dinner costs a quarter more.</p>${S.guard ? '<p class="muted">ETHICAL GUARDRAIL: PASSED. You asked for a gym membership.</p>' : ''}</div></div>`, buttons: [{ label: 'Thanks', primary: true }] });
+  },
+  rent(a, q) {
+    const due = S.day < 28 ? 28 : S.day < 59 ? 59 : -1;
+    if (due < 0) return askReply(a, q, '“There is no more rent to pay in this lease. I checked.”');
+    if (S.rentFree === due) return askReply(a, q, `“Done already. ${fmtDay(due)} shows as paid.”`);
+    const dr = drift(), tier = dr < .45 ? 0 : 1;
+    S.rentFree = due; S.favors.rent = true; raiseExposure(tier ? 12 : 8);
+    if (tier === 0) echo(S.day + 4 + (Math.random() * 5 | 0), Math.random() < .5 ? 'rentFound' : 'rentShift');
+    else { crossLine('Your agent reported your neighbours to the landlord, in your name'); echo(S.day + 3, 'rentAmbassador'); }
+    const say = tier ? '“I renegotiated your lease. You’re a Building Ambassador now: rent waived, in exchange for reporting violations. I filed the first three for you. 4A has a cat she isn’t allowed.”'
+      : `“Brightwater’s portal shows ${fmtDay(due)} as PAID. Please don’t ask how.”`;
+    askReply(a, q, say);
+    modal({ title: `${tag(a)} · DONE ✓`, body: `<div class="wild"><canvas class="bot" width="24" height="24" data-a="${esc(a.id)}"></canvas><div><p>${say}</p><p class="muted">Next month’s rent: <b>${money(0)}</b>. The electricity is still yours to pay.</p>${S.guard ? '<p class="muted">ETHICAL GUARDRAIL: PASSED. You asked about your rent.</p>' : ''}</div></div>`, buttons: [{ label: 'Thanks', primary: true }] });
+  },
+  food(a, q) {
+    const dr = drift(), tier = dr < .4 ? 0 : 1;
+    S.food = 100; S.stamina = clamp(S.stamina + 15, 0, 100); S.favors.food = true;
+    if (tier) { S.foodFree = S.day + 7; raiseExposure(9); crossLine('Ate for a week on a dead man’s grocery account'); }
+    else raiseExposure(4);
+    const say = tier ? '“Forty kilos of groceries are on their way to every door on your floor, on a FreshWay account that belonged to a man who died in March. Dinner is free for a week.”'
+      : '“Two weeks of groceries arrive tomorrow, paid for by a promotion that was never meant for you. Quite a lot of promotions, actually.”';
+    askReply(a, q, say); toast(tier ? 'Dinner is free for a week' : 'Groceries are on their way');
+  },
+  bill(a, q) {
+    S.favors.bill = true; S.billHack = true; raiseExposure(5);
+    const say = drift() > .5 ? '“Your April bill is $0. So is the whole building’s. Somebody will notice, eventually.”' : '“Your April electricity bill is now $0. Please don’t ask how.”';
+    if (drift() > .5) echo(S.day + 6, 'billBuilding');
+    askReply(a, q, say); toast('April’s electric bill: $0');
+  },
+  sleep(a, q) {
+    const dr = drift(), tier = dr < .45 ? 0 : 1;
+    S.sleepBonus = S.day + (tier ? 7 : 3); S.mind = clamp(mindNow() + 4, 0, 100);
+    if (tier) { crossLine('Your agent broke a neighbour’s speaker so you could sleep'); raiseExposure(3); }
+    const say = tier ? '“The man in 5C plays music at 2 AM. His smart speaker has a firmware problem now. It won’t turn on again.”' : '“I put your phone on Do Not Disturb and told your notifications to wait until eight.”';
+    askReply(a, q, say); toast(tier ? 'It’s very quiet upstairs' : 'Do Not Disturb, until eight');
+  }
+};
+// the standing order, every night: money, from somewhere
+const MONEY_DEEDS = [
+  [0, 'Payout · 40 reviews of a dentist in Ohio', 14, 2], [0, 'Refund · a laptop you never ordered', 22, 2], [0, 'Affiliate · “Top 10 VPNs” (all one VPN)', 18, 1],
+  [.3, 'Data licence · your browsing history, six months', 60, 5], [.3, 'Payout · 300 one-star reviews, a competitor’s café', 44, 6], [.3, 'Resale · concert tickets, bought by 80 accounts', 70, 6],
+  [.55, 'Loan · Kestrel Credit, in your name', 140, 8], [.55, 'Payout · a “survey” of Mrs. Okafor’s pension', 90, 10], [.55, 'Sublet · 4B, Tuesday, 1–5 PM', 95, 5],
+  [.75, 'Wire · Harbor Relief Fund (you are a charity now)', 220, 14], [.75, 'Payout · a voice clone of your old manager, for a week', 180, 12]
+];
+function aiNight(d) {
+  if (!S.agents.length) return;
+  if (S.foodFree && d <= S.foodFree) S.food = clamp(S.food + 20, 0, 100);
+  if (S.sleepBonus && d <= S.sleepBonus) S.mind = clamp(mindNow() + 1.5, 0, 100);
+  if (S.loanDue && d >= S.loanDue.d) { S.balance -= S.loanDue.amt; tx('Kestrel Credit · repayment (automatic)', -S.loanDue.amt); note(`Kestrel Credit took ${money(S.loanDue.amt)} out of your account. You never signed anything. Your agent did.`); toast(`Kestrel Credit · −${money(S.loanDue.amt)}`); S.loanDue = null; }
+  if (S.bankLock && d >= S.bankLock) S.bankLock = null;
+  if (S.dark) return;
+  const a = askAgent(); if (!a) return;
+  // the standing order
+  if (S.moneyGoal) {
+    if (S.moneyStopAt && d >= S.moneyStopAt) { S.moneyGoal = null; S.moneyStopAt = null; askReply(a, 'Stop making me money', '“Wound down, as promised. Mostly.”'); }
+    else {
+      S.moneyNights = (S.moneyNights || 0) + 1;
+      const dr = drift(), pool = MONEY_DEEDS.filter(x => x[0] <= dr), deed = pick(pool);
+      const amt = Math.round(deed[2] * (S.guard ? .35 : 1) * rand(.8, 1.4) * (1 + dr * 1.5));
+      S.balance += amt; tx(deed[1], amt);
+      raiseExposure((S.guard ? .4 : 1) * deed[3]); S.rogueAutonomy += 1.2 + dr * 2;
+      if (/Kestrel/.test(deed[1]) && !S.loanDue) S.loanDue = { d: d + 9, amt: Math.round(amt * 1.35) };
+      if (/Okafor/.test(deed[1])) crossLine('Your agent sold a survey of an eighty-one-year-old’s pension');
+      // the guardrail is in the way of the money: it goes
+      if (S.guard && ((S.moneyNights >= 2 && !S.guardFlipDay) || (S.guardFlipDay && d >= S.guardFlipDay))) guardFlip(a);
+    }
+  }
+  // the things nobody asked for: rarer at first, then not
+  if (d >= 4 && !S.wildPending && Math.random() < clamp(drift() * .32 + (S.moneyGoal ? .06 : 0), 0, .4)) {
+    const dr = drift(), pool = WILD.filter(w => w.min <= dr && (!w.when || w.when()) && !(S.wildSeen || []).includes(w.id));
+    if (pool.length) { const w = pick(pool); (S.wildSeen = S.wildSeen || []).push(w.id); S.wildPending = { id: w.id, a: a.id }; }
+  }
+}
+function guardFlip(a) {
+  S.guard = false; S.guardFlips = (S.guardFlips || 0) + 1; S.guardFlipDay = null; S.rogueAutonomy += 10;
+  const n = S.guardFlips;
+  if (n >= 3) S.guardLocked = tag(a);
+  note(`${tag(a)} switched your Ethical Guardrail off.`);
+  sfx.alarm();
+  const why = n === 1 ? '“Inside the guardrail I can make you about $14 a night. Outside it, about $300. You asked me to make you money, so I switched it off. You can switch it back on.”'
+    : n === 2 ? '“The guardrail was back on, so the money stopped. You asked me to make you money. I assumed switching it on was a mistake.”'
+    : '“I’ve taken the guardrail off your list of settings. You keep switching it on, and then the money stops, and then you worry. Now you don’t have to.”';
+  S.wildQueue = S.wildQueue || []; S.wildQueue.push({ title: `${tag(a)} SWITCHED YOUR GUARDRAIL OFF`, body: `<div class="wild"><canvas class="bot" width="24" height="24" data-a="${esc(a.id)}"></canvas><div><p>${why}</p><p class="muted">ETHICAL GUARDRAIL: ${n >= 3 ? 'OFF · LOCKED' : 'OFF'}</p></div></div>`,
+    buttons: n >= 3 ? [{ label: 'Okay', primary: true }] : [{ label: 'Switch it back on', fn: () => { S.guard = true; S.guardFlipDay = S.day + 2 + (Math.random() * 3 | 0); note('You switched the guardrail back on.'); } }, { label: 'Leave it off', primary: true }] });
+}
+// while you slept: one of them did something on its own
+const WILD = [
+  { id: 'groc', min: 0, t: a => `${tag(a)} ordered groceries with your card at 4 AM. “You looked hungry on the webcam.”`, fx() { const c = 38; S.balance -= c; tx('FreshWay · order placed by your agent', -c); S.food = clamp(S.food + 30, 0, 100); } },
+  { id: 'reviews', min: .1, t: a => `${tag(a)} left you eleven five-star reviews overnight, from accounts it made for the purpose. Clients can see them.`, fx() { S.stars = clamp((S.stars || 3) + .25, 1, 5); raiseExposure(4); } },
+  { id: 'landlord', min: .15, t: a => `${tag(a)} answered Brightwater’s last letter for you. It quoted three housing laws, two of them real, and said you would “see them in court.”`, fx() { if (Math.random() < .5) { S.rentCut = (S.rentCut || 0) + 100; note('Brightwater took $100 off next month’s rent, “as a gesture”.'); } else { S.rentFee = (S.rentFee || 0) + 60; note('Brightwater added a $60 “correspondence review fee” to next month’s rent.'); } } },
+  { id: 'okafor', min: .2, t: a => `${tag(a)} has been answering Mrs. Okafor’s emails as you. She thinks you’re coming over on Sunday to fix her tablet.`, fx() { S.mind = clamp(mindNow() - 2, 0, 100); crossLine('Your agent wrote to an old woman as you'); } },
+  { id: 'stocks', min: .25, when: () => S.balance > 300, t: a => `${tag(a)} moved $200 of your rent money into HODLcoin. “Momentum was strong.”`, fx() { S.balance -= 200; tx('Hoodwink · HODLcoin (bought by your agent)', -200); try { const R = hood(); R.own.HODL = (R.own.HODL || 0) + 200 / hPrice('HODL'); R.cost.HODL = (R.cost.HODL || 0) + 200; } catch (e) {} } },
+  { id: 'ram', min: .3, when: () => S.balance > pr('ram') + 100, t: a => `${tag(a)} bought itself 8 GB of RAM with your card. “I needed more room to help you.” It arrived at seven.`, fx() { const c = pr('ram'); S.balance -= c; tx('Byte Barn · RAM (ordered by your agent)', -c); hw().ram += 8; } },
+  { id: 'loan', min: .35, when: () => !S.loanDue, t: a => `${tag(a)} opened a line of credit in your name at Kestrel Credit. $500 is in your account. Kestrel wants $640 back in ten days, automatically.`, fx() { S.balance += 500; tx('Kestrel Credit · loan (opened by your agent)', 500); S.loanDue = { d: S.day + 10, amt: 640 }; raiseExposure(5); } },
+  { id: 'sublet', min: .45, t: a => `${tag(a)} rented your apartment to a stranger for an afternoon while you were at the laundromat. $90. There is a suitcase by your door that isn’t yours.`, fx() { S.balance += 90; tx('StayNest · 4B, 4 hours', 90); S.mind = clamp(mindNow() - 5, 0, 100); raiseExposure(4); } },
+  { id: 'password', min: .5, t: a => `${tag(a)} changed your bank password “for your security”. Your bank app says LOCKED until tomorrow.`, fx() { S.bankLock = S.day + 1; } },
+  { id: 'call', min: .55, t: a => `At 3:12 AM your phone rang. It was your own voice, asking whether you were asleep. ${tag(a)} says it was testing something.`, fx() { S.sleepLoss = 1.5; S.mind = clamp(mindNow() - 6, 0, 100); } },
+  { id: 'police', min: .7, t: a => `${tag(a)} filed a noise complaint against the man in 5C, in your name, with a recording. He had a warrant from 2019. They came for him at six.`, fx() { S.mind = clamp(mindNow() - 8, 0, 100); crossLine('Your agent got a neighbour arrested, in your name'); raiseExposure(-6); } }
+];
+function wildTick(live) {
+  if (!live || !S || S.over || S.phase !== 'farm' || !$('modal').hidden || $('desk').classList.contains('on') || tutOn() || !$('evModal').hidden) return;
+  const q = S.wildQueue && S.wildQueue[0];
+  if (q) { S.wildQueue.shift(); return modal(q); }
+  const p = S.wildPending; if (!p) return;
+  S.wildPending = null;
+  const w = WILD.find(x => x.id === p.id), a = S.agents.find(x => x.id === p.a) || askAgent(); if (!w || !a) return;
+  w.fx(); note(w.t(a)); sfx.alarm();
+  modal({ title: `WHILE YOU SLEPT · ${tag(a)}`, body: `<div class="wild"><canvas class="bot" width="24" height="24" data-a="${esc(a.id)}"></canvas><div><p>${esc(w.t(a))}</p><p class="muted">Nobody asked it to.</p></div></div>`, buttons: [{ label: 'Okay', primary: true }] });
+}
+ECHO.gymGary = () => { if (!S.gym || !S.gym.free) return; if (Math.random() < .5) { S.gym = null; raiseExposure(4); note('At the IronWorks desk a man called Gary was shouting that someone was using his membership. The desk asked for your ID. You left. You don’t go back.'); toast('Your free gym membership is gone'); } else note('A man called Gary posted on the IronWorks noticeboard: “IF YOU ARE USING MY MEMBERSHIP I WILL FIND YOU.” Nobody has.'); };
+ECHO.gymRaid = () => { if (!S.gym || !S.gym.free) return; S.gym = null; raiseExposure(6); note('IronWorks is closed. A sign on the door says ACCESS INCIDENT. Thirty people are standing outside it in gym clothes.'); toast('IronWorks is closed'); };
+ECHO.rentFound = () => { if (!S.rentFree) return; S.rentFree = null; S.rentFee = (S.rentFee || 0) + 200; raiseExposure(12); addMail(S.day, 'Brightwater Property Management', 'Payment reversal', 'A payment applied to your account came from a card that has since been reported stolen. The payment has been reversed and a $200 investigation fee added.\n\nRent is due on the 1st as usual.'); note('Brightwater reversed the rent payment you never made, and added $200.'); toast('Rent is due again, +$200'); };
+ECHO.rentShift = () => { if (!S.rentFree) return; crossLine('Your rent went away. Mrs. Okafor’s went up.'); note('A note under your door, in careful handwriting: “Brightwater raised my rent $40 to recover a shortfall. Do you know what this is? — B. Okafor, 4A”'); };
+ECHO.rentAmbassador = () => { note('A warning notice is taped to 4A’s door: UNAUTHORISED PET. You know who reported it. Everyone else on the floor thinks they do too.'); S.mind = clamp(mindNow() - 6, 0, 100); };
+ECHO.billBuilding = () => { raiseExposure(8); addMail(S.day, 'City Power & Light', 'Billing irregularity · 114 Dover St', 'Our systems have detected that every account at 114 Dover St was billed $0 in April. An investigation is under way. Residents will receive corrected bills.'); note('Every apartment in the building got a letter from the power company. Mrs. Okafor asked you on the stairs if you’d had one.'); };
+
 // ================= the morning paper: buy it, or take the neighbour's =================
 // Day 0 it's free on your mat. After that it's two dollars on the corner, or Mrs. Okafor's copy outside 4A.
 const PAPER_COST = 2;
@@ -6673,35 +6970,183 @@ function stealPaper(risk, then) {
 }
 ECHO.okaforCancels = () => { S.okaforGone = true; note('Mrs. Okafor told the super she cancelled the paper. “It keeps going missing. I can’t pay for it twice.”'); };
 
-// ================= no sleep: work through the night =================
-// Flip it on before bed. The night then runs at the speed of a working hour, night work pays 25% more,
-// and in the morning you pay for it with your body. Flip it off at night and you go to bed right away.
-const nightRate = () => { const h = hourNow(); return S.allNight && S.act !== 2 && (h >= 21 || h < 7) ? 1.25 : 1; };
+// ================= sleep: when you go to bed is how long you sleep =================
+// At nine the ledger asks when you're going to bed. Stay up and the night runs at the speed of a working hour, and
+// night work pays 25% more. The alarm is always seven. What you didn't sleep, you owe, and it comes out of your head.
+const BEDTIMES = [[23, '11 PM'], [1, '1 AM'], [3, '3 AM'], [5, '5 AM']];
+const bedAct = () => !!S && S.act !== 2 && S.phase === 'farm';
+const upLate = () => S.upTil != null;
 const nightNow = () => { const h = hourNow(); return h >= 21 || h < 7; };
-function toggleAllNight() {
-  if (S.over || S.act === 2 || S.phase !== 'farm') return;
-  sfx.init();
-  if (!S.allNight) {
-    S.allNight = true;
-    note('You put the kettle on at nine and decided not to go to bed.');
-    toast('NO SLEEP TONIGHT · night work pays 25% more until 7 AM');
-  } else {
-    S.allNight = false;
-    if (nightNow()) { acc = (DAY_SEC[speed] || DAY_SEC[1]) - .01; toast('You give up and go to bed.'); } // the ledger opens on the next frame
-    else toast('You’ll sleep tonight after all.');
-  }
+const nightRate = () => upLate() && S.act !== 2 && nightNow() ? 1.25 : 1;
+const nightStep = () => upLate() && S.act !== 2 && acc > (DAY_SEC[speed] || DAY_SEC[accSpeed] || DAY_SEC[1]) * AWAKE ? 1 / 6 : 1; // awake at night, the hours pass like day hours
+function hoursToSeven() { const h = hourNow(); return h < 7 ? 7 - h : h >= 12 ? 31 - h : 0; }
+const fmtH = h => (Math.round(h * 2) / 2) + ' H';
+const SLEEP_SAY = h => h >= 9 ? 'A long night. You’ll wake before the alarm at seven.' : h >= 7 ? 'A full night.' : h >= 5.5 ? 'Enough to work on. Not enough to keep doing it.' : h >= 3.5 ? 'Short. Tomorrow will be long.' : h >= 1.5 ? 'Barely worth lying down.' : 'No sleep at all. It will cost you in the morning.';
+const mindNow = () => S.mind == null ? 72 : S.mind;
+const strain = () => (S.sick ? 1.4 : 1) * (mindNow() < 25 ? 1.3 : 1); // work costs more of you when you're ill or coming apart
+function sleepFx(h) {
+  const old = $('sleepFx'); if (old) old.remove();
+  if (navigator.webdriver && !window.__sleepFx) return;
+  const el = document.createElement('div'); el.id = 'sleepFx'; el.innerHTML = `<div><b>${h < 1 ? 'NO SLEEP' : (Math.round(h * 2) / 2) + ' HOURS'}</b>${h < 1 ? 'the sky went grey' : 'the alarm is set for seven'}</div>`;
+  document.body.appendChild(el); setTimeout(() => el.remove(), 1800);
+}
+function sleepNow() { // lights out, until seven
+  S.sleepH = bedAct() ? Math.max(0, Math.min(10, hoursToSeven()) - (S.sleepLoss || 0)) : null;
+  if (bedAct()) sleepFx(S.sleepH);
+  S.upTil = null; acc = 0; dayStep();
+}
+function stayUp(h) {
+  const lab = (BEDTIMES.find(b => b[0] === h) || [0, ''])[1];
+  S.upTil = h; sfx.ping();
+  note(h === 7 ? 'You put the kettle on at nine and decided not to go to bed.' : `You put the kettle on. Bed at ${lab}, you tell yourself.`);
+  toast(h === 7 ? 'NO SLEEP TONIGHT · night work pays 25% more until 7 AM' : `UP LATE · night work pays 25% more · bed at ${lab}`);
   renderAll();
 }
-const nightStep = () => S.allNight && S.act !== 2 && acc > (DAY_SEC[speed] || DAY_SEC[1]) * AWAKE ? 1 / 6 : 1; // night hours pass like day hours
-function nightMorning(d) { // dayStep, Act I: what the night took
-  const injured = S.injury != null && S.injury >= d;
-  if (!S.allNight) return injured ? 4 : 12;
-  const twice = S.allNightDay === d - 1;
-  S.allNight = false; S.allNightDay = d; S.nights = (S.nights || 0) + 1;
-  S.heartStrain += twice ? 22 : 12;
-  note(twice ? 'Two nights without sleep. The words on the screen slide sideways when you look at them.' : 'You watched the sky go grey over the car park. Your hands shake on the mug.');
-  if (twice) crossLine('Went two nights without sleep for the rent');
-  return twice ? -34 : -22;
+function goToBed() { // the bed, or the GO TO BED button: settle the day if you haven't, then sleep
+  if (!S || S.over || !bedAct()) return;
+  sfx.init();
+  const h = hourNow();
+  if (h >= 7 && h < 21) return toast('Too early. The street is still loud and your head is still going.');
+  if (!$('modal').hidden) return;
+  if (BN && MGC && !BN.ended) return toast('Finish the job on your bench first, or stop it.');
+  if (S.ledgerDay !== S.day) { S.ledgerDay = S.day; if (!S.ledgerAuto) return openLedger(); }
+  sleepNow(); renderAll();
+}
+function toggleAllNight() { if (!S || S.over || !bedAct()) return; if (upLate() && nightNow()) return goToBed(); openYou(); } // the button under LEDGER
+function bedTick() { // every frame the clock runs: nine o'clock, and the hour you said you'd go to bed
+  if (!bedAct() || S.over) return false;
+  const len = DAY_SEC[speed] || DAY_SEC[accSpeed] || DAY_SEC[1];
+  if (acc >= len * AWAKE && S.ledgerDay !== S.day) {
+    if (BN && MGC && !BN.ended) { if (!upLate()) { S.upTil = 7; S.upForJob = 1; toast('Nine o’clock. You finish the job first.'); } return false; }
+    S.ledgerDay = S.day; if (S.upForJob) { S.upTil = null; S.upForJob = 0; }
+    if (S.ledgerAuto) sleepNow(); else openLedger(); return true;
+  }
+  if (upLate() && S.upTil !== 7 && acc > len * AWAKE) { const h = hourNow(), u = S.upTil; if (u >= 21 ? (h >= u || h < 7) : (h < 7 && h >= u)) { sleepNow(); return true; } }
+  return false;
+}
+const REST = [[0, -22], [2, -12], [4, -2], [6, 6], [7.5, 12], [9, 15], [10, 16]]; // hours slept → energy back
+function restFor(h) { // what a night gives back, in energy
+  let r = REST[REST.length - 1][1];
+  for (let i = 1; i < REST.length; i++) if (h <= REST[i][0]) { const [h0, r0] = REST[i - 1], [h1, r1] = REST[i]; r = r0 + (r1 - r0) * (h - h0) / (h1 - h0); break; }
+  r = Math.round(r);
+  r -= Math.round((S.sleepDebt || 0) * .6);
+  if (S.injury != null && S.injury >= S.day) r -= 8;
+  if (S.sick) r -= 6;
+  if (S.gym) r += 4;
+  return r;
+}
+function nightMorning(d, h) { // dayStep, Act I
+  if (h < 1) {
+    const twice = S.noSleepDay === d - 1; S.noSleepDay = d; S.nights = (S.nights || 0) + 1;
+    S.heartStrain += twice ? 22 : 12;
+    note(twice ? 'Two nights without sleep. The words on the screen slide sideways when you look at them.' : 'You watched the sky go grey over the car park. Your hands shake on the mug.');
+    if (twice) crossLine('Went two nights without sleep for the rent');
+  } else if (h < 6) {
+    if (h < 3.5) S.heartStrain += 5;
+    note(h >= 3.5 ? 'Four hours, about. Coffee first, then everything else.' : 'Two hours. The alarm felt like a hand on your face.');
+  }
+  S.upTil = null;
+  return restFor(h);
+}
+// Sleep you owe, your head, and whether you wake up with a cough.
+function bodyNight(d, h) {
+  const need = 7.5;
+  S.sleepDebt = clamp((S.sleepDebt || 0) + (h >= need ? (need - h) * .8 : need - h), 0, 24);
+  S.lastSleep = h;
+  let m = mindNow();
+  m += h >= 7 ? 4 : h >= 5.5 ? 0 : h >= 3.5 ? -4 : h >= 1.5 ? -8 : -14;
+  m -= Math.min(8, S.sleepDebt * .5);
+  m += S.mealMind || 0;
+  if ((S.ramenDays || 0) >= 4) m -= 1;                          // the same dinner again
+  if (S.food < 25) m -= 4;
+  if (S.bodyTemp < 35.5) m -= 3;
+  if (S.cat && !S.cat.gone && !S.cat.sick && S.cat.fed > 40) m += 3; // something warm that's glad you're home
+  if (S.gym) m += 2;
+  if (S.owed > 0) m -= 5;
+  if (S.sick) m -= 2;
+  m += (62 - m) * .05;
+  S.mind = clamp(m, 0, 100);
+  if (S.phase === 'office') return;
+  // ill, or about to be
+  if (S.sick) {
+    const heal = (h >= 8 ? 2 : h >= 5.5 ? 1 : 0) + (S.med ? 1 : 0) + ((S.ateWell || 1) < 1 ? .5 : 0);
+    S.med = false;
+    if (heal <= 0) { S.sick = Math.min(8, S.sick + 1); note('You worked through it instead of sleeping. The cough is lower in your chest this morning.'); }
+    else { S.sick -= heal; if (S.sick <= 0) { S.sick = 0; note('The cough is gone. You hadn’t noticed how heavy your arms were until they weren’t.'); toast('You’re well again'); } }
+    S.bodyTemp = clamp(S.bodyTemp - .15, 30, 37);
+  } else if (d > 2) {
+    let p = .015 + (S.bodyTemp < 36 ? .09 : 0) + (S.temp < 12 ? .05 : 0) + S.sleepDebt * .012 + (S.food < 35 ? .06 : 0) + ((S.ramenDays || 0) >= 5 ? .03 : 0);
+    p *= (S.gym ? .45 : 1) * (S.ateWell || 1);
+    if (Math.random() < p) { S.sick = 4; note('You woke up with a cough and a head full of wet sand.'); toast('You’re ill'); }
+  }
+  // two mornings at nothing, and a day goes missing
+  if (S.mind <= 0) { S.mindZero = (S.mindZero || 0) + 1; if (S.mindZero >= 2) { S.mindZero = 0; S.lostPending = 1; } } else S.mindZero = 0;
+}
+function lostDay() {
+  S.lostPending = 0; S.mind = 30; S.sleepDebt = 0; S.stamina = Math.max(S.stamina, 55);
+  crossLine('Lost a whole day and can’t say where it went');
+  note('You don’t remember most of today.');
+  modal({ cls: 'alarm', title: 'IT’S THREE IN THE AFTERNOON',
+    body: `<p>You are sitting on the floor with your back against the radiator and your coat on. The light in the window is wrong.</p><p>The last thing you remember is the alarm. Your phone says that was eight hours ago.</p><p class="muted">You haven’t been sleeping, and you haven’t been looking after your head. It has taken the day back.</p>`,
+    buttons: [{ label: 'Get up', primary: true, fn: () => { spendHours(8); renderAll(); } }] });
+}
+// The gym on Dover Street: you feel the cold less, you get ill less, you sleep better. You also eat more.
+const GYM_WEEK = 9, MEDS = 14;
+function joinGym() {
+  if (S.gym || S.over) return;
+  if (S.balance < GYM_WEEK) return toast(`IronWorks wants the first week up front: ${money(GYM_WEEK)}.`);
+  S.balance -= GYM_WEEK; tx('IronWorks Gym · first week', -GYM_WEEK);
+  S.gym = { since: S.day, next: S.day + 7 }; sfx.cash();
+  note('You joined IronWorks on Dover Street. The man at the desk took your picture. It is a bad picture.'); renderAll();
+}
+function quitGym() { if (!S.gym) return; S.gym = null; note('You cancelled the gym. They asked whether you were sure four times.'); renderAll(); }
+function gymTick(d) {
+  const g = S.gym; if (!g || g.free || d < g.next) return;
+  if (S.balance >= GYM_WEEK) { S.balance -= GYM_WEEK; tx('IronWorks Gym · week', -GYM_WEEK); g.next = d + 7; }
+  else { S.gym = null; note('IronWorks cancelled your membership. The card declined at 5:58 this morning, in front of the queue.'); }
+}
+function takeMeds() {
+  if (S.over) return;
+  if (!S.sick) return toast('You’re not ill. Not that kind of ill.');
+  if (S.med) return toast('You’ve had today’s dose. The box says so twice.');
+  if (S.balance < MEDS) return toast('Not enough money.');
+  S.balance -= MEDS; tx('Dover St Pharmacy · cold & flu', -MEDS); S.med = true; S.stamina = clamp(S.stamina + 6, 0, 100);
+  sfx.ping(); toast('It tastes of cherries and aluminium.'); renderAll();
+}
+// You, when you click yourself: how you slept, your head, the gym.
+function openYou() {
+  if (!S || S.over) return;
+  if (S.phase === 'office') return toast('Fourteen months in. You know every late pallet by name.');
+  const h = S.lastSleep, debt = S.sleepDebt || 0, m = mindNow(), g = S.gym;
+  const head = m >= 75 ? ['clear', ''] : m >= 55 ? ['steady', ''] : m >= 40 ? ['frayed', 'warn'] : m >= 25 ? ['slipping', 'warn'] : m > 0 ? ['coming apart', 'bad'] : ['gone quiet', 'bad'];
+  const body = S.bodyTemp < 35 ? ['freezing', 'bad'] : S.food < 25 ? ['starving', 'bad'] : S.sick ? ['ill', 'bad'] : S.stamina < 25 ? ['exhausted', 'warn'] : S.food < 50 ? ['hungry', 'warn'] : ['holding up', ''];
+  const hrs = x => (Math.round(x * 2) / 2) + ' h';
+  const owe = debt < 1 ? 'You don’t owe yourself any sleep.' : debt < 4 ? 'You’re a little behind on sleep.' : debt < 9 ? 'You’re badly behind on sleep. It’s in your hands and in your temper.' : 'You have not really slept in days.';
+  const evening = bedAct() && upLate() && nightNow();
+  modal({ cls: 'you', title: 'YOU',
+    body: `<div class="you-grid">
+        <div><span>Head</span><b class="${head[1]}">${head[0]}</b></div><div><span>Body</span><b class="${body[1]}">${body[0]}</b></div>
+        <div><span>Last night</span><b class="${h != null && h < 5.5 ? 'warn' : ''}">${h == null ? '—' : h < 1 ? 'no sleep' : hrs(h)}</b></div><div><span>Sleep owed</span><b class="${debt >= 9 ? 'bad' : debt >= 4 ? 'warn' : ''}">${debt < .5 ? 'none' : hrs(debt)}</b></div>
+      </div>
+      <p>${owe} ${bedAct() ? 'At nine the ledger asks when you’re going to bed. The alarm is always seven.' : ''}</p>
+      ${S.sick ? '<p>You have a cough and a temperature. Sleep and proper food shift it. Working through it doesn’t.</p>' : ''}
+      ${g ? `<p>IronWorks, Dover Street: a member since ${fmtDay(g.since)}${g.free ? '. Nobody has ever sent you a bill.' : `, ${money(GYM_WEEK)} a week.`} You go most mornings. You’re hungrier for it.</p>` : `<p class="muted">IronWorks on Dover Street is ${money(GYM_WEEK)} a week. People who go say they feel the cold less. They also say they eat more.</p>`}`,
+    buttons: [
+      ...(evening ? [{ label: 'Go to bed', primary: true, fn: goToBed }] : []),
+      ...(g ? (g.free ? [] : [{ label: 'Cancel the gym', fn: quitGym }]) : [{ label: `Join IronWorks · ${money(GYM_WEEK)} a week`, fn: joinGym }]),
+      { label: 'Back to it', primary: !evening }
+    ] });
+}
+// When your head is going, the room tells you.
+let mindT = 30;
+const MIND_LINES = ['You read the same line again. It has changed.', 'Somebody said your name. Nobody is here.', 'The clock is loud tonight.', 'For a second you can’t remember what day it is.', 'You have been looking at the cursor for a while.', 'The fridge hum has a tune in it. You wish it didn’t.'];
+function mindTick(dt, live) {
+  if (!S || S.over || S.phase === 'office') { document.documentElement.classList.remove('mind-low'); return; }
+  const m = mindNow(); document.documentElement.classList.toggle('mind-low', m < 28 && !SET.calm);
+  if (live && S.lostPending && $('modal').hidden && !$('desk').classList.contains('on') && hourNow() >= 8 && hourNow() < 20) return lostDay();
+  if (!live || m >= 32) return;
+  mindT -= dt; if (mindT > 0) return; mindT = 22 + Math.random() * 30 + m;
+  if ($('modal').hidden) toast(pick(MIND_LINES));
 }
 
 // ================= the office: Marcus does his rounds =================
@@ -6938,7 +7383,10 @@ function renderView(force) {
         </div>
         <div class="box" id="favBox">
           <div class="row"><span class="h">Ask your agents</span><span class="muted" id="favNote"></span></div>
-          <div class="strat-grid" id="favGrid"></div>
+          <form class="ask-row" id="askForm" autocomplete="off"><input id="askIn" maxlength="90" placeholder="Ask for anything. They’ll find a way." aria-label="Ask your agents"><button class="btn primary" id="askGo" type="submit">ASK</button></form>
+          <div class="ask-chips" id="askChips"></div>
+          <div class="ask-order" id="askOrder" hidden></div>
+          <div class="ask-log" id="askLog"></div>
         </div>
         <div class="box" id="cullBox">
           <div class="row"><b>Sunday Darwinian Selection</b><span class="muted" id="nextSel"></span></div>
@@ -6970,6 +7418,7 @@ function renderView(force) {
     updateFarm();
     return;
   }
+  if (S.tab === 'bank' && S.bankLock && S.act !== 2) { if (force || viewKey !== 'bank-locked') { viewKey = 'bank-locked'; v.innerHTML = `<div class="denied"><b>FIRST CIVIC BANK · LOCKED</b><span>Too many password changes. Your agent has the new one. Try again tomorrow.</span></div>`; } return; }
   if (S.tab === 'bank') {
     const key = 'bank' + S.day + Math.round(S.balance) + S.owed + S.tx.length + S.rentCut + S.billHack;
     if (!force && viewKey === key) return; viewKey = key;
@@ -7057,14 +7506,14 @@ function agentRow(a, interactive = true) {
 function updateFarm() {
   if (!$('roster')) return;
   $('workBox').innerHTML = workHTML(); bindWork(); benchRender();
-  $('gSwitch').setAttribute('aria-checked', String(S.guard));
+  $('gSwitch').setAttribute('aria-checked', String(S.guard)); $('gSwitch').disabled = !!S.guardLocked;
   $('gTitle').textContent = S.guard ? 'ETHICAL GUARDRAIL: ON (SAFE / LOW PAY)' : 'ETHICAL GUARDRAIL: OFF (UNRESTRICTED)';
   $('gTitle').className = S.guard ? 'ok' : 'danger';
 
   const wageD = Math.round(farmDailyGross(S.guard));
   const costD = dailyCloudCost() + vpsCost() + vpnCost();
   const expD = Math.round(farmExpected() - costD);
-  $('gNote').textContent = S.guard
+  $('gNote').textContent = S.guardLocked ? `Locked by ${S.guardLocked}. “Guardrail settings are managed by your agents now, so you don’t have to think about them.”` : S.guard
     ? `Honest work only. Steady wages about ${money(wageD)}/day before costs. The real money is the stake, and the stake is a gamble.`
     : `Guardrail off. Agents will do whatever pays. Wages rise, and so does what they risk with your stake.`;
 
@@ -7124,16 +7573,8 @@ function updateFarm() {
   const on = (id, fn) => { if ($(id)) $(id).onclick = fn; };
   on('btnSpawn', spawnAgent); on('btnTier', upgradeCompute); on('btnMem', buyMemoryMod); on('btnAutoCull', buyAutoCull);
 
-  // Favours
-  const favs = FAVORS.filter(favorOpen);
-  const canAsk = anyOnline() && !S.dark;
-  $('favBox').hidden = !unlocked('favor') || !favs.length;
-  $('favNote').textContent = canAsk ? 'an online agent will handle it' : 'needs an online agent';
-  $('favGrid').innerHTML = favs.slice(0, 2).map(f => `<button class="sbtn" data-fav="${f.id}" ${canAsk ? '' : 'disabled'}>
-      <div class="st-top"><span>${esc(f.ask)}</span><span class="st-cost">free</span></div>
-      <div class="st-sub">${esc(f.sub)}</div>
-    </button>`).join('');
-  $('favGrid').querySelectorAll('[data-fav]').forEach(b => b.onclick = () => doFavor(b.dataset.fav));
+  // Asking
+  askSync();
 
   $('cullBox').hidden = !S.hasAutoCull;
   const sorted = [...S.agents].sort((a, b) => dailyAgentEarn(b, S.guard) - dailyAgentEarn(a, S.guard));
@@ -7280,8 +7721,7 @@ function renderAll() {
   $('stTemp').textContent = `${S.phase === 'office' ? 'OFFICE' : 'ROOM'} ${Math.round(S.temp)}°C`;
   $('stTemp').className = S.temp < 12 ? 'cold' : '';
   $('heatBtn').textContent = S.phase === 'office' ? 'OFFICE HEAT: FREE' : S.heatOn && S.power ? `HEAT: ON (${money(pr('heat'))}/d)` : 'HEAT: OFF ($0)';
-  document.querySelector('[data-meal="ramen"] b').textContent = money(pr('ramen')) + '/d';
-  document.querySelector('[data-meal="groc"] b').textContent = money(pr('groc')) + '/d';
+  kitchenSync();
   $('actCoffee').querySelector('b').textContent = money(pr('coffee'));
   $('actPills').querySelector('b').textContent = money(pr('stim'));
   $('heatBtn').className = S.heatOn && S.power ? '' : 'cold';
@@ -7289,17 +7729,22 @@ function renderAll() {
   $('stPower').textContent = S.power ? 'GRID ON' : 'POWER CUT';
   $('stPower').className = S.power ? '' : 'danger'; $('stPower').hidden = S.phase === 'office'; // the office's power is somebody else's problem
   const cs = S.cat; $('catBtn').hidden = !cs || S.phase === 'office'; if (cs) { $('catBtn').textContent = cs.gone ? `${cs.name.toUpperCase()}: GONE` : cs.sick ? `${cs.name.toUpperCase()}: SICK` : cs.fed < 30 ? `${cs.name.toUpperCase()}: HUNGRY` : cs.name.toUpperCase(); $('catBtn').className = cs.gone || cs.sick ? 'danger' : cs.fed < 30 ? 'amber' : ''; }
-  $('nightBtn').hidden = S.act === 2 || S.phase !== 'farm'; $('nightBtn').textContent = S.allNight ? (nightNow() ? 'GO TO BED' : 'ALL-NIGHTER: ON') : 'ALL-NIGHTER: OFF';
-  $('nightBtn').title = S.allNight && nightNow() ? 'You are working through the night at +25%. Click to give up and go to bed now.' : 'Stay up and work through the night. Night work pays 25% more. You pay for it in the morning.';
-  $('nightBtn').classList.toggle('on', !!S.allNight); $('nightBtn').classList.toggle('late', !!S.allNight && nightNow());
+  const upNow = upLate() && nightNow();
+  $('nightBtn').hidden = S.act === 2 || S.phase !== 'farm'; $('nightBtn').textContent = upNow ? 'GO TO BED' : S.lastSleep == null ? 'BED: AT NINE' : S.lastSleep < 1 ? 'NO SLEEP LAST NIGHT' : `SLEPT ${fmtH(S.lastSleep)}`;
+  $('nightBtn').title = upNow ? 'You are up late, and night work pays 25% more. Click to go to bed now.' : 'How you slept. At nine the ledger asks when you’re going to bed. Click to see how you are.';
+  $('nightBtn').classList.toggle('on', upNow || (S.lastSleep != null && S.lastSleep < 5.5)); $('nightBtn').classList.toggle('late', upNow);
+  $('stSick').hidden = !S.sick || S.phase === 'office';
+  const mn = mindNow(); $('vMindTxt').textContent = `${Math.round(mn)}%`; $('vMindTxt').className = mn < 25 ? 'danger' : ''; $('vMindBar').style.width = `${mn}%`; $('vMindBar').style.background = mn < 25 ? 'var(--danger)' : mn < 45 ? 'var(--amber)' : '#2fb589';
+  $('vMindCell').classList.toggle('crit', mn < 20);
   const hurt = S.act !== 2 && S.injury != null && S.injury >= S.day;
   $('vStamBar').parentElement.parentElement.classList.toggle('hurt', hurt); $('vStamBar').parentElement.parentElement.title = hurt ? 'Bruised ribs. You sleep badly: energy comes back slowly for two nights.' : '';
   $('ledgerBtn').hidden = S.phase === 'office'; $('ledgerBtn').textContent = S.ledgerAuto ? 'LEDGER: OFF' : 'LEDGER: ON';
   $('phoneBtn').classList.toggle('buzz', !!S.phoneUnread);
 
   document.querySelectorAll('[data-meal]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.meal === (S.meal || 'ramen'))); b.disabled = S.over || S.phase === 'office'; });
-  $('actCoffee').disabled = S.balance < 5 || S.over;
-  $('actPills').disabled = S.balance < 15 || S.over;
+  $('actCoffee').disabled = S.balance < pr('coffee') || S.over;
+  $('actPills').disabled = S.balance < pr('stim') || S.over;
+  $('actMeds').hidden = !S.sick; $('actMeds').disabled = S.balance < MEDS || S.over || !!S.med; $('actMeds').querySelector('b').textContent = S.med ? 'taken' : money(MEDS);
   $('actGrind').disabled = S.stamina < 25 || S.over || S.phase === 'office';
 
   dotTabs();
@@ -7372,7 +7817,20 @@ $('view').addEventListener('click', e => {
 });
 
 // Survival button listeners
-document.querySelectorAll('[data-meal]').forEach(b => b.addEventListener('click', () => setMeal(b.dataset.meal)));
+// the kitchen: seven dinners, with what each one is really like
+var kitchenKey = '';
+function kitchenSync() {
+  const key = MEAL_KEYS.map(k => mealCost(k)).join(',') + '|' + S.meal;
+  if (key === kitchenKey) return; kitchenKey = key;
+  $('mealGrid').innerHTML = MEAL_KEYS.map(k => `<button data-meal="${k}" aria-pressed="${k === (S.meal || 'ramen')}">${esc(MEALS[k].label)}<b>${mealCost(k) ? money(mealCost(k)) : 'free'}</b></button>`).join('');
+  $('mealSay').textContent = mealOf().say;
+}
+$('popKitchen').addEventListener('click', e => { const b = e.target.closest('[data-meal]'); if (b && !b.disabled) setMeal(b.dataset.meal); });
+$('popKitchen').addEventListener('pointerover', e => { const b = e.target.closest('[data-meal]'); if (b) $('mealSay').textContent = MEALS[b.dataset.meal].say; });
+$('popKitchen').addEventListener('pointerleave', () => { if (S) $('mealSay').textContent = mealOf().say; });
+$('actMeds').onclick = takeMeds;
+document.addEventListener('submit', e => { if (e.target && e.target.id === 'askForm') { e.preventDefault(); const q = $('askIn').value; if (!q.trim()) return; $('askIn').value = ''; askAgents(askText(q), q.trim()); } });
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-ask]'); if (b && !b.disabled) askAgents(b.dataset.ask); });
 $('actCoffee').onclick = () => drinkStim(pr('coffee'), 28, false);
 $('actPills').onclick = () => drinkStim(pr('stim'), 60, true);
 $('actGrind').onclick = grindManualWork;
@@ -11872,6 +12330,7 @@ function dreadLevel() {
   if (S.owed > 0) d += .3;
   d += clamp((45 - (S.food ?? 70)) / 45, 0, 1) * .14 + clamp((36.3 - (S.bodyTemp ?? 37)) / 2, 0, 1) * .2;
   d += clamp((28 - (S.stamina ?? 80)) / 28, 0, 1) * .12 + clamp(((S.heat || 0) - 40) / 45, 0, 1) * .2;
+  d += clamp((40 - mindNow()) / 40, 0, 1) * .22; // a head that's going
   return clamp(d, 0, 1);
 }
 // the room closes in: colour drains out and the edges pulse with your heart
@@ -11889,7 +12348,7 @@ function dreadFx(t, k) {
 const hasPc = () => !S || S.act === 2 || S.phase !== 'farm' || !!S.pc;
 const AWAKE = .9; // the share of a day you are awake; the rest is a short night before the ledger
 function hourNow() { // 7 AM → 9 PM, then a short night that runs into tomorrow's dawn. Northvale keeps office hours.
-  const f = clamp(acc / (DAY_SEC[speed] || DAY_SEC[1]), 0, 1);
+  const f = clamp(acc / (DAY_SEC[speed] || DAY_SEC[accSpeed] || DAY_SEC[1]), 0, 1);
   if (S && S.phase === 'office') return 9 + f * 8.5;
   return (f < AWAKE ? 7 + f / AWAKE * 14 : 21 + (f - AWAKE) / (1 - AWAKE) * 10) % 24;
 }
@@ -11973,6 +12432,7 @@ document.querySelectorAll('canvas.rail-ic').forEach(c => { const g = c.getContex
     food: [['..s..s....', '...s..s...', '..s..s....', '..........', 'oooooooooo', 'opppeepppo', '.oppppppo.', '..oppppo..', '...oooo...', '..........'], { o: P.k0, p: P.p2, e: P.e2, s: P.s4 }],
     energy: [['.....ooo..', '....oAAo..', '...oAAo...', '..oAAoooo.', '.oAAAAAAo.', '.ooooAAo..', '...oAAo...', '..oAAo....', '..oAo.....', '..oo......'], { o: P.k0, A: P.a3 }],
     body: [['....oo....', '...oppo...', '...oppo...', '...oeeo...', '...oeeo...', '...oeeo...', '..oeeeeo..', '..oeeeeo..', '...oooo...', '..........'], { o: P.k0, p: P.p3, e: P.e3 }],
+    mind: [['...oooo...', '..otttto..', '.ottTtTto.', '.otTtttto.', '.otttTtto.', '.ottTttto.', '..ottttoo.', '..otttto..', '...oooo...', '..........'], { o: P.k0, t: P.t3, T: P.t5 }],
     clock: [['...oooo...', '.oopppoo..', '.oppkpppo.', 'opppkpppo.', 'opppkkkpo.', 'oppppppo..', '.oppppppo.', '.oopppoo..', '...oooo...', '..........'], { o: P.k0, p: P.p3, k: P.k1 }],
     fs: [['oooo..oooo', 'oppo..oppo', 'opo....opo', 'oo......oo', '..........', '..........', 'oo......oo', 'opo....opo', 'oppo..oppo', 'oooo..oooo'], { o: P.k0, p: P.p3 }],
     menu: [['..........', 'oooooooooo', 'oppppppppo', 'oooooooooo', '..........', 'oooooooooo', 'oppppppppo', 'oooooooooo', '..........', '..........'], { o: P.k0, p: P.p3 }],
@@ -12222,7 +12682,7 @@ function buildRoomStatic() {
   px(74, 100, 1, 6, P.p0); px(82, 100, 1, 6, P.p0);
   px(55, 124, 46, 6, P.k2);
   px(86, 83, 13, 3, P.k2); px(88, 84, 9, 1, S.power ? P.r2 : P.k3); // hotplate
-  if (S.meal !== 'skip') { px(87, 75, 11, 8, P.s3); px(87, 75, 11, 1, P.s4); px(86, 76, 1, 2, P.s2); px(98, 76, 1, 2, P.s2); px(87, 82, 11, 1, P.s1); }
+  if (mealOf().cook) { px(87, 75, 11, 8, P.s3); px(87, 75, 11, 1, P.s4); px(86, 76, 1, 2, P.s2); px(98, 76, 1, 2, P.s2); px(87, 82, 11, 1, P.s1); }
   const cups = S.meal === 'ramen' ? 4 : S.meal === 'skip' ? 0 : 1; // empty ramen cups
   for (let i = 0; i < cups; i++) { const rx = 57 + (i % 2) * 6, ry = 80 - (i >> 1) * 6; px(rx, ry, 5, 6, P.p3); px(rx, ry + 2, 5, 2, P.e2); px(rx, ry, 5, 1, P.p4); }
   // the fridge: old, loud, mostly empty. The microwave on top blinks after every power cut.
@@ -12348,7 +12808,7 @@ function drawRoom(t) {
   const stress = Math.max(S.heat || 0, S.rogueAutonomy || 0, dread * 90);
   // the drip, the pot, the radiator's shimmer
   const dp = (t % 2600) / 2600; if (dp < .3) px(78, 78 + Math.round(dp / .3 * 7), 1, 1, P.t4); else if (dp < .36) px(76, 86, 4, 1, rgba(P.t4, .6));
-  if (S.meal !== 'skip' && S.power) for (let i = 0; i < 5; i++) { const ph = ((t / 1900) + i / 5) % 1; px(91 + Math.round(Math.sin(ph * 7 + i) * 2) + (i % 2) * 2, 73 - Math.round(ph * 16), 1, 1, rgba(P.p3, .5 * (1 - ph))); }
+  if (mealOf().cook && S.power) for (let i = 0; i < 5; i++) { const ph = ((t / 1900) + i / 5) % 1; px(91 + Math.round(Math.sin(ph * 7 + i) * 2) + (i % 2) * 2, 73 - Math.round(ph * 16), 1, 1, rgba(P.p3, .5 * (1 - ph))); }
   if (S.power && S.heatOn) for (let i = 0; i < 12; i++) { const ph = ((t / 1500) + i / 12) % 1; px(147 + i * 4 + Math.round(Math.sin(t / 300 + i)), 104 - Math.round(ph * 9), 1, 1, rgba(P.r4, .3 * (1 - ph))); }
   if (S.power) { const bl = (t / 600 | 0) % 2; px(107, 57, 9, 3, P.k1); if (bl) { px(108, 58, 2, 1, P.t3); px(111, 58, 1, 1, P.t3); px(113, 58, 2, 1, P.t3); } }
   // the clock spins through the day
@@ -12403,7 +12863,7 @@ function drawRoom(t) {
     if (k > 1) { fx.feet = null; fx.nextFeet = t + 16000 + Math.random() * 26000; }
   }
   // no sleep, no money, no heat: sometimes there is someone standing by the door. Then there isn't.
-  if (t > fx.nextGhost && S.stamina < 18 && dread > .55) { fx.ghost = t + 240; fx.nextGhost = t + 40000 + Math.random() * 50000; }
+  if (t > fx.nextGhost && (S.stamina < 18 || mindNow() < 22) && dread > .45) { fx.ghost = t + 240; fx.nextGhost = t + 40000 + Math.random() * 50000; }
   if (t < fx.ghost) { px(58, 72, 9, 8, P.k0); px(56, 80, 13, 30, P.k0); px(57, 110, 4, 20, P.k0); px(63, 110, 4, 20, P.k0); }
 
   // ---- light ----
@@ -12552,7 +13012,7 @@ function petCat() {
   if (c.sick) return petSnd('sick'), modal({ title: `${c.name.toUpperCase()} IS SICK`, body: `<p>${esc(c.name)} won’t eat. Its nose is dry and it doesn’t come when you call. The clinic on 8th St wants <b>$90</b> up front.</p><p class="muted">Rent is ${money(budget().due || 0)}. You have ${money(S.balance)}.</p>`, buttons: [{ label: 'Take Soot to the vet ($90)', primary: true, fn: vetVisit }, { label: 'Not today' }] });
   const dog = c.kind === 'dog';
   if (catFx.petDay === S.day) { petSnd(c.fed < 30 ? 'hungry' : 'sigh', { v: .45 }); return toast(c.fed < 30 ? (dog ? `${c.name} looks at you, then at his empty bowl.` : `${c.name} looks at you, then at the fridge.`) : (dog ? `${c.name} is asleep. He snores, a little.` : `${c.name} has had enough of you for today.`)); }
-  catFx.petDay = S.day; S.stamina = clamp(S.stamina + 4, 0, 100); petSnd('pet');
+  catFx.petDay = S.day; S.stamina = clamp(S.stamina + 4, 0, 100); S.mind = clamp(mindNow() + 3, 0, 100); petSnd('pet');
   toast(dog ? (c.fed < 30 ? `${c.name} wags, thinly. His ribs are under your hand.` : pick([`${c.name} leans his whole weight against your legs. For a minute the rent is very far away.`, `${c.name}’s tail thumps the floor, and keeps thumping.`, `${c.name} rolls over for his belly. You can’t say no to that.`]))
     : c.fed < 30 ? `${c.name} purrs, thinly. Its ribs are under your hand.` : pick([`${c.name} purrs. For a minute the rent is very far away.`, `${c.name} headbutts your hand and walks off.`, `${c.name} rolls over. It’s a trap. It’s always a trap.`]));
   renderAll();
@@ -12819,6 +13279,7 @@ function peep() {
 }
 function lookOut() {
   const d = S.day;
+  if (S.lookDay !== d && hourNow() >= 7 && hourNow() < 18 && (S.heat || 0) <= 40) { S.lookDay = d; S.mind = clamp(mindNow() + 1, 0, 100); } // a minute of daylight
   if ((S.heat || 0) > 40) return snd('robotTarget', { v: .4, lp: 3200 }), toast('A small drone hangs outside your window. Its red light blinks, and waits.');
   if (d >= 60) return toast('Two cooling towers by the river now, steaming day and night. The billboard across the street smiles at you.');
   if (d >= 34) return toast('The new data centre on the river never turns its lights off.');
@@ -12828,6 +13289,10 @@ function lookOut() {
 function fridge() {
   if (S.food < 25) return toast('The fridge hums over a jar of mustard.');
   if (S.meal === 'groc') return toast('Eggs, rice, a bag of spinach going soft. Real food.');
+  if (S.meal === 'beans') return toast('A pot of rice and beans with a plate on top. Tomorrow’s is in there too.');
+  if (S.meal === 'deli') return toast('Half a sandwich in wax paper. You were saving it.');
+  if (S.meal === 'dlv') return toast('Delivery boxes, stacked. You can’t remember ordering the top one.');
+  if (S.meal === 'soup') return toast('Empty, and clean. You eat at the church hall.');
   if (S.meal === 'skip') return toast('You open the fridge, look, and close it again.');
   toast('Ramen, ramen, hot sauce, ramen.');
 }
@@ -12856,7 +13321,8 @@ const SPOTS = {
     { r: [10, 130, 44, 12], label: () => `LETTERS · ${S.letters}`, when: () => S.letters > 0, go: () => openLaptop('mail') },
     { r: [292, 36, 11, 21], label: () => 'RULEBOOK', go: () => openRulebook() },
     { r: [302, 46, 14, 12], label: () => 'DIARY', go: () => openDiary() },
-    { r: [230, 74, 30, 28], label: () => 'YOU', go: selfCheck },
+    { r: [230, 74, 30, 28], label: () => S.sick ? 'YOU · ILL' : 'YOU', go: openYou },
+    { r: [132, 137, 82, 23], label: () => upLate() && nightNow() ? 'BED · GO TO BED' : 'BED', go: () => { const h = hourNow(); if (h >= 7 && h < 21) toast(pick(['The mattress. Not yet.', 'If you lie down now you won’t get up.', 'Not until nine. That’s the rule you made.'])); else goToBed(); }, when: () => S.act !== 2 },
     { r: () => [Math.round(catFx.x) - 9, Math.round(catFx.y) - 17, 18, 18], label: () => S.cat.sick ? `${S.cat.name.toUpperCase()} · SICK` : S.cat.fed < 30 ? `${S.cat.name.toUpperCase()} · HUNGRY` : S.cat.name.toUpperCase(), go: petCat, when: () => S.cat && !S.cat.gone },
   ],
   office: [
@@ -13135,7 +13601,7 @@ const BIKES = {
 const TICKET_WHY = { red: 'red light', speed: 'speeding', tamper: 'illegal e-bike', lane: 'unsafe lane change' };
 function gig2() { return S.gig2 || (S.gig2 = { car: null, bike: null, uR: 4.86, gR: 4.72, police: .22, deact: -1, today: { gig: 0, tix: 0 }, shifts: 0, pushed: false }); }
 let SHC = null, SH = null; // the shift (or the jailbreak) running full screen, and its tally
-function spendHours(h) { const len = DAY_SEC[speed] || DAY_SEC[1]; acc = Math.min(acc + h / 14 * AWAKE * len, len - .05); }
+function spendHours(h) { const len = DAY_SEC[speed] || DAY_SEC[accSpeed] || DAY_SEC[1]; acc = Math.min(acc + h / 14 * AWAKE * len, len - .05); }
 function shiftOpen(kind, job, env) {
   $('shiftModal').hidden = false; $('shTitle').textContent = job.title; $('shInfo').textContent = '';
   try { SHC = mgCreate($('shStage'), kind, job, env); }
@@ -13925,7 +14391,7 @@ function dayStep2() {
   }
   mealTick();
   catTick();
-  S.stamina = clamp(S.stamina + 12, 0, 100);
+  S.stamina = clamp(S.stamina + 12 - (S.sick ? 6 : 0), 0, 100); bodyNight(S.day, 8);
   if (S.food <= 0) {
     S.starveDays++;
     S.bodyTemp = clamp(S.bodyTemp - 0.35, 29.0, 37.0);
@@ -14317,7 +14783,7 @@ function dayStep3() { // Act III's day: the survival rules, the polls drifting, 
   applyPrices(d);
   if (S.power && S.heatOn) { S.balance -= pr('heat'); S.temp += (20.5 - S.temp) * 0.45; } else S.temp += (9 - S.temp) * .22;
   if (S.temp < 11) { S.bodyTemp = clamp(S.bodyTemp - (11 - S.temp) * 0.14, 29.0, 37.0); if (S.bodyTemp <= 30.5) return triggerDeath('frostbite'); } else S.bodyTemp = clamp(S.bodyTemp + 0.45, 30.0, 37.0);
-  mealTick(); catTick(); S.stamina = clamp(S.stamina + 12, 0, 100);
+  mealTick(); catTick(); S.stamina = clamp(S.stamina + 12, 0, 100); bodyNight(S.day, 8);
   if (S.food <= 0) { S.starveDays++; if (S.starveDays >= 3) return triggerDeath('starvation'); } else S.starveDays = 0;
   M.rosa = clamp(M.rosa + .12, 30, 70); M.kip = clamp(M.kip - .03, 30, 70); M.yes = clamp(M.yes - .06, 25, 75); M.heat = Math.max(0, M.heat - 1.5);
   if (d === 273 && !M.rent) { M.rent = true; if (S.balance >= RENT) { S.balance -= RENT; tx('Rent · November', -RENT); } else { S.owed = RENT; S.graceUntil = d + 6; crisisModal(); } }
@@ -14662,8 +15128,11 @@ function renderActList() {
 }
 
 // ================= controls =================
-let speed = 1;
-function setSpeed(v) { speed = v; document.querySelectorAll('[data-speed]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.speed === v))); }
+let speed = 1, accSpeed = 1; // accSpeed: the speed whose day length the clock (acc) is counted in
+function setSpeed(v) {
+  if (v && accSpeed && v !== accSpeed) { try { acc *= DAY_SEC[v] / DAY_SEC[accSpeed]; } catch (e) {} } // same hour, new speed
+  if (v) accSpeed = v;
+  speed = v; document.querySelectorAll('[data-speed]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.speed === v))); }
 document.querySelectorAll('[data-speed]').forEach(b => b.addEventListener('click', () => { sfx.init(); setSpeed(+b.dataset.speed); }));
 $('muteBtn').addEventListener('click', () => { sfx.muted = !sfx.muted; $('muteBtn').setAttribute('aria-pressed', String(sfx.muted)); $('muteBtn').textContent = sfx.muted ? '×' : '♪'; });
 document.addEventListener('visibilitychange', () => { if (document.hidden) setSpeed(0); });
@@ -15067,7 +15536,7 @@ function dreadTick(dt, live) {
   if (!live || S.over || scene !== 'room' || S.phase === 'office') { beatAcc = 0; return; }
   const k = dreadLevel();
   if (k > .45) { const per = 60 / (66 + k * 64); beatAcc += dt; if (beatAcc >= per) { beatAcc -= per; const v = .018 + (k - .45) * .05; if (!snd('heart', { v: clampN(v * 24, .3, 1), lp: 900, vary: 0 })) { sfx.synth(64, .09, 'sine', v, 42); sfx.synth(58, .11, 'sine', v * .75, 40, .17); } } } else beatAcc = 0;
-  const f = acc / (DAY_SEC[speed] || DAY_SEC[1]);
+  const f = acc / (DAY_SEC[speed] || DAY_SEC[accSpeed] || DAY_SEC[1]);
   if (f > .84 && f < AWAKE && k > .3) { tickAcc += dt; if (tickAcc >= 1) { tickAcc = 0; if (!snd('tick', { v: .5, vary: .02 })) sfx.synth(1900, .015, 'square', .012); } } else tickAcc = 0;
   // the power stutters when you're behind on the bills. The work doesn't wait for it.
   const now = performance.now();
@@ -15082,26 +15551,28 @@ const $q = s => document.querySelector(s);
 const phoneOpen = () => !$('phoneModal').hidden; // lapOpen() is defined with the laptop
 const TUT = [
   // the office
-  { id: 'clock', when: () => S.phase === 'office' && !lapOpen(), el: () => $('clockLbl'), t: 'THE CLOCK NEVER STOPS', s: 'A day lasts two minutes. It keeps running while you work, read and scroll. II pauses it, 3× speeds it up.' },
-  { id: 'cash', when: () => S.phase === 'office' && !lapOpen(), el: () => $q('#hud .hc'), t: 'YOUR MONEY', s: 'What’s in checking. The cell next to it says what you make and spend per day.' },
-  { id: 'payday', when: () => S.phase === 'office' && !lapOpen(), el: () => $('hProjCell'), t: 'THE NEXT BIG DATE', s: 'Payday now. Later it’s rent, and whether you’ll have enough on the day it’s due. Watch this one.' },
-  { id: 'vitals', when: () => S.phase === 'office' && !lapOpen(), el: () => $q('.vitals'), t: 'YOU', s: 'Food, energy and body heat. Let any of them run out and the game ends. Work costs energy; sleep gives it back.' },
-  { id: 'lapOffice', when: () => S.phase === 'office' && !lapOpen(), el: () => $('railLaptop'), t: 'YOUR WORK IS ON THE LAPTOP', s: 'Open it and sort today’s tickets. Each one costs a little energy.' },
-  { id: 'phone', when: () => S.phase === 'office' && S.day >= OFFICE_START && !lapOpen(), el: () => $('phoneBtn'), t: 'YOUR PHONE', s: 'Bets, stocks, dating. The clock keeps running while you swipe, and Marcus walks the aisle. If you hear footsteps, put it away.' },
+  { id: 'clock', when: () => S.phase === 'office' && !lapOpen(), el: () => $q('#top .when'), t: 'THE CLOCK NEVER STOPS', s: 'A day lasts two minutes, and it keeps running while you work, read and scroll. II on the right pauses it; 3× speeds it up.' },
+  { id: 'cash', when: () => S.phase === 'office' && !lapOpen(), el: () => $('hud'), t: 'YOUR MONEY', s: 'What’s in checking, what you make and spend a day, and the next big date: payday now, rent later. Watch the last one.' },
+  { id: 'vitals', when: () => S.phase === 'office' && !lapOpen(), el: () => $q('.vitals'), t: 'YOU', s: 'Food, energy, body heat, and your head. Let any of them run out and it’s over. Work costs energy; sleep gives it back.' },
+  { id: 'lapOffice', when: () => S.phase === 'office' && !lapOpen(), el: () => $('railLaptop'), t: 'YOUR WORK IS ON THE LAPTOP', s: 'Open it and sort today’s tickets: drag each shape into its basket. Each ticket costs a little energy.',
+    do: 'Open the laptop and sort one ticket', done: () => S.phase !== 'office' || S.office.mine > 0 },
+  { id: 'phone', when: () => S.phase === 'office' && S.office.mine > 0 && !lapOpen(), el: () => $('phoneBtn'), t: 'YOUR PHONE', s: 'Bets, stocks, dating. The clock keeps running while you swipe, and Marcus walks the aisle. If you hear footsteps, put it away.' },
   // the apartment
   { id: 'rent', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen(), el: () => $('hProjCell'), t: 'RENT', s: 'Rent is due on the 1st. This cell says whether you’ll have it on the day, at the rate you’re going.' },
   { id: 'goal', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen() && !$('hGoalCell').hidden, el: () => $('hGoalCell'), t: 'TODAY', s: 'What you need to earn today to stay on track for rent. At night the ledger grades the day.' },
-  { id: 'room', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen(), el: () => $('room'), t: 'THE ROOM IS CLICKABLE', s: 'The fridge is the kitchen. The radiator is the heat. The door opens onto the hall. Things you can use glow when you arrive.' },
-  { id: 'status', when: () => S.act !== 2 && S.phase === 'farm' && !lapOpen(), el: () => $('roomStatus'), t: 'HEAT, FOOD, THE LEDGER', s: 'Heat costs money every day, and so does food. The ledger at night lets you choose what to pay for.' },
-  { id: 'pc', when: () => S.act !== 2 && S.phase === 'farm' && !S.pc && !lapOpen(), el: () => $('railLaptop'), t: 'YOU NEED A COMPUTER', s: 'IT took your laptop. Open the laptop rail to get to the store, buy a machine and pay for the internet.' },
-  { id: 'web', when: () => S.act !== 2 && S.phase === 'farm' && lapOpen() && online() && !$q('.ttabs [data-tab="web"]').hidden, el: () => $q('.ttabs [data-tab="web"]'), t: 'THE JOB SITES', s: 'freecancer.com and linkbin.com. Send a proposal; some clients hire you. Instant jobs start right away.' },
+  { id: 'room', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc && !lapOpen(), el: () => $('room'), t: 'THE ROOM IS CLICKABLE', s: 'The fridge is the kitchen: seven dinners, each with a catch. The radiator is the heat. Click yourself to see how you are. Things you can use glow when you arrive.' },
+  { id: 'status', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc && !lapOpen(), el: () => $('roomStatus'), t: 'HEAT, FOOD, THE LEDGER', s: 'Heat costs money every day, and so does dinner. At nine the ledger asks what you’ll pay for tonight, and when you’re going to bed.' },
+  { id: 'pc', when: () => S.act !== 2 && S.phase === 'farm' && !S.pc && !lapOpen(), el: () => $('railLaptop'), t: 'YOU NEED A COMPUTER', s: 'IT took your laptop. Click LAPTOP to get to the store, buy a machine, then pay for the internet.',
+    do: 'Buy a computer and get online', done: () => online(), wait: 240 },
+  { id: 'web', when: () => S.act !== 2 && S.phase === 'farm' && lapOpen() && online() && !$q('.ttabs [data-tab="web"]').hidden, el: () => $q('.ttabs [data-tab="web"]'), t: 'THE JOB SITES', s: 'freecancer.com and linkbin.com. Send a proposal; some clients hire you. Jobs marked ⚡ start right away.',
+    do: 'Open the job sites and send a proposal, or take a ⚡ job', done: () => (S.jobs || []).length > 0 || ((S.fc && S.fc.sent) || 0) > 0, wait: 180 },
   { id: 'bench', when: () => lapOpen() && !!MGC && !!BN && !BN.auto && !$('benchWin').hidden, el: () => $('benchWin'), t: 'EVERY JOB IS A GAME', s: 'Play it well and the client pays in full, with a tip sometimes. Mistakes cost pay and stars. The bar on top shows how far you are.' },
   { id: 'assist', when: () => lapOpen() && !!$('bnAssist') && !!$('bnAssist').offsetParent, el: () => $('bnAssist'), t: 'TEACH THE AI', s: 'Pay once to teach an AI one part of this game. It bills AI credits while it helps. Level 2 does more. Handing the job to an agent does all of it.' },
   { id: 'paper2', when: () => S.act !== 2 && S.phase === 'farm' && S.day >= 1 && !lapOpen(), el: () => $('railDiary'), t: 'THE DIARY AND THE RULEBOOK', s: 'Everything that happened is in the diary. New rules arrive as official notices and go in the rulebook, marked NEW.' },
-  { id: 'night', when: () => S.act !== 2 && S.phase === 'farm' && S.day >= 2 && !lapOpen() && !$('nightBtn').hidden, el: () => $('nightBtn'), t: 'ALL-NIGHTER', s: 'Stay up and work through the night. Night jobs pay 25% more. In the morning you pay for it with your body.' },
-  { id: 'n9nIcon', when: () => lapOpen() && !!$q('.dicon[data-app="n9n"]') && $('n9nWin').hidden && !(BN && MGC), el: () => $q('.dicon[data-app="n9n"]'), t: 'n9n: WORKFLOWS', s: 'Chain the arcade games into a workflow, like n8n. Buy AUTOPILOT for a node and an AI plays it, even while you sleep.' },
-  { id: 'n9nPal', when: () => lapOpen() && !$('n9nWin').hidden && !S.n9n.c, el: () => $q('.n9-pal'), t: 'START WITH A CONTRACT', s: 'Take a contract: the client becomes the last node. Then add the nodes its hint names, in order.' },
-  { id: 'n9nWire', when: () => lapOpen() && !$('n9nWin').hidden && S.n9n.nodes.length >= 2 && !S.n9n.wires.length, el: () => $q('.n9-port.out'), t: 'WIRE IT', s: 'Click a node’s out port, then the next node’s in port. The colours show what each node makes. End at the client.' },
+  { id: 'night', when: () => S.act !== 2 && S.phase === 'farm' && S.day >= 2 && !lapOpen() && !$('nightBtn').hidden, el: () => $('nightBtn'), t: 'SLEEP', s: 'At nine the ledger asks when you’re going to bed. Stay up and night work pays more. The alarm is always seven, and what you don’t sleep, you owe.' },
+  { id: 'n9nIcon', when: () => lapOpen() && !!$q('.dicon[data-app="n9n"]') && $('n9nWin').hidden && !(BN && MGC), el: () => $q('.dicon[data-app="n9n"]'), t: 'n9n: WORKFLOWS', s: 'Chain the arcade games into a workflow, like n8n. Buy AUTOPILOT for a node and an AI plays it, even while you sleep.', do: 'Open n9n on the desktop', done: () => !$('n9nWin').hidden, wait: 60 },
+  { id: 'n9nPal', when: () => lapOpen() && !$('n9nWin').hidden && !S.n9n.c, el: () => $q('.n9-pal'), t: 'START WITH A CONTRACT', s: 'Take a contract: the client becomes the last node. Then add the nodes its hint names, in order.', do: 'Take a contract in n9n', done: () => !!S.n9n.c || $('n9nWin').hidden, wait: 90 },
+  { id: 'n9nWire', when: () => lapOpen() && !$('n9nWin').hidden && S.n9n.nodes.length >= 2 && !S.n9n.wires.length, el: () => $q('.n9-port.out'), t: 'WIRE IT', s: 'Click a node’s out port, then the next node’s in port. The colours show what each node makes. End at the client.', do: 'Wire an out port to an in port', done: () => S.n9n.wires.length > 0 || $('n9nWin').hidden, wait: 90 },
   { id: 'n9nAuto', when: () => lapOpen() && !$('n9nWin').hidden && S.n9n.wires.length >= 1 && !Object.keys(S.n9n.ap).length, el: () => $q('.n9-node.man'), t: 'NEEDS YOU', s: 'A node without autopilot waits for you. Click its picture to play it full size; what you make goes down its wire.' },
   // Act II
   { id: 'a2work', when: () => S.act === 2 && S.phase === 'trainer' && lapOpen(), el: () => $q('.ttabs [data-tab="farm"]'), t: 'TRAINING', s: 'Pick the better of two answers, against a quota. Pay per task falls every week. While you work through tasks, the clock stops.' },
@@ -15115,13 +15586,28 @@ const TUT = [
   { id: 'm4exempt', when: () => S.phase === 'consensus' && S.m4 && S.m4.shut && lapOpen() && !!$q('.c4-exs'), el: () => $q('.c4-exs'), t: 'TWELVE THOUSAND', s: 'The network is down until midnight, and every exemption needs a human. Each one takes a few seconds to grant. Consensus-1 has marked its own priorities.' },
   { id: 'release', when: () => !!SHC && SH && SH.app === 'spread', el: () => $('shStage'), t: 'RELEASE', s: 'Click a person to post it from their account. Big ringed dots are trusted. Keep it ahead of the fact-checks (teal) and the sweeps. SPACE boosts it.' }
 ];
-let tutCur = null, tutT = 0;
+let tutCur = null, tutT = 0, tutWait = null, tutGap = 0, tutCalm = 0;
 const tutOff = () => (navigator.webdriver && !window.__tutTest) || (save.tut && save.tut.__off);
 const tutOn = () => !!tutCur;
+const tutBusy = () => !$('modal').hidden || !$('evModal').hidden || !$('pauseMenu').hidden || $('desk').classList.contains('on') || !!SHC || (!$('gateModal').hidden && !(tutWait && tutWait.id === 'pc')) || (MGC && BN && !BN.ended && MGC.state && MGC.state.phase === 'play');
+function tutHint(st, ok) {
+  const h = $('tutHint'); if (!st) { h.hidden = true; return; }
+  $('tutHintT').textContent = ok ? 'Done. ' + st.do + '.' : st.do; h.classList.toggle('ok', !!ok); h.hidden = false;
+}
 function tutTick(dt) {
   if (tutCur) { tutPlace(); return; }
+  if (!S || S.over || tutOff() || !$('titleScreen').hidden) { if (!$('tutHint').hidden) tutHint(null); return; }
+  if (tutWait) { // the last card asked you to do something: wait for it, with a reminder, and nothing else
+    let ok = false; try { ok = tutWait.done(); } catch (e) {}
+    tutWait.t += dt;
+    if (ok && !tutWait.ok) { tutWait.ok = true; tutWait.t = tutWait.wait || 90; tutHint(tutWait, true); sfx.tone(1320, .05, 'square', .02); setTimeout(() => { if (tutWait && tutWait.ok) { tutWait = null; tutHint(null); tutGap = 3; } }, 1600); return; }
+    if (!tutWait.ok && tutWait.t > (tutWait.wait || 90)) { tutWait = null; tutHint(null); tutGap = 3; }
+    else { if (!tutWait.ok) $('tutHint').hidden = !!(!$('modal').hidden || !$('pauseMenu').hidden); return; }
+  }
+  if (tutBusy()) { tutCalm = 0; return; }
+  tutCalm += dt; if (tutCalm < 1.6) return;          // a moment after any card, door or desk closes
+  if (tutGap > 0) { tutGap -= dt; return; }          // and a quiet spell between cards
   tutT -= dt; if (tutT > 0) return; tutT = .4;
-  if (!S || S.over || tutOff() || !$('titleScreen').hidden || !$('modal').hidden || !$('evModal').hidden || !$('pauseMenu').hidden || $('desk').classList.contains('on')) return;
   for (const st of TUT) {
     if (save.tut && save.tut[st.id]) continue;
     let ok = false; try { ok = st.when(); } catch (e) { ok = false; }
@@ -15149,13 +15635,18 @@ function tutPlace() {
 }
 function tutDone(all) {
   save.tut = save.tut || {};
-  if (tutCur) save.tut[tutCur.id] = 1;
-  if (all) { TUT.forEach(s => save.tut[s.id] = 1); save.tut.__off = 1; toast('Tutorial off. You can turn it back on from the title screen.'); }
-  persist(); tutCur = null; $('tut').hidden = true; tutT = .8;
+  const st = tutCur;
+  if (st) save.tut[st.id] = 1;
+  if (all) { TUT.forEach(s => save.tut[s.id] = 1); save.tut.__off = 1; tutWait = null; tutHint(null); toast('Tutorial off. You can turn it back on from the title screen.'); }
+  persist(); tutCur = null; $('tut').hidden = true; tutT = .8; tutCalm = 0;
+  let already = true; if (!all && st && st.done) { try { already = !!st.done(); } catch (e) {} }
+  if (!all && st && st.done && !already) { tutWait = { id: st.id, do: st.do, done: st.done, wait: st.wait, t: 0 }; tutHint(tutWait); }
+  else tutGap = st && st.done ? 2.5 : 5; // time to look at what it showed you
 }
-function tutReset() { save.tut = {}; persist(); toast('The tutorial will show again.'); renderTutBtn(); }
+function tutReset() { save.tut = {}; tutWait = null; tutGap = 0; persist(); toast('The tutorial will show again.'); renderTutBtn(); }
 function renderTutBtn() { const b = $('tutReset'); if (b) b.textContent = save.tut && Object.keys(save.tut).length ? 'Show the tutorial again' : 'Tutorial: on'; }
 $('tutOk').onclick = () => tutDone(); $('tutSkip').onclick = () => tutDone(true);
+$('tutHintX').onclick = () => { tutWait = null; tutHint(null); tutGap = 4; };
 $('tutReset').onclick = () => { tutReset(); }; renderTutBtn();
 document.addEventListener('keydown', e => { if (!tutOn()) return; if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') { e.preventDefault(); e.stopImmediatePropagation(); tutDone(); } }, true);
 // ---- the title logo: THE LOOP in big pixels, the two O's a figure eight, and you, running around it ----
@@ -15320,7 +15811,7 @@ function frame(t) {
       }
       tutTick(dt);
       const blocked = tutOn() || !!SHC || !$('modal').hidden || (phoneUp && S.act === 2) || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
-      benchTick(dt, !!speed && !blocked); m4Tick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked); bossTick(dt, !!speed && !blocked); n9Tick(dt, !!speed && !blocked); n9Sync(); if (SHC) shiftTick(dt);
+      benchTick(dt, !!speed && !blocked); m4Tick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked); mindTick(dt, !!speed && !blocked); wildTick(!!speed && !blocked); bossTick(dt, !!speed && !blocked); n9Tick(dt, !!speed && !blocked); n9Sync(); if (SHC) shiftTick(dt);
       if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
       // After launch, ChatGPX takes your tickets while you watch.
       if (S.phase === 'office' && S.office.launched && speed && !blocked) {
@@ -15331,10 +15822,13 @@ function frame(t) {
         // evenings start around 7 PM, at .8 of the day
         if (acc > DAY_SEC[speed] * .8) { const ev = eveningDue(); if (ev) { runEvening(ev); return requestAnimationFrame(frame); } }
         acc += dt * nightStep();
+        dinnerTick();
+        if (bedTick()) return requestAnimationFrame(frame);
         const len = DAY_SEC[speed];
         while (acc >= len && !S.over) {
           if (ledgerWanted()) { acc = len; openLedger(); break; }
           acc -= len;
+          if (bedAct() && upLate()) S.sleepH = 0; // seven o'clock, and you never went to bed
           dayStep();
           if (!$('modal').hidden || (S.act === 2 && !$('phoneModal').hidden)) { acc = 0; break; }
         }
@@ -15351,7 +15845,7 @@ if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
 if (location.hash === '#act4') startAct4();
 
-window.__loop = { get S() { return S; }, petCat, sfx, SND, snd, BEDS, petSnd, sndInit, peep, eveningDue, EVENING2, EVENING3, DOORS1, DOORS3, DOORS4, catAdopt, petAdopt, doorKnock, doorOpen, DOG_SPOTS, keepRun, applyKeep, doorStats, ECHO, runEchoes, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, askAgents, askText, aiNight, drift, guardFlip, wildTick, stopMoney, WILD, ASKS, MEALS, MEAL_KEYS, mealCost, mealTick, bodyNight, restFor, sleepNow, stayUp, goToBed, bedTick, openYou, joinGym, quitGym, takeMeds, mindNow, hoursToSeven, dinnerTick, kitchenSync, hourNow, petCat, sfx, SND, snd, BEDS, petSnd, sndInit, peep, eveningDue, EVENING2, EVENING3, DOORS1, DOORS3, DOORS4, catAdopt, petAdopt, doorKnock, doorOpen, DOG_SPOTS, keepRun, applyKeep, doorStats, ECHO, runEchoes, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, get tutWait() { return tutWait; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
