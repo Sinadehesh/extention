@@ -625,6 +625,27 @@ details.box summary { cursor: pointer; list-style: none; } details.box summary::
 .sbasket { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px 6px; background: #0d1013; border: 2px solid #07080a; box-shadow: inset 0 -10px 0 #2b2d22, 0 0 0 2px #634026; font-size: 10px; letter-spacing: .12em; color: var(--muted); }
 .sbasket svg { width: 26px; height: 26px; }
 .sbasket i { position: absolute; top: 4px; right: 6px; font-style: normal; color: var(--amber); font-size: 11px; }
+.sbaskets.n4 { grid-template-columns: repeat(4, 1fr); }
+.sbasket { cursor: pointer; transition: transform .08s; }
+.sbasket kbd { position: absolute; top: 4px; left: 6px; font-family: var(--f-term); font-size: 10px; color: #71858f; }
+.sbasket.hover { box-shadow: inset 0 -10px 0 #2b2d22, 0 0 0 3px #e0a33a; transform: translateY(-2px); }
+.sbasket.yes { box-shadow: inset 0 -10px 0 #24402a, 0 0 0 3px #87b85a; }
+.sbasket.no { box-shadow: inset 0 -10px 0 #3d0f0c, 0 0 0 3px #e04a34; }
+.sbasket.rt span { color: #cf7a4f; }
+.srule { display: flex; align-items: center; gap: 8px; font-family: var(--f-ui); font-size: 13.5px; color: var(--ink); }
+.srule b { font-family: var(--f-term); font-weight: 400; font-size: 10.5px; letter-spacing: .14em; color: #0d1013; background: #e0a33a; padding: 1px 5px; }
+.srule b:last-of-type:not(:first-of-type) { background: #843b27; color: #fbf6e8; }
+.srule u { text-decoration-color: #e04a34; text-decoration-thickness: 2px; }
+.sstreak { margin-left: auto; font-family: var(--f-term); font-size: 15px; color: #87b85a; }
+.shp.picked { filter: drop-shadow(0 0 0 #e0a33a) drop-shadow(0 0 4px #e0a33a) drop-shadow(3px 3px 0 #07080a); transform: rotate(0deg) scale(1.12) !important; z-index: 5; }
+.shp .crk { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ssla { height: 5px; background: #151a1f; border: 1px solid #07080a; overflow: hidden; }
+.ssla i { display: block; height: 100%; background: linear-gradient(90deg, #e04a34, #e0a33a 30%, #87b85a); animation: slaRun linear forwards; transform-origin: left; }
+@keyframes slaRun { to { width: 0; } }
+.sorter { position: relative; }
+.sstamp { position: absolute; right: 18px; top: 46px; z-index: 30; display: flex; flex-direction: column; align-items: center; padding: 6px 12px; border: 3px solid #3a6438; color: #3a6438; background: rgba(236,228,204,.92); font-family: var(--f-term); transform: rotate(-8deg); pointer-events: none; }
+.sstamp b { font-size: 20px; font-weight: 400; letter-spacing: .1em; } .sstamp span { font-size: 13px; } .sstamp small { font-size: 11px; color: #7a2116; }
+.sstamp.late { border-color: #b8321f; color: #b8321f; }
 #annLogo { width: 120px; height: 120px; image-rendering: pixelated; display: block; margin: 0 auto 8px; border: 3px solid #07080a; box-shadow: 4px 4px 0 #07080a; }
 /* ===== freelancing ===== */
 .work .stars { color: var(--amber); letter-spacing: .1em; } .work .stars b { color: var(--ink); margin-left: 4px; }
@@ -2033,54 +2054,92 @@ const GPU_SAYS = [
   'Customer satisfaction is up 11%. We vibing.'
 ];
 const SHAPE_COL = ['#e0a33a', '#9aaab1', '#e04a34', '#ddd6c1', '#87b85a'];
-const SHAPE_NAME = { tri: 'TRIANGLES', sq: 'SQUARES', ci: 'CIRCLES' };
+const SHAPE_NAME = { tri: 'TRIANGLES', sq: 'SQUARES', ci: 'CIRCLES', rt: 'RETURNS' };
 function shapeSVG(k, c) {
   return `<svg viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true">${k === 'ci' ? `<circle cx="8" cy="8" r="6.4" fill="${c}" stroke="#07080a" stroke-width="1.6"/>` : k === 'sq' ? `<rect x="2" y="2" width="12" height="12" fill="${c}" stroke="#07080a" stroke-width="1.6"/>` : `<polygon points="8,1.6 14.8,14.4 1.2,14.4" fill="${c}" stroke="#07080a" stroke-width="1.6"/>`}</svg>`;
 }
+const CRACK = '<svg class="crk" viewBox="0 0 16 16" aria-hidden="true"><polyline points="5,2 8,6 6,9 10,12 9,15" fill="none" stroke="#07080a" stroke-width="1.6"/><polyline points="8,6 11,5" fill="none" stroke="#07080a" stroke-width="1.2"/></svg>';
+const binOf = (tk, s) => tk.rule === 'returns' && s.c ? 'rt' : s.k; // where a parcel belongs
+const SORT_SLA = 3.2;                                                 // seconds per parcel before the ticket is late
 function sorterHTML(tk) {
   if (!tk) return `<div class="box sorter"><div class="row"><span class="h">Sorting bench</span></div><div class="stray empty">${S.office.launched ? 'Nothing to sort. ChatGPX got to it first.' : 'Queue clear. Tickets keep arriving.'}</div></div>`;
-  return `<div class="box sorter"><div class="row"><span class="h">${esc(tk.id)} · ${esc(tk.t)}</span><span class="muted" id="sLeft">${tk.left.length} to sort · −10 stamina</span></div>
-    <div class="stray" id="sTray" data-t="${esc(tk.id)}">${tk.left.map((s, i) => `<div class="shp" data-sid="${s.id}" data-k="${s.k}" style="left:${6 + i * 17}%;top:${12 + (s.id * 37 % 34)}px;--r:${(s.id * 23 % 30) - 15}deg">${shapeSVG(s.k, SHAPE_COL[s.id % 5])}</div>`).join('')}</div>
-    <div class="sbaskets">${['tri', 'sq', 'ci'].map(b => `<div class="sbasket" data-b="${b}">${shapeSVG(b, '#2b2d22')}<span>${SHAPE_NAME[b]}</span><i></i></div>`).join('')}</div>
-    <p class="muted" style="margin:0">Drag each shape into its basket. That is the whole job.</p></div>`;
+  tk.t0 = tk.t0 || performance.now(); tk.n0 = tk.n0 || tk.left.length;
+  const sla = Math.max(4, tk.n0 * SORT_SLA), spent = (performance.now() - tk.t0) / 1000, bins = tk.rule === 'returns' ? ['tri', 'sq', 'ci', 'rt'] : ['tri', 'sq', 'ci'];
+  return `<div class="box sorter"><div class="row"><span class="h">${esc(tk.id)} · ${esc(tk.t)}</span><span class="muted" id="sLeft">${tk.left.length} to sort · −10 energy</span></div>
+    <div class="srule">${tk.rule === 'returns' ? '<b>RULE</b> Sort by shape. <u>Cracked</u> parcels go to <b>RETURNS</b>.' : '<b>RULE</b> Sort by shape.'}<span class="sstreak" id="sStreak">${(S.office.streak || 0) > 1 ? '×' + S.office.streak : ''}</span></div>
+    <div class="stray" id="sTray" data-t="${esc(tk.id)}">${tk.left.map((s, i) => `<div class="shp${s.c ? ' cracked' : ''}" data-sid="${s.id}" data-k="${s.k}" data-bin="${binOf(tk, s)}" style="left:${6 + i * 15}%;top:${12 + (s.id * 37 % 34)}px;--r:${(s.id * 23 % 30) - 15}deg">${shapeSVG(s.k, SHAPE_COL[s.id % 5])}${s.c ? CRACK : ''}</div>`).join('')}</div>
+    <div class="ssla" title="The deadline on this ticket"><i style="animation-duration:${Math.max(.1, sla - spent).toFixed(2)}s;width:${Math.max(0, 100 - spent / sla * 100).toFixed(1)}%"></i></div>
+    <div class="sbaskets n${bins.length}">${bins.map((b, i) => `<div class="sbasket${b === 'rt' ? ' rt' : ''}" data-b="${b}"><kbd>${i + 1}</kbd>${b === 'rt' ? '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6h10v8H3z" fill="#843b27" stroke="#07080a" stroke-width="1.4"/><path d="M5 6l3-4 3 4" fill="none" stroke="#07080a" stroke-width="1.4"/></svg>' : shapeSVG(b, '#2b2d22')}<span>${SHAPE_NAME[b]}</span><i></i></div>`).join('')}</div>
+    <p class="muted" style="margin:0">Drag each parcel into its bin, or click it and then the bin. Keys 1–${bins.length} sort the next one.</p></div>`;
+}
+let sortPick = null; // a parcel you clicked, waiting for a bin
+function sortTry(tk, el, bin) { // the one place a parcel meets a bin
+  if (!el || !bin || tk.by) return;
+  if (bin.dataset.b === el.dataset.bin) { S.office.streak = (S.office.streak || 0) + 1; dropShape(tk, el, bin); const s = $('sStreak'); if (s) { s.textContent = S.office.streak > 1 ? '×' + S.office.streak : ''; pop(s); } }
+  else { S.office.streak = 0; S.office.wrong = (S.office.wrong || 0) + 1; el.style.transform = ''; jolt(el, 6); jolt(bin, 4); bin.classList.add('no'); setTimeout(() => bin.classList.remove('no'), 260); sfx.tone(160, .12, 'square', .03); const s = $('sStreak'); if (s) s.textContent = '';
+    if (el.dataset.bin === 'rt' && bin.dataset.b !== 'rt') toast('That one is cracked. It goes to RETURNS.'); }
+  if (sortPick === el) { el.classList.remove('picked'); sortPick = null; }
 }
 function bindSorter(tk) {
   const tray = $('sTray'); if (!tray || !tk) return;
+  sortPick = null;
+  const binAt = (x, y) => [...document.querySelectorAll('.sbasket')].find(b => { const r = b.getBoundingClientRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom; });
   tray.querySelectorAll('.shp').forEach(el => {
     el.onpointerdown = e => {
       if (S.over || tk.by) return;
       if (S.stamina < 10) { toast('Too tired. Get a coffee.'); return; }
-      e.preventDefault(); el.setPointerCapture(e.pointerId); el.classList.add('drag');
-      const sx = e.clientX, sy = e.clientY;
-      el.onpointermove = m => { el.style.transform = `translate(${m.clientX - sx}px, ${m.clientY - sy}px) rotate(0deg) scale(1.15)`; };
+      e.preventDefault(); el.setPointerCapture(e.pointerId);
+      const sx = e.clientX, sy = e.clientY; let moved = false, over = null;
+      el.onpointermove = m => {
+        if (!moved && Math.hypot(m.clientX - sx, m.clientY - sy) < 5) return;
+        moved = true; el.classList.add('drag'); el.style.transform = `translate(${m.clientX - sx}px, ${m.clientY - sy}px) rotate(0deg) scale(1.15)`;
+        const b = binAt(m.clientX, m.clientY); if (b !== over) { if (over) over.classList.remove('hover'); over = b; if (b) b.classList.add('hover'); }
+      };
       el.onpointerup = u => {
-        el.onpointermove = el.onpointerup = null; el.classList.remove('drag');
-        const hit = [...document.querySelectorAll('.sbasket')].find(b => { const r = b.getBoundingClientRect(); return u.clientX >= r.left && u.clientX <= r.right && u.clientY >= r.top && u.clientY <= r.bottom; });
-        if (hit && hit.dataset.b === el.dataset.k) dropShape(tk, el, hit);
-        else { el.style.transform = ''; if (hit) { jolt(el, 6); jolt(hit, 4); sfx.tone(160, .12, 'square', .03); } }
+        el.onpointermove = el.onpointerup = null; el.classList.remove('drag'); if (over) over.classList.remove('hover');
+        if (!moved) { // a click: pick it up, then click a bin
+          if (sortPick && sortPick !== el) sortPick.classList.remove('picked');
+          sortPick = sortPick === el ? null : el; el.classList.toggle('picked', sortPick === el); sfx.tone(520, .03, 'square', .015); return;
+        }
+        const hit = binAt(u.clientX, u.clientY);
+        if (hit) sortTry(tk, el, hit); else el.style.transform = '';
       };
     };
   });
+  document.querySelectorAll('.sbasket').forEach(b => b.onclick = () => { if (sortPick && sortPick.isConnected) sortTry(tk, sortPick, b); });
 }
+addEventListener('keydown', e => { // 1–4: the next parcel into that bin
+  if (!S || S.phase !== 'office' || !lapOpen() || S.tab !== 'farm' || tutOn() || !$('modal').hidden || /INPUT|TEXTAREA/.test((e.target || {}).tagName || '')) return;
+  const n = +e.key; if (!(n >= 1 && n <= 4)) return;
+  const tk = S.office.q.find(x => !x.by), tray = $('sTray'); if (!tk || !tray || tray.dataset.t !== tk.id) return;
+  if (S.stamina < 10) return toast('Too tired. Get a coffee.');
+  const el = (sortPick && sortPick.isConnected ? sortPick : null) || [...tray.querySelectorAll('.shp:not([style*="pointer-events"])')].sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left)[0];
+  const bin = document.querySelectorAll('.sbasket')[n - 1];
+  if (el && bin) { e.preventDefault(); sortTry(tk, el, bin); }
+});
 function dropShape(tk, el, basket, fast) {
   const r = el.getBoundingClientRect(), b = basket.getBoundingClientRect();
   const dx = b.left + b.width / 2 - (r.left + r.width / 2), dy = b.top + b.height / 2 - (r.top + r.height / 2);
   el.style.pointerEvents = 'none';
   const a = anim(el, { transform: [el.style.transform || 'translate(0px,0px)', `translate(${dx}px, ${dy}px) scale(.3)`], opacity: [1, 0] }, { duration: fast ? .16 : .28, ease: 'easeIn' });
-  const done = () => { el.remove(); const c = basket.querySelector('i'); c.textContent = (+c.textContent || 0) + 1; pop(basket); };
+  const done = () => { el.remove(); const c = basket.querySelector('i'); if (c) c.textContent = (+c.textContent || 0) + 1; pop(basket); basket.classList.add('yes'); setTimeout(() => basket.classList.remove('yes'), 220); };
   a ? a.finished.then(done, done) : done();
   if (fast) return;
   sfx.tone(660 + tk.left.length * 60, .05, 'square', .025);
   tk.left = tk.left.filter(s => s.id !== +el.dataset.sid);
-  $('sLeft').textContent = `${tk.left.length} to sort · −10 stamina`;
+  $('sLeft').textContent = `${tk.left.length} to sort · −10 energy`;
   if (!tk.left.length) setTimeout(() => completeTicket(tk), 320);
 }
 function completeTicket(tk) {
   if (tk.by) return;
-  S.stamina = clamp(S.stamina - 10, 0, 100); tk.by = 'you'; S.office.mine++;
+  const secs = tk.t0 ? (performance.now() - tk.t0) / 1000 : 0, late = secs > Math.max(4, (tk.n0 || 4) * SORT_SLA);
+  S.stamina = clamp(S.stamina - (late ? 10 : 8), 0, 100); tk.by = 'you'; tk.secs = secs; S.office.mine++;
+  if (!late) S.mind = clamp(mindNow() + .6, 0, 100);
   sfx.ping();
+  const st = document.createElement('div'); st.className = 'sstamp' + (late ? ' late' : ''); st.innerHTML = `<b>${late ? 'LATE' : 'SORTED'}</b><span>${secs.toFixed(1)} s</span>${S.office.launched ? '<small>ChatGPX: 0.4 s</small>' : ''}`;
+  const sb = document.querySelector('.sorter'); if (sb) { sb.appendChild(st); settle(anim(st, { scale: [2.2, 1], rotate: [-24, -8], opacity: [0, 1] }, { duration: .3, ease: [.3, 1.5, .5, 1] }), st); }
   if (S.office.mine === 1) note('You sorted your first batch of the week. Eleven minutes, two phone calls, one triangle that kept sliding off the tray.');
-  renderAll();
+  setTimeout(renderAll, 650);
 }
 // After launch, ChatGPX takes each batch the moment it appears, while you watch.
 function kawaiiSteal() {
@@ -2091,7 +2150,7 @@ function kawaiiSteal() {
   if (tray && tray.dataset.t === tk.id && S.tab === 'farm') {
     o.stealing = true;
     tray.classList.add('ai');
-    [...tray.querySelectorAll('.shp')].forEach((el, i) => setTimeout(() => { const b = document.querySelector(`.sbasket[data-b="${el.dataset.k}"]`); if (b && el.isConnected) dropShape(tk, el, b, true); }, i * 45));
+    [...tray.querySelectorAll('.shp')].forEach((el, i) => setTimeout(() => { const b = document.querySelector(`.sbasket[data-b="${el.dataset.bin || el.dataset.k}"]`); if (b && el.isConnected) dropShape(tk, el, b, true); }, i * 45));
     setTimeout(finish, 420);
   } else finish();
   return true;
@@ -2572,7 +2631,9 @@ function readPaper() {
 function newTicket() {
   const o = S.office;
   const n = 4 + (o.seq % 3), left = Array.from({ length: n }, (_, i) => ({ id: o.seq * 10 + i, k: pick(['tri', 'sq', 'ci']) }));
-  o.q.push({ id: 'NV-' + (4410 + o.seq * 7), t: TICKETS[o.seq % TICKETS.length], by: null, left });
+  const rule = o.seq % 3 === 2 ? 'returns' : 'shape'; // every third batch has damage in it
+  if (rule === 'returns') { left[1].c = true; if (n > 4) left[n - 1].c = true; }
+  o.q.push({ id: 'NV-' + (4410 + o.seq * 7), t: TICKETS[o.seq % TICKETS.length], by: null, left, rule });
   o.seq++;
 }
 function dayStepOffice() {
@@ -7897,16 +7958,17 @@ function mgCreate(host, kind, job, env) {
   }
   const ro = new ResizeObserver(fit); ro.observe(host); fit();
 
+  const firstTime = !env.auto && !env.endless && !((save.mgSeen || {})[kind]); // the first time you see this game
   const units = job.units, st = {
     t: 0, done: job.done || 0, errs: job.errs || 0, combo: 0, best: 0, busy: 0, black: 0, flick: 0,
     pops: [], parts: [], shake: 0, flash: null, stop: 0, hint: def.how || '', phase: 'intro', introT: 0,
-    introLen: env.auto ? .5 : (job.done || 0) > 0 ? 1.1 : 2.6, result: null, resT: 0, pulse: 0, ai: Math.floor(1200 + Math.random() * 4000),
+    introLen: env.auto ? .5 : (job.done || 0) > 0 ? 1.1 : firstTime ? 3.4 : 2.6, introWait: firstTime && !(job.done > 0), result: null, resT: 0, pulse: 0, ai: Math.floor(1200 + Math.random() * 4000),
     started: job.done || 0, frameAcc: 0, startT: 0, tipFx: 0, closed: false
   };
   const rnd = Math.random;
   const api = {
     g, W: MG.W, H: MG.H, top: MG.TOP, bot: MG.BOT, mid: (MG.TOP + MG.BOT) / 2, P: PAL,
-    level: clampN(env.level == null ? .5 : env.level, 0, 1), day: env.day || 0, units, lag: env.lag || 0, gpu: env.gpu == null ? 1 : env.gpu,
+    level: clampN((env.level == null ? .5 : env.level) * (firstTime ? .55 : 1), 0, 1), day: env.day || 0, firstTime, units, lag: env.lag || 0, gpu: env.gpu == null ? 1 : env.gpu,
     get done() { return st.done; }, get left() { return Math.max(0, units - st.done); }, get busy() { return st.busy > 0 || st.black > 0; },
     get t() { return st.t; }, get combo() { return st.combo; }, get auto() { return !!env.auto; }, get autoErr() { return env.autoErr || 0; }, get assist() { return env.auto ? 3 : env.assist || 0; }, // 0 you, 1–2 the AI helps, 3 the AI plays
     get progress() { return units ? st.done / units : 1; },
@@ -7959,6 +8021,7 @@ function mgCreate(host, kind, job, env) {
     const acc = st.done ? (st.done - st.errs) / st.done : 0, need = Math.min(15, Math.ceil(units * .5));
     const grade = acc < .75 ? 'F' : acc >= .97 && st.best >= need ? 'S' : acc >= .93 ? 'A' : acc >= .85 ? 'B' : 'C';
     const sum = { acc, grade, best: st.best, errs: st.errs, done: st.done, secs: st.t - st.startT, rejected: grade === 'F' };
+    if (firstTime) { save.mgSeen = save.mgSeen || {}; save.mgSeen[kind] = 1; persist(); }
     st.result = Object.assign(sum, (env.onEnd && env.onEnd(sum)) || {});
     st.phase = 'result'; st.resT = 0; api.stop(120);
     mgSound(env, grade === 'F' ? 'fail' : 'stamp');
@@ -7977,6 +8040,7 @@ function mgCreate(host, kind, job, env) {
   cv.addEventListener('pointerdown', e => {
     cv.focus({ preventScroll: true });
     if (st.phase === 'result') { if (st.resT > .7) close(); return; }
+    if (st.phase === 'intro' && st.introWait) { st.introWait = false; mgSound(env, 'count'); return; } // you're ready: the countdown starts
     if (blocked()) return;
     try { cv.setPointerCapture(e.pointerId); } catch (_) {}
     dragging = true; const [x, y] = toLogical(e); if (game.down) game.down(x, y, e);
@@ -7988,7 +8052,7 @@ function mgCreate(host, kind, job, env) {
   function key(e) {
     if (st.closed) return false;
     if (st.phase === 'result') { if ((e.key === 'Enter' || e.key === ' ') && st.resT > .7) { close(); return true; } return false; }
-    if (st.phase === 'intro' && (e.key === 'Enter' || e.key === ' ')) { st.introT = st.introLen; return true; }
+    if (st.phase === 'intro' && (e.key === 'Enter' || e.key === ' ')) { if (st.introWait) { st.introWait = false; mgSound(env, 'count'); } else st.introT = st.introLen; return true; }
     if (blocked() || !game.key) return false;
     return !!game.key(e.key, e);
   }
@@ -8005,6 +8069,7 @@ function mgCreate(host, kind, job, env) {
       st.t += dt;
       if (st.stop > 0) st.stop -= dt * 1000;
       else if (st.phase === 'intro') {
+        if (st.introWait) st.introT = Math.min(st.introT, .3 - dt); // it waits for you: the card slides in, the countdown doesn't start
         const before = Math.ceil(st.introLen - st.introT); st.introT += dt; const after = Math.ceil(st.introLen - st.introT);
         if (after !== before && after > 0 && after <= 3) mgSound(env, 'count');
         if (st.introT >= st.introLen) { st.phase = 'play'; st.startT = st.t; mgSound(env, 'go'); }
@@ -8085,14 +8150,17 @@ function mgCreate(host, kind, job, env) {
   }
 
   function introCard() {
-    const k = clampN(st.introT / .3, 0, 1), y = api.mid - 34 + (1 - mgEase.outBack(k)) * -30;
+    const k = clampN(st.introT / .3, 0, 1), first = firstTime && st.started === 0, hh = first ? 92 : 70, y = api.mid - hh / 2 + (1 - mgEase.outBack(k)) * -30;
     g.fillStyle = 'rgba(7,8,10,.78)'; g.fillRect(0, MG.TOP, MG.W, MG.BOT - MG.TOP);
-    mgFrame(g, 50, y, 220, 70, 'paper');
-    mgText(g, (def.title || kind).toUpperCase(), MG.W / 2, y + 17, { size: 11, color: PAL.k1, align: 'center', bold: true });
-    mgText(g, def.how || '', MG.W / 2, y + 31, { size: 7, color: PAL.d1, align: 'center', font: 'read', max: 200 });
-    mgText(g, def.keys || '', MG.W / 2, y + 43, { size: 6.5, color: PAL.d2, align: 'center' });
-    const left = st.introLen - st.introT, n = Math.ceil(left);
-    mgText(g, st.started > 0 ? 'BACK TO WORK' : n > 3 ? 'READY' : n > 0 ? String(n) : 'GO', MG.W / 2, y + 62, { size: 10, color: n <= 0 ? PAL.t2 : PAL.r2, align: 'center', bold: true });
+    mgFrame(g, 44, y, 232, hh, 'paper');
+    if (first) { g.fillStyle = PAL.r2; g.fillRect(44 + 8, y + 7, 58, 9); mgText(g, 'NEW · HOW TO PLAY', 44 + 37, y + 13.5, { size: 5.5, color: PAL.p4, align: 'center' }); }
+    mgText(g, (def.title || kind).toUpperCase(), MG.W / 2, y + (first ? 28 : 17), { size: 11, color: PAL.k1, align: 'center', bold: true });
+    mgText(g, def.how || '', MG.W / 2, y + (first ? 42 : 31), { size: 7, color: PAL.d1, align: 'center', font: 'read', max: 212 });
+    mgText(g, def.keys || '', MG.W / 2, y + (first ? 55 : 43), { size: 6.5, color: PAL.d2, align: 'center', max: 212 });
+    if (first) mgText(g, 'The first job of a kind starts slow.', MG.W / 2, y + 66, { size: 6, color: PAL.d3, align: 'center', font: 'read' });
+    const left = st.introLen - st.introT, n = Math.ceil(left), blink = (st.t * 2.2 | 0) % 2;
+    if (st.introWait) mgText(g, blink ? '▶ CLICK OR PRESS ENTER TO START' : '  CLICK OR PRESS ENTER TO START', MG.W / 2, y + hh - 9, { size: 8, color: PAL.r2, align: 'center', bold: true });
+    else mgText(g, st.started > 0 ? 'BACK TO WORK' : n > 3 ? 'READY' : n > 0 ? String(n) : 'GO', MG.W / 2, y + hh - 8, { size: 10, color: n <= 0 ? PAL.t2 : PAL.r2, align: 'center', bold: true });
   }
 
   function resultCard() {
