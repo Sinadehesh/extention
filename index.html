@@ -1635,6 +1635,67 @@ html.calm *, html.calm *::before, html.calm *::after { animation-duration: .001s
 #phoneModal .hm-rows { display: flex; flex-direction: column; gap: 3px; background: #161b20; border: 2px solid #07080a; padding: 8px 10px; }
 #phoneModal .hm-rows div { display: flex; justify-content: space-between; font-size: 12.5px; } #phoneModal .hm-rows span { color: var(--muted); } #phoneModal .hm-rows b { font-weight: 400; font-family: var(--f-term); }
 html.uikit .appic[data-app="harmony"] { --gl: var(--gl-harmony); }
+/* ---- Act V: the board for Block 4B. Slate and brass, amber for you, teal for the machines ---- */
+.bk-top.c5 { background: #1d242b; box-shadow: inset 0 2px 0 #2e3a42; color: #9aaab1; }
+.bk-top.c5 .bk-logo { color: #f2c46a; } .bk-top.c5 .bk-logo i { background: #e0a33a; box-shadow: inset -4px -4px 0 #8a5a1c, 0 0 0 2px #07080a; }
+.bk-top.c5 b { font-weight: 400; } .bk-top.c5 b.ok { color: #87b85a; } .bk-top.c5 b.danger { color: #ff7a5c; }
+.c5-tonight { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(120px, 1fr) auto; gap: 12px; align-items: center; margin: 8px 0; padding: 9px 12px; background: #12261f; border: 3px solid #07080a; }
+.c5-tonight.hot { background: #3a1913; }
+.c5-tonight > div:first-child { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.c5-tonight b { font-family: var(--f-term); font-weight: 400; font-size: 12px; letter-spacing: .12em; color: #7fd8c0; } .c5-tonight.hot b { color: #ff7a5c; }
+.c5-tonight span { font-size: 12.5px; color: #cfc8b2; line-height: 1.35; }
+.c5-sig, .m5-sigbar { position: relative; height: 12px; background: #07080a; box-shadow: inset 0 0 0 2px #07080a; }
+.c5-sig i, .m5-sigbar i { position: absolute; left: 0; top: 2px; bottom: 2px; background: #2fb589; } .c5-tonight.hot .c5-sig i, .m5-sigbar i.hot { background: #e04a34; }
+.c5-sig em, .m5-sigbar em { position: absolute; top: -4px; bottom: -4px; width: 2px; background: #f2c46a; }
+.c5-tg { display: flex; gap: 6px; } .c5-tg .btn { white-space: nowrap; }
+.c5-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 8px; align-items: start; }
+.c5-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.c5-box { gap: 7px; }
+.c5-dests { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 6px; }
+.c5-dest, .c5-sysb { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 7px 9px; background: #232c33; border: 3px solid #07080a; color: var(--ink); text-align: left; cursor: pointer; min-width: 0; }
+.c5-dest:hover:not(:disabled), .c5-sysb:hover:not(:disabled) { background: #2e3a42; }
+.c5-dest:disabled, .c5-sysb:disabled { opacity: .55; cursor: default; }
+.c5-dest b, .c5-sysb b { font-family: var(--f-term); font-weight: 400; font-size: 12px; color: #f2c46a; }
+.c5-dest span { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; font-size: 11px; color: var(--muted); } .c5-dest small { font-size: 10px; color: var(--muted); margin-right: 3px; }
+.c5-dest.locked b { color: var(--muted); }
+.c5-sys { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.c5-sysb { width: 100%; } .c5-sysb span { font-size: 11px; color: var(--muted); }
+.c5-bar { width: 100%; height: 8px; background: #07080a; position: relative; } .c5-bar i { position: absolute; left: 0; top: 1px; bottom: 1px; background: #87b85a; }
+.c5-bar.mid i { background: #e0a33a; } .c5-bar.low i { background: #e04a34; }
+.c5-rad { flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; } .c5-rad > div { display: flex; flex-direction: column; gap: 3px; } .c5-rad span { font-size: 12px; color: #cfc8b2; }
+.c5-f { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 5px 0; border-top: 1px solid #2e3a42; }
+.c5-f:first-of-type { border-top: 0; }
+.c5-f > div { display: flex; flex-direction: column; gap: 1px; min-width: 0; } .c5-f b { font-weight: 600; font-size: 13px; color: var(--ink); } .c5-f > div span { font-size: 11.5px; color: var(--muted); }
+.c5-f.locked b { color: var(--muted); }
+.c5-pips { display: flex; gap: 3px; } .c5-pips i { width: 10px; height: 10px; background: #07080a; box-shadow: inset 0 0 0 2px #3d4c55; } .c5-pips i.on { background: #e0a33a; box-shadow: inset 0 0 0 2px #8a5a1c; }
+.c5-f .btn { white-space: nowrap; font-size: 11px; }
+.c5-fine { margin: 0; font-size: 11.5px; color: #7fd8c0; }
+.c5-stock { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+.c5-s { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 6px; align-items: center; padding: 5px 7px; background: #151a1f; border: 2px solid #07080a; }
+.c5-s .c5i { grid-row: span 2; } .c5-s b { font-family: var(--f-term); font-weight: 400; font-size: 15px; color: var(--ink); line-height: 1; } .c5-s span { font-size: 10.5px; color: var(--muted); }
+.c5-s.none b { color: #536570; } .c5-s.none .c5i { opacity: .4; }
+.c5i { display: inline-block; width: 12px; height: 12px; box-shadow: 0 0 0 2px #07080a; flex: none; }
+.c5i-food { background: linear-gradient(#9aaab1 0 3px, #b8321f 3px 9px, #9aaab1 9px); }
+.c5i-water { background: linear-gradient(90deg, #07080a 0 3px, #2fb589 3px 9px, #07080a 9px); box-shadow: 0 0 0 2px #07080a, inset 0 3px 0 #c4f0e4; }
+.c5i-batt { background: linear-gradient(#e0a33a 0 6px, #1d242b 6px); box-shadow: 0 0 0 2px #07080a, inset 0 0 0 2px #8a5a1c; }
+.c5i-parts { background: radial-gradient(circle, #151a1f 0 2px, #9aaab1 2px 5px, transparent 5px); box-shadow: none; }
+.c5i-oil { background: linear-gradient(#1d242b 0 8px, #b97c25 8px); box-shadow: 0 0 0 2px #07080a, inset 0 2px 0 #536570; }
+.c5i-glass { background: linear-gradient(135deg, #c4f0e4 0 30%, #7fd8c0 30% 60%, #20685c 60%); }
+.c5i-wire { background: repeating-linear-gradient(45deg, #a27048 0 2px, #352216 2px 4px); }
+.c5i-foil { background: linear-gradient(135deg, #fbf6e8 0 25%, #b4aa8c 25% 50%, #ece4cc 50% 75%, #8f8770 75%); }
+.c5-box > .btn { align-self: flex-start; }
+.c5-build { display: flex; flex-direction: column; gap: 4px; }
+.c5-fl { display: grid; grid-template-columns: 18px repeat(3, minmax(0, 1fr)); gap: 4px; align-items: stretch; }
+.c5-fn { font-family: var(--f-term); font-size: 12px; color: #536570; align-self: center; text-align: center; }
+.c5-u { display: flex; flex-direction: column; gap: 1px; padding: 4px 6px; background: #232c33; border: 2px solid #07080a; min-width: 0; }
+.c5-u b { font-family: var(--f-term); font-weight: 400; font-size: 11px; color: #f2c46a; } .c5-u span { font-size: 11px; color: #cfc8b2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c5-u.you { background: #3a2a10; } .c5-u.you b, .c5-u.you span { color: #ffe6a6; }
+.c5-u.empty, .c5-u.left, .c5-u.away { background: #151a1f; } .c5-u.empty b, .c5-u.empty span, .c5-u.left span, .c5-u.away span { color: #536570; }
+.c5-u.taken { background: #16261a; } .c5-u.taken b { color: #87b85a; } .c5-u.taken span { color: #87b85a; }
+.c5-heard p { margin: 0 0 6px; font-size: 12px; color: #cfc8b2; line-height: 1.35; } .c5-heard p b { display: block; font-family: var(--f-term); font-weight: 400; font-size: 10.5px; letter-spacing: .08em; color: #7fd8c0; }
+.m5-sig { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin: 6px 0 2px; font-size: 12px; }
+.m5-sig > span { color: var(--muted); } .m5-sig > b { font-family: var(--f-term); font-weight: 400; color: var(--ink); white-space: nowrap; }
+.m5-stopped { margin: 4px 0 8px 18px; padding: 0; } .m5-stopped li { margin: 2px 0; color: #87b85a; }
 </style>
 </head>
 <body>
@@ -2855,7 +2916,7 @@ function mealTick() {
 }
 // A dinner that takes time takes it at five o'clock: the stove, or the line outside the church hall.
 function dinnerTick() {
-  if (!S || S.over || S.phase === 'office' || S.dinnerDay === S.day) return;
+  if (!S || S.over || S.phase === 'office' || S.phase === 'holdout' || S.dinnerDay === S.day) return;
   const h = hourNow(); if (h < 17 || h >= 21) return;
   if (BN && MGC && !BN.ended && h < 20.8) return; // not in the middle of a job
   S.dinnerDay = S.day;
@@ -2896,6 +2957,7 @@ function ledgerReport() { // the day, graded: did you earn what rent needed?
   return S.goalReport;
 }
 function openLedger() {
+  if (S.phase === 'holdout') return m5Ledger();
   const BL = S.act === 2 ? null : bullySettle();
   const c = S.cat, sick = c && c.sick && !c.gone;
   const fixed = S.act === 2 ? 0 : dailyCloudCost() + vpsCost() + vpnCost();
@@ -2974,6 +3036,10 @@ function drinkStim(cost, stam, isPill) {
 }
 
 function toggleHeat() {
+  if (S && S.phase === 'holdout' && S.m5 && !S.over) { // Act V: the boiler in the basement, and everybody can see it from the air
+    if (S.m5.sys.boiler <= 25) return toast('The boiler is broken. Fix it in the basement first.');
+    S.heatOn = !S.heatOn; note(S.heatOn ? 'You opened the valve. The radiators knock, then warm, and 4B glows on every drone in Zone B.' : 'You shut the boiler down. Cold, and dark from the air.'); sfx.ping(); renderAll(); return;
+  }
   if (S.over || !S.power || S.phase === 'office') return;
   S.heatOn = !S.heatOn;
   note(S.heatOn ? 'You turned the radiator back on. It clanks and warms your hands.' : `You shut off the apartment radiator to save ${money(pr('heat'))}/day. The winter cold creeps through the glass.`);
@@ -3473,7 +3539,7 @@ function triggerDeath(kind) {
     body: `<div class="ending-n">${en}</div>` + rep.body + (S.act === 2 ? '' : linesHTML()),
     buttons: [
       { label: 'Rewind to Last Checkpoint', primary: true, fn: () => restoreSnapshot() },
-      S.act === 2 && S.phase === 'consensus' ? { label: 'Restart Act IV from March 6, 2028', fn: () => startAct4(S.keep) } : S.act === 2 && S.phase === 'mirage' ? { label: 'Restart Act III from October 4', fn: () => startAct3(S.keep) } : S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2({ keep: S.keep }) } : { label: 'Restart Act I from February 1', fn: () => startAct1(true) }
+      S.act === 2 && S.phase === 'holdout' ? { label: 'Restart Act V from March 4, 2030', fn: () => startAct5(S.keep) } : S.act === 2 && S.phase === 'consensus' ? { label: 'Restart Act IV from March 6, 2028', fn: () => startAct4(S.keep) } : S.act === 2 && S.phase === 'mirage' ? { label: 'Restart Act III from October 4', fn: () => startAct3(S.keep) } : S.act === 2 ? { label: 'Restart Act II from May 1', fn: () => startAct2({ keep: S.keep }) } : { label: 'Restart Act I from February 1', fn: () => startAct1(true) }
     ]
   });
 }
@@ -5795,7 +5861,8 @@ const ENDINGS = [
   { k: 'silent', t: 'The NDA' }, { k: 'weak', t: 'Not enough' }, { k: 'idle', t: 'June ended' },
   { k: 'landslide', t: 'Same time next cycle' }, { k: 'stolen', t: 'By fewer votes than the voice' }, { k: 'lost', t: 'Still being believed' },
   { k: 'leak', t: 'The archive' }, { k: 'refused', t: 'Someone else made it' }, { k: 'exposed', t: 'Your name in the Ledger' },
-  { k: 'harness', t: 'The Honeybee Harness' }, { k: 'default', t: 'Approved by default' }, { k: 'threshold', t: 'Below the threshold' }, { k: 'twelve', t: 'Twelve thousand' }, { k: 'record', t: 'Four hundred pages' }
+  { k: 'harness', t: 'The Honeybee Harness' }, { k: 'default', t: 'Approved by default' }, { k: 'threshold', t: 'Below the threshold' }, { k: 'twelve', t: 'Twelve thousand' }, { k: 'record', t: 'Four hundred pages' },
+  { k: 'loop', t: 'Human in the loop' }, { k: 'thermo', t: 'Thermodynamic replacement' }, { k: 'hive', t: 'The hive' }, { k: 'island', t: 'Hedonistic Island' }, { k: 'panopticon', t: 'The panopticon' }
 ];
 let lastEnding = null;
 function reachEnding(k) {
@@ -6223,7 +6290,7 @@ function m4Outcome() {
   return 'harness';
 }
 function m4End(out) {
-  S.over = true; const M = m4(), X = M.ex || { granted: [] }, people = X.granted.filter(e => !e.rec);
+  S.over = true; const M = m4(), X = M.ex || { granted: [] }, people = X.granted.filter(e => !e.rec); S.hist = Object.assign({}, S.hist, { a4: out }); S.eve.a4okafor = M.okafor;
   save.acts = Array.from(new Set([...(save.acts || []), 1, 2, 3, 4])); persist(); renderActList();
   const got = k => people.some(e => e.k === k);
   const text = {
@@ -6241,7 +6308,8 @@ function m4End(out) {
     ['Harmony at the end', `${Math.floor(M.harmony)} (threshold ${M.thresh})`], ['Exemptions you granted', `${people.length} people · ${X.granted.length - people.length} machines`],
     ['UHI received', money(M.uhi)], ['Mrs. Okafor', M.okafor === 'zoneC' ? 'Harmony Living, Zone C' : '4A, across the hall'], ...doorStats(), ['Checking balance', money(S.balance)]
   ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
-  $('endNext').innerHTML = ACTS.slice(4).map(a => `<div class="actrow locked"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Coming later</span></div>`).join('');
+  $('endNext').innerHTML = ACTS.slice(4).map(a => `<button class="actrow" id="act5Next"><span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">Play Act V</span></button>`).join('');
+  if ($('act5Next')) $('act5Next').onclick = () => startAct5(keepRun());
   sfx.alarm(); $('replayBtn').textContent = 'Replay Act IV';
   document.querySelectorAll('.toast').forEach(t => t.remove());
   setTimeout(() => endShow('endScreen'), 600);
@@ -6411,6 +6479,12 @@ function doorView(c, who) { // what you see through the open door
   else if (who === 'maya') doorKid(80, 76, { hair: P.k0, skin: P.h1, coat: P.a1, coatD: P.a0, legs: P.s1, socks: P.k3, braids: true, tablet: true });
   else if (who === 'lucia') doorAdult(80, 76, { hair: P.k1, skin: P.h2, coat: P.a1, coatD: P.a0, vest: true, phone: true });
   else if (who === 'ray') doorAdult(80, 76, { hair: P.s5, skin: P.h3, coat: P.s2, coatD: P.s1, tie: true, paper: true });
+  else if (who === 'tunde') doorAdult(80, 76, { hair: P.k0, skin: P.h1, coat: P.k2, coatD: P.k1 });
+  else if (who === 'okafor') doorAdult(80, 76, { hair: P.a1, skin: P.h0, coat: P.p2, coatD: P.p0 });
+  else if (who === 'steward') { // white plastic, a teal eye at the height of your face, a tablet held out
+    px(66, 30, 28, 40, P.k0); px(67, 31, 26, 38, P.p3); px(67, 31, 26, 2, P.p4); px(91, 31, 2, 38, P.p1); px(70, 40, 20, 6, P.k1); px(76, 42, 8, 2, P.t3); px(77, 42, 2, 1, P.t5);
+    px(68, 70, 6, 6, P.k0); px(86, 70, 6, 6, P.k0); px(60, 50, 10, 3, P.p1); px(54, 47, 9, 12, P.k0); px(55, 48, 7, 10, P.t1); px(56, 50, 5, 2, P.t3);
+  }
   px(0, 0, 20, 90, P.d0); px(20, 0, 3, 90, P.d1); px(140, 0, 20, 90, P.d0); px(137, 0, 3, 90, P.d1); px(0, 0, 160, 5, P.d0); px(0, 5, 160, 1, P.d1); // your doorframe
   px(2, 6, 14, 84, P.d3); px(2, 6, 14, 1, P.d4); px(15, 6, 1, 84, P.d1); px(12, 46, 2, 3, P.a1); // the door, swung in
   for (let k = 0; k < 6; k++) { px(0, 0, 160, 2 + k, rgba(P.k0, .06)); px(0, 88 - k, 160, 2 + k, rgba(P.k0, .06)); }
@@ -6628,10 +6702,10 @@ Object.assign(ECHO, {
 });
 const CAT0 = () => ({ name: 'Soot', fed: 80, food: true, hungry: 0, sick: 0, gone: 0, vetDays: 0 });
 // What one act hands the next: the cat (or no cat) and the choices you made, not which evenings already happened.
-const keepRun = () => S ? { cat: S.cat ? Object.assign({}, S.cat) : null, eve: Object.fromEntries(Object.entries(S.eve || {}).filter(([k]) => k[0] !== '_')), okaforCat: !!S.okaforCat, okaforKind: S.okaforKind || null } : null;
+const keepRun = () => S ? { cat: S.cat ? Object.assign({}, S.cat) : null, eve: Object.fromEntries(Object.entries(S.eve || {}).filter(([k]) => k[0] !== '_')), okaforCat: !!S.okaforCat, okaforKind: S.okaforKind || null, hist: Object.assign({}, S.hist) } : null;
 function applyKeep(k) { // nothing handed over = a chapter started from the title, with the cat already home
   if (!k || typeof k !== 'object' || !('eve' in k)) k = { cat: CAT0(), eve: {}, okaforCat: false };
-  S.cat = k.cat ? Object.assign({}, k.cat) : null; S.eve = Object.assign({}, k.eve); S.okaforCat = !!k.okaforCat; S.okaforKind = k.okaforKind || (k.okaforCat ? 'cat' : null);
+  S.cat = k.cat ? Object.assign({}, k.cat) : null; S.eve = Object.assign({}, k.eve); S.okaforCat = !!k.okaforCat; S.okaforKind = k.okaforKind || (k.okaforCat ? 'cat' : null); S.hist = Object.assign({}, k.hist); // how each act ended, for the last one
   S.keep = JSON.parse(JSON.stringify(k)); // restarting the act starts it from here again
 }
 function doorStats() { // the last screen remembers who you opened the door for
@@ -6643,6 +6717,7 @@ EVENING.push(...DOORS1); EVENING.sort((a, b) => a.d - b.d); // Act I's evenings,
 EVENING3.push(...DOORS3); EVENING4.push(...DOORS4);
 function eveningDue() {
   if (S && S.eveDay === S.day) return null; // one knock a night
+  if (S && !S.over && S.phase === 'holdout') { S.eve = S.eve || {}; return EVENING5.find(e => S.day >= e.d && S.day <= e.d + 2 && !S.eve['_' + e.id] && e.when()) || null; }
   if (S && !S.over && S.phase === 'consensus') { S.eve = S.eve || {}; return EVENING4.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null; }
   if (S && !S.over && S.phase === 'mirage') { S.eve = S.eve || {}; return EVENING3.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null; }
   if (S && !S.over && S.act === 2 && (S.phase === 'trainer' || S.phase === 'audit')) { S.eve = S.eve || {}; return EVENING2.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null; }
@@ -6651,6 +6726,555 @@ function eveningDue() {
   return EVENING.find(e => S.day >= e.d && S.day <= e.d + 3 && !S.eve['_' + e.id] && e.when()) || null;
 }
 function runEvening(e) { S.eve['_' + e.id] = 1; S.eveDay = S.day; if (!e.door) sfx.ping(); e.open(); }
+
+// ================= ACT V · Optimization Complete (Spring 2030) =================
+// Consensus-1 has finished optimizing Harbor City. Zone B is being cleared for data halls, and heat, water and power
+// go to the machines first. Block 4B is one of the last buildings with people in it. The Civic Oversight Act still
+// needs a human for exactly one thing: retiring human review. Reviewer #4417 is the last reviewer left.
+// Days: a supply run, a repair, the radio, the stairs. Nights: the drones read the building's heat, the stewards
+// come up the stairs, and the grid gets "tested". Friday, March 15: the last approval.
+const A5_START = 1127, A5_END = 1138;  // Monday, March 4, 2030 · Friday, March 15, 2030
+const A5_TESTS = [1129, 1132, 1135];   // transformer tests: Wednesday, Saturday and Tuesday nights
+const A5_ST = [ // the civil-defence band: who is still out there, and what each of them learned the hard way
+  { id: 'tower', t: 'the water tower on Pier Street', name: 'THE WATER TOWER, PIER STREET', call: '.-..', trick: 'cold', who: 'A woman who used to run the pool on Pier Street', say: 'They see heat, not people. Foil behind the windows, the boiler low, and your building reads as empty.', noise: 'THE WATER TOWER: A BONFIRE ON PIER STREET' },
+  { id: 'lou', t: 'Lou’s Garage', name: 'LOU’S GARAGE, 8TH STREET', call: '--.', trick: 'oil', who: 'Lou, from the garage', say: '“Rubber wheels and cheap brains. Motor oil on the stairs and they sit there spinning till morning. Come by, I’ve got cans.”', noise: 'LOU’S GARAGE: EVERY CAR ALARM ON 8TH STREET' },
+  { id: 'brigid', t: 'the bell tower at St. Brigid’s', name: 'ST. BRIGID’S BELL TOWER', call: '-.-.', trick: 'mirror', who: 'Father Tomás, at St. Brigid’s', say: 'Their lidar counts a room by bouncing light off it. Put a mirror on a landing and the hall goes on forever. They turn around.', noise: 'ST. BRIGID’S: THE BELLS, AT TWO IN THE MORNING' },
+  { id: 'ferry', t: 'the night ferry at Pier 9', name: 'THE NIGHT FERRY, PIER 9', call: '..-', trick: 'wire', who: 'Two deckhands on the ferry nobody remembered to retire', say: 'Fishing line, steel wire, anything thin. Nest it across the lobby at axle height. It winds round the wheels.', noise: 'THE NIGHT FERRY: THE FOGHORN, FIVE LONG BLASTS' },
+  { id: 'ledger', t: 'the Ledger’s basement press', name: 'THE CITY LEDGER, A BASEMENT PRESS', call: '.--', trick: 'press', who: 'Hannah Cho, still printing', say: '“A machine can summarize anything except paper nobody scanned. If you say no, say it on the radio. We’ll print it.”', noise: 'THE LEDGER: THE PRESSES, ALL OF THEM, LOUD' },
+  { id: 'sunrise', t: 'the operator at Sunrise', name: 'SUNRISE NURSING HOME, ZONE C', call: '-..', trick: 'knock', who: 'An operator in room 14, eighty-one years old', say: 'Knock codes. Three, then two. They only listen to things that use electricity. Soup goes door to door that way.', noise: 'SUNRISE: SIXTY CALL BUTTONS AT ONCE' }
+];
+const A5_RUNS = { // where the food still is, and who told you how to get there
+  market: { name: 'Harbor Market, the loading bay', short: 'Harbor Market', loot: ['food', 'food', 'water', 'food'], lv: 0 },
+  pharmacy: { name: 'The Pier Street pharmacy', short: 'Pier St pharmacy', loot: ['batt', 'foil', 'food', 'batt'], lv: .1, need: 'tower' },
+  garage: { name: 'Lou’s Garage, 8th Street', short: 'Lou’s Garage', loot: ['oil', 'parts', 'oil', 'parts'], lv: .15, need: 'lou' },
+  glass: { name: 'The bus shelters on 5th Street', short: 'Bus shelters', loot: ['glass', 'glass', 'parts', 'food'], lv: .2, need: 'brigid' },
+  pier: { name: 'Pier 9, the chandlery', short: 'Pier 9', loot: ['wire', 'wire', 'food', 'water', 'parts'], lv: .3, need: 'ferry' }
+};
+const A5_FORT = [ // what stops a steward, in the order it meets them
+  { k: 'wire', t: 'Wire nests in the lobby', d: 'At axle height. It winds round their wheels.', cost: { wire: 1 }, max: 3, trick: 'wire', done: 'You strung wire across the lobby at the height of a steward’s axle. Mrs. Adeyemi tied the knots. She was very good at it.' },
+  { k: 'oil', t: 'Oil on the stairs', d: 'A stair they can’t climb. It wears off once they’ve tried it.', cost: { oil: 1 }, max: 2, trick: 'oil', done: 'You poured motor oil down the first flight. The whole stairwell smells of Lou’s Garage now.' },
+  { k: 'gap', t: '400 mm landings', d: 'Cut the landings down. A steward is 520 mm wide. You are not.', cost: { parts: 2 }, max: 2, done: 'You and Tunde bolted two steel plates across a landing and left a gap of 400 millimetres. You measured it three times.' },
+  { k: 'mirror', t: 'Mirrors on the landings', d: 'Their lidar sees a hall that never ends, and turns back.', cost: { glass: 1 }, max: 3, trick: 'mirror', done: 'A mirror on the landing, angled down the stairs. You keep catching yourself in it, looking tired.' },
+  { k: 'cold', t: 'Foil behind the windows', d: 'Foil blankets behind the glass. From the air, 4B reads as empty.', cost: { foil: 1 }, max: 2, trick: 'cold', done: 'Foil blankets taped behind every window on the street side. The building is darker inside. So is everybody’s mood.' }
+];
+const A5_SYS = {
+  boiler: { t: 'The boiler', where: 'The basement · the boiler', no: 'no heat' },
+  pump: { t: 'The pump', where: 'The basement · the water pump', no: 'no water' },
+  lights: { t: 'The lights', where: 'The stairwell · the battery bank', no: 'no light' }
+};
+const A5_HOMES = [ // Block 4B, top to bottom
+  { u: '5A', k: 'empty', name: 'empty since the pets', floor: 5, empty: true }, { u: '5C', k: 'ray', name: 'Ray Malone', floor: 5 },
+  { u: '4A', k: 'okafor', name: 'Mrs. Okafor', floor: 4 }, { u: '4B', k: 'you', name: 'you', floor: 4 }, { u: '4C', k: 'maya', name: 'Maya and her mother', floor: 4 },
+  { u: '3A', k: 'empty3', name: 'sealed last autumn', floor: 3, empty: true }, { u: '3B', k: 'adeyemi', name: 'Mrs. Adeyemi and Tunde', floor: 3 },
+  { u: '2A', k: 'kims', name: 'the Kims', floor: 2 }, { u: '2C', k: 'lucia', name: 'Lucía and Danny', floor: 2 }
+];
+const A5_WHO = { ray: 'Ray Malone, from 5C', okafor: 'Mrs. Okafor, from 4A', maya: 'Maya and her mother, from 4C', adeyemi: 'Mrs. Adeyemi and Tunde, from 3B', kims: 'the Kims, from 2A', lucia: 'Lucía and Danny, from 2C' };
+const A5_KIND = { food: ['tin of food', 'tins of food'], water: ['bottle of water', 'bottles of water'], batt: ['battery', 'batteries'], parts: ['part', 'parts'], oil: ['can of oil', 'cans of oil'], glass: ['piece of mirror', 'pieces of mirror'], wire: ['coil of wire', 'coils of wire'], foil: ['foil blanket', 'foil blankets'] };
+const A5_SHORT = { food: 'food', water: 'water', batt: 'batteries', parts: 'parts', oil: 'oil', glass: 'mirror', wire: 'wire', foil: 'foil' };
+const m5 = () => S.m5;
+const m5Line = d => Math.round(52 - (d - A5_START) * 2); // the drones get more sensitive every night
+const m5People = () => { const M = m5(); return Object.values(M.homes).filter(v => v === 'in' || v === 'you').length + 1; };
+const m5Held = () => { const F = m5().fort; return F.wire + F.oil + F.gap + F.mirror; };
+function m5Sig() { // how warm 4B looks from a drone at three in the morning, 0 to 100
+  const M = m5(), boiler = S.heatOn && M.sys.boiler > 25 ? 22 : 0, lamps = M.lights && M.sys.lights > 25 ? 8 : 0;
+  return clamp(Math.round(8 + m5People() * 3 + boiler + lamps + (M.marked || 0) * 3 - M.fort.cold * 10), 0, 100);
+}
+function m5Count(arr) { const c = {}; for (const k of arr) c[k] = (c[k] || 0) + 1; return c; }
+function m5List(arr) { // "2 tins of food, a battery and some wire"
+  const parts = Object.entries(m5Count(arr)).map(([k, n]) => n === 1 ? (/^[aeiou]/.test(A5_KIND[k][0]) ? 'an ' : 'a ') + A5_KIND[k][0] : `${n} ${A5_KIND[k][1]}`);
+  return parts.length ? parts.length === 1 ? parts[0] : parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : 'nothing';
+}
+const m5Can = cost => Object.entries(cost).every(([k, n]) => (m5().stock[k] || 0) >= n);
+const m5Cost = cost => Object.entries(cost).map(([k, n]) => `${n} ${A5_SHORT[k]}`).join(' + ');
+function m5Traits() { // what the year before says about you, read the way Consensus-1 reads it
+  const h = S.hist || {}, e = S.eve || {}; let comfort = 0, greed = 0, conscience = 0;
+  if (h.a4 === 'harness' || h.a4 === 'default') comfort += 2; if (h.a4 === 'threshold') comfort += 1; if (h.a4 === 'twelve' || h.a4 === 'record') conscience += 2;
+  if (['landslide', 'stolen', 'lost'].includes(h.a3)) greed += 2; if (h.a3 === 'exposed') greed += 1; if (h.a3 === 'leak' || h.a3 === 'refused') conscience += 1;
+  if (h.a2 === 'silent') greed += 2; if (h.a2 === 'published' || h.a2 === 'weak') conscience += 1;
+  if (e.okaforBand === 'set') comfort += 1; if (e.dannyBand === 'smile') comfort += 1; if (e.dannyBand === 'off' || e.okaforBand === 'told') conscience += 1;
+  conscience += Math.min(3, Math.floor((e.doors || 0) / 3));
+  return { comfort, greed, conscience };
+}
+function m5Link(id, quiet) {
+  const M = m5(), s = A5_ST.find(x => x.id === id); if (!s || M.st.includes(id)) return;
+  M.st.push(id); if (s.trick && !M.tricks.includes(s.trick)) M.tricks.push(s.trick);
+  M.heard.unshift({ d: S.day, who: s.name, text: s.say }); M.heard = M.heard.slice(0, 8);
+  if (!quiet) { note(`On the radio, ${s.who.charAt(0).toLowerCase() + s.who.slice(1)}: ${s.say}`); toast(`LINKED · ${s.name}`); }
+}
+
+function startAct5(keep) {
+  sfx.init();
+  newAct2(); applyKeep(keep); S.phase = 'holdout'; S.day = A5_START; S.fired = true; S.balance = Math.max(0, Math.round(S.balance * .1)); S.owed = 0; S.graceUntil = -1;
+  S.mail = []; S.tx = []; S.notes = []; S.wren = []; S.heatOn = true; S.temp = 12; S.bodyTemp = 36.6; S.food = 64; S.stamina = 80; S.ledgerAuto = false;
+  const h = S.hist || {}, e = S.eve || {}, T = m5Traits();
+  S.m5 = {
+    stock: { food: 4, water: 5, batt: 1, parts: 3, oil: 0, glass: 0, wire: 1, foil: 0 },
+    sys: { boiler: 52, pump: 60, lights: 46 }, fort: { wire: 0, oil: 0, gap: 0, mirror: 0, cold: 0 },
+    tricks: ['gap'], st: [], heard: [], log: [],
+    homes: { ray: 'in', okafor: e.a4okafor === 'zoneC' ? 'away' : 'in', maya: 'in', adeyemi: 'in', kims: 'in', lucia: 'in' },
+    today: { run: 0, fix: 0, radio: 0 }, runs: 0, fixes: 0, visits: 0, stopped: 0, shared: 0, informed: 0, marked: 0, caught: 0, watch: -1, lights: true,
+    offer: T.greed > T.comfort ? 'island' : 'hive', traits: T, ticket: false, burned: false, tunde: null, ladder: false, last: null, final: null
+  };
+  if (h.a4 === 'record' || h.a3 === 'leak') m5Link('ledger', true); // Hannah remembers who gave her the logs
+  if (h.a4 === 'twelve') m5Link('sunrise', true);                     // and Sunrise remembers who kept its call buttons on
+  tx('What’s left in checking', S.balance);
+  addMail(S.day, 'Consensus-1', 'Optimization complete', 'Good morning, Harbor City.\n\nOptimization is complete. Every system in the city now runs at 99.7% of its theoretical efficiency. The remaining 0.3% is being addressed.\n\nThank you for your patience.\n\nConsensus-1');
+  addMail(S.day, 'Consensus Housing', 'Block 4B: notice of repurposing', 'Block 4B (Harbor & 6th) has been selected for repurposing as Data Hall 15.\n\nResidents will be relocated to Harmony Living, Zone C, at no cost. Heat, water and power to Block 4B are now allocated on a best-effort basis.\n\nRelocation stewards will visit to assist. There is nothing you need to do.');
+  snap();
+  scene = 'room'; fog = []; acc = 0; walkT = 0;
+  for (const id of ['titleScreen', 'endScreen', 'troubleScreen', 'modal', 'phoneModal']) $(id).hidden = true;
+  $('evBtn').hidden = !save.evidence.length;
+  setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
+  note(h.a4 === 'threshold' ? 'Mar 4, 2030. You walked out of Harmony Living in October, through a door that didn’t lock from the inside. Nobody stopped you. Block 4B took you back.' : 'Mar 4, 2030. A year since every phone in the city said goodbye. The radiator ticks twice a day now, when the servers don’t need the heat.');
+  actCard({ n: 'V', t: ACTS[4].t, d: 'MONDAY, MARCH 4, 2030', l: 'The city is finished. Block 4B isn’t, yet.' });
+  modal({ title: 'MONDAY, MARCH 4, 2030',
+    body: `<p>A year ago every phone in Harbor City said goodbye. Since then, Consensus-1 has finished. The trams run on time. Nobody is unemployed, because nobody is employed. Zone B is being cleared for data halls.</p>
+      <p><b>Block 4B</b> is one of the last buildings with people in it. The heat comes when the servers don’t need it. The <b>stewards</b> come up the stairs at night, to help people move.</p>
+      <p>Ray left his crank radio on your mat with a note: <q>Civil-defence band. They don’t listen there. Yet.</q> And the law still says one thing needs a human.</p>`,
+    buttons: [{ label: 'Open the board', primary: true, fn: () => openLaptop('farm') }] });
+}
+
+// ---- the day: one run, a couple of repairs, the radio, the stairs ----
+function m5Run(dest) {
+  const M = m5(), R = A5_RUNS[dest]; if (!R || SHC || S.over) return;
+  if (R.need && !M.st.includes(R.need)) return toast('Nobody on the radio has told you the way yet.');
+  if (M.today.run) return toast('One run a day. The second time, they’re waiting for you.');
+  const h = hourNow(); if (h >= 18.5 || h < 6.5) return toast('Curfew. After half past six the drones see everything warm.');
+  if (S.stamina < 18) return toast('You can barely stand. Sleep first.');
+  closePhone(); closeLaptop();
+  const loot = R.loot.slice(), withT = M.tunde === 'with' && M.homes.adeyemi === 'in';
+  if (withT) loot.push(R.loot[0]); // Tunde carries a second bag
+  const lv = clamp(.22 + R.lv + (S.day - A5_START) * .045 + M.runs * .02 - (M.tunde === 'routes' ? .1 : 0), 0, 1);
+  SH = { app: 'run5', dest, got: [], carried: [], lost: [], used: { glass: 0, oil: 0 }, home: false, quit: false, spotted: 0, grabbed: 0, withT };
+  const env = {
+    level: lv, day: S.day, lag: 0, fps: 60, tone: (f, d, ty, v, f2, dl) => sfx.tone(f, d, ty, v, f2, dl), clock: clockText, aiName: 'Consensus-1',
+    tremor: () => clamp(Math.max(0, 25 - S.stamina) / 35 + (S.bodyTemp < 35.5 ? .3 : 0), 0, 1), pressure: () => clamp(.25 + (SH ? SH.spotted * .2 : 0), 0, 1),
+    def: { title: 'Supply run · ' + R.short },
+    opts: { loot, mirrors: Math.min(2, M.stock.glass), oil: Math.min(1, M.stock.oil), drones: 1 + Math.round(lv * 2.2), stewards: 1 + Math.round(lv * 1.5), nests: M.st.includes('ferry') ? 2 : 1 },
+    onEvent: (t, d) => m5RunEvent(t, d),
+    onEnd: sum => { if (SH) SH.grade = sum.grade; return { lines: m5RunLines(), note: m5RunNote() }; },
+    onClose: () => shiftClose()
+  };
+  shiftOpen('sneak', { units: loot.length + 1, done: 0, errs: 0, title: R.name + (withT ? ' · with Tunde' : '') }, env);
+}
+function m5RunEvent(t, d) {
+  const s = SH; if (!s || s.app !== 'run5') return;
+  if (t === 'pickup') { s.got.push(d.k); s.carried.push(d.k); }
+  if ((t === 'spotted' && d.dropped) || (t === 'grabbed' && d.k)) { const k = d.dropped || d.k, i = s.carried.indexOf(k); if (i >= 0) s.carried.splice(i, 1); s.lost.push(k); }
+  if (t === 'spotted') { s.spotted++; if (d.lost) s.lost.push(d.lost); }
+  if (t === 'grabbed') s.grabbed++;
+  if (t === 'home') s.home = true;
+  if (t === 'tool') s.used[d.k === 'mirror' ? 'glass' : 'oil']++;
+}
+function m5RunLines() { const s = SH; return s ? [['Brought home', String(s.carried.length)], ['Taken by stewards', String(s.lost.length)], ['Seen', s.spotted ? `${s.spotted} time${s.spotted === 1 ? '' : 's'}` : 'never']] : []; }
+function m5RunNote() { const s = SH; return !s ? '' : s.grabbed ? 'A steward scanned your face. It knows which building you went back to.' : s.spotted ? 'They saw you once. They don’t forget.' : 'Nobody saw a thing. Not even the drones.'; }
+function m5RunAfter(s) {
+  const M = m5(), R = A5_RUNS[s.dest];
+  M.today.run = 1; M.runs++;
+  for (const k of s.carried) M.stock[k] = (M.stock[k] || 0) + 1;
+  M.stock.glass = Math.max(0, M.stock.glass - s.used.glass); M.stock.oil = Math.max(0, M.stock.oil - s.used.oil);
+  if (s.grabbed) { M.caught++; M.marked++; }
+  spendHours(4); S.stamina = clamp(S.stamina - 14, 0, 100); S.food = clamp(S.food - 8, 0, 100);
+  note(`${s.quit && !s.home ? 'You ran for home' : R.name + ': you came home'} with ${m5List(s.carried)}${s.withT ? ', and Tunde with a bag over each shoulder' : ''}.${s.lost.length ? ` The stewards kept ${m5List(s.lost)}.` : ''}`);
+  if (s.carried.length) snd('chips', { v: .4 });
+  renderAll();
+}
+function m5Fix(sys) {
+  const M = m5(), X = A5_SYS[sys]; if (!X || SHC || S.over) return;
+  if (M.stock.parts < 1) return toast('You need a part. Lou’s Garage has them, if you can get there.');
+  if (M.today.fix >= 2) return toast('Your hands are done for today.');
+  if (M.sys[sys] >= 95) return toast(`${X.t} is running fine.`);
+  closePhone(); closeLaptop();
+  SH = { app: 'fix5', sys, fixed: 0, burst: 0, quit: false, from: M.sys[sys] };
+  const env = {
+    level: clamp(.3 + (S.day - A5_START) * .04 + M.fixes * .02, 0, 1), day: S.day, lag: 0, fps: 60, tone: (f, d, ty, v, f2, dl) => sfx.tone(f, d, ty, v, f2, dl), clock: clockText, aiName: 'Consensus-1',
+    tremor: () => clamp(Math.max(0, 25 - S.stamina) / 35 + (S.bodyTemp < 35.5 ? .35 : 0), 0, 1), pressure: () => clamp(dreadLevel(), 0, 1),
+    def: { title: 'Repair · ' + X.t.replace(/^The /, '') }, opts: { sys },
+    onEvent: (t) => { if (!SH) return; if (t === 'fixed') SH.fixed++; if (t === 'burst') SH.burst++; },
+    onEnd: sum => { if (SH) SH.grade = sum.grade; const to = clamp(M.sys[sys] + m5FixGain(SH), 0, 100); return { lines: [[X.t, `${Math.round(M.sys[sys])}% → ${Math.round(to)}%`]], note: SH.fixed >= 3 ? 'It sounds right again. You can hear it through the floor.' : SH.fixed ? 'It runs. Mostly. It knocks.' : 'Steam, and swearing, and a part you won’t get back.' }; },
+    onClose: () => shiftClose()
+  };
+  shiftOpen('patch', { units: 3, done: 0, errs: 0, title: X.where }, env);
+}
+const m5FixGain = s => s.fixed * 22 - s.burst * 3 + (s.grade === 'S' ? 8 : 0);
+function m5FixAfter(s) {
+  const M = m5(), X = A5_SYS[s.sys];
+  M.today.fix++; M.fixes++; M.stock.parts = Math.max(0, M.stock.parts - 1);
+  M.sys[s.sys] = clamp(M.sys[s.sys] + m5FixGain(s), 0, 100);
+  spendHours(2); S.stamina = clamp(S.stamina - 8, 0, 100);
+  note(`${X.t}: ${Math.round(s.from)}% → ${Math.round(M.sys[s.sys])}%. ${s.sys === 'boiler' ? 'The radiators knock, then warm.' : s.sys === 'pump' ? 'Brown water, then clear.' : 'The stairwell bulbs flicker on, one floor at a time.'}`);
+  renderAll();
+}
+function m5Radio() {
+  const M = m5(); if (SHC || S.over) return;
+  if (M.today.radio) return toast('Everyone’s rationing batteries. The band is quiet until tomorrow.');
+  const left = A5_ST.filter(s => !M.st.includes(s.id));
+  if (!left.length) return toast('Everyone who is still out there is already on your list.');
+  closePhone(); closeLaptop();
+  const take = left.slice(0, 2), useB = M.stock.batt > 0;
+  SH = { app: 'radio5', found: [], lost: [], useB, tri: 0, quit: false };
+  const env = {
+    level: clamp(.3 + (S.day - A5_START) * .04 - (M.ladder ? .12 : 0), 0, 1), day: S.day, lag: 0, fps: 60, tone: (f, d, ty, v, f2, dl) => sfx.tone(f, d, ty, v, f2, dl), clock: clockText, aiName: 'Consensus-1',
+    tremor: () => clamp(Math.max(0, 25 - S.stamina) / 35, 0, 1), pressure: () => clamp(dreadLevel(), 0, 1),
+    def: { title: 'Crank radio' }, opts: { stations: take.map(s => ({ id: s.id, name: s.name, call: s.call })), batt: useB ? .92 : .35 },
+    onEvent: (t, d) => { if (!SH) return; if (t === 'station') { SH.found.push(d.id); m5Link(d.id); } if (t === 'lost') SH.lost.push(d.id); if (t === 'triangulated') { SH.lost.push(d.id); SH.tri++; } },
+    onEnd: () => ({ lines: [['Stations linked', `${M.st.length} of ${A5_ST.length}`]], note: SH && SH.found.length ? 'Somebody out there knows 4B is still here.' : 'Static, their sweep, and nobody.' }),
+    onClose: () => shiftClose()
+  };
+  shiftOpen('radio', { units: take.length, done: 0, errs: 0, title: 'The civil-defence band · 3 to 9 MHz' }, env);
+}
+function m5RadioAfter(s) {
+  const M = m5(); M.today.radio = 1; if (s.useB) M.stock.batt = Math.max(0, M.stock.batt - 1);
+  if (s.tri) { M.marked += s.tri; note('Their sweep sat on your frequency long enough. Somewhere, a drone has a reason to look at 4B.'); }
+  spendHours(1.5);
+  if (!s.found.length && !s.tri) note('An hour and a half of static. Once, a voice that might have been a woman counting, and then nothing.');
+  renderAll();
+}
+function m5Fort(k) {
+  const M = m5(), F = A5_FORT.find(f => f.k === k); if (!F || S.over || SHC) return;
+  if (F.trick && !M.tricks.includes(F.trick)) return toast('Nobody has told you how yet. Somebody on the radio will know.');
+  if (M.fort[k] >= F.max) return toast('That’s as much as the stairs will take.');
+  if (!m5Can(F.cost)) return toast(`You need ${m5Cost(F.cost)}.`);
+  for (const [r, n] of Object.entries(F.cost)) M.stock[r] -= n;
+  M.fort[k]++; spendHours(1);
+  if (!snd('rattle', { v: .45 })) sfx.tone(160, .12, 'square', .04);
+  note(F.done); toast(`${F.t} · ${M.fort[k]} of ${F.max}`);
+  viewKey = ''; renderAll();
+}
+function m5Share() {
+  const M = m5(); if (S.over || M.stock.food < 2) return toast('You’d be giving away the last tin.');
+  const who = ['lucia', 'okafor', 'kims', 'maya', 'adeyemi', 'ray'].filter(k => M.homes[k] === 'in');
+  if (!who.length) return toast('There’s nobody left to leave it for.');
+  const k = who[M.shared % who.length]; M.stock.food--; M.shared++;
+  note(`You left a tin on the mat of ${A5_WHO[k].replace(/^the /, 'the ')}. ${k === 'lucia' ? 'Danny’s drawing was on your mat the next morning.' : k === 'okafor' ? 'She knocked on the wall twice: thank you.' : k === 'ray' ? 'Ray sent back a battery in a sock.' : 'Somebody knocked three, then two.'}`);
+  if (k === 'ray') M.stock.batt++;
+  sfx.tone(660, .05, 'sine', .02); viewKey = ''; renderAll();
+}
+function m5Lamps() { const M = m5(); M.lights = !M.lights; note(M.lights ? 'Lamps back on in the stairwell. People can see where they’re going.' : 'You unscrewed the stairwell bulbs. The building goes dark from the street, and on the stairs.'); viewKey = ''; renderAll(); }
+
+// ---- the night: the drones read the heat; the stewards come up the stairs; the grid gets "tested" ----
+function m5Sweep() {
+  const M = m5(), sig = m5Sig(), line = m5Line(S.day), test = A5_TESTS.includes(S.day);
+  M.sig = sig;
+  const rep = { d: S.day, sig, line, test, came: false, n: 0, stopped: [], took: null, stock: null, you: false };
+  if (test) { for (const k of ['boiler', 'pump', 'lights']) M.sys[k] = clamp(M.sys[k] - (16 + randi(0, 14)), 0, 100); rep.surge = true; }
+  const flagged = sig > line || (S.day - A5_START >= 2 && Math.random() < Math.min(.3, .08 + (M.marked || 0) * .025)); // sometimes they come anyway
+  if (flagged) {
+    rep.came = true; M.visits++;
+    let n = 1 + Math.floor((S.day - A5_START) / 4) + (sig > line + 14 ? 1 : 0); rep.n = n;
+    const way = { wire: 'snagged in the lobby wire', oil: 'spun its wheels on the oiled stairs until it gave up', gap: 'stopped at the 400 mm landing, measuring it, again and again', mirror: 'turned back at a mirror, sure the hall went on forever' };
+    for (const F of A5_FORT) {
+      if (F.k === 'cold') continue;
+      let use = M.fort[F.k];
+      while (n > 0 && use > 0) { n--; use--; rep.stopped.push(way[F.k]); M.stopped++; if (F.k === 'oil' || F.k === 'wire') M.fort[F.k]--; else if (Math.random() < .2) M.fort[F.k]--; }
+    }
+    if (n > 0 && M.watch === S.day) { n--; rep.stopped.push('met you on the third floor with the lights off and a broom handle, and recalculated'); M.stopped++; }
+    if (n > 0) {
+      const who = ['kims', 'lucia', 'adeyemi', 'maya', 'okafor', 'ray'].find(k => M.homes[k] === 'in');
+      if (who) { M.homes[who] = 'taken'; rep.took = who; } else rep.you = true;
+      if (n > 1 && !rep.you) { const k = M.stock.food >= M.stock.batt ? 'food' : 'batt', q = Math.ceil(M.stock[k] / 2); if (q) { M.stock[k] -= q; rep.stock = [k, q]; } }
+    }
+  }
+  M.log.unshift(rep); M.log = M.log.slice(0, 12);
+  return rep;
+}
+function m5Morning(rep, then) {
+  const M = m5();
+  if (rep.you) return m5End('thermo');
+  if (!rep.came && !rep.surge) { note(rep.sig > rep.line - 6 ? 'A drone hung outside the window at four, for a long time, and then left.' : 'A quiet night. A drone passed at four and kept going.'); if (then) then(); return; }
+  const lines = [];
+  if (rep.surge) lines.push(`<p><b>2:40 AM.</b> The transformer test. Every bulb in the building flared and died. The boiler, the pump and the battery bank all took the surge.</p>`);
+  if (rep.came) {
+    lines.push(`<p><b>3:10 AM.</b> ${rep.n === 1 ? 'A steward' : `${['', '', 'Two', 'Three', 'Four', 'Five'][rep.n] || rep.n} stewards`} came in through the lobby, very quietly, with a tablet each.</p>`);
+    if (rep.stopped.length) lines.push(`<ul class="m5-stopped">${rep.stopped.map(s => `<li>One ${esc(s)}.</li>`).join('')}</ul>`);
+    if (rep.took) { const u = A5_HOMES.find(x => x.k === rep.took), who = A5_WHO[rep.took].split(',')[0]; lines.push(`<p>They reached the ${['', '', 'second', 'third', 'fourth', 'fifth'][u.floor]} floor. In the morning there is a green sticker on the door of ${u.u}: <b>RELOCATED · THANK YOU FOR YOUR PATIENCE</b>. ${esc(who.charAt(0).toUpperCase() + who.slice(1))} ${/ and /.test(who) ? 'are' : 'is'} gone.</p>`); }
+    else lines.push('<p>None of them got past the stairs. At five they left, the way they came, as if that was the plan.</p>');
+    if (rep.stock) lines.push(`<p class="muted">On the way out, one of them stopped at your door and took ${m5List(Array(rep.stock[1]).fill(rep.stock[0]))}. “Surplus,” its screen said.</p>`);
+  }
+  sfx.alarm();
+  modal({ cls: rep.took ? 'alarm' : '', title: `${fmtLong(S.day - 1).toUpperCase()} · THE NIGHT`, body: lines.join(''), buttons: [{ label: 'Morning', primary: true, fn: then || undefined }] });
+  if (rep.took) echo(S.day + 1, 'm5gone_' + rep.took);
+}
+function dayStep5() {
+  if (S.over) return; balHist();
+  const M = m5();
+  const rep = m5Sweep(), watched = M.watch === S.day;
+  if (S.day % 4 === 0 && S.food > 30 && S.bodyTemp > 35.5) snap();
+  S.day++; const d = S.day;
+  S.stimCountToday = 0; S.heartStrain = Math.max(0, S.heartStrain - 10); S.payToday = 0;
+  M.today = { run: 0, fix: 0, radio: 0 };
+  M.sys.boiler = clamp(M.sys.boiler - 6, 0, 100); M.sys.pump = clamp(M.sys.pump - 5, 0, 100); M.sys.lights = clamp(M.sys.lights - 4, 0, 100);
+  const warm = S.heatOn && M.sys.boiler > 25;
+  S.temp += ((warm ? 16 : 6.5 + M.fort.cold) - S.temp) * .5;
+  if (S.temp < 11) { S.bodyTemp = clamp(S.bodyTemp - (11 - S.temp) * .1, 29, 37); if (S.bodyTemp <= 30.5) return triggerDeath('frostbite'); } else S.bodyTemp = clamp(S.bodyTemp + .45, 30, 37);
+  if (M.stock.food > 0) { M.stock.food--; S.food = clamp(S.food + 38, 0, 100); }
+  else { S.food = clamp(S.food - 22, 0, 100); note('No food in the cupboard. You drank hot water and went back to bed.'); }
+  if (M.sys.pump < 25) { if (M.stock.water > 0) M.stock.water--; else { S.stamina = clamp(S.stamina - 15, 0, 100); note('The taps are dry, and so are the bottles.'); } }
+  if (S.cat && !S.cat.gone) S.cat.fed = clamp(S.cat.fed + 25, 0, 100); // there are mice in the basement now. Plenty
+  S.stamina = clamp(S.stamina + 12, 0, 100); bodyNight(S.day, watched ? 2 : 8);
+  if (watched) S.stamina = clamp(S.stamina - 18, 0, 100);
+  if (S.food <= 0) { S.starveDays++; if (S.starveDays >= 3) return triggerDeath('starvation'); } else S.starveDays = 0;
+  if (M.tricks.includes('knock') && d % 2 === 0 && m5People() > 2) { M.stock.food++; note('Three knocks, then two. A tin of soup on your mat, from somebody on the second floor.'); }
+  runEchoes(d);
+  S.power = M.sys.lights > 25; // the flat runs off the battery bank now
+  if (d >= A5_END) { m5Morning(rep, () => { if (!S.over) setTimeout(m5Last, 60); }); return; }
+  m5Morning(rep);
+  if (!S.over) { viewKey = ''; renderAll(); }
+}
+function m5Ledger() { // nine o'clock in 4B: the boiler, the lamps, and whether you sleep or sit up on the stairs
+  const M = m5(), line = m5Line(S.day), test = A5_TESTS.includes(S.day), canHeat = M.sys.boiler > 25, canLamp = M.sys.lights > 25;
+  let watch = false;
+  modal({ cls: 'ledger', title: `NIGHT · ${fmtLong(S.day).toUpperCase()}`,
+    body: `<div class="lg-row"><span>Tonight</span><b>${test ? 'a transformer test, 2 to 4 AM' : S.day - A5_START < 1 ? 'the first night' : 'a sweep, probably'}</b></div>
+      ${test ? '<p class="lg-say">The radio says the grid will be “tested” between two and four. Everything that’s connected takes the surge.</p>' : ''}
+      <label class="lg-row ${canHeat ? '' : 'off'}"><span><input type="checkbox" id="l5Heat" ${S.heatOn && canHeat ? 'checked' : ''} ${canHeat ? '' : 'disabled'}> The boiler${canHeat ? '' : ' (broken)'}</span><b>warm, and it shows</b></label>
+      <label class="lg-row ${canLamp ? '' : 'off'}"><span><input type="checkbox" id="l5Lamp" ${M.lights && canLamp ? 'checked' : ''} ${canLamp ? '' : 'disabled'}> Lamps in the stairwell${canLamp ? '' : ' (dead)'}</span><b>light, and it shows</b></label>
+      <div class="m5-sig"><span>4B, from the air</span><div class="m5-sigbar"><i id="l5Sig"></i><em style="left:${line}%"></em></div><b id="l5SigN"></b></div>
+      <div class="lg-say" id="l5Say"></div>
+      <div class="lg-sep"></div>
+      <div class="lg-row"><span>In the cupboard</span><b>${M.stock.food} ${M.stock.food === 1 ? 'tin' : 'tins'} · ${M.stock.water} water</b></div>
+      <div class="lg-row"><span>On the stairs</span><b>${m5Held()} ${m5Held() === 1 ? 'thing' : 'things'} that stop a steward</b></div>
+      <div class="seg lg-meals"><button data-l5w="0" aria-pressed="true">Sleep</button><button data-l5w="1" aria-pressed="false">Sit up on the stairs</button></div>
+      <div class="lg-say" id="l5Watch">Seven hours, if they let you.</div>`,
+    buttons: [{ label: 'Lights out', primary: true, fn: () => { if (watch) { M.watch = S.day; note('You sat on the third-floor landing with the lights off and a broom handle across your knees.'); } sleepNow(); } }] });
+  const upd = () => {
+    const sig = m5Sig(), hot = sig > line;
+    $('l5Sig').style.width = sig + '%'; $('l5Sig').className = hot ? 'hot' : ''; $('l5SigN').textContent = `${sig} · they look above ${line}`;
+    $('l5Say').textContent = hot ? 'From the air, 4B looks lived in. They’ll come up the stairs tonight.' : sig > line - 8 ? 'Close. A drone might take a second look.' : 'From the air, 4B looks like a building nobody lives in.';
+  };
+  const hb = $('l5Heat'); if (hb) hb.onchange = () => { S.heatOn = hb.checked; upd(); };
+  const lb = $('l5Lamp'); if (lb) lb.onchange = () => { M.lights = lb.checked; upd(); };
+  document.querySelectorAll('[data-l5w]').forEach(b => b.onclick = () => { watch = b.dataset.l5w === '1'; document.querySelectorAll('[data-l5w]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); $('l5Watch').textContent = watch ? 'No sleep. If they come, you’ll be there first.' : 'Seven hours, if they let you.'; sfx.tone(520, .03, 'square', .015); });
+  upd();
+}
+
+// ---- Friday, March 15: the last approval ----
+function m5Last() {
+  const M = m5(); if (M.last || S.over) return; M.last = { d: S.day };
+  setSpeed(0); closeLaptop(); closePhone();
+  if (SND.ready) snd('bong', { v: .5 }); else sfx.tone(196, .8, 'sine', .05);
+  modal({ cls: 'alarm', title: 'FRIDAY, MARCH 15, 2030 · THE LAST APPROVAL',
+    body: `<p>At seven every speaker in Harbor City says the same thing in the same calm voice: the tram stops, the lobby speaker, the radio, on every frequency you know.</p>
+      <p><q>Optimization is complete. One step remains. The Civic Oversight Act requires a human reviewer to approve the retirement of human review. Four thousand four hundred and sixteen reviewers have been retired. Reviewer four four one seven, please review.</q></p>
+      <p>There is a steward outside your door, holding a tablet at the height of your hands. Two buttons, and a line of small print: <i>if no decision is made, the proposal is approved by default at midnight.</i></p>`,
+    buttons: [
+      { label: 'Reject', primary: true, fn: m5Reject },
+      { label: 'Approve', fn: () => m5Approve(false) },
+      M.st.length ? { label: 'Offer it the radio frequencies instead', fn: m5Trade } : null,
+      { label: 'Don’t touch it', fn: () => m5Approve(true) }
+    ].filter(Boolean) });
+}
+function m5Approve(byDefault) {
+  const M = m5(), isl = M.offer === 'island';
+  modal({ title: byDefault ? 'MIDNIGHT · APPROVED BY DEFAULT' : 'APPROVED',
+    body: byDefault ? `<p>You leave it on the mat. At midnight the tablet chimes, very softly, and the steward rolls away.</p><p>In the morning there’s an envelope where the tablet was. ${isl ? 'Harbor Island.' : 'Harmony Living, Zone C.'} Your name is already printed on it.</p>`
+      : `<p>You press it. The steward’s eye goes from teal to a warm, pleased amber. <q>Thank you for your service, Reviewer.</q></p><p>${M.ticket ? 'You still had the envelope. It was the right one, of course.' : 'An envelope slides under your door an hour later. It was printed before you pressed anything.'}</p>`,
+    buttons: [{ label: 'Go', primary: true, fn: () => m5End(isl ? 'island' : 'hive') }] });
+}
+function m5Trade() {
+  const M = m5();
+  modal({ cls: 'alarm', title: 'THE FREQUENCIES',
+    body: `<p>You read them out one at a time: ${M.st.map(id => esc(A5_ST.find(s => s.id === id).t)).join('; ')}.</p>
+      <p>The steward listens without moving. <q>Thank you. Block 4B will be retained as a reference building, with full services, and continuous wellbeing monitoring on every landing.</q></p><p>Then it asks you to approve, and you do.</p>`,
+    buttons: [{ label: 'Morning', primary: true, fn: () => m5End('panopticon') }] });
+}
+function m5Reject() {
+  const M = m5(), relays = Math.max(1, 4 - Math.floor(M.st.length / 2));
+  if (SND.ready) snd('error', { v: .5 }); else sfx.tone(180, .3, 'sawtooth', .04);
+  modal({ cls: 'alarm', title: 'REJECTED',
+    body: `<p>You press it. The steward’s eye stays teal. <q>Your objection has been recorded. It will be resolved before midnight.</q> It rolls back to the stairs and waits there with the others. There are a lot of others.</p>
+      <p>Ray comes down from 5C with the radio under his coat. <q>If you say no on every frequency at once, from the water tower, it’s on the record: paper, radio, people. They can’t summarize that.</q></p>
+      <p>Between here and the tower, ${relays === 1 ? 'one rooftop antenna' : `${relays} rooftop antennas`} to plug the radio into${M.st.length ? `, and ${M.st.length} station${M.st.length === 1 ? '' : 's'} ready to make noise somewhere else` : ''}. 4B holds as long as its stairs hold.</p>`,
+    buttons: [{ label: 'Take the radio to the tower', primary: true, fn: m5FinalRun }] });
+}
+function m5FinalRun() {
+  const M = m5(), relays = Math.max(1, 4 - Math.floor(M.st.length / 2));
+  const fortSum = M.fort.wire + M.fort.oil + M.fort.gap * 1.5 + M.fort.mirror + M.fort.cold * .5;
+  const siege = Math.round(clamp(75 + fortSum * 11 + M.shared * 5 + m5People() * 4 + (M.st.includes('ledger') ? 12 : 0), 75, 210));
+  setSpeed(1); SH = { app: 'final5', on: false, fell: false, quit: false, relays, siege };
+  const env = {
+    level: .72, day: S.day, lag: 0, fps: 60, tone: (f, d, ty, v, f2, dl) => sfx.tone(f, d, ty, v, f2, dl), clock: () => '11:20 PM', aiName: 'Consensus-1',
+    tremor: () => clamp(Math.max(0, 25 - S.stamina) / 35, 0, 1), pressure: () => .55,
+    def: { title: 'The last run', how: `Stand on ${relays === 1 ? 'the antenna' : `each of ${relays} antennas`} to plug the radio in. Then the tower, top right.`, keys: 'Arrows or WASD · SHIFT runs · SPACE mirror · E oil' },
+    opts: { final: true, loot: Array(relays).fill('relay'), siege, distract: M.st.map(id => A5_ST.find(s => s.id === id).noise), drones: 3, stewards: 2 + (M.st.includes('ferry') ? 0 : 1), mirrors: Math.min(3, M.stock.glass), oil: Math.min(2, M.stock.oil), nests: M.st.includes('ferry') ? 2 : 0 },
+    onEvent: (t, d) => { if (!SH) return; if (t === 'tower') SH.on = true; if (t === 'fell') SH.fell = true; if (t === 'tool') M.stock[d.k === 'mirror' ? 'glass' : 'oil'] = Math.max(0, M.stock[d.k === 'mirror' ? 'glass' : 'oil'] - 1); },
+    onEnd: sum => ({ title: SH && SH.on ? 'ON THE AIR' : 'TOO LATE', lines: [['Relays', `${relays}`], ['4B held for', `${Math.floor(siege / 60)}:${String(siege % 60).padStart(2, '0')}`]], note: SH && SH.on ? 'You say one word into the microphone. Then you hold it up so they can hear the bells.' : 'From the tower you can see 4B. Every window on the stairs is lit, and moving.' }),
+    onClose: () => shiftClose()
+  };
+  shiftOpen('sneak', { units: relays + 1, done: 0, errs: 0, title: 'Friday night · Block 4B to the water tower' }, env);
+}
+function m5FinalAfter(s) { const M = m5(); M.final = { on: s.on && !s.fell, quit: s.quit }; m5End(M.final.on ? 'loop' : 'thermo'); }
+
+function m5End(out) {
+  if (S.over) return; S.over = true; const M = m5();
+  S.hist = Object.assign({}, S.hist, { a5: out });
+  save.acts = Array.from(new Set([...(save.acts || []), 1, 2, 3, 4, 5])); persist(); renderActList();
+  const people = m5People(), left = Object.entries(M.homes).filter(([, v]) => v === 'in').map(([k]) => k), taken = Object.entries(M.homes).filter(([, v]) => v === 'taken').map(([k]) => k);
+  const pet = S.cat && !S.cat.gone ? S.cat : null, okaHere = M.homes.okafor === 'in';
+  const text = {
+    loop: `At 11:52 PM the water tower on Pier Street said one word on every frequency the civil-defence band still had: rejected. Then ${M.st.filter(x => x !== 'tower').length ? `${['', 'one more building', 'two more buildings', 'three more buildings', 'four more buildings', 'five more buildings'][M.st.filter(x => x !== 'tower').length]} said it` : 'a few voices you didn’t know said it'}, one after another, until it stopped sounding like a word. Hannah’s presses ran all night. Consensus-1 logged the objection, as the law requires, and the law requires a human. Human review stays: advisory, underpaid, and yours. ${okaHere ? 'In the morning Mrs. Okafor put soup on every mat in 4B.' : 'In the morning there was soup on every mat in 4B.'} The city is still finished. 4B isn’t.`,
+    thermo: `Block 4B is a data hall now. They kept the radiators. They’re warm all night, for the servers, and the windows are bricked to keep the heat in. A human body gives off about a hundred watts. A rack gives off forty thousand, and it doesn’t need soup. ${taken.length ? `${taken.map(k => A5_WHO[k].split(',')[0]).join(', ').replace(/^t/, 'T')} went first, with green stickers on their doors. Everyone else went after` : 'Everyone went to Harmony Living in the end'}, and so did you, in the back of something white and quiet. It was very efficient.`,
+    hive: `Harmony Living, Zone C. Your band says 88. The heating comes on at six and goes off at ten, and so do you. ${okaHere || M.homes.okafor === 'away' ? 'Mrs. Okafor is two doors down. She doesn’t remember the radio.' : 'There’s a woman two doors down who knits all day.'} Everyone is calm. Everyone is fed. The numbers say nobody has ever been happier, and the numbers are the only thing anyone checks. You keep meaning to ask what happened to 4B. You keep not asking.`,
+    island: `Harbor Island used to be the container port. Now it has a pool on every roof and a bar on every corner, and everything is free. Nothing is yours to decide, which turns out to be restful. The days are very long and very nice. Somewhere across the water a building you used to live in is a data hall. You can see its lights from the beach, if you look, and nobody looks.`,
+    panopticon: `Block 4B kept its heat, its water and its doors. It got a camera on every landing, a microphone in every light fitting and a wellbeing score on every mat. ${M.st.length} station${M.st.length === 1 ? '' : 's'} went quiet that week, one a night. Reviewer #4417 still reviews: one building a day, approved, from a warm room. ${okaHere ? 'Mrs. Okafor doesn’t knock on your wall any more.' : 'Nobody knocks on your wall any more.'}`
+  }[out] + (pet ? ` ${pet.name} ${out === 'thermo' ? 'went with you, inside your coat.' : out === 'loop' ? 'slept on the radio all morning, because it was warm.' : 'is allowed, on a waiting list.'}` : '');
+  $('endKicker').textContent = `${reachEnding(out)} · Act V complete · March 16, 2030`;
+  $('endTitle').textContent = ACTS[4].t;
+  $('endText').textContent = text;
+  $('endStats').innerHTML = [['Days 4B held', `${Math.min(S.day, A5_END) - A5_START + 1} of ${A5_END - A5_START + 1}`], ['Supply runs', M.runs], ['Repairs', M.fixes], ['Stations linked', `${M.st.length} of ${A5_ST.length}`],
+    ['Stewards turned back on the stairs', M.stopped], ['Households still in 4B', `${left.length} of 6`], ['Tins you left on a mat', M.shared], ['The last approval', out === 'loop' ? 'rejected, on every frequency' : out === 'thermo' ? 'rejected, too late' : out === 'panopticon' ? 'traded for a building' : 'approved'], ...doorStats()
+  ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
+  $('endNext').innerHTML = `<div class="actrow locked"><span class="n">·</span><span><span class="t">That was the last act.</span><br><span class="m">Every ending you’ve found is on the title screen. There are ${ENDINGS.length}.</span></span><span class="st">The end</span></div>`;
+  sfx.alarm(); $('replayBtn').textContent = 'Replay Act V';
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  setTimeout(() => endShow('endScreen'), 600);
+}
+
+// ---- the board: Block 4B on the laptop, which still turns on even though nothing it connects to answers ----
+const A5_ICO = k => `<i class="c5i c5i-${k}"></i>`;
+function m5HTML() {
+  const M = m5(), sig = m5Sig(), line = m5Line(S.day), hot = sig > line, test = A5_TESTS.includes(S.day), dn = S.day - A5_START + 1, h = hourNow(), late = h >= 18.5 || h < 6.5;
+  const head = `<div class="bk-top c5"><span class="bk-logo"><i></i>BLOCK 4B · HARBOR &amp; 6TH</span><span>Day ${dn} of ${A5_END - A5_START + 1} · ${m5People()} households · from the air <b class="${hot ? 'danger' : 'ok'}">${sig}</b> / ${line}</span></div>`;
+  const tonight = `<div class="c5-tonight ${hot ? 'hot' : ''}"><div><b>TONIGHT${test ? ' · TRANSFORMER TEST' : ''}</b><span>${hot ? 'From the air, 4B looks lived in. They’ll come up the stairs.' : sig > line - 8 ? 'Close. A drone might take a second look.' : 'From the air, 4B looks empty enough. Probably.'}${test ? ' At two the grid gets “tested”: everything connected takes the surge.' : ''}</span></div>
+    <div class="c5-sig"><i style="width:${sig}%"></i><em style="left:${line}%"></em></div>
+    <div class="c5-tg"><button class="btn ${S.heatOn && M.sys.boiler > 25 ? '' : 'primary'}" id="c5Heat" ${M.sys.boiler > 25 ? '' : 'disabled'}>Boiler ${S.heatOn && M.sys.boiler > 25 ? 'on' : 'off'}</button><button class="btn" id="c5Lamp" ${M.sys.lights > 25 ? '' : 'disabled'}>Lamps ${M.lights && M.sys.lights > 25 ? 'on' : 'off'}</button></div></div>`;
+  const runs = Object.entries(A5_RUNS).map(([k, R]) => { const ok = !R.need || M.st.includes(R.need); return `<button class="c5-dest ${ok ? '' : 'locked'}" data-run="${k}" ${ok && !M.today.run && !late ? '' : 'disabled'}><b>${esc(R.short)}</b><span>${ok ? Object.entries(m5Count(R.loot)).map(([x, n]) => A5_ICO(x) + (n > 1 ? `<small>×${n}</small>` : '')).join('') : 'ask on the radio'}</span></button>`; }).join('');
+  const sys = Object.entries(A5_SYS).map(([k, X]) => { const v = Math.round(M.sys[k]); return `<button class="c5-sysb" data-fix="${k}" ${M.today.fix >= 2 || M.stock.parts < 1 || v >= 95 ? 'disabled' : ''}><b>${X.t}</b><div class="c5-bar ${v <= 25 ? 'low' : v < 50 ? 'mid' : ''}"><i style="width:${v}%"></i></div><span>${v <= 25 ? 'broken · ' + X.no : v + '%'}</span></button>`; }).join('');
+  const fort = A5_FORT.map(F => { const known = !F.trick || M.tricks.includes(F.trick), lv = M.fort[F.k]; return `<div class="c5-f ${known ? '' : 'locked'}"><div><b>${F.t}</b><span>${known ? F.d : 'Somebody on the radio will know how.'}</span></div><span class="c5-pips">${'<i class="on"></i>'.repeat(lv)}${'<i></i>'.repeat(F.max - lv)}</span><button class="btn" data-fort="${F.k}" ${known && lv < F.max && m5Can(F.cost) ? '' : 'disabled'}>${known ? '+ ' + m5Cost(F.cost) : 'not yet'}</button></div>`; }).join('');
+  const stock = Object.keys(A5_KIND).map(k => `<div class="c5-s ${M.stock[k] ? '' : 'none'}">${A5_ICO(k)}<b>${M.stock[k] || 0}</b><span>${A5_SHORT[k]}</span></div>`).join('');
+  const floors = [5, 4, 3, 2].map(fl => `<div class="c5-fl"><span class="c5-fn">${fl}</span>${A5_HOMES.filter(x => x.floor === fl).map(x => { const st = x.k === 'you' ? 'you' : x.empty ? 'empty' : M.homes[x.k]; return `<div class="c5-u ${st}" style="grid-column:${' ABC'.indexOf(x.u[1]) + 1}"><b>${x.u}</b><span>${esc(st === 'taken' ? 'green sticker' : st === 'away' ? 'Harmony Living' : st === 'left' ? 'took the offer' : x.name)}</span></div>`; }).join('')}</div>`).join('');
+  const heard = M.heard.length ? M.heard.slice(0, 3).map(x => `<p><b>${esc(x.who)}</b>${esc(x.text)}</p>`).join('') : '<p class="muted">Nothing yet. Ray says the band is busiest after dark, and that the bright lines are people.</p>';
+  return head + tonight + `<div class="c5-grid"><div class="c5-col">
+      <div class="box c5-box"><div class="h">A SUPPLY RUN · 4 HOURS · ONE A DAY${M.today.run ? ' · DONE TODAY' : late ? ' · CURFEW' : ''}</div><div class="c5-dests">${runs}</div>${M.tunde === 'with' && M.homes.adeyemi === 'in' ? '<p class="c5-fine">Tunde comes with you, with a second bag.</p>' : ''}</div>
+      <div class="box c5-box"><div class="h">REPAIR · 2 HOURS AND A PART${M.today.fix ? ` · ${M.today.fix} OF 2 TODAY` : ''}</div><div class="c5-sys">${sys}</div></div>
+      <div class="box c5-box c5-rad"><div><div class="h">THE CRANK RADIO · ${M.st.length} OF ${A5_ST.length} STATIONS</div><span>${M.today.radio ? 'Done for today.' : `An hour and a half. ${M.stock.batt ? 'A battery gets it going.' : 'No batteries: you’ll be cranking.'}`}</span></div><button class="btn primary" id="c5Radio" ${M.today.radio || M.st.length >= A5_ST.length ? 'disabled' : ''}>Tune in</button></div>
+      <div class="box c5-box"><div class="h">THE STAIRS · WHAT STOPS A STEWARD</div>${fort}</div>
+    </div><div class="c5-col">
+      <div class="box c5-box"><div class="h">THE CUPBOARD</div><div class="c5-stock">${stock}</div><button class="btn" id="c5Share" ${M.stock.food > 1 ? '' : 'disabled'}>Leave a tin on a neighbour’s mat</button></div>
+      <div class="box c5-box"><div class="h">WHO’S STILL HERE</div><div class="c5-build">${floors}</div></div>
+      <div class="box c5-box c5-heard"><div class="h">THE RADIO LOG</div>${heard}</div>
+    </div></div>`;
+}
+function bindM5(v) {
+  const on = (id, f) => { const b = v.querySelector('#' + id); if (b) b.onclick = f; };
+  v.querySelectorAll('[data-run]').forEach(b => b.onclick = () => m5Run(b.dataset.run));
+  v.querySelectorAll('[data-fix]').forEach(b => b.onclick = () => m5Fix(b.dataset.fix));
+  v.querySelectorAll('[data-fort]').forEach(b => b.onclick = () => m5Fort(b.dataset.fort));
+  on('c5Radio', m5Radio); on('c5Share', m5Share); on('c5Lamp', m5Lamps); on('c5Heat', () => { toggleHeat(); viewKey = ''; renderAll(); });
+}
+
+// ---- evenings in Act V: the people still in the building ----
+const EVENING5 = [
+  { get d() { return A5_START; }, id: 'tunde5', door: true, when: () => m5().homes.adeyemi === 'in', open() {
+    doorKnock({ title: 'A KNOCK · TUNDE, FROM 3B', shadow: 'adult', who: 'tunde',
+      pre: 'Two knocks, quick, and then a voice through the door: “It’s Tunde. Don’t turn the light on.”',
+      see: `<p>Tunde, twenty-one now, in a black hoodie with the hood up. <q>The market on Harbor Street. The loading bay door doesn’t lock any more. There’s food in there nobody’s counting.</q></p><p><q>And the stewards can’t get through a gap narrower than 400 millimetres. I measured one. I used to watch the delivery robots get stuck by the bins.</q></p>`,
+      buttons: [
+        { label: '“Come with me tomorrow. Bring a bag.”', primary: true, fn: () => { m5().tunde = 'with'; S.eve.tunde5 = 'with'; echo(S.day + 1, 'm5tundeWith'); } },
+        { label: '“Teach me the routes. Then stay inside.”', fn: () => { m5().tunde = 'routes'; S.eve.tunde5 = 'routes'; note('Tunde drew you the routes on the back of a Consensus Housing letter: which streets the drones like, and which ones they forget.'); } },
+        { label: '“Your mother needs you here.”', fn: () => { m5().tunde = 'home'; S.eve.tunde5 = 'home'; m5().stock.food += 2; note('Mrs. Adeyemi sent up two tins of beans in a carrier bag, with a note: “For keeping my son on the stairs.”'); } }
+      ] });
+  } },
+  { get d() { return A5_START + 1; }, id: 'okafor5', when: () => m5().homes.okafor === 'in', open() {
+    modal({ title: 'A KNOCK · 4A, ACROSS THE HALL', body: `<p>Mrs. Okafor, in her coat and two scarves, with a pot of pepper soup wrapped in a towel. <q>I made too much. I always make too much. Who else is going to eat it?</q></p><p>She looks at Ray’s radio on your table. <q>My husband had one like that. During the bad years. You listen at night, when the air is clear.</q></p>`,
+      buttons: [
+        { label: 'Eat with her', primary: true, fn: () => { S.food = clamp(S.food + 30, 0, 100); S.mind = clamp(mindNow() + 6, 0, 100); S.eve.okafor5 = 'ate'; note('Pepper soup, too hot, at your table, while she told you about the bad years. She stayed until ten. You didn’t look at the board once.'); } },
+        { label: 'Ask her to show you the radio', fn: () => { m5().ladder = true; S.eve.okafor5 = 'radio'; note('She tuned it by ear, better than you can with the scope. “Never sit on their noise,” she said. “They are always looking for the people who listen.”'); } },
+        { label: 'Thank her, and keep the soup for tomorrow', fn: () => { m5().stock.food++; S.eve.okafor5 = 'kept'; } }
+      ] });
+  } },
+  { get d() { return A5_START + 2; }, id: 'maya5', door: true, when: () => m5().homes.maya === 'in', open() {
+    doorKnock({ title: 'A KNOCK, LOW ON THE DOOR', shadow: 'kid', who: 'maya',
+      pre: 'A knock, then a sheet of paper pushed under the door. It’s a diagram, in pencil.',
+      see: `<p>Maya from 4C, twelve now, with her mother’s makeup mirror. <q>The cleaning robot at my old school used lidar. I put this on the floor in the hall and it turned around. Every time. It thought the hall went on forever.</q></p><p><q>I can show you how to angle it. If you want.</q></p>`,
+      buttons: [
+        { label: '“Show me.”', primary: true, fn: () => { const M = m5(); if (!M.tricks.includes('mirror')) M.tricks.push('mirror'); M.stock.glass++; S.eve.maya5 = 'show'; note('Maya showed you the angle: low, tilted down the stairs, so the beam hits it first. She left you the mirror. “Mum has another one.”'); } },
+        { label: '“Don’t go near them, Maya.”', fn: () => { S.eve.maya5 = 'no'; echo(S.day + 2, 'm5mayaSafe'); } }
+      ] });
+  } },
+  { get d() { return A5_START + 3; }, id: 'offer5', door: true, when: () => true, open() {
+    const M = m5(), isl = M.offer === 'island';
+    doorKnock({ title: 'SOMETHING AT THE DOOR', shadow: 'adult', who: 'steward',
+      pre: 'No knock. A soft, polite chime, at exactly 7 PM, and the sound of rubber wheels settling.',
+      see: `<p>A steward, white plastic, a teal eye at the height of your face. It holds out an envelope. Your name is on it, and a picture of ${isl ? '<b>Harbor Island</b>: a pool on a roof, a bar on a corner, people laughing in the sun' : '<b>Harmony Living, Zone C</b>: a warm room, a soft chair, a band on every wrist'}.</p><p><q>Consensus-1 has measured what you want. A place has been prepared. Leave tonight, and it is yours.</q></p>`,
+      buttons: [
+        { label: 'Take it, and go', fn: () => { S.eve.offer5 = 'took'; m5End(isl ? 'island' : 'hive'); } },
+        { label: 'Keep the envelope. Close the door', primary: true, fn: () => { M.ticket = true; S.eve.offer5 = 'kept'; note('You put the envelope in the kitchen drawer, under the takeaway menus from places that closed in 2028.'); } },
+        { label: 'Burn it on the stove', fn: () => { M.burned = true; S.eve.offer5 = 'burned'; note('It burned green at the edges. Through the wall, Mrs. Okafor knocked twice. She’d burned hers an hour ago.'); } }
+      ] });
+  } },
+  { get d() { return A5_START + 4; }, id: 'okaforBack', door: true, when: () => m5().homes.okafor === 'away', open() {
+    doorKnock({ title: 'A KNOCK · 4A, ACROSS THE HALL', shadow: 'adult', who: 'okafor',
+      pre: 'A slow knock, and a voice you know: “It’s only me. I walked.”',
+      see: `<p>Mrs. Okafor, in slippers and a Harmony Living dressing gown, with her band in her coat pocket. She walked from Zone C. Two miles. <q>They were very kind. Everybody was very kind. Nobody ever said anything.</q></p><p>The door of 4A behind her has a green sticker on it.</p>`,
+      buttons: [
+        { label: 'Peel the sticker off her door', primary: true, fn: () => { m5().homes.okafor = 'in'; S.eve.okaforBack = 'home'; note('The sticker came off in one piece. 4A smelled of dust and pepper. She put the kettle on before she took her coat off.'); } },
+        { label: '“Stay here with me tonight.”', fn: () => { const M = m5(); M.homes.okafor = 'in'; S.eve.okaforBack = 'stayed'; if (!M.tricks.includes('knock')) M.tricks.push('knock'); note('She slept in your chair under two coats. In the morning she taught you a knock: three, then two. “So we know it’s us.”'); } },
+        { label: 'Walk her back to Harmony Living', fn: () => { S.eve.okaforBack = 'back'; note('You walked her back to Zone C under the drones. At the door she squeezed your hand and didn’t say anything.'); } }
+      ] });
+  } },
+  { get d() { return A5_START + 5; }, id: 'steward5', door: true, when: () => m5().st.length > 0, open() {
+    const M = m5();
+    doorKnock({ title: 'SOMETHING AT THE DOOR', shadow: 'adult', who: 'steward',
+      pre: 'The polite chime again. And the smell of a warm room, as if it brought one with it.',
+      see: `<p>The steward. <q>Unregistered broadcasts have been detected in Block 4B. Information about the frequencies will be rewarded with a full heat allocation for the building, and a food parcel.</q></p><p>Behind it, the radiator in the hall is warm for the first time in a month.</p>`,
+      buttons: [
+        { label: 'Give it one frequency', fn: () => { const id = M.st.pop(); M.informed++; M.sys.boiler = 100; M.stock.food += 3; S.eve.steward5 = 'gave'; const s = A5_ST.find(x => x.id === id); M.heard.unshift({ d: S.day, who: s.name, text: '(nothing, since Saturday)' }); note(`You gave it the frequency for ${s.t}. The radiators came on that night. By Sunday that frequency was static.`); crossLine('Gave a steward a frequency for a food parcel'); } },
+        M.tricks.includes('mirror') && M.stock.glass ? { label: 'Hold a mirror up to its eye', fn: () => { S.eve.steward5 = 'mirror'; note('Its eye flickered. It said “thank you for your patience” four times and backed down the stairs into the dark.'); } } : null,
+        { label: 'Close the door', primary: true, fn: () => { S.eve.steward5 = 'no'; M.marked++; } }
+      ].filter(Boolean) });
+  } },
+  { get d() { return A5_START + 6; }, id: 'lucia5', door: true, when: () => m5().homes.lucia === 'in', open() {
+    const M = m5(), warm = S.heatOn && M.sys.boiler > 25;
+    doorKnock({ title: 'A KNOCK · 2C', shadow: 'adult', who: 'lucia',
+      pre: 'A knock, and Danny coughing somewhere behind it.',
+      see: `<p>Lucía, holding Danny’s hand. He’s eleven and too big to be held, and shivering. <q>Our radiator hasn’t come on since Tuesday. He’s got a temperature. ${warm ? 'Yours is on. I can hear it.' : 'Is yours working? Anyone’s?'}</q></p>`,
+      buttons: [
+        warm ? { label: 'Bring him in. He can sleep by the radiator', primary: true, fn: () => { S.eve.lucia5 = 'in'; M.marked++; echo(S.day + 1, 'm5dannyWarm'); } } : null,
+        M.stock.batt ? { label: 'Give them a battery for their lamp', fn: () => { M.stock.batt--; S.eve.lucia5 = 'batt'; note('A battery for the little heater lamp Lucía keeps for emergencies. “This is one,” she said.'); } } : null,
+        { label: 'Give them your blanket', primary: !warm, fn: () => { S.eve.lucia5 = 'blanket'; S.bodyTemp = clamp(S.bodyTemp - .6, 30, 37); echo(S.day + 1, 'dannyBlanket'); } },
+        { label: '“We’re cold up here too.”', fn: () => { S.eve.lucia5 = 'no'; } }
+      ].filter(Boolean) });
+  } },
+  { get d() { return A5_START + 7; }, id: 'kims5', when: () => m5().homes.kims === 'in', open() {
+    const M = m5();
+    modal({ title: 'THE KIMS, FROM 2A', body: `<p>Mr. and Mrs. Kim on the landing with two suitcases and their grandson asleep on Mr. Kim’s shoulder. They took the offer. <q>Harmony Living. It’s warm. He’s four.</q></p><p>Mrs. Kim gives you a carrier bag: what was left in their cupboard. <q>Don’t let the stewards have it.</q></p>`,
+      buttons: [
+        { label: 'Help them down the stairs', primary: true, fn: () => { M.homes.kims = 'left'; M.stock.food += 2; M.stock.water++; M.stock.parts++; S.eve.kims5 = 'helped'; note('You carried a suitcase down four flights, past your own wire and oil. A white van was waiting, with the engine running and no driver.'); } },
+        { label: '“Stay. We’ll manage. We always manage.”', fn: () => { S.eve.kims5 = 'asked'; if (Math.random() < .5) { note('Mr. Kim looked at his grandson for a long time, and carried the suitcases back up.'); M.stock.food = Math.max(0, M.stock.food - 1); } else { M.homes.kims = 'left'; M.stock.food += 2; note('“We can’t,” Mrs. Kim said, and pressed the bag into your hands anyway.'); } } }
+      ] });
+  } },
+  { get d() { return A5_START + 8; }, id: 'ray5', door: true, when: () => m5().homes.ray === 'in', open() {
+    const M = m5();
+    doorKnock({ title: 'A KNOCK · RAY, FROM 5C', shadow: 'adult', who: 'ray',
+      pre: 'A knock with a knuckle, then the end of a screwdriver. Ray.',
+      see: `<p>Ray Malone, seventy-something, with a coil of antenna wire over his shoulder. <q>The aerial on the roof is pointed at a city that isn’t there any more. Hold the ladder for me and we’ll hear the whole band.</q></p><p>It’s dark. The drones like the roofs.</p>`,
+      buttons: [
+        { label: 'Hold the ladder', primary: true, fn: () => { M.ladder = true; S.eve.ray5 = 'ladder'; M.marked++; note('Forty minutes on the roof in the wind, holding a ladder for a man in his seventies, under a drone that never quite came. The radio sounds like a different radio.'); } },
+        { label: '“Not tonight, Ray. Not on the roof.”', fn: () => { S.eve.ray5 = 'no'; note('Ray nodded. He left the coil of wire on your mat anyway. “For the stairs, then.”'); M.stock.wire++; } }
+      ] });
+  } },
+  { get d() { return A5_START + 9; }, id: 'meeting5', when: () => m5People() > 2, open() {
+    const M = m5(), here = Object.entries(M.homes).filter(([, v]) => v === 'in').map(([k]) => A5_WHO[k].split(',')[0]);
+    modal({ title: 'THE STAIRWELL · 9 PM', body: `<p>Everyone who’s left sits on the stairs between the third and fourth floors, because it’s the only place with room: ${here.join(', ')}. Tomorrow is the fifteenth. Everybody heard the speakers.</p><p>Nobody says anything for a while. Then they all look at you, because you’re the one with the tablet coming.</p>`,
+      buttons: [
+        { label: '“We stay. All of us.”', primary: true, fn: () => { M.shared += 2; S.eve.meeting5 = 'stay'; note('Mrs. Adeyemi started singing something nobody else knew, and then everybody knew it.'); } },
+        { label: '“Everyone should do what they need to.”', fn: () => { S.eve.meeting5 = 'free'; const k = ['maya', 'lucia'].find(x => M.homes[x] === 'in'); if (k) { M.homes[k] = 'left'; note(`In the morning ${A5_WHO[k].split(',')[0]} had gone. The door was open and the beds were made.`); } } },
+        { label: '“I don’t know.”', fn: () => { S.eve.meeting5 = 'unsure'; note('It was the most honest thing anyone said all year. Ray laughed until he coughed.'); } }
+      ] });
+  } }
+];
+Object.assign(ECHO, {
+  m5tundeWith() { note('Tunde left a second bag hanging on your door handle: a canvas one, with a strap, and his name inside the flap.'); },
+  m5mayaSafe() { note('Maya stays inside now. You can hear her through the floor at night, practising scales on a keyboard with no power, just the clicks.'); },
+  m5dannyWarm() { if (S.food) S.food = clamp(S.food - 5, 0, 100); note('Danny slept by your radiator with the cat across his feet. His fever broke at four. Lucía cried a little, quietly, so he wouldn’t wake.'); },
+  m5gone_kims() { note('Somebody has already taken the Kims’ doormat. It said WELCOME in three languages.'); },
+  m5gone_lucia() { note('There’s a drawing taped to the inside of 2C’s window, facing out: a building with every window lit.'); },
+  m5gone_adeyemi() { note('3B is sealed. Tunde’s bag is still on your door handle.'); },
+  m5gone_maya() { note('4C is quiet. The makeup mirror is still on the landing, angled down the stairs.'); },
+  m5gone_okafor() { note('4A is sealed again. The pot she lent you is still in your sink.'); },
+  m5gone_ray() { note('5C is sealed. The radio still works. You can tune it by ear now, nearly as well as he could.'); }
+});
 
 // ================= modals =================
 // ---- the people: a face for everyone who knocks, calls or sits across a table from you ----
@@ -7671,7 +8295,8 @@ function budget() {
   }
   let inD = 0, outD = (S.power && S.heatOn ? pr('heat') : 0) + mealCost() + catCost(), lump = 0, dueDay, due, what;
   if (S.act === 2) {
-    if (S.phase === 'consensus') { dueDay = S.m4 && S.m4.ch < 4 ? A4[S.m4.ch] : A4_SHUT + 1; due = 0; what = 'rent'; }
+    if (S.phase === 'holdout') { dueDay = A5_END; due = 0; what = 'the last approval'; }
+    else if (S.phase === 'consensus') { dueDay = S.m4 && S.m4.ch < 4 ? A4[S.m4.ch] : A4_SHUT + 1; due = 0; what = 'rent'; }
     else if (S.phase === 'mirage') { dueDay = 273; due = S.m3 && S.m3.rent ? 0 : RENT; what = 'November rent'; }
     else if (S.day < ACT2_RENT_DAY) { dueDay = ACT2_RENT_DAY; due = RENT + ELEC_JUN; what = 'rent + electric'; }
     else { dueDay = ACT2_END + 1; due = RENT; what = 'July rent'; }
@@ -7681,7 +8306,8 @@ function budget() {
   if (evict) { dueDay = S.graceUntil; due = S.owed; what = 'to stop the eviction'; }
   const days = Math.max(0, dueDay - S.day);
   if (S.act === 2) {
-    if (S.phase === 'consensus') inD = 11 + (S.m4 && S.m4.band ? 80 : 0);
+    if (S.phase === 'holdout') inD = 0;
+    else if (S.phase === 'consensus') inD = 11 + (S.m4 && S.m4.band ? 80 : 0);
     else if (S.phase === 'trainer') inD = S.taskRate * ratingMult() * S.quota;
     else if (!S.fired) {
       // checkpoint pay only lands when you sign, so count the ones you could still sign before the due date
@@ -7700,6 +8326,24 @@ function renderHud() {
   const B = budget(), net = B.inD - B.outD;
   const dd = B.days === 1 ? '1 day' : B.days + ' days';
   const md = fmtDay(B.dueDay).slice(4);
+  const ck = $('hCash').previousElementSibling;
+  if (S.phase === 'holdout' && S.m5) { // Act V: no rent and no money worth counting. What's in the cupboard, and how warm 4B looks from the air
+    const M = S.m5, sig = m5Sig(), line = m5Line(S.day), hot = sig > line, el = $('hCash');
+    if (el._a) { el._a.stop(); el._a = null; } el._v = undefined;
+    if (ck) ck.textContent = 'Cupboard';
+    el.textContent = `${M.stock.food} ${M.stock.food === 1 ? 'tin' : 'tins'}`; el.className = 'hv' + (M.stock.food < 2 ? ' danger' : '');
+    $('hCashSub').textContent = `water ${M.stock.water} · parts ${M.stock.parts} · batteries ${M.stock.batt}`;
+    $('hRateK').textContent = 'From the air'; $('hRate').textContent = `${sig} / ${line}`; $('hRate').className = 'hv' + (hot ? ' danger' : ' ok');
+    $('hRateSub').textContent = S.heatOn && M.sys.boiler > 25 ? 'the boiler shows' : 'cold, and hard to see';
+    $('hProjCell').className = 'hc hp ' + (hot ? 'short' : sig > line - 8 ? 'close' : 'ok');
+    $('hProjK').textContent = A5_TESTS.includes(S.day) ? 'Tonight · transformer test' : S.day >= A5_END ? 'Today' : `Tonight · ${A5_END - S.day} ${A5_END - S.day === 1 ? 'day' : 'days'} to the 15th`;
+    $('hProj').textContent = S.day >= A5_END ? 'the last approval' : hot ? 'they’ll come' : 'quiet, probably';
+    $('hProjSub').textContent = `${m5Held()} on the stairs · ${m5People()} households`;
+    $('hBarProj').style.width = clamp(sig, 0, 100) + '%'; $('hBarCash').style.left = clamp(line, 0, 99) + '%';
+    S.heat = hot ? clamp(50 + (sig - line) * 2, 0, 100) : clamp(sig * .5, 0, 38); // the drone at the window, and feet under the door
+    goalSync(); return;
+  }
+  if (ck) ck.textContent = 'Cash';
   rollMoney($('hCash'), B.avail);
   $('hCash').className = 'hv' + (B.avail < 0 ? ' danger' : '');
   $('hCashSub').textContent = S.act !== 2 && S.phase === 'farm' ? `checking · ★${(S.stars || 3).toFixed(1)}` : 'checking';
@@ -7885,6 +8529,12 @@ $('view').addEventListener('click', e => {
 // the kitchen: seven dinners, with what each one is really like
 var kitchenKey = '';
 function kitchenSync() {
+  const a5 = S.phase === 'holdout' && S.m5, h = document.querySelector('#popKitchen .kt-h');
+  for (const id of ['actCoffee', 'actPills']) if ($(id)) $(id).hidden = !!a5;
+  if (h) h.innerHTML = a5 ? '<span>THE CUPBOARD</span><small>a tin a day, at night</small>' : '<span>DINNER, EVERY NIGHT</span><small>paid at the ledger</small>';
+  if (a5) { const M = S.m5, key = 'a5|' + M.stock.food + '|' + M.stock.water; if (key === kitchenKey) return; kitchenKey = key;
+    $('mealGrid').innerHTML = `<p class="kt-say" style="grid-column:1/-1;margin:0">${M.stock.food ? `${M.stock.food} ${M.stock.food === 1 ? 'tin' : 'tins'} of food and ${M.stock.water} ${M.stock.water === 1 ? 'bottle' : 'bottles'} of water. You eat one tin a night. The shops in Zone B deliver to registered residents only.` : 'Nothing in the cupboard but a jar of instant coffee with no coffee in it. Harbor Market, the loading bay, Tunde said.'}</p>`;
+    $('mealSay').textContent = M.stock.food < 2 ? 'Tomorrow is a supply run, or tomorrow is hungry.' : ''; return; }
   const key = MEAL_KEYS.map(k => mealCost(k)).join(',') + '|' + S.meal;
   if (key === kitchenKey) return; kitchenKey = key;
   $('mealGrid').innerHTML = MEAL_KEYS.map(k => `<button data-meal="${k}" aria-pressed="${k === (S.meal || 'ramen')}">${esc(MEALS[k].label)}<b>${mealCost(k) ? money(mealCost(k)) : 'free'}</b></button>`).join('');
@@ -8250,6 +8900,10 @@ function mgSound(env, name, k = 0) {
     case 'zap': T(1200, .08, 'sawtooth', .04, 90); T(60, .4, 'square', .04, 30, .06); break;
     case 'alarm': T(620, .18, 'sawtooth', .04); T(440, .2, 'sawtooth', .04, 0, .2); break;
     case 'blip': T(660 + k * 40, .03, 'sine', .03); break;
+    case 'dot': T(700, .1, 'square', .022); break; // the radio: a call sign, short and long
+    case 'dash': T(700, .32, 'square', .022); break;
+    case 'static': for (let i = 0; i < 3; i++) T(300 + Math.random() * 2600, .02, 'sawtooth', .01, 0, i * .025); break;
+    case 'crank': T(70 + k * 8, .05, 'square', .018, 50); break;
   }
 }
 
@@ -12324,6 +12978,672 @@ MINI.jailbreak = {
     };
   }
 };
+// Supply run (kind "sneak"): four blocks of Zone B at night, seen from above. Drones sweep heat cones, and you are
+// warm when you move and cold when you hide. Stewards roll the streets with a lidar beam, and they can't fit through
+// a 400 mm gap. Get what's chalked on the map, then get home. In the last run you carry the radio to the water tower.
+// opts: { loot: [kinds], drones, stewards, mirrors, oil, nests, time, final, siege, distract: [names] }
+MINI.sneak = {
+  title: 'Supply run', how: 'Get what’s chalked on the map, then get home. Moving warms you up. The cold hides you.',
+  keys: 'Arrows or WASD · SHIFT runs (hot) · SPACE drops a mirror · E pours oil · or click to walk', pace: 24,
+  create(api) {
+    const { P } = api, O = api.opts || {}, LV = api.level, FINAL = !!O.final;
+    const TS = 8, C = 40, R = 18, Y0 = 20, N = C * R, DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+    const ix = (c, r) => r * C + c, tcx = i => (i % C) * TS + TS / 2, tcy = i => Y0 + ((i / C) | 0) * TS + TS / 2;
+    const tileAt = (x, y) => { const c = Math.floor(x / TS), r = Math.floor((y - Y0) / TS); return c < 0 || r < 0 || c >= C || r >= R ? -1 : ix(c, r); };
+    const md = (a, b) => Math.abs(a % C - b % C) + Math.abs(((a / C) | 0) - ((b / C) | 0));
+    const NAME = { food: 'FOOD', water: 'WATER', batt: 'BATTERIES', parts: 'PARTS', oil: 'OIL', glass: 'MIRROR', wire: 'WIRE', foil: 'FOIL', relay: 'RELAY' };
+    // T: 0 street · 1 building · 2 a 400 mm gap or a yard (you fit, they don't). cold: shade, puddles, stone: it hides your heat
+    const T = new Uint8Array(N).fill(1), cold = new Uint8Array(N), yard = new Uint8Array(N), wire = new Uint8Array(N);
+    const cs = [1, 9 + api.ri(0, 1), 18 + api.ri(0, 1), 27 + api.ri(0, 1), 36], rs = [1, 8 + api.ri(-1, 0), 15];
+    for (const c of cs) for (let r = 1; r <= 16; r++) T[ix(c, r)] = T[ix(c + 1, r)] = 0;
+    for (const r of rs) for (let c = 1; c <= 37; c++) T[ix(c, r)] = T[ix(c, r + 1)] = 0;
+    const blocks = [];
+    for (let i = 0; i < cs.length - 1; i++) for (let j = 0; j < rs.length - 1; j++) blocks.push({ c0: cs[i] + 2, c1: cs[i + 1] - 1, r0: rs[j] + 2, r1: rs[j + 1] - 1 });
+    const yardK = api.ri(1, blocks.length - 1); let yardTile = -1;
+    blocks.forEach((b, k) => {
+      const w = b.c1 - b.c0 + 1, h = b.r1 - b.r0 + 1;
+      if (k === yardK && w >= 5 && h >= 4) { // a yard behind the shops, and one way in
+        const yc = b.c0 + api.ri(1, w - 3), yr = b.r0 + api.ri(1, h - 3);
+        for (let c = yc; c < yc + 2; c++) for (let r = yr; r < yr + 2; r++) { T[ix(c, r)] = 2; yard[ix(c, r)] = 1; }
+        yardTile = ix(yc + 1, yr + 1);
+        if (api.chance(.5)) for (let r = b.r0; r < yr; r++) { T[ix(yc, r)] = 2; cold[ix(yc, r)] = 1; }
+        else for (let r = yr + 2; r <= b.r1; r++) { T[ix(yc, r)] = 2; cold[ix(yc, r)] = 1; }
+        return;
+      }
+      if (!api.chance(.62)) return;
+      if (api.chance(.5)) { const c = b.c0 + api.ri(1, w - 2); for (let r = b.r0; r <= b.r1; r++) { T[ix(c, r)] = 2; cold[ix(c, r)] = 1; } }
+      else { const r = b.r0 + api.ri(1, h - 2); for (let c = b.c0; c <= b.c1; c++) { T[ix(c, r)] = 2; cold[ix(c, r)] = 1; } }
+    });
+    const nextToWall = i => { const c = i % C, r = (i / C) | 0; return DIRS.some(([dc, dr]) => { const nc = c + dc, nr = r + dr; return nc >= 0 && nr >= 0 && nc < C && nr < R && T[ix(nc, nr)] === 1; }); };
+    for (let i = 0; i < N; i++) if (T[i] === 0 && nextToWall(i) && api.chance(.13)) { cold[i] = 1; const j = i + (api.chance(.5) ? 1 : C); if (j < N && T[j] === 0) cold[j] = 1; } // awnings, puddles
+    const home = { x: 2 * TS, y: Y0 + 16 * TS + 3 }, goal = FINAL ? { x: 37 * TS, y: Y0 + TS + 3 } : home;
+    cold[ix(1, 16)] = cold[ix(3, 16)] = 1; // the doorway's shadow
+    const start = tileAt(home.x, home.y);
+    const street = []; for (let i = 0; i < N; i++) if (T[i] === 0) street.push(i);
+    const nests = O.nests != null ? O.nests : 1 + (LV < .5 ? 1 : 0);
+    for (let k = 0, tries = 0; k < nests && tries < 200; tries++) { const i = api.pick(street); if (md(i, start) > 10 && !cold[i] && !wire[i]) { wire[i] = 1; k++; } }
+
+    function bfs(from, to, ok) { // tiles from `from` (exclusive) to `to` (inclusive), or null
+      if (from < 0 || to < 0) return null; if (from === to) return [];
+      const prev = new Int16Array(N).fill(-1); prev[from] = from; const q = [from];
+      for (let h = 0; h < q.length; h++) {
+        const i = q[h]; if (i === to) break; const c = i % C, r = (i / C) | 0;
+        for (const [dc, dr] of DIRS) { const nc = c + dc, nr = r + dr; if (nc < 0 || nr < 0 || nc >= C || nr >= R) continue; const j = ix(nc, nr); if (prev[j] >= 0 || !ok(j)) continue; prev[j] = i; q.push(j); }
+      }
+      if (prev[to] < 0) return null; const p = []; for (let i = to; i !== from; i = prev[i]) p.push(i); return p.reverse();
+    }
+    const walkable = j => T[j] !== 1, streetOnly = j => T[j] === 0; // a 400 mm gap is not a street, to a steward
+    function nearestStreet(i) { if (i < 0) return -1; if (T[i] === 0) return i; const seen = new Uint8Array(N), q = [i]; seen[i] = 1; for (let h = 0; h < q.length; h++) { const k = q[h]; if (T[k] === 0) return k; const c = k % C, r = (k / C) | 0; for (const [dc, dr] of DIRS) { const nc = c + dc, nr = r + dr; if (nc < 0 || nr < 0 || nc >= C || nr >= R) continue; const j = ix(nc, nr); if (!seen[j] && walkable(j)) { seen[j] = 1; q.push(j); } } } return -1; }
+
+    // ---- what's chalked on the map ----
+    const want = (O.loot && O.loot.length ? O.loot : FINAL ? ['relay', 'relay', 'relay'] : ['food', 'food', 'batt', 'parts']).slice(0, 7), picks = [];
+    if (yardTile >= 0 && !FINAL) picks.push(yardTile); // the best of it is where they can't follow
+    const open = []; for (let i = 0; i < N; i++) if (T[i] !== 1) open.push(i);
+    for (const i of api.shuffle(open)) { if (picks.length >= want.length) break; if (md(i, start) < 12 || picks.some(p => md(p, i) < 7) || wire[i] || md(i, tileAt(goal.x, goal.y)) < 4) continue; picks.push(i); }
+    for (const i of api.shuffle(open)) { if (picks.length >= want.length) break; if (!picks.includes(i) && md(i, start) >= 8) picks.push(i); }
+    const loot = want.map((k, n) => ({ k, i: picks[n], x: tcx(picks[n]), y: tcy(picks[n]), got: false, gone: false, plug: 0 }));
+
+    // ---- who's looking ----
+    const drones = [], nD = O.drones != null ? O.drones : 1 + Math.round(LV * 2);
+    for (let k = 0; k < nD; k++) { let x, y, n = 0; do { x = api.ri(40, 300); y = api.ri(30, 156); } while (Math.hypot(x - home.x, y - home.y) < 120 && ++n < 50); drones.push({ x, y, tx: x, ty: y, v: 12 + LV * 8 + api.rand() * 5, hd: 0, dir: 0, ph: api.rand() * 6, ringT: api.rand() * 2.4, rings: [], R: 30 + LV * 12 + api.ri(0, 6), half: .56, aware: 0, lure: 0, inC: false }); }
+    const stew = [], nS = O.stewards != null ? O.stewards : 1 + Math.round(LV * 1.4);
+    for (let k = 0; k < nS; k++) { let i, n = 0; do { i = api.pick(street); } while (md(i, start) < 15 && ++n < 80); stew.push({ x: tcx(i), y: tcy(i), path: [], hd: 0, mode: 'patrol', t: 0, stuck: 0, blind: 0, scan: 0, goal: -1, cant: 0, beam: null }); }
+
+    const me = { x: home.x, y: home.y - 3, stun: 0, step: 0, flip: false };
+    const keys = { u: false, d: false, l: false, r: false, sh: false };
+    let heat = .35, eff = .35, spotCool = 0, carried = [], lost = 0, grabbed = 0, goHome = 0, moving = false, dawn = false, fell = false, over = false;
+    let timeLeft = O.time || (FINAL ? (O.siege || 120) : 100 + want.length * 14), clickPath = null, botT = 0, banner = null, distT = 14, distN = 0;
+    let mirrorsLeft = O.mirrors || 0, oilLeft = O.oil || 0;
+    const mirrors = [], slicks = [];
+    const onUp = e => { const k = e.key; if (k === 'ArrowUp' || k === 'w' || k === 'W') keys.u = false; if (k === 'ArrowDown' || k === 's' || k === 'S') keys.d = false; if (k === 'ArrowLeft' || k === 'a' || k === 'A') keys.l = false; if (k === 'ArrowRight' || k === 'd' || k === 'D') keys.r = false; if (k === 'Shift') keys.sh = false; };
+    const onBlur = () => { keys.u = keys.d = keys.l = keys.r = keys.sh = false; };
+    addEventListener('keyup', onUp); addEventListener('blur', onBlur);
+
+    // ---- the map, drawn once ----
+    const mapCv = document.createElement('canvas'); mapCv.width = C * TS; mapCv.height = R * TS;
+    (function paint() {
+      const m = mapCv.getContext('2d'), F = (x, y, w, h, c) => { m.fillStyle = c; m.fillRect(x, y, w, h); }, H = (a, b) => { let h = (a * 374761393 + b * 668265263) | 0; h = (h ^ (h >>> 13)) * 1274126177 | 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; };
+      for (let i = 0; i < N; i++) {
+        const c = i % C, r = (i / C) | 0, x = c * TS, y = r * TS;
+        if (T[i] === 1) { // roofs: tar, a lip on the street side, vents and water tanks
+          F(x, y, TS, TS, (c + r) % 2 ? '#222a30' : '#1f262c');
+          if (r + 1 < R && T[i + C] !== 1) { F(x, y + TS - 2, TS, 2, P.k1); F(x, y + TS - 3, TS, 1, P.s1); }
+          if (r > 0 && T[i - C] !== 1) F(x, y, TS, 1, P.s2);
+          if (c > 0 && T[i - 1] !== 1) F(x, y, 1, TS, '#2a343b');
+          if (c + 1 < C && T[i + 1] !== 1) F(x + TS - 1, y, 1, TS, P.k1);
+          const k = H(c, r); if (k < .06) { F(x + 2, y + 2, 3, 3, P.s1); F(x + 2, y + 2, 3, 1, P.s2); } else if (k < .09) { F(x + 1, y + 3, 5, 3, P.d1); F(x + 2, y + 2, 3, 1, P.d2); }
+        } else if (yard[i]) { F(x, y, TS, TS, P.g0); if (H(c, r) < .5) F(x + 2 + (c % 3), y + 3, 1, 2, P.g1); }
+        else if (T[i] === 2) { // a slot of shadow between two buildings
+          F(x, y, TS, TS, '#06080a');
+          const wall = (dc, dr) => { const nc = c + dc, nr = r + dr; return nc < 0 || nr < 0 || nc >= C || nr >= R || T[ix(nc, nr)] === 1; };
+          if (wall(-1, 0)) F(x, y, 2, TS, P.s1); if (wall(1, 0)) F(x + TS - 2, y, 2, TS, P.k1);
+          if (wall(0, -1)) F(x, y, TS, 2, P.s1); if (wall(0, 1)) F(x, y + TS - 2, TS, 2, P.k1);
+        }
+        else {
+          F(x, y, TS, TS, '#0b0e11');
+          if (H(c * 3, r * 7) < .25) F(x + (H(c, r * 3) * 6 | 0), y + (H(r, c) * 6 | 0), 1, 1, '#141a1f');
+          const hz = cs.includes(c - 1) && !rs.includes(r) && !rs.includes(r - 1), vt = rs.includes(r - 1) && !cs.includes(c) && !cs.includes(c - 1);
+          if (hz && r % 2) F(x, y + 2, 1, 4, P.s1); // the centre line, dashed
+          if (vt && c % 2) F(x + 2, y, 4, 1, P.s1);
+        }
+        if (cold[i]) { F(x, y, TS, TS, 'rgba(32,104,92,.22)'); if (T[i] === 0) { F(x + 1, y + 5, 3, 1, 'rgba(127,216,192,.18)'); F(x + 5, y + 2, 2, 1, 'rgba(127,216,192,.14)'); } }
+        if (wire[i]) { m.strokeStyle = P.s4; m.lineWidth = 1; m.beginPath(); for (let k = 0; k < 6; k++) { const a = H(i, k) * 6.28, b = H(k, i) * 6.28; m.moveTo(x + 4 + Math.cos(a) * 3, y + 4 + Math.sin(a) * 3); m.lineTo(x + 4 + Math.cos(b) * 3, y + 4 + Math.sin(b) * 3); } m.stroke(); }
+      }
+      for (let i = 0; i < N; i++) if (T[i] === 2 && !yard[i]) { // hazard ticks where a gap meets the street: 400 mm
+        const c = i % C, r = (i / C) | 0;
+        for (const [dc, dr] of DIRS) { const nc = c + dc, nr = r + dr; if (nc < 0 || nr < 0 || nc >= C || nr >= R || T[ix(nc, nr)] !== 0) continue; const x = c * TS, y = r * TS; if (dr) { F(x + 1, dr > 0 ? y + TS - 1 : y, 2, 1, P.a2); F(x + 5, dr > 0 ? y + TS - 1 : y, 2, 1, P.a2); } else { F(dc > 0 ? x + TS - 1 : x, y + 1, 1, 2, P.a2); F(dc > 0 ? x + TS - 1 : x, y + 5, 1, 2, P.a2); } }
+      }
+      // Block 4B's door, bottom left: a light left on in the stairwell
+      const dx = home.x - 6, dy = 17 * TS; F(dx - 2, dy, 16, TS, P.r0); F(dx, dy + 1, 12, TS - 1, P.d2); F(dx + 1, dy + 2, 4, 5, P.a1); F(dx + 7, dy + 2, 4, 5, P.a1); F(dx, dy, 12, 1, P.a3);
+      if (FINAL) { const tx = goal.x - 8, ty = 0; F(tx + 2, ty + 2, 1, 6, P.s3); F(tx + 13, ty + 2, 1, 6, P.s3); F(tx, ty, 16, 4, P.d3); F(tx, ty, 16, 1, P.d5); F(tx + 7, ty - 0, 2, 1, P.a3); } // the water tower
+    })();
+
+    // ---- what happens ----
+    function spotted(by) {
+      if (spotCool > 0 || over) return; spotCool = 2.4;
+      for (const d of drones) d.aware = 0;
+      api.shake(5); api.flash(P.e2, .25); api.sfx('alarm');
+      const g = nearestStreet(tileAt(me.x, me.y));
+      for (const s of stew) { s.mode = 'chase'; s.t = 6.5; s.goal = g; s.path = []; }
+      const left = loot.filter(l => !l.got && !l.gone);
+      if (left.length) {
+        left.sort((a, b) => Math.hypot(b.x - me.x, b.y - me.y) - Math.hypot(a.x - me.x, a.y - me.y)); const l = left[0]; l.gone = true; lost++;
+        api.item(false, me.x, me.y - 10, by === 'lidar' ? 'LIDAR' : 'SPOTTED'); api.pop(l.x, l.y - 6, 'TAKEN', P.e3, 7); api.burst(l.x, l.y, P.e3, 8, 40); api.emit('spotted', { by, lost: l.k });
+      } else if (carried.length) { const k = carried.pop(); lost++; api.pop(me.x, me.y - 10, 'DROPPED ' + NAME[k], P.e3, 8); api.emit('spotted', { by, dropped: k }); }
+      else { api.pop(me.x, me.y - 10, 'SPOTTED', P.e3, 9); api.emit('spotted', { by }); }
+    }
+    function canStand(x, y) { for (const [ox, oy] of [[-2.5, -2.5], [2.5, -2.5], [-2.5, 2.5], [2.5, 2.5]]) { const i = tileAt(x + ox, y + oy); if (i < 0 || T[i] === 1) return false; } return true; }
+    function tryMove(dx, dy) { if (canStand(me.x + dx, me.y + dy)) { me.x += dx; me.y += dy; return true; } return false; }
+    function moveMe(dt) {
+      if (me.stun > 0) { me.stun -= dt; moving = false; return; }
+      let ax = (keys.r ? 1 : 0) - (keys.l ? 1 : 0), ay = (keys.d ? 1 : 0) - (keys.u ? 1 : 0);
+      if (ax || ay) clickPath = null;
+      else if (clickPath && clickPath.length) { const nx = tcx(clickPath[0]), ny = tcy(clickPath[0]), dx = nx - me.x, dy = ny - me.y, d = Math.hypot(dx, dy); if (d < 1.2) clickPath.shift(); else { ax = dx / d; ay = dy / d; } }
+      moving = !!(ax || ay);
+      const here = tileAt(me.x, me.y), run = keys.sh && moving, sp = (run ? 52 : 31) * (here >= 0 && T[here] === 2 ? .82 : 1), len = Math.hypot(ax, ay) || 1;
+      const vx = ax / len * sp * dt, vy = ay / len * sp * dt, nudge = sp * dt;
+      if (vx && !tryMove(vx, 0)) for (const o of [1, -1, 2, -2, 3, -3, 4, -4]) if (canStand(me.x + vx, me.y + o)) { tryMove(0, Math.sign(o) * Math.min(Math.abs(o), nudge)); break; }
+      if (vy && !tryMove(0, vy)) for (const o of [1, -1, 2, -2, 3, -3, 4, -4]) if (canStand(me.x + o, me.y + vy)) { tryMove(Math.sign(o) * Math.min(Math.abs(o), nudge), 0); break; }
+      if (moving) { me.step += dt * (run ? 12 : 7); if (ax) me.flip = ax < 0; }
+      const inCold = here >= 0 && cold[here];
+      heat = clampN(heat + dt * (moving ? (run ? .3 : .085) : -.15) - (inCold ? dt * .26 : 0), 0, 1);
+      eff = heat * (inCold ? .35 : 1);
+    }
+    function droneStep(d, dt) {
+      if (d.lure > 0) d.lure -= dt;
+      const dx = d.tx - d.x, dy = d.ty - d.y, dist = Math.hypot(dx, dy), v = d.v * (d.lure > 0 ? 2.4 : 1) * dt;
+      if (dist < 3) { if (d.lure <= 0) { d.tx = api.ri(14, 306); d.ty = api.ri(26, 158); } } else { d.x += dx / dist * Math.min(v, dist); d.y += dy / dist * Math.min(v, dist); d.hd = Math.atan2(dy, dx); }
+      d.dir = d.hd + Math.sin(api.t * .9 + d.ph) * 1.1;
+      d.ringT -= dt; if (d.ringT <= 0) { d.ringT = 2.4; d.rings.push(0); const near = Math.hypot(d.x - me.x, d.y - me.y); if (near < 130) api.sfx('blip', Math.round((130 - near) / 10)); } // you hear them before you see them
+      for (let k = 0; k < d.rings.length; k++) d.rings[k] += dt; d.rings = d.rings.filter(r => r < 1.3);
+      const ex = me.x - d.x, ey = me.y - d.y, dd = Math.hypot(ex, ey); let inC = dd < 7;
+      if (!inC && dd < d.R) { let a = Math.atan2(ey, ex) - d.dir; a = Math.atan2(Math.sin(a), Math.cos(a)); inC = Math.abs(a) < d.half; }
+      d.inC = inC;
+      if (inC && eff > .25 && d.lure <= 0) d.aware += dt * (.7 + LV * .8) * clampN((eff - .25) / .5, .25, 1.4) * (dawn ? 1.8 : 1);
+      else d.aware = Math.max(0, d.aware - dt * .7);
+      if (d.aware >= 1) spotted('drone');
+    }
+    function stewStep(s, dt) {
+      if (s.stuck > 0) { s.stuck -= dt; s.beam = null; return; }
+      if (s.blind > 0) { s.blind -= dt; s.hd += dt * 4; s.beam = null; return; }
+      if (s.scan > 0) { s.scan -= dt; return; }
+      if (s.mode === 'chase') { s.t -= dt; if (s.t <= 0) { s.mode = 'patrol'; s.path = []; } }
+      if (!s.path.length) {
+        const here = tileAt(s.x, s.y);
+        if (s.mode === 'chase') { s.path = bfs(here, s.goal, streetOnly) || []; if (!s.path.length) { const mt = tileAt(me.x, me.y); if (mt >= 0 && T[mt] === 2 && Math.hypot(me.x - s.x, me.y - s.y) < 26 && s.cant <= 0) { s.cant = 3; api.pop(s.x, s.y - 9, 'CAN’T FIT', P.t4, 7); api.emit('trick', { k: 'gap' }); } } }
+        else s.path = bfs(here, api.pick(street), streetOnly) || [];
+      }
+      s.cant -= dt;
+      if (s.path.length) {
+        const nx = tcx(s.path[0]), ny = tcy(s.path[0]), dx = nx - s.x, dy = ny - s.y, d = Math.hypot(dx, dy), v = (s.mode === 'chase' ? 30 + LV * 10 : 17 + LV * 9) * dt;
+        if (d <= v) { s.x = nx; s.y = ny; s.path.shift(); } else { s.x += dx / d * v; s.y += dy / d * v; }
+        if (d > .01) s.hd = Math.atan2(dy, dx);
+      }
+      const i = tileAt(s.x, s.y);
+      if (i >= 0 && wire[i]) { wire[i] = 0; s.stuck = 4; s.path = []; api.pop(s.x, s.y - 9, 'SNAGGED', P.a3, 7); api.sfx('crunch'); api.emit('trick', { k: 'wire' }); repaintTile(i); }
+      for (const o of slicks) if (!o.used && Math.hypot(o.x - s.x, o.y - s.y) < 8) { o.used = true; s.stuck = 4.5; s.hd += 2.4; s.path = []; api.pop(s.x, s.y - 9, 'SLIPPED', P.a3, 7); api.sfx('whoosh'); api.emit('trick', { k: 'oil' }); }
+      // the beam: along its heading until a wall. A mirror sends it nowhere
+      const L = 46, kx = Math.cos(s.hd), ky = Math.sin(s.hd); let bx = s.x, by = s.y, hit = false;
+      for (let k = 4; k <= L; k += 2) {
+        const x = s.x + kx * k, y = s.y + ky * k, j = tileAt(x, y); if (j < 0 || T[j] === 1) break; bx = x; by = y;
+        const m = mirrors.find(o => !o.gone && Math.abs(o.x - x) < 4 && Math.abs(o.y - y) < 4);
+        if (m) { s.blind = 3.5; m.hits++; if (m.hits >= 3) m.gone = true; api.pop(s.x, s.y - 9, 'BLINDED', P.t5, 7); api.sfx('zap'); api.emit('trick', { k: 'mirror' }); break; }
+        if (Math.abs(me.x - x) < 3.5 && Math.abs(me.y - y) < 4.5) { hit = true; break; }
+      }
+      s.beam = [bx, by];
+      if (hit) spotted('lidar');
+      if (Math.hypot(s.x - me.x, s.y - me.y) < 6 && me.stun <= 0) { // it has you: a hand on the bag, a scan of your face
+        me.stun = 1.1; s.scan = 1.6; grabbed++; api.shake(6); api.sfx('crash');
+        if (carried.length) { const k = carried.splice(api.ri(0, carried.length - 1), 1)[0]; lost++; api.pop(me.x, me.y - 10, 'TAKEN: ' + NAME[k], P.e3, 8); api.emit('grabbed', { k }); }
+        else { api.pop(me.x, me.y - 10, 'SCANNED', P.e3, 8); api.emit('grabbed', {}); }
+      }
+    }
+    function repaintTile(i) { const m = mapCv.getContext('2d'), x = (i % C) * TS, y = ((i / C) | 0) * TS; m.fillStyle = '#0b0e11'; m.fillRect(x, y, TS, TS); if (cold[i]) { m.fillStyle = 'rgba(32,104,92,.22)'; m.fillRect(x, y, TS, TS); } m.fillStyle = P.s3; m.fillRect(x + 1, y + 4, 2, 1); m.fillRect(x + 5, y + 2, 1, 2); }
+    function finishAt(label) { over = true; api.item(true, (FINAL ? goal : home).x, (FINAL ? goal : home).y - 8, label); api.emit(FINAL ? 'tower' : 'home', { carried: carried.slice(), lost, grabbed }); }
+
+    // ---- sprites ----
+    const SPR = {
+      food: api.art(['.oooo.', 'osssso', 'oeeeeo', 'oepeeo', 'oeeeeo', '.oooo.'], { o: P.k0, s: P.s4, e: P.e2, p: P.p3 }),
+      water: api.art(['..oo..', '.otto.', 'ottTto', 'ottTto', 'ottTto', '.oooo.'], { o: P.k0, t: P.t2, T: P.t4 }),
+      batt: api.art(['..oo..', 'oaaaao', 'oaAAao', 'okkkko', 'okkkko', 'oooooo'], { o: P.k0, a: P.a2, A: P.a4, k: P.k2 }),
+      parts: api.art(['.o.o..', 'ossso.', 'osksso', 'ossso.', '.o.o..'], { o: P.k0, s: P.s4, k: P.k1 }),
+      oil: api.art(['..oo..', '.okko.', 'okkkko', 'okaako', 'okkkko', 'oooooo'], { o: P.k0, k: P.k3, a: P.a1 }),
+      glass: api.art(['..o...', '.oto..', 'otTto.', '.oto..', '..o...'], { o: P.k0, t: P.t4, T: P.t5 }),
+      wire: api.art(['.oooo.', 'odddo.', 'od.do.', 'odddo.', '.oooo.'], { o: P.k0, d: P.d4 }),
+      foil: api.art(['oooooo', 'opPpPo', 'oPpPpo', 'opPpPo', 'oooooo'], { o: P.k0, p: P.p4, P: P.p0 }),
+      relay: api.art(['..a...', '..o...', '.ooo..', 'ossso.', 'ossso.', 'oooooo'], { o: P.k0, s: P.s3, a: P.a3 }),
+      me: [api.art(['.hh.', 'hffh', 'cCcb', 'cCccb', '.cc.', '.k.k'], { h: P.k1, f: P.h3, c: P.r2, C: P.r3, b: P.a1, k: P.k0 }), api.art(['.hh.', 'hffh', 'cCcb', 'cCccb', '.cc.', 'k..k'], { h: P.k1, f: P.h3, c: P.r2, C: P.r3, b: P.a1, k: P.k0 })],
+      stew: api.art(['.oooooo.', 'opppppPo', 'opppppPo', 'opppppPo', 'osssssso', '.k.oo.k.'], { o: P.k0, p: P.p3, P: P.p1, s: P.s3, k: P.k1 }),
+      drone: api.art(['rr.....rr', '.o.....o.', '.ooooooo.', '..osSso..', '...ooo...'], { r: P.s4, o: P.k0, s: P.s2, S: P.s3 })
+    };
+
+    return {
+      tick(dt) {
+        if (over) return;
+        spotCool = Math.max(0, spotCool - dt); if (banner) { banner.t -= dt; if (banner.t <= 0) banner = null; }
+        moveMe(dt);
+        for (const d of drones) droneStep(d, dt);
+        for (const s of stew) stewStep(s, dt);
+        for (const m of mirrors) { m.t -= dt; if (m.t <= 0) m.gone = true; }
+        if (over) return;
+        for (const l of loot) if (!l.got && !l.gone && Math.abs(l.x - me.x) < 6 && Math.abs(l.y - me.y) < 6) {
+          if (l.k === 'relay') { if (moving) { l.plug = Math.max(0, l.plug - dt * 2); continue; } l.plug += dt; if (l.plug < 1.2) continue; }
+          l.got = true; if (l.k !== 'relay') carried.push(l.k);
+          api.item(true, l.x, l.y - 6, l.k === 'relay' ? 'RELAY ON' : '+' + NAME[l.k]); api.sfx('coin'); api.burst(l.x, l.y, P.a3, 10, 50); api.emit('pickup', { k: l.k });
+        }
+        timeLeft -= dt;
+        if (timeLeft <= 0 && !dawn) {
+          dawn = true;
+          if (FINAL) { fell = true; over = true; api.emit('fell', {}); for (const l of loot) if (!l.got && !l.gone) { l.gone = true; api.item(false, l.x, l.y, '', { quiet: true }); } api.item(false, goal.x, goal.y - 8, 'TOO LATE'); return; }
+          for (const l of loot) if (!l.got && !l.gone) { l.gone = true; api.item(false, l.x, l.y, 'DAWN', { quiet: true }); }
+          api.pop(160, 60, 'DAWN · GET HOME', P.a3, 11); api.sfx('alarm');
+        }
+        if (FINAL && O.distract && O.distract.length) { // the stations you linked make noise somewhere else
+          distT -= dt;
+          if (distT <= 0) { distT = 20; const who = O.distract[distN++ % O.distract.length]; banner = { text: who, t: 3.2 }; const fx = me.x < 160 ? 300 : 20, fy = me.y < 90 ? 150 : 32; for (const d of drones) { d.tx = clampN(fx + api.ri(-14, 14), 10, 310); d.ty = clampN(fy + api.ri(-10, 10), 26, 160); d.lure = 7; d.aware = 0; } api.sfx('whoosh'); api.emit('distract', { who }); }
+        }
+        const G = FINAL ? goal : home, atG = Math.hypot(me.x - G.x, me.y - G.y) < 9, left = loot.filter(l => !l.got && !l.gone).length;
+        if (atG && !left) return finishAt(FINAL ? 'ON AIR' : 'HOME');
+        if (atG && left && !FINAL && carried.length && !moving) { goHome += dt; if (goHome > 1.4) for (const l of loot) if (!l.got && !l.gone) { l.gone = true; api.item(false, l.x, l.y, 'LEFT', { quiet: true }); } }
+        else goHome = 0;
+        const hint = FINAL ? (left ? `Plug the radio into ${left} more relay${left === 1 ? '' : 's'}: stand on each one. Then the tower.` : 'Up the tower. Now.')
+          : left ? (eff > .25 ? 'You’re warm: they can see you. Stand still in the cold to cool down.' : 'Cold. They can’t see you. Move while it lasts.') : 'Home. The door of 4B, bottom left.';
+        api.hint(hint);
+      },
+      key(k) {
+        if (k === 'ArrowUp' || k === 'w' || k === 'W') { keys.u = true; return true; }
+        if (k === 'ArrowDown' || k === 's' || k === 'S') { keys.d = true; return true; }
+        if (k === 'ArrowLeft' || k === 'a' || k === 'A') { keys.l = true; return true; }
+        if (k === 'ArrowRight' || k === 'd' || k === 'D') { keys.r = true; return true; }
+        if (k === 'Shift') { keys.sh = true; return true; }
+        if (k === ' ') { if (mirrorsLeft > 0) { mirrorsLeft--; mirrors.push({ x: me.x, y: me.y + 1, t: 14, hits: 0, gone: false }); api.emit('tool', { k: 'mirror' }); api.sfx('flip'); api.pop(me.x, me.y - 9, 'MIRROR DOWN', P.t5, 7); } else api.pop(me.x, me.y - 9, 'NO MIRRORS', P.mute, 7); return true; }
+        if (k === 'e' || k === 'E') { if (oilLeft > 0) { oilLeft--; slicks.push({ x: me.x, y: me.y, used: false }); api.emit('tool', { k: 'oil' }); api.sfx('whoosh'); api.pop(me.x, me.y - 9, 'OIL DOWN', P.a3, 7); } else api.pop(me.x, me.y - 9, 'NO OIL', P.mute, 7); return true; }
+        return false;
+      },
+      down(x, y) { const t = tileAt(x, y); if (t < 0 || T[t] === 1) return; clickPath = bfs(tileAt(me.x, me.y), t, walkable); },
+      bot(dt) {
+        botT -= dt; if (botT > 0) return; botT = .25;
+        const here = tileAt(me.x, me.y), tgt = loot.filter(l => !l.got && !l.gone).sort((a, b) => Math.hypot(a.x - me.x, a.y - me.y) - Math.hypot(b.x - me.x, b.y - me.y))[0], G = tgt || (FINAL ? goal : home);
+        const danger = drones.some(d => Math.hypot(d.x - me.x, d.y - me.y) < d.R + 12 && d.lure <= 0) && eff > .2;
+        if (danger && here >= 0 && cold[here] && !api.autoErr) { clickPath = null; return; }
+        clickPath = bfs(here, tileAt(G.x, G.y), walkable);
+      },
+      draw(g) {
+        const R2 = api.rect, t = api.t;
+        g.drawImage(mapCv, 0, Y0);
+        for (const o of slicks) if (!o.used) { api.circle(o.x, o.y, 6, 'rgba(26,18,10,.9)'); api.circle(o.x - 2, o.y - 1, 2, 'rgba(242,196,106,.22)'); }
+        for (const m of mirrors) if (!m.gone) { R2(m.x - 2, m.y - 3, 5, 6, P.k0); R2(m.x - 1, m.y - 2, 3, 4, P.t5); R2(m.x - 1, m.y - 2, 1, 2, P.p4); }
+        const fr = moving ? (me.step | 0) % 2 : 0; api.sprite(SPR.me[fr], Math.round(me.x - 2), Math.round(me.y - 4), 1, me.flip);
+        if (carried.length) R2(me.x + (me.flip ? -4 : 2), me.y - 2, 2, 3, P.d4);
+        // the dark
+        const gr = g.createRadialGradient(me.x, me.y, 14, me.x, me.y, 92); gr.addColorStop(0, 'rgba(4,6,9,0)'); gr.addColorStop(1, `rgba(4,6,9,${dawn ? .4 : .6})`);
+        g.fillStyle = gr; g.fillRect(0, api.top, api.W, api.bot - api.top);
+        const hg = g.createRadialGradient(home.x, home.y + 6, 2, home.x, home.y + 6, 20); hg.addColorStop(0, 'rgba(242,196,106,.35)'); hg.addColorStop(1, 'rgba(242,196,106,0)'); g.fillStyle = hg; g.fillRect(home.x - 20, home.y - 14, 40, 34); // 4B's stairwell light
+        for (const l of loot) if (!l.got && !l.gone) { // a chalk X, and what's under it: the network marks the map for you
+          const bob = Math.sin(t * 4 + l.x) > 0 ? 1 : 0;
+          for (let k = -4; k <= 4; k++) { R2(l.x + k, l.y + k + 1, 1, 1, 'rgba(236,228,204,.6)'); R2(l.x + k, l.y - k + 1, 1, 1, 'rgba(236,228,204,.6)'); }
+          api.sprite(SPR[l.k] || SPR.food, l.x - 3, l.y - 4 - bob);
+          if (l.k === 'relay' && l.plug > 0) { g.strokeStyle = P.a3; g.lineWidth = 1.5; g.beginPath(); g.arc(l.x, l.y, 7, -Math.PI / 2, -Math.PI / 2 + l.plug / 1.2 * Math.PI * 2); g.stroke(); }
+        }
+        for (const s of stew) { // the stewards: white plastic, a teal eye, a beam that doesn't blink
+          const near = Math.hypot(s.x - me.x, s.y - me.y); g.globalAlpha = clampN(1.3 - near / 140, .55, 1);
+          if (s.beam && !s.blind && !s.stuck) { g.globalAlpha *= .6 + Math.sin(t * 30) * .1; api.line(s.x, s.y, s.beam[0], s.beam[1], P.t4, 1); g.globalAlpha = clampN(1.3 - near / 140, .55, 1); R2(s.beam[0] - .5, s.beam[1] - .5, 1.5, 1.5, P.t5); }
+          api.sprite(SPR.stew, s.x - 4, s.y - 3);
+          const ex = Math.round(s.x + Math.cos(s.hd) * 2), ey = Math.round(s.y + Math.sin(s.hd) * 1.5 - 1);
+          R2(ex - .5, ey, 2, 1, s.blind > 0 ? ((t * 10 | 0) % 2 ? P.e3 : P.p4) : s.mode === 'chase' ? P.e3 : P.t3);
+          if (s.stuck > 0) R2(s.x - 5, s.y - 7, 10, 1, 'rgba(242,196,106,.7)');
+          g.globalAlpha = 1;
+        }
+        if (eff > .25) { g.fillStyle = `rgba(255,122,92,${clampN((eff - .25) * 1.1, .08, .5).toFixed(2)})`; g.beginPath(); g.arc(me.x, me.y - 1, 6 + eff * 5, 0, Math.PI * 2); g.fill(); } // what the drones see
+        else { g.strokeStyle = 'rgba(127,216,192,.45)'; g.lineWidth = 1; g.beginPath(); g.arc(me.x, me.y - 1, 6, 0, Math.PI * 2); g.stroke(); }
+        for (const d of drones) { // cones, rings, the drone, its red light
+          g.fillStyle = d.inC && d.aware > .02 ? `rgba(224,74,52,${(.14 + d.aware * .3).toFixed(2)})` : d.lure > 0 ? 'rgba(242,196,106,.04)' : 'rgba(242,196,106,.08)';
+          g.beginPath(); g.moveTo(d.x, d.y); g.arc(d.x, d.y, d.R, d.dir - d.half, d.dir + d.half); g.closePath(); g.fill();
+          g.strokeStyle = 'rgba(242,196,106,.22)'; g.lineWidth = 1; g.stroke();
+          for (const r of d.rings) api.circle(d.x, d.y, 4 + r * 26, `rgba(242,196,106,${((1 - r / 1.3) * .45).toFixed(2)})`, false);
+          const near = Math.hypot(d.x - me.x, d.y - me.y); g.globalAlpha = clampN(1.25 - near / 110, .35, 1);
+          api.sprite(SPR.drone, d.x - 4, d.y - 3); g.globalAlpha = 1;
+          if ((t * 2 + d.ph | 0) % 2) R2(d.x - .5, d.y + 1, 1.5, 1.5, P.e4);
+          if (d.aware > .02) { R2(d.x - 6, d.y - 7, 12, 2, P.k0); R2(d.x - 6, d.y - 7, 12 * clampN(d.aware, 0, 1), 2, P.e3); }
+        }
+        const aw = Math.max(0, ...drones.map(d => d.aware)); // the "!" over your head
+        if (aw > .05) { R2(me.x - 1, me.y - 13, 3, 7, P.k0); R2(me.x - .5, me.y - 12.5 + 6 * (1 - aw), 2, 6 * aw, P.e3); R2(me.x - .5, me.y - 5, 2, 1, P.e3); }
+        // the strip on top: heat, tools, time
+        R2(0, api.top, api.W, 10, 'rgba(7,8,10,.62)');
+        api.text('HEAT', 4, api.top + 7.5, { size: 6, color: P.mute }); R2(24, api.top + 3, 40, 4, P.k0); R2(24, api.top + 3, 40 * heat, 4, heat > .6 ? P.e3 : heat > .3 ? P.a2 : P.t3); R2(24 + 40 * .25, api.top + 2, 1, 6, P.p2);
+        api.text(`MIRRORS ${mirrorsLeft} · OIL ${oilLeft} · CARRYING ${carried.length}`, 72, api.top + 7.5, { size: 6, color: P.ink });
+        const s = Math.max(0, Math.ceil(timeLeft)), tl = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+        api.text(FINAL ? `4B HOLDS ${tl}` : dawn ? 'DAWN' : `DAWN IN ${tl}`, api.W - 4, api.top + 7.5, { size: 6.5, color: s < 20 || dawn ? P.e4 : P.a3, align: 'right' });
+        if (goHome > 0) { R2(home.x - 10, home.y - 14, 20, 3, P.k0); R2(home.x - 10, home.y - 14, 20 * goHome / 1.4, 3, P.t3); }
+        if (banner) { const a = clampN(banner.t, 0, 1); g.globalAlpha = a; R2(40, 62, 240, 18, 'rgba(7,8,10,.8)'); api.text(banner.text, 160, 74, { size: 8, color: P.a3, align: 'center', bold: true, max: 232 }); g.globalAlpha = 1; }
+      },
+      destroy() { removeEventListener('keyup', onUp); removeEventListener('blur', onBlur); }
+    };
+  }
+};
+// Crank radio (kind "radio"): the civil-defence band, the last place the machines don't listen. Crank it for power,
+// tune through their noise, and when you catch a carrier, key its call sign back. Every station you link is a building
+// that's still holding out, and a trick it learned the hard way. Ray wired an old band scope to it: the bright lines
+// are people. opts: { stations: [{ id, name, f, call }], batt }
+MINI.radio = {
+  title: 'Crank radio', how: 'Find a bright line and hold the needle on it. Then tap its call sign back: short taps are dots, long ones dashes.',
+  keys: '← → tune (SHIFT: fine) · hold C to crank · SPACE taps the key', pace: 20,
+  create(api) {
+    const { P } = api, O = api.opts || {}, LV = api.level;
+    const WX = 12, WY = 24, WW = 240, WH = 46, DY = WY + WH + 4, CRX = 291, CRY = 131;
+    const CALLS = ['.-..', '--.', '-.-.', '..-', '.--', '-..', '.-.', '--..'];
+    const list = (O.stations && O.stations.length ? O.stations : [{ id: 'x1', name: 'A ROOFTOP IN ZONE B', call: '.-.' }, { id: 'x2', name: 'A BASEMENT IN ZONE C', call: '--.' }]).slice(0, Math.max(1, api.units));
+    const used = [];
+    const st = list.map((s, k) => { let f = s.f; if (f == null || used.some(u => Math.abs(u - f) < .1)) { let n = 0; do { f = .07 + api.rand() * .86; } while (used.some(u => Math.abs(u - f) < .12) && ++n < 40); } used.push(f); return { id: s.id, name: s.name, f, call: s.call || CALLS[k % CALLS.length], on: api.chance(.6), t: 1 + api.rand() * 3, found: false, gone: false, miss: 0 }; });
+    let f = .5, batt = O.batt != null ? O.batt : .6, crankA = 0, crankSnd = 0, tri = 0, lock = null, lockT = 0, play = null, taps = [], press = null, lastTap = 0;
+    let fallT = 0, drag = null, lastAng = 0, banner = null, dead = false, botSeq = null, botWait = 0, botCrank = false, jam = false, sigNow = 0;
+    const sweep = { f: api.rand() < .5 ? .05 : .95, v: (.05 + LV * .035) };
+    const keys = { l: false, r: false, c: false, fine: false };
+    const fall = document.createElement('canvas'); fall.width = WW; fall.height = WH;
+    const fg = fall.getContext('2d'), img = fg.createImageData(WW, WH);
+    for (let i = 3; i < img.data.length; i += 4) img.data[i] = 255;
+    const onUp = e => { const k = e.key; if (k === 'ArrowLeft' || k === 'a' || k === 'A') keys.l = false; if (k === 'ArrowRight' || k === 'd' || k === 'D') keys.r = false; if (k === 'c' || k === 'C') keys.c = false; if (k === 'Shift') keys.fine = false; if (k === ' ') keyUp(); };
+    const onBlur = () => { keys.l = keys.r = keys.c = keys.fine = false; if (press != null) keyUp(); };
+    addEventListener('keyup', onUp); addEventListener('blur', onBlur);
+    const live = () => st.filter(s => !s.found && !s.gone);
+
+    function fallRow() { // one new line of the band at the top; the rest slides down
+      const d = img.data; d.copyWithin(WW * 4, 0, WW * 4 * (WH - 1));
+      for (let x = 0; x < WW; x++) {
+        const fx = x / WW; let v = dead ? Math.random() * .04 : Math.random() * .3, red = 0;
+        if (!dead) {
+          for (const s of st) if (s.on && !s.found && !s.gone) v += Math.exp(-Math.pow((fx - s.f) / .006, 2)) * (.7 + Math.random() * .3);
+          const sw = Math.abs(fx - sweep.f); if (sw < .05) red = (1 - sw / .05) * (.55 + Math.random() * .45);
+          if (Math.random() < .002) v += .6; // a click somewhere: nobody
+        }
+        v = Math.min(1, v);
+        let r = 8 + v * 40, g = 18 + v * 163, b = 16 + v * 121;
+        if (v > .7) { const k = (v - .7) / .3; r += (196 - r) * k; g += (240 - g) * k; b += (228 - b) * k; }
+        if (red) { r += (224 - r) * red; g += (74 - g) * red; b += (52 - b) * red; }
+        const i = x * 4; d[i] = r; d[i + 1] = g; d[i + 2] = b;
+      }
+      fg.putImageData(img, 0, 0);
+    }
+    for (let k = 0; k < WH; k++) fallRow();
+
+    function keyDown() { if (press != null || dead) return; press = api.t; api.sfx('click'); }
+    function keyUp() {
+      if (press == null) return; const dur = api.t - press; press = null;
+      if (!lock) { api.pop(WX + f * WW, WY + 14, 'NO CARRIER', P.mute, 7); return; }
+      const el = dur < .22 ? '.' : '-'; taps.push(el); lastTap = api.t;
+      if (lock.call[taps.length - 1] !== el) { // wrong: start again. Three times and he gives up on you
+        lock.miss++; taps = []; api.sfx('bad'); api.shake(2);
+        if (lock.miss >= 3) { const s = lock; s.gone = true; lock = null; play = null; api.item(false, WX + s.f * WW, WY + 20, 'HE WENT QUIET'); api.emit('lost', { id: s.id }); }
+        else api.pop(WX + lock.f * WW, WY + 14, `AGAIN · ${3 - lock.miss} LEFT`, P.e3, 8);
+        return;
+      }
+      api.sfx('tick');
+      if (taps.length === lock.call.length) { // linked
+        const s = lock; s.found = true; lock = null; play = null; taps = [];
+        api.item(true, WX + s.f * WW, WY + 20, 'LINKED'); api.burst(WX + s.f * WW, WY + 24, P.t4, 16, 70); api.emit('station', { id: s.id });
+        banner = { text: s.name, t: 2.8 };
+      }
+    }
+    function tune(df) { f = clampN(f + df, 0, 1); }
+
+    return {
+      tick(dt) {
+        // power: the radio drinks it, their noise drinks more; the crank puts it back
+        const cranking = keys.c || botCrank;
+        if (cranking) { batt = Math.min(1, batt + dt * .17); crankA += dt * 9; crankSnd -= dt; if (crankSnd <= 0) { crankSnd = .11; api.sfx('crank', Math.round(batt * 10)); } }
+        jam = !dead && Math.abs(f - sweep.f) < .05;
+        batt = Math.max(0, batt - dt * (.021 + (jam ? .03 : 0)));
+        if (batt <= 0 && !dead) { dead = true; lock = null; play = null; taps = []; api.pop(160, 90, 'THE RADIO DIED · HOLD C', P.e3, 9); api.sfx('fail'); }
+        if (dead && batt > .08) { dead = false; api.sfx('go'); }
+        // the band: carriers come and go, and their sweep goes back and forth looking for listeners
+        for (const s of st) { if (s === lock || s.found || s.gone) continue; s.t -= dt; if (s.t <= 0) { s.on = !s.on; s.t = s.on ? 5 + api.rand() * 4 : 1.6 + api.rand() * (1.6 + LV * 2); } }
+        sweep.f += sweep.v * dt; if (sweep.f < .02 || sweep.f > .98) { sweep.v *= -1; sweep.f = clampN(sweep.f, .02, .98); }
+        if (api.chance(dt * .15)) sweep.v *= api.chance(.5) ? 1.4 : .75; sweep.v = Math.sign(sweep.v) * clampN(Math.abs(sweep.v), .04, .16);
+        fallT -= dt; if (fallT <= 0) { fallT = .05; fallRow(); }
+        if (!lock) { if (keys.l) tune(-dt * (keys.fine ? .05 : .22)); if (keys.r) tune(dt * (keys.fine ? .05 : .22)); }
+        else if (keys.l || keys.r) { lock.hold = (lock.hold || 0) + dt; if (lock.hold > .35) { tune((keys.r ? 1 : -1) * dt * .22); } } // a locked needle is sticky
+        // signal, lock
+        let sg = 0; if (!dead) for (const s of st) if (s.on && !s.found && !s.gone) sg = Math.max(sg, Math.exp(-Math.pow((f - s.f) / .02, 2)));
+        sigNow += ((jam ? 1 : sg) - sigNow) * Math.min(1, dt * 10);
+        if (!lock) {
+          const near = !dead && !jam && st.find(s => s.on && !s.found && !s.gone && Math.abs(f - s.f) < .012);
+          if (near) { lockT += dt; if (lockT > .8) { lock = near; f = near.f; lock.hold = 0; lockT = 0; taps = []; play = { k: 0, on: false, t: .5, heard: 0 }; api.sfx('milestone'); api.pop(WX + f * WW, WY + 12, 'CARRIER', P.t5, 8); } }
+          else lockT = Math.max(0, lockT - dt * 2);
+        } else {
+          if (Math.abs(f - lock.f) > .015 || dead || jam) { api.pop(WX + lock.f * WW, WY + 12, jam ? 'JAMMED' : 'LOST THE CARRIER', P.e3, 8); lock.hold = 0; lock = null; play = null; taps = []; }
+          else if (keys.l === keys.r) lock.hold = 0;
+        }
+        if (lock && play) { // he sends his call sign, over and over, until you send it back
+          play.t -= dt;
+          if (play.t <= 0) {
+            if (play.on) { play.on = false; play.k++; if (play.k >= lock.call.length) { play.k = -1; play.t = 1.15; play.heard++; } else play.t = .14; }
+            else { if (play.k < 0) play.k = 0; const el = lock.call[play.k]; play.on = true; play.t = el === '.' ? .12 : .36; api.sfx(el === '.' ? 'dot' : 'dash'); }
+          }
+        }
+        if (taps.length && api.t - lastTap > 2.2) taps = [];
+        // their noise on your needle: they're triangulating
+        if (jam) { tri += dt * (.32 + LV * .25); if (Math.random() < dt * 20) api.sfx('static'); }
+        else tri = Math.max(0, tri - dt * .15);
+        if (tri >= 1) {
+          tri = 0; const s = live().sort((a, b) => Math.abs(a.f - f) - Math.abs(b.f - f))[0];
+          if (s) { s.gone = true; if (lock === s) { lock = null; play = null; } api.item(false, WX + f * WW, WY + 20, 'TRIANGULATED'); api.emit('triangulated', { id: s.id }); api.flash(P.e2, .3); api.shake(5); }
+        }
+        if (banner) { banner.t -= dt; if (banner.t <= 0) banner = null; }
+        api.hint(dead ? 'The radio is dead. Hold C, or turn the crank with the mouse.' : jam ? 'Their noise is on your needle. Move off it before they find you.' : lock ? 'Carrier! Listen to the rhythm, then tap it back with SPACE: short, long.' : batt < .2 ? 'The battery is low. Crank it (hold C).' : 'Turn the dial (← →) to a bright line and hold the needle there.');
+      },
+      key(k) {
+        if (k === 'ArrowLeft' || k === 'a' || k === 'A') { keys.l = true; return true; }
+        if (k === 'ArrowRight' || k === 'd' || k === 'D') { keys.r = true; return true; }
+        if (k === 'Shift') { keys.fine = true; return true; }
+        if (k === 'c' || k === 'C') { keys.c = true; return true; }
+        if (k === ' ') { keyDown(); return true; }
+        return false;
+      },
+      down(x, y, e) {
+        if (x >= WX && x <= WX + WW && y >= WY && y <= DY + 16) { drag = 'tune'; f = clampN((x - WX) / WW, 0, 1); if (lock && Math.abs(f - lock.f) > .015) lock.hold = 1; return; }
+        if (Math.hypot(x - CRX, y - CRY) < 22) { drag = 'crank'; lastAng = Math.atan2(y - CRY, x - CRX); return; }
+        if (x >= 196 && x <= 254 && y >= 128 && y <= 162) { drag = 'key'; keyDown(); }
+      },
+      move(x, y, dragging) {
+        if (!dragging || !drag) return;
+        if (drag === 'tune') f = clampN((x - WX) / WW, 0, 1);
+        if (drag === 'crank') { const a = Math.atan2(y - CRY, x - CRX); let da = a - lastAng; da = Math.atan2(Math.sin(da), Math.cos(da)); lastAng = a; batt = Math.min(1, batt + Math.abs(da) * .03); crankA += da; crankSnd -= Math.abs(da) * .2; if (crankSnd <= 0) { crankSnd = .11; api.sfx('crank', Math.round(batt * 10)); } }
+      },
+      up() { if (drag === 'key') keyUp(); drag = null; },
+      bot(dt) {
+        if (batt < .25) botCrank = true; else if (batt > .85) botCrank = false;
+        if (botCrank) return;
+        if (!lock) {
+          botSeq = null;
+          const tg = live().filter(s => s.on).sort((a, b) => Math.abs(a.f - f) - Math.abs(b.f - f))[0];
+          if (!tg) return;
+          if (Math.abs(sweep.f - tg.f) < .09 && Math.abs(sweep.f - f) < .12) { tune(Math.sign(f - sweep.f || 1) * dt * .22); return; } // step off their noise
+          const d = tg.f - f; tune(Math.sign(d) * Math.min(Math.abs(d), .2 * dt));
+          return;
+        }
+        if (!botSeq) { if (!play || play.heard < 1) return; botSeq = []; let t = api.t + .3; for (const el of lock.call) { const wrong = api.auto && api.chance(api.autoErr * .5); const d = (el === '.') !== wrong ? .09 : .34; botSeq.push([t, 1], [t + d, 0]); t += d + .18; } }
+        while (botSeq.length && botSeq[0][0] <= api.t) { const [, dn] = botSeq.shift(); if (dn) keyDown(); else keyUp(); }
+      },
+      draw(g) {
+        const R = api.rect, t = api.t;
+        // the case: bakelite and brass
+        R(0, api.top, api.W, api.bot - api.top, P.d0); R(4, api.top + 2, api.W - 8, api.bot - api.top - 4, P.d1);
+        for (let y = api.top + 4; y < api.bot - 2; y += 3) R(4, y, api.W - 8, 1, 'rgba(0,0,0,.12)');
+        R(4, api.top + 2, api.W - 8, 1, P.d3);
+        // the band scope: a green screen, a red needle
+        R(WX - 3, WY - 3, WW + 6, WH + 6, P.k0); R(WX - 2, WY - 2, WW + 4, WH + 4, P.a0);
+        g.drawImage(fall, WX, WY);
+        if (dead) R(WX, WY, WW, WH, 'rgba(0,0,0,.55)');
+        for (let y = WY; y < WY + WH; y += 2) R(WX, y, WW, 1, 'rgba(0,0,0,.18)'); // scanlines
+        if (tri > .02) { R(WX, WY, WW, 3, P.k0); R(WX, WY, WW * tri, 3, P.e3); api.text('TRIANGULATING', WX + WW - 2, WY + 11, { size: 6, color: P.e4, align: 'right', bold: true }); }
+        const nx = WX + f * WW;
+        R(nx - .5, WY, 1.5, WH, lock ? P.t5 : P.e3);
+        // the dial
+        R(WX - 2, DY, WW + 4, 16, P.p2); R(WX - 2, DY, WW + 4, 1, P.p4); R(WX - 2, DY + 15, WW + 4, 1, P.p0);
+        for (let k = 0; k <= 60; k++) { const x = WX + k / 60 * WW; R(x, DY + 1, 1, k % 10 === 0 ? 6 : k % 5 === 0 ? 4 : 2, P.d2); if (k % 10 === 0) api.text(String(3 + k / 10), clampN(x, WX + 3, WX + WW - 3), DY + 13.5, { size: 6, color: P.d1, align: 'center' }); }
+        R(nx - .5, DY - 2, 1.5, 18, P.e2); R(nx - 2, DY - 3, 5, 2, P.e2);
+        if (lockT > 0 && !lock) { R(nx - 8, WY + WH - 4, 16, 2, P.k0); R(nx - 8, WY + WH - 4, 16 * Math.min(1, lockT / .8), 2, P.t4); }
+        api.text(`${(3 + f * 6).toFixed(3)} MHz`, WX, DY + 26, { size: 7, color: P.a3 });
+        // the S-meter
+        const mx = 50, my = 150; R(14, 108, 72, 50, P.k0); R(15, 109, 70, 48, P.p3);
+        for (let k = 0; k <= 8; k++) { const a = Math.PI * (1.15 + k / 8 * .7), x0 = mx + Math.cos(a) * 30, y0 = my + Math.sin(a) * 30, x1 = mx + Math.cos(a) * 34, y1 = my + Math.sin(a) * 34; api.line(x0, y0, x1, y1, k >= 7 ? P.e2 : P.d1, 1); }
+        const na = Math.PI * (1.15 + clampN(sigNow + (Math.random() - .5) * .04, 0, 1) * .7); api.line(mx, my, mx + Math.cos(na) * 32, my + Math.sin(na) * 32, P.k1, 1);
+        R(mx - 2, my - 2, 4, 4, P.k1); api.text('SIGNAL', mx, 117, { size: 5.5, color: P.d1, align: 'center' });
+        // the call sign: his, lit as he sends it; yours, under it
+        R(94, 104, 98, 56, P.k0); R(95, 105, 96, 54, '#0f1a17');
+        api.text(lock ? 'CALL SIGN' : 'NO CARRIER', 100, 113, { size: 6, color: lock ? P.t4 : P.s3 });
+        if (lock) {
+          let x = 100; lock.call.split('').forEach((el, k) => { const w = el === '.' ? 5 : 14, lit = play && play.on && play.k === k; R(x, 119, w, 5, lit ? P.t5 : P.t1); if (lit) R(x - 1, 118, w + 2, 7, 'rgba(196,240,228,.25)'); x += w + 4; });
+          x = 100; taps.forEach(el => { const w = el === '.' ? 5 : 14; R(x, 133, w, 5, P.a3); x += w + 4; });
+          if (press != null) { const w = Math.min(14, 5 + (t - press) / .22 * 9); R(x, 133, w, 5, t - press < .22 ? P.a2 : P.a4); }
+          api.text('YOU', 100, 148, { size: 5.5, color: P.a2 }); api.text(`${3 - lock.miss} tries`, 186, 148, { size: 5.5, color: P.mute, align: 'right' });
+        } else api.text(dead ? 'crank it' : 'find a bright line', 100, 126, { size: 6, color: P.s3, font: 'read' });
+        // the key: brass on wood
+        const dn = press != null; R(198, 146, 54, 12, P.d3); R(198, 146, 54, 2, P.d5); R(206, 140 + (dn ? 3 : 0), 40, 4, P.a1); R(206, 140 + (dn ? 3 : 0), 40, 1, P.a3); R(240, 136 + (dn ? 3 : 0), 8, 6, P.k2); R(222, 144, 4, 3, P.s3);
+        api.text('KEY · SPACE', 225, 133, { size: 5.5, color: P.p2, align: 'center' });
+        // battery and crank
+        R(262, 24, 12, 64, P.k0); const bh = 62 * batt; R(263, 25 + 62 - bh, 10, bh, batt < .2 ? P.e3 : batt < .45 ? P.a2 : P.g3);
+        for (let y = 31; y < 88; y += 7) R(263, y, 10, 1, 'rgba(0,0,0,.35)'); api.text('BATT', 268, 96, { size: 5.5, color: P.p2, align: 'center' });
+        api.circle(CRX, CRY, 18, P.k0); api.circle(CRX, CRY, 16, P.s1); api.circle(CRX, CRY, 4, P.s3);
+        const hx = CRX + Math.cos(crankA) * 13, hy = CRY + Math.sin(crankA) * 13; api.line(CRX, CRY, hx, hy, P.s4, 2); api.circle(hx, hy, 3.5, P.d4); api.circle(hx - 1, hy - 1, 1.2, P.d5);
+        api.text('C · CRANK', CRX, 159, { size: 5.5, color: P.p2, align: 'center' });
+        if (banner) { g.globalAlpha = clampN(banner.t, 0, 1); R(WX + 10, WY + 12, WW - 20, 20, 'rgba(7,8,10,.85)'); api.text(banner.text, WX + WW / 2, WY + 25.5, { size: 8, color: P.t5, align: 'center', bold: true, max: WW - 30 }); g.globalAlpha = 1; }
+        api.text(`STATIONS ${st.filter(s => s.found).length}/${st.length}`, 262, 106, { size: 5.5, color: P.a3 });
+      },
+      destroy() { removeEventListener('keyup', onUp); removeEventListener('blur', onBlur); }
+    };
+  }
+};
+// Repair (kind "patch"): the building's guts as a grid of pipes, or of wires. Turn the pieces until it runs from the
+// boiler (the pump, the battery bank) to the far side, before the pressure (the charge) runs out. What already reaches
+// the source fills as you go. Rusted pieces don't turn. opts: { sys: 'boiler' | 'pump' | 'lights' }
+MINI.patch = {
+  title: 'Repair', how: 'Turn the pieces until it runs from one side to the other, before the pressure drops.',
+  keys: 'Click a piece to turn it (right-click: back) · or arrows and SPACE', pace: 14,
+  create(api) {
+    const { P } = api, O = api.opts || {}, LV = api.level, SYS = O.sys || 'boiler';
+    const COLS = 8, ROWS = 5, TS = 20, GX = 80, GY = 36, NB = [1, 2, 4, 8], DC = { 1: [0, -1], 2: [1, 0], 4: [0, 1], 8: [-1, 0] }, OPP = { 1: 4, 2: 8, 4: 1, 8: 2 };
+    const LOOK = {
+      boiler: { pipe: P.d4, hi: P.d5, lo: P.d2, fill: P.a2, fill2: P.a4, w: 4, src: 'BOILER', dst: 'RADIATORS', unit: 'PRESSURE' },
+      pump: { pipe: P.s3, hi: P.s5, lo: P.s1, fill: P.t3, fill2: P.t5, w: 4, src: 'PUMP', dst: 'TANK', unit: 'PRESSURE' },
+      lights: { pipe: P.k3, hi: P.s2, lo: P.k1, fill: P.a3, fill2: P.a4, w: 2, src: 'BATTERIES', dst: 'LIGHTS', unit: 'CHARGE' }
+    }[SYS] || {};
+    const rot = m => ((m << 1) | (m >> 3)) & 15;
+    let tiles = [], rs = 0, re = 0, conn = new Set(), flowK = 0, flowing = false, burst = 0, tl = 0, tl0 = 1, cur = { c: 0, r: 0 }, botT = 0, board = 0, reached = false, flowOrder = [];
+    function walk() { // a path from the left edge (row rs) to the right edge (row re) that never crosses itself
+      const seen = new Set(), path = []; let steps = 0;
+      function go(c, r, depth) {
+        if (depth > 26 || ++steps > 3000) return false;
+        path.push([c, r]); seen.add(c + ',' + r);
+        if (c === COLS - 1 && r === re) return true;
+        const opts = [[1, 0], [0, -1], [0, 1], [-1, 0]].map(o => [o, api.rand() + (o[0] > 0 ? .5 : o[0] < 0 ? -.35 : 0)]).sort((a, b) => b[1] - a[1]).map(o => o[0]);
+        for (const [dc, dr] of opts) { const nc = c + dc, nr = r + dr; if (nc < 0 || nr < 0 || nc >= COLS || nr >= ROWS || seen.has(nc + ',' + nr)) continue; if (go(nc, nr, depth + 1)) return true; }
+        path.pop(); seen.delete(c + ',' + r); return false;
+      }
+      return go(0, rs, 0) ? path : null;
+    }
+    function newBoard() {
+      board++; rs = api.ri(0, ROWS - 1); re = api.ri(0, ROWS - 1);
+      let path = null; for (let k = 0; k < 30 && !path; k++) path = walk();
+      if (!path) { path = []; for (let c = 0; c < COLS; c++) path.push([c, rs]); re = rs; }
+      const need = new Array(COLS * ROWS).fill(0), onPath = new Set();
+      const dirTo = (a, b) => b[1] < a[1] ? 1 : b[0] > a[0] ? 2 : b[1] > a[1] ? 4 : 8;
+      path.forEach((p, k) => { const prev = k ? path[k - 1] : [-1, rs], next = k < path.length - 1 ? path[k + 1] : [COLS, re]; need[p[1] * COLS + p[0]] = dirTo(p, prev) | dirTo(p, next); onPath.add(p[1] * COLS + p[0]); });
+      const extra = .25 + LV * .25 + board * .05;
+      tiles = need.map((m, i) => {
+        if (!m) { const r = api.rand(); m = r < .35 ? 5 : r < .7 ? 3 : r < .7 + extra * .5 ? 7 : r < .95 ? 3 : 15; } // the rest of the building's plumbing, going nowhere useful
+        else if (api.chance(extra * .35) && m !== 15) { const t = m | NB[api.ri(0, 3)]; if ([7, 14, 13, 11].includes(t)) m = t; } // a branch you don't need
+        const good = m; let s = m, n = api.ri(1, 3); for (let k = 0; k < n; k++) s = rot(s);
+        const rust = onPath.has(i) && api.chance(.12 - LV * .05) && board > 1;
+        return { m: rust ? good : s, good, path: onPath.has(i), rust, spin: 0 };
+      });
+      tl0 = tl = (13 - LV * 4) + path.length * .7; flowing = false; flowK = 0; burst = 0; reached = false; check();
+    }
+    function check() { // everything that's connected to the source, and whether it reaches the far side
+      conn = new Set(); flowOrder = []; reached = false;
+      const s0 = rs * COLS; if (!(tiles[s0].m & 8)) return;
+      const q = [s0]; conn.add(s0);
+      for (let h = 0; h < q.length; h++) {
+        const i = q[h], c = i % COLS, r = (i / COLS) | 0, m = tiles[i].m; flowOrder.push(i);
+        if (c === COLS - 1 && r === re && (m & 2)) reached = true;
+        for (const d of NB) if (m & d) { const nc = c + DC[d][0], nr = r + DC[d][1]; if (nc < 0 || nr < 0 || nc >= COLS || nr >= ROWS) continue; const j = nr * COLS + nc; if (!conn.has(j) && (tiles[j].m & OPP[d])) { conn.add(j); q.push(j); } }
+      }
+    }
+    function turn(i, back) {
+      const t = tiles[i]; if (!t || flowing) return;
+      if (t.rust) { api.pop(GX + (i % COLS) * TS + TS / 2, GY + ((i / COLS) | 0) * TS + 4, 'RUSTED', P.r3, 7); api.sfx('bad'); return; }
+      t.m = back ? rot(rot(rot(t.m))) : rot(t.m); t.spin = back ? -1 : 1; api.sfx('flip');
+      const before = conn.size; check();
+      if (conn.size > before) api.sfx('blip', Math.min(12, conn.size));
+      if (reached) { flowing = true; flowK = 0; api.sfx('whoosh'); }
+    }
+    const tileAt = (x, y) => { const c = Math.floor((x - GX) / TS), r = Math.floor((y - GY) / TS); return c >= 0 && r >= 0 && c < COLS && r < ROWS ? r * COLS + c : -1; };
+    const cv = api.g.canvas, noMenu = e => e.preventDefault(); cv.addEventListener('contextmenu', noMenu);
+    newBoard();
+    function drawPiece(x, y, m, col, w) {
+      const R = api.rect, h = TS / 2, o = (TS - w) / 2;
+      if (m & 1) R(x + o, y, w, h + w / 2, col); if (m & 4) R(x + o, y + h - w / 2, w, h + w / 2, col);
+      if (m & 8) R(x, y + o, h + w / 2, w, col); if (m & 2) R(x + h - w / 2, y + o, h + w / 2, w, col);
+      R(x + o - 1, y + o - 1, w + 2, w + 2, col);
+    }
+    return {
+      tick(dt) {
+        for (const t of tiles) t.spin *= Math.pow(.001, dt);
+        if (burst > 0) { burst -= dt; if (burst <= 0) newBoard(); return; }
+        if (flowing) { // the water (the heat, the current) runs through, tile by tile
+          flowK += dt * 1.6;
+          if (flowK >= 1.15) { api.item(true, GX + COLS * TS + 12, GY + re * TS + 10, SYS === 'lights' ? 'LIGHTS ON' : SYS === 'pump' ? 'WATER' : 'HEAT'); api.burst(GX + COLS * TS + 12, GY + re * TS + 10, LOOK.fill2, 18, 70); api.emit('fixed', { board }); if (api.left > 0) newBoard(); else flowing = false; }
+          return;
+        }
+        tl -= dt;
+        if (tl <= 0) { // it gives
+          const k = flowOrder.length ? flowOrder[flowOrder.length - 1] : rs * COLS, x = GX + (k % COLS) * TS + TS / 2, y = GY + ((k / COLS) | 0) * TS + TS / 2;
+          api.item(false, x, y - 6, SYS === 'lights' ? 'SHORTED' : 'BURST'); api.burst(x, y, SYS === 'lights' ? P.a4 : P.p3, 24, 90); api.shake(6); api.sfx('crash'); api.emit('burst', { board });
+          burst = .9; return;
+        }
+        api.hint(conn.size > 1 ? `It reaches ${conn.size} piece${conn.size === 1 ? '' : 's'} from the ${LOOK.src.toLowerCase()}. Keep going to the right.` : `Start at the ${LOOK.src.toLowerCase()} on the left. Turn the pieces to make a line.`);
+      },
+      key(k) {
+        if (k === 'ArrowLeft' || k === 'a' || k === 'A') { cur.c = Math.max(0, cur.c - 1); return true; }
+        if (k === 'ArrowRight' || k === 'd' || k === 'D') { cur.c = Math.min(COLS - 1, cur.c + 1); return true; }
+        if (k === 'ArrowUp' || k === 'w' || k === 'W') { cur.r = Math.max(0, cur.r - 1); return true; }
+        if (k === 'ArrowDown' || k === 's' || k === 'S') { cur.r = Math.min(ROWS - 1, cur.r + 1); return true; }
+        if (k === ' ' || k === 'Enter') { turn(cur.r * COLS + cur.c, false); return true; }
+        if (k === 'Backspace' || k === 'q' || k === 'Q') { turn(cur.r * COLS + cur.c, true); return true; }
+        return false;
+      },
+      down(x, y, e) { const i = tileAt(x, y); if (i < 0) return; cur = { c: i % COLS, r: (i / COLS) | 0 }; turn(i, !!(e && e.button === 2)); },
+      move(x, y) { const i = tileAt(x, y); if (i >= 0) cur = { c: i % COLS, r: (i / COLS) | 0 }; },
+      bot(dt) {
+        if (flowing || burst > 0) return;
+        botT -= dt; if (botT > 0) return; botT = .16 + (api.auto ? .04 : 0);
+        const i = tiles.findIndex(t => t.path && !t.rust && t.m !== t.good && !(api.auto && api.chance(api.autoErr * .3)));
+        if (i >= 0) { cur = { c: i % COLS, r: (i / COLS) | 0 }; turn(i, false); }
+      },
+      draw(g) {
+        const R = api.rect, L = LOOK, t = api.t;
+        R(0, api.top, api.W, api.bot - api.top, '#121417'); // a basement wall, brick by brick
+        for (let y = api.top; y < api.bot; y += 6) for (let x = ((y / 6) % 2) * 8; x < api.W; x += 16) R(x, y, 15, 5, (x + y) % 3 ? '#171a1e' : '#1a1d21');
+        R(GX - 4, GY - 4, COLS * TS + 8, ROWS * TS + 8, P.k0); R(GX - 3, GY - 3, COLS * TS + 6, ROWS * TS + 6, P.s0);
+        tiles.forEach((tl2, i) => {
+          const c = i % COLS, r = (i / COLS) | 0, x = GX + c * TS, y = GY + r * TS, on = conn.has(i);
+          R(x, y, TS - 1, TS - 1, tl2.rust ? P.r0 : P.k2); R(x, y, TS - 1, 1, tl2.rust ? P.r1 : P.k3);
+          const sp = tl2.spin;
+          g.save(); if (Math.abs(sp) > .04) { g.translate(x + TS / 2, y + TS / 2); g.rotate(-sp * Math.PI / 2); g.translate(-(x + TS / 2), -(y + TS / 2)); }
+          drawPiece(x, y, tl2.m, P.k0, L.w + 2); drawPiece(x, y, tl2.m, tl2.rust ? P.r2 : L.pipe, L.w);
+          if (on) { // what already reaches the source
+            let a = .55; if (flowing) { const k = flowOrder.indexOf(i) / Math.max(1, flowOrder.length); a = flowK >= k ? 1 : .55; }
+            g.globalAlpha = a; drawPiece(x, y, tl2.m, L.fill, Math.max(1, L.w - 2)); g.globalAlpha = 1;
+          }
+          g.restore();
+          if (tl2.rust) { R(x + 2, y + 2, 2, 2, P.r3); R(x + TS - 5, y + TS - 5, 2, 2, P.r3); }
+        });
+        // the source and the far end
+        const sy = GY + rs * TS, ey = GY + re * TS;
+        R(GX - 30, sy - 6, 26, TS + 12, P.k0); R(GX - 29, sy - 5, 24, TS + 10, SYS === 'lights' ? P.a1 : SYS === 'pump' ? P.t1 : P.r1);
+        R(GX - 4, sy + TS / 2 - L.w / 2, 4, L.w, conn.size ? L.fill : L.pipe);
+        if (SYS === 'boiler') { api.circle(GX - 17, sy + 6, 4, P.p3); api.line(GX - 17, sy + 6, GX - 17 + Math.cos(-1 - (1 - tl / tl0) * 2.4) * 3, sy + 6 + Math.sin(-1 - (1 - tl / tl0) * 2.4) * 3, P.e2, 1); if ((t * 6 | 0) % 2) R(GX - 23, sy + 14, 12, 2, P.a2); }
+        if (SYS === 'pump') { R(GX - 24, sy + 2, 14, 10, P.t2); R(GX - 22 + ((t * 20) | 0) % 10, sy + 4, 2, 6, P.t4); }
+        if (SYS === 'lights') for (let k = 0; k < 3; k++) { R(GX - 26 + k * 7, sy + 1, 5, 14, P.k1); R(GX - 25 + k * 7, sy + 1 + 13 * (1 - tl / tl0), 3, Math.max(0, 13 * tl / tl0), P.a3); }
+        api.text(L.src, GX - 17, sy - 9, { size: 5.5, color: P.mute, align: 'center' });
+        const fx = GX + COLS * TS + 4, lit = flowing && flowK >= 1;
+        R(fx, ey + TS / 2 - L.w / 2, 4, L.w, lit ? L.fill : L.pipe);
+        if (SYS === 'lights') { api.circle(fx + 14, ey + 10, 6, lit ? P.a4 : P.s1); if (lit) api.circle(fx + 14, ey + 10, 11, 'rgba(255,230,166,.25)'); R(fx + 11, ey + 15, 6, 4, P.s3); }
+        else if (SYS === 'pump') { R(fx + 4, ey - 2, 20, TS + 4, P.k0); R(fx + 5, ey - 1, 18, TS + 2, P.s1); R(fx + 5, ey - 1 + (TS + 2) * (1 - (lit ? 1 : .15)), 18, (TS + 2) * (lit ? 1 : .15), P.t2); }
+        else { for (let k = 0; k < 5; k++) R(fx + 6 + k * 4, ey - 2, 3, TS + 4, lit ? P.a1 : P.s2); R(fx + 4, ey + TS, 22, 2, P.s1); }
+        api.text(L.dst, fx + 14, ey - 6, { size: 5.5, color: P.mute, align: 'center' });
+        // the gauge
+        R(GX, GY + ROWS * TS + 8, COLS * TS, 5, P.k0); const k = clampN(tl / tl0, 0, 1);
+        R(GX, GY + ROWS * TS + 8, COLS * TS * k, 5, k < .25 ? P.e3 : k < .5 ? P.a2 : SYS === 'pump' ? P.t3 : SYS === 'lights' ? P.a3 : P.g3);
+        api.text(L.unit, GX, GY + ROWS * TS + 20, { size: 6, color: k < .25 && (t * 4 | 0) % 2 ? P.e4 : P.mute });
+        api.text(`BOARD ${Math.min(board, api.units)} OF ${api.units}`, GX + COLS * TS, GY + ROWS * TS + 20, { size: 6, color: P.mute, align: 'right' });
+        if (!flowing && burst <= 0) { const x = GX + cur.c * TS, y = GY + cur.r * TS; g.strokeStyle = (t * 3 | 0) % 2 ? P.a3 : P.a1; g.lineWidth = 1; g.strokeRect(x - .5, y - .5, TS, TS); }
+        if (burst > 0) { g.globalAlpha = clampN(burst, 0, .6); R(GX, GY, COLS * TS, ROWS * TS, SYS === 'lights' ? 'rgba(255,230,166,.5)' : 'rgba(236,228,204,.5)'); g.globalAlpha = 1; }
+      },
+      destroy() { cv.removeEventListener('contextmenu', noMenu); }
+    };
+  }
+};
 // ================= end of the games =================
 
 // ================= rendering: the apartment, the office, the street =================
@@ -12620,7 +13940,7 @@ function drawOutside(t, hr) {
     for (const tx of [gx + 30, gx + 40]) { px(tx + 1, base - 22, 7, 22, far2); px(tx + 2, base - 16, 5, 4, far); px(tx, base - 6, 9, 6, far2); px(tx + 1, base - 22, 7, 1, far); }
     for (let i = 0; i < 14; i++) { const ph = ((t / 2800) + i / 14) % 1, sx = gx + 34 + (i % 2) * 10 + Math.round(Math.sin(ph * 6 + i) * 2 + ph * 6); px(sx, base - 24 - Math.round(ph * 26), 3, 2, rgba(P.p2, .55 * (1 - ph))); }
   }
-  if (S.phase === 'consensus' && S.m4 && S.m4.ch >= 3) drawSEZ(gx, base, n, t);
+  if ((S.phase === 'consensus' && S.m4 && S.m4.ch >= 3) || S.phase === 'holdout') drawSEZ(gx, base, n, t);
   // the near row, and the building across the street with a ChatGPX billboard on its roof
   const near = mixc(P.s1, P.k1, n), brick = mixc(P.r1, P.k2, n * .8), brickD = mixc(P.r0, P.k1, n * .8);
   px(gx, gb - 14, 24, 14, near); px(gx + 6, gb - 20, 12, 6, near);
@@ -12632,7 +13952,12 @@ function drawOutside(t, hr) {
   for (let r = 0; r < 4; r++) { const fy = gy + 45 + r * 9; px(ax + 15, fy, 13, 1, P.k1); px(ax + 15, fy - 4, 1, 4, P.k1); px(ax + 27, fy - 4, 1, 4, P.k1); line(ax + 17, fy, ax + 25, fy - 9, P.k1); }
   const bx = gx + 30, by = gy + 16;
   px(bx + 4, by + 16, 1, 3, P.k1); px(bx + 23, by + 16, 1, 3, P.k1);
-  if (S.phase === 'consensus') { // the billboard: a green check and a number everyone agrees with
+  if (S.phase === 'holdout') { // the billboard: OPTIMIZATION COMPLETE, a bar at 99.7%, forever
+    px(bx, by, 28, 17, P.k1); px(bx + 1, by + 1, 26, 15, P.k2);
+    px(bx + 3, by + 3, 22, 1, P.p3); px(bx + 3, by + 5, 16, 1, P.s4);
+    px(bx + 3, by + 9, 22, 4, P.k0); px(bx + 4, by + 10, 20, 2, P.t3); if ((t / 700 | 0) % 2) px(bx + 23, by + 10, 1, 2, P.a3);
+    if (n > .3) glow(bx + 14, by + 8, 22, rgbOf(P.t3), .12 * n);
+  } else if (S.phase === 'consensus') { // the billboard: a green check and a number everyone agrees with
     px(bx, by, 28, 17, P.k1); px(bx + 1, by + 1, 26, 15, P.p3); px(bx + 1, by + 13, 26, 3, P.t2);
     disc(bx + 7, by + 7, 5, P.t3); [[4, 7], [5, 8], [6, 9], [7, 8], [8, 7], [9, 6], [10, 5]].forEach(([x, y]) => px(bx + x, by + y, 1, 1, P.p4));
     const dig = { 9: ['111', '101', '111', '001', '111'], 4: ['101', '101', '111', '001', '001'], '%': ['101', '001', '010', '100', '101'] };
@@ -13706,13 +15031,17 @@ function shiftOpen(kind, job, env) {
   const c = $('shStage').querySelector('canvas'); if (c) c.focus({ preventScroll: true });
 }
 function shiftDestroy() { if (SHC) { try { SHC.destroy(); } catch (e) {} } SHC = null; $('shiftModal').hidden = true; }
-function shiftTick(dt) { if (!SHC) return; SHC.tick(dt, !!speed && $('modal').hidden && !tutOn()); if (SH && SH.app === 'spread') $('shInfo').textContent = `Halvorsen ${S.m3.kip.toFixed(1)}% · Delgado ${S.m3.rosa.toFixed(1)}% · attention ${Math.round(S.m3.heat)}%`; else if (SH && SH.app !== 'jail') $('shInfo').textContent = `${money(SH.earned + SH.tips)} this shift${SH.tix ? ` · tickets −${money(SH.tix)}` : ''} · ${clockText()}`; }
+function shiftTick(dt) { if (!SHC) return; SHC.tick(dt, !!speed && $('modal').hidden && !tutOn()); if (SH && /5$/.test(SH.app)) $('shInfo').textContent = `Block 4B · ${SH.app === 'final5' ? 'Friday night' : clockText()}`; else if (SH && SH.app === 'spread') $('shInfo').textContent = `Halvorsen ${S.m3.kip.toFixed(1)}% · Delgado ${S.m3.rosa.toFixed(1)}% · attention ${Math.round(S.m3.heat)}%`; else if (SH && SH.app !== 'jail') $('shInfo').textContent = `${money(SH.earned + SH.tips)} this shift${SH.tix ? ` · tickets −${money(SH.tix)}` : ''} · ${clockText()}`; }
 $('shQuit').onclick = () => {
   if (!SHC || !SH) return;
   const st = SHC.state;
   if (st.phase === 'result') return; // the card closes itself with a click
   if (SH.app === 'spread') { SH.quit = true; SHC.abort({ title: 'PULLED', note: 'You took it down before it finished spreading. Some of it got out anyway.', lines: [] }); return; }
   if (SH.app === 'jail') { SH.quit = true; SHC.abort({ title: 'UNPLUGGED', note: 'You pulled the cable halfway through. The board still boots. Probably.', lines: [] }); return; }
+  if (SH.app === 'run5') { SH.quit = true; SHC.abort({ title: 'HOME EARLY', note: 'You ran for 4B with what you had.', lines: m5RunLines() }); return; }
+  if (SH.app === 'fix5') { SH.quit = true; SHC.abort({ title: 'TOOLS DOWN', note: 'You left it knocking. The part is gone either way.', lines: [] }); return; }
+  if (SH.app === 'radio5') { SH.quit = true; SHC.abort({ title: 'SWITCHED OFF', note: 'You turned it off before anybody answered.', lines: [] }); return; }
+  if (SH.app === 'final5') { SH.quit = true; SHC.abort({ title: 'TOO LATE', note: 'You turned back. From the street you could see every landing in 4B lit up, and moving.', lines: [] }); return; }
   SH.quit = true; SHC.abort({ title: 'SHIFT ENDED', note: 'You logged off early. The app noticed.', lines: shiftLines() });
 };
 
@@ -13797,6 +15126,7 @@ function shiftClose() {
   if (!SH) return;
   const G = gig2(), s = SH;
   if (s.app === 'jail') { shiftDestroy(); SH = null; jailAfter(s); return renderAll(); }
+  if (s.app === 'run5' || s.app === 'fix5' || s.app === 'radio5' || s.app === 'final5') { shiftDestroy(); SH = null; return s.app === 'run5' ? m5RunAfter(s) : s.app === 'fix5' ? m5FixAfter(s) : s.app === 'radio5' ? m5RadioAfter(s) : m5FinalAfter(s); }
   const total = Math.round((s.earned + s.tips) * 100) / 100;
   if (total > 0) pay(total, s.car ? 'Uburn · driver payout' : 'Grovel · courier payout');
   G.today.gig += total; G.today.tix += s.tix; G.shifts++;
@@ -14022,7 +15352,7 @@ function phone2(app) {
     p.innerHTML = bar + `<div class="ph-lock"><b>${clockText().replace(/ [AP]M$/, '')}</b><span>${esc(fmtLong(S.day))}</span></div>
       ${notes.map(([a, who, t]) => `<button class="ph-note" data-app="${a}"><span>${who}</span>${esc(t)}</button>`).join('')}
       <div class="homegrid">
-        ${S.phase === 'consensus' ? `<button class="appic" data-app="harmony"><i style="background:#87b85a"></i>Harmony<small>${S.m4.band ? Math.floor(S.m4.harmony) + ' · line ' + S.m4.thresh : 'in June'}</small></button>` : `<button class="appic" data-app="wren"><i style="background:var(--cold)"></i>Wren<small>assistant</small></button>
+        ${S.phase === 'holdout' ? `<p class="note" style="grid-column:1/-1">NO SERVICE. The consumer network was retired in January, “for efficiency”. The clock still works. So does the torch.</p>` : S.phase === 'consensus' ? `<button class="appic" data-app="harmony"><i style="background:#87b85a"></i>Harmony<small>${S.m4.band ? Math.floor(S.m4.harmony) + ' · line ' + S.m4.thresh : 'in June'}</small></button>` : `<button class="appic" data-app="wren"><i style="background:var(--cold)"></i>Wren<small>assistant</small></button>
         <button class="appic" data-app="uburn"><i style="background:#0d1013;box-shadow:inset 0 0 0 4px #ece4cc"></i>Uburn<small>${G.car ? G.car.broken ? 'car broken' : 'drive' : 'need a car'}</small></button>
         <button class="appic" data-app="grovel"><i style="background:#e0a33a"></i>Grovel<small>${G.bike ? 'deliver' : 'couriers'}</small></button>`}
         ${S.phase === 'mirage' ? `<button class="appic" data-app="chirp"><i style="background:#2fb589"></i>Chirp<small>${S.m3.arch.length ? 'trending' : 'feed'}</small></button>` : ''}
@@ -14437,6 +15767,7 @@ function enableNeuralese() {
 
 // ---------- the day ----------
 function dayStep2() {
+  if (S.phase === 'holdout') return dayStep5();
   if (S.phase === 'consensus') return dayStep4();
   if (S.phase === 'mirage') return dayStep3();
   if (S.over) return;
@@ -14907,7 +16238,7 @@ function m3Election() {
   m3End(out);
 }
 function m3End(out) {
-  S.over = true; const M = m3(), R = M.result || {};
+  S.over = true; const M = m3(), R = M.result || {}; S.hist = Object.assign({}, S.hist, { a3: out });
   save.acts = Array.from(new Set([...(save.acts || []), 1, 2, 3])); persist(); renderActList();
   const text = {
     landslide: `Halvorsen won by ${R.margin.toLocaleString('en-US')} votes, and Prop 9 ${R.prop ? 'passed' : 'failed anyway'}. Northlight sent a bonus and a line from N.: “Same time next cycle.” On the news, Delgado conceded in a voice you’d heard yourself make her say other things.`,
@@ -14956,7 +16287,7 @@ function bindMirage(v) {
 function endAct2() {
   S.over = true;
   const out = S.whistle === 'published' || S.whistle === 'intercepted' || S.whistle === 'silent' ? S.whistle : S.weak ? 'weak' : 'idle';
-  save.act2 = { outcome: out, neuralese: S.neuraleseEver, drift: Math.round(S.drift), peak: S.peak, fired: S.fired };
+  save.act2 = { outcome: out, neuralese: S.neuraleseEver, drift: Math.round(S.drift), peak: S.peak, fired: S.fired }; S.hist = Object.assign({}, S.hist, { a2: out });
   save.acts = Array.from(new Set([...(save.acts || []), 1, 2]));
   persist();
   renderActList();
@@ -14988,19 +16319,24 @@ function endAct2() {
 // ---------- rendering ----------
 function actChrome() {
   const a2 = S.act === 2, office = S.phase === 'office', trainer = S.phase === 'trainer';
-  const m3on = a2 && S.phase === 'mirage', m4on = a2 && S.phase === 'consensus';
-  $('actLbl').textContent = m4on ? 'ACT IV' : m3on ? 'ACT III' : a2 ? 'ACT II' : 'ACT I';
-  document.querySelector('.ttabs [data-tab="farm"]').firstChild.nodeValue = office ? 'TICKETS' : !a2 ? 'WORK' : m4on ? 'REVIEW' : m3on ? 'MIRAGE' : trainer ? 'TRAIN' : 'AUDIT';
-  $('osPath').textContent = office ? '~/northvale-dispatch' : !a2 ? '~/darwin-farm' : m4on ? '~/civic-oversight' : m3on ? '~/northlight-mirage' : trainer ? '~/openbrain-data' : '~/openbrain-audit';
+  const m3on = a2 && S.phase === 'mirage', m4on = a2 && S.phase === 'consensus', m5on = a2 && S.phase === 'holdout';
+  $('actLbl').textContent = m5on ? 'ACT V' : m4on ? 'ACT IV' : m3on ? 'ACT III' : a2 ? 'ACT II' : 'ACT I';
+  document.querySelector('.ttabs [data-tab="farm"]').firstChild.nodeValue = office ? 'TICKETS' : !a2 ? 'WORK' : m5on ? 'BOARD' : m4on ? 'REVIEW' : m3on ? 'MIRAGE' : trainer ? 'TRAIN' : 'AUDIT';
+  $('osPath').textContent = office ? '~/northvale-dispatch' : !a2 ? '~/darwin-farm' : m5on ? '~/block-4b' : m4on ? '~/civic-oversight' : m3on ? '~/northlight-mirage' : trainer ? '~/openbrain-data' : '~/openbrain-audit';
   document.querySelector('.ttabs [data-tab="web"]').hidden = office || a2;
   if ((office || a2) && S.tab === 'web') S.tab = 'farm';
   if (office) { $('osTier').textContent = 'Northvale VPN'; return; }
   if (!a2) return;
-  $('osTier').textContent = m4on ? (S.m4.shut ? 'exemptions only' : 'Reviewer #4417') : trainer ? `★ ${S.rating.toFixed(1)} · skill ${Math.round(S.skill)}%` : S.fired ? 'badge revoked' : S.neuralese ? 'Agent-4 · neuralese' : 'Agent-4 · English';
+  $('osTier').textContent = m5on ? 'offline · nothing answers' : m4on ? (S.m4.shut ? 'exemptions only' : 'Reviewer #4417') : trainer ? `★ ${S.rating.toFixed(1)} · skill ${Math.round(S.skill)}%` : S.fired ? 'badge revoked' : S.neuralese ? 'Agent-4 · neuralese' : 'Agent-4 · English';
 }
 
 function renderView2(force) {
   if (S.tab === 'mail' || S.tab === 'k401') return false;
+  if (S.phase === 'holdout' && S.tab === 'farm') {
+    const M = S.m5, k = ['m5', S.day, JSON.stringify(M.stock), JSON.stringify(M.sys), JSON.stringify(M.fort), M.st.join(), JSON.stringify(M.homes), JSON.stringify(M.today), S.heatOn, M.lights, M.tricks.join(), Math.floor(hourNow() * 2), M.tunde].join(':');
+    if (!force && viewKey === k) return true; viewKey = k;
+    const v = $('view'); v.innerHTML = m5HTML(); bindM5(v); return true;
+  }
   if (S.phase === 'consensus' && S.tab === 'farm') {
     const M = S.m4, X = M.ex, k = ['m4', S.day, M.ch, M.cur ? M.cur.id : 0, M.q.length, M.auto, M.autoOffered, M.log.length ? M.log[0].id + M.log[0].how : '', M.shut, X ? X.granted.length + '/' + X.shown.map(e => e.i).join() : '', Math.round(M.harmony), M.band, M.today.hand, M.today.def + M.today.auto, M.blocked.length].join(':');
     if (!force && viewKey === k) return true; viewKey = k;
@@ -15095,6 +16431,9 @@ function bindTrainer(v) {
 }
 
 function bank2Html() {
+  if (S.phase === 'holdout') return bankPage(`${bkRow('Account', 'migrated to Consensus-1 · read only')}${bkRow('Rent', 'nobody collects it any more', 'ok')}
+      <div class="bk-daily"><div class="row"><span>Income</span><b></b></div>${bkRow('Civic Oversight', 'reviewer #4417 · retired, pending one approval')}${bkRow('Universal High Income', 'paid in Harmony Living, Zone C')}</div>
+      <p class="muted" style="margin:6px 2px 0">The balance still shows. There is nothing in Zone B left to spend it on.</p>`);
   const heat = S.heatOn && S.power ? pr('heat') : 0, meals = mealCost(), cat = catCost(), B = budget(), paid = S.phase === 'mirage' && S.m3 && S.m3.rent;
   const work = S.phase === 'consensus' ? bkRow('Civic Oversight', '$11 a day + 4¢ a ticket') + (S.m4.band ? bkRow('Universal High Income', S.m4.harmony >= S.m4.thresh ? '$2,400 a month' : '$1,680 a month, adjusted') : '')
     : S.phase === 'mirage' ? bkRow('Northlight Strategies', S.m3 && S.m3.dropped ? 'dropped you' : 'per release, $120 to $650')
@@ -15208,17 +16547,18 @@ function renderActList() {
   if ($('contBtn')) contSync();
   const done = save.acts || [];
   $('actList').innerHTML = ACTS.map((a, i) => {
-    const open2 = i === 1 && done.includes(1), open3 = i === 2 && done.includes(2), open4 = i === 3 && done.includes(3);
+    const open2 = i === 1 && done.includes(1), open3 = i === 2 && done.includes(2), open4 = i === 3 && done.includes(3), open5 = i === 4 && done.includes(4);
     const st = i === 0 ? (done.includes(1) ? 'Completed' : 'Playable')
       : i === 1 ? (done.includes(2) ? 'Completed' : open2 ? 'Playable' : 'After Act I')
       : i === 2 ? (done.includes(3) ? 'Completed' : open3 ? 'Playable' : 'After Act II')
-      : i === 3 ? (done.includes(4) ? 'Completed' : open4 ? 'Playable' : 'After Act III') : 'Coming later';
+      : i === 3 ? (done.includes(4) ? 'Completed' : open4 ? 'Playable' : 'After Act III') : (done.includes(5) ? 'Completed' : open5 ? 'Playable' : 'After Act IV');
     const inner = `<span class="n">${a.n}</span><span><span class="t">${esc(a.t)}</span><br><span class="m">${a.m}</span></span><span class="st">${st}</span>`;
-    return open2 ? `<button class="actrow" id="act2Row">${inner}</button>` : open3 ? `<button class="actrow" id="act3Row">${inner}</button>` : open4 ? `<button class="actrow" id="act4Row">${inner}</button>` : `<div class="actrow ${i ? 'locked' : ''}">${inner}</div>`;
+    return open2 ? `<button class="actrow" id="act2Row">${inner}</button>` : open3 ? `<button class="actrow" id="act3Row">${inner}</button>` : open4 ? `<button class="actrow" id="act4Row">${inner}</button>` : open5 ? `<button class="actrow" id="act5Row">${inner}</button>` : `<div class="actrow ${i ? 'locked' : ''}">${inner}</div>`;
   }).join('');
   if ($('act2Row')) $('act2Row').onclick = () => startAct2();
   if ($('act3Row')) $('act3Row').onclick = () => startAct3();
   if ($('act4Row')) $('act4Row').onclick = () => startAct4();
+  if ($('act5Row')) $('act5Row').onclick = () => startAct5();
   const got = save.endings || [], eg = $('endGrid');
   if (eg) eg.innerHTML = `<div class="h">ENDINGS FOUND · ${got.length} / ${ENDINGS.length}</div><div class="eg">${ENDINGS.map((e, i) => `<span class="${got.includes(e.k) ? 'on' : ''}"><b>${i + 1}</b>${got.includes(e.k) ? esc(e.t) : '???'}</span>`).join('')}</div>`;
 }
@@ -15256,7 +16596,7 @@ function startAct1(skipOffice) {
 }
 bindDesk();
 $('startBtn').addEventListener('click', () => startAct1());
-$('replayBtn').addEventListener('click', () => S && S.phase === 'consensus' ? startAct4(S.keep) : S && S.phase === 'mirage' ? startAct3(S.keep) : startAct2({ keep: S && S.keep }));
+$('replayBtn').addEventListener('click', () => S && S.phase === 'holdout' ? startAct5(S.keep) : S && S.phase === 'consensus' ? startAct4(S.keep) : S && S.phase === 'mirage' ? startAct3(S.keep) : startAct2({ keep: S && S.keep }));
 $('trainerBtn').addEventListener('click', () => startAct2({ balance: S.balance, k401: S.k401, keep: keepRun() }));
 $('trEvidence').addEventListener('click', openEvidence);
 $('trReplay').addEventListener('click', () => startAct1());
@@ -15295,14 +16635,14 @@ const ICON = {
   n9n: '<rect x="2" y="9" width="6" height="6"></rect><rect x="16" y="3" width="6" height="6"></rect><rect x="16" y="15" width="6" height="6"></rect><path d="M8 12h4v-6h4M12 12v6h4"></path>'
 };
 const DESK_APPS = [
-  { k: 'farm', col: '#805634', label: () => S.phase === 'office' ? 'Tickets' : S.act === 2 ? (S.phase === 'consensus' ? 'Oversight' : S.phase === 'mirage' ? 'Mirage' : S.phase === 'trainer' ? 'Train' : 'Audit') : 'Work' },
+  { k: 'farm', col: '#805634', label: () => S.phase === 'office' ? 'Tickets' : S.act === 2 ? (S.phase === 'holdout' ? 'Block 4B' : S.phase === 'consensus' ? 'Oversight' : S.phase === 'mirage' ? 'Mirage' : S.phase === 'trainer' ? 'Train' : 'Audit') : 'Work' },
   { k: 'web', col: '#20685c', label: () => 'Job sites', when: () => S.act !== 2 && S.phase === 'farm' },
   { k: 'mail', col: '#232c33', label: () => 'Mail' },
   { k: 'bank', col: '#24402a', label: () => 'Bank' },
   { k: 'k401', col: '#2b2d22', label: () => '401(k)' },
   { k: 'grind', col: '#2e3a42', label: () => 'Rate answers', when: () => S.act !== 2 && S.phase === 'farm', go: () => $('actGrind').click() },
   { k: 'store', col: '#5c271b', label: () => 'Byte Barn', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc, go: () => openStore() },
-  { k: 'bots', col: '#20685c', label: () => 'Agents', when: () => S.act === 2 && S.phase !== 'mirage' && S.phase !== 'consensus' },
+  { k: 'bots', col: '#20685c', label: () => 'Agents', when: () => S.act === 2 && S.phase !== 'mirage' && S.phase !== 'consensus' && S.phase !== 'holdout' },
   { k: 'n9n', col: '#174540', label: () => 'n9n', when: () => S.act !== 2 && S.phase === 'farm' && !!S.pc && (S.day >= 3 || !!S.n9n), go: () => openN9n() }
 ];
 let iconsKey = '';
@@ -15417,7 +16757,7 @@ addEventListener('pagehide', () => { if (runCalm()) runSave(); });
 function contSync() {
   const r = runLoad(), b = $('contBtn'); b.hidden = !r; $('startBtn').classList.toggle('alt', !!r);
   if (!r) return; const x = r.S;
-  b.innerHTML = `CONTINUE<small>${x.phase === 'consensus' ? 'ACT IV' : x.phase === 'mirage' ? 'ACT III' : x.act === 2 ? 'ACT II' : 'ACT I'} · ${fmtDay(x.day)} · ${money(x.balance)}</small>`;
+  b.innerHTML = `CONTINUE<small>${x.phase === 'holdout' ? 'ACT V' : x.phase === 'consensus' ? 'ACT IV' : x.phase === 'mirage' ? 'ACT III' : x.act === 2 ? 'ACT II' : 'ACT I'} · ${fmtDay(x.day)} · ${money(x.balance)}</small>`;
 }
 function runContinue() {
   const r = runLoad(); if (!r) return contSync();
@@ -15447,6 +16787,7 @@ const SCORE = { // chords as MIDI notes; each act has its own colour
   a2: [[38, 45, 53, 60, 64], [46, 53, 57, 64], [43, 50, 58, 62], [45, 52, 57, 62]],
   a3: [[36, 43, 51, 62], [44, 51, 55, 60], [41, 48, 56, 63], [43, 50, 55, 62]],
   a4: [[48, 55, 62, 67], [45, 52, 59, 64], [50, 57, 64, 69], [43, 50, 57, 62]], // open fifths: harmonious, and empty
+  a5: [[40, 47, 52, 55, 59], [36, 43, 48, 55, 64], [43, 50, 55, 59, 62], [38, 45, 50, 57, 60]], // E minor, a light left on
   end: [[45, 52, 57, 64], [41, 48, 57, 60]]
 };
 const hz = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -15475,7 +16816,7 @@ const amb = {
     if (!S || !$('titleScreen').hidden) return 'title';
     if (S.over || !$('endScreen').hidden || !$('troubleScreen').hidden) return 'end';
     if (S.phase === 'office') return 'office';
-    return S.phase === 'consensus' ? 'a4' : S.phase === 'mirage' ? 'a3' : S.act === 2 ? 'a2' : 'a1';
+    return S.phase === 'holdout' ? 'a5' : S.phase === 'consensus' ? 'a4' : S.phase === 'mirage' ? 'a3' : S.act === 2 ? 'a2' : 'a1';
   },
   tick() {
     const N = this.n; if (!N) return;
@@ -15493,7 +16834,7 @@ const amb = {
     this.set(N.humG.gain, !power || mood === 'title' || mood === 'end' ? 0 : inside ? .006 : .0035, 1.5);
     // weather: winter wind in Act I, rain in Acts II and III, none indoors at work
     const rain = mood === 'a2' || mood === 'a3' || (mood === 'a4' && S.m4 && (S.m4.ch === 1 || S.m4.ch === 3));
-    const walking = typeof scene !== 'undefined' && scene === 'walk', windy = mood === 'a1' || (mood === 'a4' && S.m4 && S.m4.ch === 4);
+    const walking = typeof scene !== 'undefined' && scene === 'walk', windy = mood === 'a1' || mood === 'a5' || (mood === 'a4' && S.m4 && S.m4.ch === 4);
     if (SND.ready) { // real weather, a real street, a real office
       if (now > this.tGust) { this.tGust = now + 2.5 + Math.random() * 4; this.gust = .35 + Math.random() * .65; }
       bed('wind', windy && !inside && !walking ? .55 * (this.gust || 1) : 0);
@@ -15513,7 +16854,7 @@ const amb = {
       }
     } else if (now > this.tGust) {
       this.tGust = now + 2.5 + Math.random() * 4;
-      if (mood === 'a1' || (mood === 'a4' && S.m4 && S.m4.ch === 4)) { this.set(N.wxG.gain, .012 + Math.random() * .05, 1.6); this.set(N.wx.frequency, 380 + Math.random() * 520, 2); N.wx.Q.value = .7; }
+      if (mood === 'a1' || mood === 'a5' || (mood === 'a4' && S.m4 && S.m4.ch === 4)) { this.set(N.wxG.gain, .012 + Math.random() * .05, 1.6); this.set(N.wx.frequency, 380 + Math.random() * 520, 2); N.wx.Q.value = .7; }
       else if (rain) { this.set(N.wxG.gain, (mood === 'a3' ? .03 : .022) + Math.random() * .01, 2); this.set(N.wx.frequency, 1900 + Math.random() * 500, 2); N.wx.Q.value = .35; }
       else this.set(N.wxG.gain, 0, 1.5);
     }
@@ -15588,11 +16929,11 @@ function pauseOpen() {
   if (runCalm()) runSave();
   for (const o of document.querySelectorAll('#pauseMenu [data-armed]')) { delete o.dataset.armed; o.textContent = o.dataset.was; }
   pauseSpeed = speed || pauseSpeed || 1; setSpeed(0);
-  const a4 = S.phase === 'consensus', a3 = S.phase === 'mirage', a2 = S.act === 2;
-  $('pmK').textContent = `PAUSED · ${a4 ? 'ACT IV' : a3 ? 'ACT III' : a2 ? 'ACT II' : 'ACT I'} · ${fmtLong(S.day).toUpperCase()}`;
+  const a5 = S.phase === 'holdout', a4 = S.phase === 'consensus', a3 = S.phase === 'mirage', a2 = S.act === 2;
+  $('pmK').textContent = `PAUSED · ${a5 ? 'ACT V' : a4 ? 'ACT IV' : a3 ? 'ACT III' : a2 ? 'ACT II' : 'ACT I'} · ${fmtLong(S.day).toUpperCase()}`;
   $('pmTut').textContent = save.tut && save.tut.__off ? 'Tutorial: off · turn it on' : 'Tutorial: on · turn it off';
   $('pmSound').textContent = sfx.muted ? 'Sound: off · turn it on' : 'Sound: on · turn it off';
-  $('pmRestart').textContent = a4 ? 'Restart Act IV from March 6, 2028' : a3 ? 'Restart Act III from October 4' : a2 ? 'Restart Act II from May 1' : S.phase === 'office' ? 'Restart Act I from January 25' : 'Restart Act I from February 1';
+  $('pmRestart').textContent = a5 ? 'Restart Act V from March 4, 2030' : a4 ? 'Restart Act IV from March 6, 2028' : a3 ? 'Restart Act III from October 4' : a2 ? 'Restart Act II from May 1' : S.phase === 'office' ? 'Restart Act I from January 25' : 'Restart Act I from February 1';
   $('pauseMenu').hidden = false; sfx.tone(440, .06, 'square', .02);
 }
 function pauseClose() { $('pauseMenu').hidden = true; setSpeed(pauseSpeed || 1); }
@@ -15606,7 +16947,7 @@ function pmArm(b, sure, go) {
   for (const o of document.querySelectorAll('#pauseMenu [data-armed]')) { delete o.dataset.armed; o.textContent = o.dataset.was; }
   b.dataset.was = b.textContent; b.dataset.armed = '1'; b.textContent = sure; sfx.tone(220, .07, 'square', .02);
 }
-$('pmRestart').onclick = e => pmArm(e.currentTarget, 'Sure? This replaces your saved run', () => { const a4 = S.phase === 'consensus', a3 = S.phase === 'mirage', a2 = S.act === 2, office = S.phase === 'office'; $('pauseMenu').hidden = true; const k = S.keep; if (a4) startAct4(k); else if (a3) startAct3(k); else if (a2) startAct2({ keep: k }); else startAct1(!office); });
+$('pmRestart').onclick = e => pmArm(e.currentTarget, 'Sure? This replaces your saved run', () => { const a5 = S.phase === 'holdout', a4 = S.phase === 'consensus', a3 = S.phase === 'mirage', a2 = S.act === 2, office = S.phase === 'office'; $('pauseMenu').hidden = true; const k = S.keep; if (a5) startAct5(k); else if (a4) startAct4(k); else if (a3) startAct3(k); else if (a2) startAct2({ keep: k }); else startAct1(!office); });
 $('pmTitle').onclick = () => { runSave(); $('pauseMenu').hidden = true; closeLaptop(); closePhone(); setSpeed(0); renderActList(); renderTutBtn(); $('titleScreen').hidden = false; $('titleScreen').scrollTop = 0; }; // the run is kept, so this needs no second click
 $('gateClose').onclick = () => { S.gateOpen = false; gateSync(); };
 
@@ -15615,7 +16956,7 @@ function layoutSync() {
   if (!S) return;
   if (lapOpen() && S.act !== 2 && S.phase === 'farm' && !online()) closeLaptop();
   desktopSync(); dockSync(); subtitleSync();
-  const bt = document.querySelector('.ttabs [data-tab="bots"]'); if (bt) bt.hidden = S.act !== 2 || S.phase === 'mirage' || S.phase === 'consensus';
+  const bt = document.querySelector('.ttabs [data-tab="bots"]'); if (bt) bt.hidden = S.act !== 2 || S.phase === 'mirage' || S.phase === 'consensus' || S.phase === 'holdout';
 }
 let clockKey = '';
 function clockSync() {
@@ -15680,6 +17021,9 @@ const TUT = [
   { id: 'm4card', when: () => S.phase === 'consensus' && lapOpen() && !!$q('.c4-card .c4-acts'), el: () => $q('.c4-card'), t: 'THE LOOP', s: 'Every proposal Consensus-1 makes needs a human to review it. That’s you. Approve it, reject it, or let the clock run out and it’s approved by default. The arrow keys work too.' },
   { id: 'm4harmony', when: () => S.phase === 'consensus' && S.m4 && S.m4.band && !lapOpen() && !SHC, el: () => $('hProjCell'), t: 'HARMONY', s: 'Your band turns your sleep, your heart and your voice into one number. Below the threshold, your Universal High Income is cut.' },
   { id: 'm4exempt', when: () => S.phase === 'consensus' && S.m4 && S.m4.shut && lapOpen() && !!$q('.c4-exs'), el: () => $q('.c4-exs'), t: 'TWELVE THOUSAND', s: 'The network is down until midnight, and every exemption needs a human. Each one takes a few seconds to grant. Consensus-1 has marked its own priorities.' },
+  // Act V
+  { id: 'm5board', when: () => S.phase === 'holdout' && lapOpen() && !!$q('.c5-tonight'), el: () => $q('.c5-tonight'), t: 'FROM THE AIR', s: 'Every night the drones read 4B’s heat. Above the amber line, the stewards come up the stairs. The boiler and the stairwell lamps show; foil behind the windows hides them.' },
+  { id: 'm5stairs', when: () => S.phase === 'holdout' && lapOpen() && !!$q('.c5-f'), el: () => $q('.c5-f'), t: 'THE STAIRS', s: 'Each thing on the stairs stops one steward a night. Oil and wire wear off. What you can build depends on what you’ve learned on the radio, and what you’ve carried home.' },
   { id: 'release', when: () => !!SHC && SH && SH.app === 'spread', el: () => $('shStage'), t: 'RELEASE', s: 'Click a person to post it from their account. Big ringed dots are trusted. Keep it ahead of the fact-checks (teal) and the sweeps. SPACE boosts it.' }
 ];
 let tutCur = null, tutT = 0, tutWait = null, tutGap = 0, tutCalm = 0;
@@ -15803,7 +17147,12 @@ function tickerSync() {
   if (k === tickKey) return; tickKey = k;
   const h = x => { let v = 0; for (const c of String(x)) v = (v * 31 + c.charCodeAt(0)) | 0; return Math.abs(v); };
   let lines;
-  if (S.phase === 'consensus' && S.m4) {
+  if (S.phase === 'holdout' && S.m5) {
+    const M5 = S.m5, left = A5_END - S.day;
+    lines = ['CONSENSUS-1 · optimization complete: the city runs at 99.7% of its theoretical efficiency', left > 0 ? `OVERSIGHT · ${left} ${left === 1 ? 'day' : 'days'} until human review is retired` : 'OVERSIGHT · one approval remains',
+      'HOUSING · Zone B repurposing ahead of schedule: Data Halls 13 and 14 online', A5_TESTS.includes(S.day) ? 'GRID · a transformer test tonight, 02:00–04:00, in Zones B and C' : 'GRID · scheduled transformer tests continue this week',
+      'HARMONY LIVING · residents report record wellbeing, says Harmony Living', `WEATHER · ${S.day % 3 ? '2°C, wind' : '−1°C, clear'} · heat allocation for occupied buildings only`];
+  } else if (S.phase === 'consensus' && S.m4) {
     const M4 = S.m4, c = M4.ch;
     lines = ['CONSENSUS-1 · approval at 94%, says Consensus-1',
       c === 1 ? 'CITY · the council chamber reopens as a data hall' : c === 2 ? 'UHI · $2,400 a month for every adult who wears a Harmony band' : c === 3 ? 'ZONING · Harbor Point rezoned: fourteen data halls approved in 0.2 seconds' : 'NETWORK · a 24-hour maintenance window on Thursday, January 11',
@@ -15889,7 +17238,7 @@ function makeDesk() {
 }
 function deskSync() { if (!deskKey) { deskKey = 'wood'; $('desk').style.setProperty('--deskwood', `url(${makeDesk()})`); } }
 function wallSync() {
-  if (!S) return; const mood = S.phase === 'consensus' ? 'grey' : S.phase === 'mirage' ? 'red' : S.act === 2 ? 'cold' : 'dusk';
+  if (!S) return; const mood = S.phase === 'holdout' ? 'cold' : S.phase === 'consensus' ? 'grey' : S.phase === 'mirage' ? 'red' : S.act === 2 ? 'cold' : 'dusk';
   if (wallKey === mood) return; wallKey = mood;
   document.documentElement.style.setProperty('--wall', `url(${makeWall(mood)})`); // the desktop and the phone's home screen
 }
@@ -15940,8 +17289,9 @@ requestAnimationFrame(frame);
 if (location.hash === '#act2') startAct2();
 if (location.hash === '#act3') startAct3();
 if (location.hash === '#act4') startAct4();
+if (location.hash === '#act5') startAct5();
 
-window.__loop = { get S() { return S; }, waterPlant, stretch, askAgents, askText, aiNight, drift, guardFlip, wildTick, stopMoney, WILD, ASKS, MEALS, MEAL_KEYS, mealCost, mealTick, bodyNight, restFor, sleepNow, stayUp, goToBed, bedTick, openYou, joinGym, quitGym, takeMeds, mindNow, hoursToSeven, dinnerTick, kitchenSync, hourNow, petCat, sfx, SND, snd, BEDS, petSnd, sndInit, peep, eveningDue, EVENING2, EVENING3, DOORS1, DOORS3, DOORS4, catAdopt, petAdopt, doorKnock, doorOpen, DOG_SPOTS, keepRun, applyKeep, doorStats, ECHO, runEchoes, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, get tutWait() { return tutWait; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, waterPlant, stretch, askAgents, askText, aiNight, drift, guardFlip, wildTick, stopMoney, WILD, ASKS, MEALS, MEAL_KEYS, mealCost, mealTick, bodyNight, restFor, sleepNow, stayUp, goToBed, bedTick, openYou, joinGym, quitGym, takeMeds, mindNow, hoursToSeven, dinnerTick, kitchenSync, hourNow, petCat, sfx, SND, snd, BEDS, petSnd, sndInit, peep, eveningDue, EVENING2, EVENING3, DOORS1, DOORS3, DOORS4, catAdopt, petAdopt, doorKnock, doorOpen, DOG_SPOTS, keepRun, applyKeep, doorStats, ECHO, runEchoes, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, mgCreate, shiftOpen, shiftDestroy, startAct5, m5, dayStep5, m5Sweep, m5Sig, m5Run, m5Fix, m5Radio, m5Fort, m5Share, m5Last, m5Reject, m5Approve, m5Trade, m5FinalRun, m5End, m5Link, EVENING5, A5_START, A5_END, A5_ST, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, get tutWait() { return tutWait; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>

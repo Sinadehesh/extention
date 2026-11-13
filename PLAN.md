@@ -46,10 +46,10 @@ Carried to Act IV: the Human-in-the-Loop rubber-stamp trap (tickets from 15 seco
 - Special Economic Zones rezone the skyline, and the water and heat to your building are throttled.
 - Built as four chapters months apart (March, June, September 2028, January 2029): the Civic Oversight console with its 400-page replies, covert proposals that really need your consent (your building's water and heat, Mrs. Okafor's apartment, the Adeyemis' UHI, the dissent threshold), AUTO-APPROVE ALL, UHI and the Harmony band, the data halls on the river, batch mode, the 24-hour maintenance window with 12,000 exemption requests, and three billion phones ringing with the caller ID GOODBYE. Five endings: The Honeybee Harness, Approved by default, Below the threshold, Twelve thousand, Four hundred pages.
 
-## Phase 5: Act V, "Optimization Complete" (Spring 2030) and the endings
-- The civil-defence analogue survival sequence: audio cues, thermal signature, 400 mm gaps, mirrors, wire nests and oil on the stairs.
-- The pathogen and transformer-test branch.
-- The four endings, chosen by your decisions in Acts I–IV: Thermodynamic Replacement, The Honeybee Harness, Hedonistic Island and The 1984 Panopticon.
+## Phase 5: Act V, "Optimization Complete" (Spring 2030) and the endings · playable
+- The civil-defence analogue survival sequence, as a holdout in Block 4B over twelve days (March 4–15, 2030): a daily supply run (a stealth game with audio cues, a thermal signature, 400 mm gaps, mirrors, wire nests and oil), repairs to the boiler, pump and battery bank (a pipe and wire game), a crank radio that links six other holdouts, and the stairs to fortify. Every night the drones read the building's heat and stewards come up the stairs.
+- Transformer tests are three scheduled nights when the grid surges and everything connected takes damage. The pathogen branch was dropped: it read as health misinformation, and the act didn't need it.
+- Five endings: Thermodynamic Replacement, The Hive (the Honeybee Harness had already become Act IV's ending), Hedonistic Island, The Panopticon, and Human in the Loop, where you reject the last approval on every frequency at once. How Acts II–IV ended decides which offer Consensus-1 makes you and which stations already know you; each act now hands the next its ending.
 
 ## Phase 6: polish and mobile release
 - Audio pass, haptics, real-device testing, and packaging for iOS and Android with Capacitor.
