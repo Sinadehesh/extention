@@ -13226,8 +13226,8 @@ MINI.sneak = {
         if (atG && !left) return finishAt(FINAL ? 'ON AIR' : 'HOME');
         if (atG && left && !FINAL && carried.length && !moving) { goHome += dt; if (goHome > 1.4) for (const l of loot) if (!l.got && !l.gone) { l.gone = true; api.item(false, l.x, l.y, 'LEFT', { quiet: true }); } }
         else goHome = 0;
-        const hint = FINAL ? (left ? `Plug the radio into ${left} more relay${left === 1 ? '' : 's'}: stand on each one. Then the tower.` : 'Up the tower. Now.')
-          : left ? (eff > .25 ? 'You’re warm: they can see you. Stand still in the cold to cool down.' : 'Cold. They can’t see you. Move while it lasts.') : 'Home. The door of 4B, bottom left.';
+        const hint = FINAL ? (left ? `${left} more antenna${left === 1 ? '' : 's'}: stand on it. Then the tower.` : 'Up the tower. Now.')
+          : left ? (eff > .25 ? 'Warm: they can see you. Stand still in the cold.' : 'Cold: they can’t see you. Move while it lasts.') : 'Home: the door of 4B, bottom left.';
         api.hint(hint);
       },
       key(k) {
