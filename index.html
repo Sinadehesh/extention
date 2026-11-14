@@ -6885,7 +6885,7 @@ function m5Out(dest) { // nightfall, and you're through the door
   const M = m5(), R = A5_RUNS[dest], withT = M.tunde === 'with' && M.homes.adeyemi === 'in';
   const lv = clamp(.2 + R.lv + (S.day - A5_START) * .05 + M.runs * .02 - (M.tunde === 'routes' ? .1 : 0), 0, 1);
   M.today.run = 1; M.outNight = S.day;
-  outStart({ dest, lv, day: S.day, loot: withT ? R.loot.concat(R.loot[0]) : R.loot.slice(), pal: withT, cap: withT ? 9 : 6, len: 300,
+  outStart({ dest, lv, day: S.day, loot: withT ? R.loot.concat(R.loot[0]) : R.loot.slice(), pal: withT, cap: withT ? 9 : 6,
     tools: { glass: M.tricks.includes('mirror') ? Math.min(3, M.stock.glass) : 0, oil: M.tricks.includes('oil') ? Math.min(2, M.stock.oil) : 0, wire: M.tricks.includes('wire') ? Math.min(2, M.stock.wire) : 0 },
     nests: M.st.includes('ferry') ? 2 : 0, home: { lamps: M.lights && M.sys.lights > 25, cold: M.fort.cold }, safeChurch: M.st.includes('brigid'), onDone: r => m5OutDone(dest, r) });
 }
@@ -7133,7 +7133,7 @@ function m5Reject() {
 function m5FinalRun() { // Friday night: the radio, the aerials, the tower
   const M = m5(), relays = Math.max(1, 4 - Math.floor(M.st.length / 2));
   const fortSum = M.fort.wire + M.fort.oil + M.fort.gap * 1.5 + M.fort.mirror + M.fort.cold * .5;
-  const siege = Math.round(clamp(120 + fortSum * 12 + M.shared * 5 + m5People() * 5 + (M.st.includes('ledger') ? 12 : 0), 120, 270));
+  const siege = Math.round(clamp(150 + fortSum * 12 + M.shared * 5 + m5People() * 5 + (M.st.includes('ledger') ? 12 : 0), 150, 300));
   setSpeed(1);
   outStart({ dest: 'tower', lv: .7, day: S.day, loot: [], pal: false, cap: 6, final: { relays, siege, noises: M.st.map(id => A5_ST.find(s => s.id === id).noise) },
     tools: { glass: Math.min(3, M.stock.glass), oil: Math.min(2, M.stock.oil), wire: Math.min(2, M.stock.wire) }, nests: M.st.includes('ferry') ? 2 : 0,
@@ -17267,22 +17267,23 @@ Object.assign(OBLOCK, {
     oTextC(bx + bw / 2, 82, 'DELIVERIES', '#d9cfb3', 3, .8);
     B.spots.push({ k: 'indoor', x0: bx + 1, x1: bx + bw - 1 });
     const it = B.cfg.loot || []; it.forEach((k, i) => B.loot.push({ x: Math.round(bx + 12 + i * (bw - 24) / Math.max(1, it.length - 1)), kind: 'crate', t: 2.1, item: k, chalk: true }));
-    B.props.push({ k: 'cart', x: ex + 82 }); B.props.push({ k: 'cart', x: ex + 94 }); B.props.push({ k: 'pallets', x: bx - 22, hide: true });
+    B.props.push({ k: 'cart', x: ex + 82 }); B.props.push({ k: 'cart', x: ex + 94 }); B.props.push({ k: 'pallets', x: bx - 22, hide: true }); B.props.push({ k: 'boxes', x: x + w - 9, hide: true }); // somewhere to get down at each end of the bay: it's a dead end
     B.goal = { x0: bx, x1: bx + bw, x: bx + bw / 2 };
   },
   // the Pier Street pharmacy: the shutter is down, the night hatch isn't
   pharmacy(B, x, w) {
-    const K = OWALL.p; oBrick(x, 0, w, OBASE, K, B.seed + x); px(x, 0, 2, OBASE, K.d); px(x + w - 2, 0, 2, OBASE, K.dd); px(x, 40, w, 3, K.t); px(x, 40, w, 1, K.tl); px(x, 130, w, 10, K.b); px(x, 130, w, 1, K.bl);
-    for (let i = 0; i < 5; i++) { oWindow(B, x + 12 + i * 31, 10, 14, 21, K, OWIN(B, .05)); oWindow(B, x + 12 + i * 31, 52, 14, 21, K, OWIN(B, .05)); }
-    px(x + 5, 85, w - 10, 55, '#07090c'); px(x + 6, 86, w - 12, 12, '#12241e'); oTextC(x + w / 2, 89, 'PIER ST PHARMACY', '#7fd8c0', 5); B.lights.push({ k: 'sign', x: x + w / 2, y: 92, w: w - 12, h: 12, rgb: '47,181,137', a: .45, flick: 6 });
+    const K = OWALL.p, sw = 152; oBrick(x, 0, w, OBASE, K, B.seed + x); px(x, 0, 2, OBASE, K.d); px(x + w - 2, 0, 2, OBASE, K.dd); px(x, 40, w, 3, K.t); px(x, 40, w, 1, K.tl); px(x, 130, w, 10, K.b); px(x, 130, w, 1, K.bl);
+    for (let i = 0; 12 + i * 31 + 14 < w - 24; i++) { oWindow(B, x + 12 + i * 31, 10, 14, 21, K, OWIN(B, .05)); oWindow(B, x + 12 + i * 31, 52, 14, 21, K, OWIN(B, .05)); }
+    px(x + 5, 85, sw, 55, '#07090c'); px(x + 6, 86, sw - 2, 12, '#12241e'); oTextC(x + 5 + sw / 2, 89, 'PIER ST PHARMACY', '#7fd8c0', 5); B.lights.push({ k: 'sign', x: x + 5 + sw / 2, y: 92, w: sw - 2, h: 12, rgb: '47,181,137', a: .45, flick: 6 });
+    oDoorway(B, x + 180, K, { door: '#243b36', sticker: false, num: 'STAFF' });                                                                                     // the staff door, round the side
     oShutter(x + 8, 100, 78, 40, '#3a4a46'); oTag(x + 20, 116, B.seed, '#d9cfb3');
     const kx = x + w - 12; px(kx - 8, 56, 17, 17, '#07090c'); px(kx - 2, 59, 5, 11, '#2fb589'); px(kx - 5, 62, 11, 5, '#2fb589'); B.lights.push({ k: 'sign', x: kx, y: 64, w: 14, h: 14, rgb: '47,181,137', a: .8, blink: 1.2 });
-    const hx = x + 100; px(hx - 1, 102, 26, 20, '#07090c'); px(hx, 103, 24, 18, '#020304'); px(hx, 103, 24, 4, '#3a4a46'); px(hx + 14, 107, 10, 3, '#3a4a46'); px(hx - 2, 122, 28, 2, '#8f8770'); oText(hx + 2, 96, 'NIGHT', '#8f8770', 3);   // the night hatch, forced
+    const hx = x + 100; px(hx - 1, 102, 26, 20, '#07090c'); px(hx, 103, 24, 18, '#020304'); px(hx, 103, 24, 4, '#3a4a46'); px(hx + 14, 107, 10, 3, '#3a4a46'); px(hx - 2, 122, 28, 2, '#8f8770'); oText(hx + 3, 126, 'NIGHT', '#8f8770', 3);   // the night hatch, forced
     const cb = x + 136; px(cb, 104, 13, 13, '#07090c'); px(cb + 1, 105, 11, 11, '#d9cfb3'); px(cb + 5, 107, 3, 7, '#3f6b33'); px(cb + 3, 109, 7, 3, '#3f6b33');                                                              // a first-aid cabinet
-    const it = B.cfg.loot || [], at = [[hx + 12, 'hatch', 2.4], [cb + 6, 'cabinet', 1.8], [x + 60, 'locker', 2.6], [x + w - 34, 'vend', 2, true]];
+    const it = B.cfg.loot || [], at = [[hx + 12, 'hatch', 2.4], [cb + 6, 'cabinet', 1.8], [x + 26, 'locker', 2.6], [x + w - 14, 'vend', 2, true]];
     it.slice(0, 4).forEach((k, i) => B.loot.push({ x: at[i][0], kind: at[i][1], t: at[i][2], item: k, chalk: true, loud: !!at[i][3] }));
-    B.props.push({ k: 'locker', x: x + 60 }); B.props.push({ k: 'vend', x: x + w - 34 }); B.lights.push({ k: 'sign', x: x + w - 34, y: 124, w: 10, h: 14, rgb: '47,90,104', a: .5 });
-    B.spots.push({ k: 'roof', x0: hx - 4, x1: hx + 28, y: 100 }); B.goal = { x0: x + 50, x1: x + w - 20, x: hx + 12 };
+    B.props.push({ k: 'locker', x: x + 26 }); B.props.push({ k: 'bins', x: x + 62, hide: true }); B.props.push({ k: 'vend', x: x + w - 14 }); B.lights.push({ k: 'sign', x: x + w - 14, y: 124, w: 10, h: 14, rgb: '47,90,104', a: .5 });
+    B.spots.push({ k: 'roof', x0: hx - 4, x1: hx + 28, y: 100 }); B.goal = { x0: x + 14, x1: x + w - 6, x: hx + 12 };
   },
   // Lou's Garage, 8th Street. The light is on. The Corrola is still outside, FOR PARTS
   garage(B, x, w) {
@@ -17297,24 +17298,26 @@ Object.assign(OBLOCK, {
     B.spots.push({ k: 'low', x0: cx0 - 2, x1: cx0 + 54, cx: cx0 + 26 });
     const it = B.cfg.loot || [], lou = it.filter(k => k === 'oil'), rest = it.filter(k => k !== 'oil');
     B.props.push({ k: 'lou', x: gx + gw - 14 }); B.loot.push({ x: gx + gw - 26, kind: 'lou', t: 1.4, items: lou, chalk: true });
-    rest.forEach((k, i) => B.loot.push({ x: gx + 12 + i * 16, kind: 'crate', t: 2, item: k, chalk: true }));
+    rest.forEach((k, i) => B.loot.push({ x: gx + 9 + i * 13, kind: 'crate', t: 2, item: k, chalk: true }));
     B.props.push({ k: 'tyres', x: gx - 16, hide: true }); B.props.push({ k: 'drum', x: x + 104 }); B.goal = { x0: gx, x1: gx + gw, x: gx + gw / 2 };
   },
   // the 5th Street viaduct. They renamed it Consensus Way. The bus shelters still have their glass
   shelters(B, x, w) {
-    px(x, 96, w, 44, '#2c343a'); px(x, 96, w, 2, '#4a565d'); for (let i = 0; i < w; i += 26) px(x + i, 98, 1, 42, '#232a2f'); oTag(x + 30, 112, B.seed, '#b8321f'); oTag(x + 120, 108, B.seed + 3, '#2fb589'); oPoster(x + 76, 106, 'vote'); // the retaining wall
+    px(x, 96, w, 44, '#2c343a'); px(x, 96, w, 2, '#4a565d'); for (let i = 0; i < w; i += 26) px(x + i, 98, 1, 42, '#232a2f'); oTag(x + 3, 112, B.seed, '#b8321f'); oTag(x + 140, 109, B.seed + 3, '#2fb589'); oPoster(x + 166, 104, 'vote'); // the retaining wall
     px(x - 6, 14, w + 12, 26, '#3d474d'); px(x - 6, 14, w + 12, 2, '#66747c'); px(x - 6, 38, w + 12, 4, '#1f272d'); for (let i = 0; i < w + 12; i += 30) px(x - 6 + i, 16, 1, 22, '#2e373d'); px(x - 6, 8, w + 12, 6, '#2c343a'); for (let i = 0; i < w + 12; i += 6) px(x - 6 + i, 4, 1, 4, '#2c343a'); px(x - 6, 4, w + 12, 1, '#4a565d');     // the deck and its rail
     px(x + w / 2 - 44, 20, 88, 13, '#174540'); px(x + w / 2 - 43, 21, 86, 11, '#20685c'); oTextC(x + w / 2, 23, 'CONSENSUS WAY', '#ece4cc', 5); oText(x + w / 2 - 40, 35, '5TH ST VIADUCT', '#55626a', 3, .7);
-    for (const pxl of [x + 26, x + w - 46]) { px(pxl, 42, 22, 98, '#3d474d'); px(pxl, 42, 2, 98, '#55626a'); px(pxl + 20, 42, 2, 98, '#232a2f'); dith(pxl + 4, 96, 14, 44, '#2c343a', 1); px(pxl + 6, 78, 9, 6, '#7a2116'); px(pxl + 7, 79, 7, 1, '#b8321f'); }
-    px(x + 96, 122, 20, 18, '#07090c'); px(x + 97, 123, 18, 17, '#232c33'); px(x + 97, 123, 18, 1, '#3d4c55'); px(x + 97, 129, 18, 1, '#3a1913'); px(x + 100, 119, 12, 4, '#0b0e12');                        // the barrel. Cold, this year
+    for (const pxl of [x + 26, x + w - 50]) { px(pxl, 42, 22, 98, '#3d474d'); px(pxl, 42, 2, 98, '#55626a'); px(pxl + 20, 42, 2, 98, '#232a2f'); dith(pxl + 4, 96, 14, 44, '#2c343a', 1); px(pxl + 6, 78, 9, 6, '#7a2116'); px(pxl + 7, 79, 7, 1, '#b8321f');
+      px(pxl + 22, 96, 9, 44, '#161c20'); dith(pxl + 31, 96, 3, 44, '#161c20', 1); B.spots.push({ k: 'door', x0: pxl + 16, x1: pxl + 36, cx: pxl + 26, flat: true, say: 'BEHIND THE PILLAR' }); }                    // and the shadow behind each one
+    const bx0 = x + 118; px(bx0, 122, 20, 18, '#07090c'); px(bx0 + 1, 123, 18, 17, '#232c33'); px(bx0 + 1, 123, 18, 1, '#3d4c55'); px(bx0 + 1, 129, 18, 1, '#3a1913'); px(bx0 + 4, 119, 12, 4, '#0b0e12');                // the barrel. Cold, this year
+    B.spots.push({ k: 'low', x0: bx0 - 3, x1: bx0 + 23, cx: bx0 + 10 });
     B.spots.push({ k: 'roof', x0: x - 4, x1: x + w + 4, y: 40, deck: true });
-    const it = (B.cfg.loot || []).slice(), g1 = it.indexOf('glass'); const s1 = x + 78, s2 = x + w - 92;
+    const it = (B.cfg.loot || []).slice(), g1 = it.indexOf('glass'); const s1 = x + 88, s2 = x + 200;
     B.props.push({ k: 'shelter', x: s1 }); B.props.push({ k: 'shelter', x: s2 });
     const take = k => { const i = it.indexOf(k); return i >= 0 ? it.splice(i, 1)[0] : it.shift(); };
     B.loot.push({ x: s1 - 8, kind: 'shelter', t: 2.8, item: take('glass'), chalk: true, loud: true }); B.loot.push({ x: s2 - 8, kind: 'shelter', t: 2.8, item: take('glass'), chalk: true, loud: true });
-    B.props.push({ k: 'robot', x: x + w / 2 + 6 }); B.loot.push({ x: x + w / 2 + 6, kind: 'robot', t: 2.6, item: take('parts'), chalk: true });
-    B.props.push({ k: 'vend', x: x + w - 20 }); B.loot.push({ x: x + w - 20, kind: 'vend', t: 2, item: take('food'), chalk: true, loud: true });
-    B.goal = { x0: x + 40, x1: x + w - 10, x: x + w / 2 };
+    B.props.push({ k: 'robot', x: x + 156 }); B.loot.push({ x: x + 156, kind: 'robot', t: 2.6, item: take('parts'), chalk: true });
+    B.props.push({ k: 'vend', x: x + w - 8 }); B.loot.push({ x: x + w - 8, kind: 'vend', t: 2, item: take('food'), chalk: true, loud: true });
+    B.goal = { x0: x + 40, x1: x + w - 4, x: x + w / 2 };
   },
   // Pier 9: the chandlery, and the night ferry nobody remembered to retire
   chandlery(B, x, w) {
@@ -17333,7 +17336,8 @@ Object.assign(OBLOCK, {
     const it = (B.cfg.loot || []).slice(); const take = k => { const i = it.indexOf(k); return i >= 0 ? it.splice(i, 1)[0] : it.shift(); };
     B.props.push({ k: 'coil', x: x + 108 }); B.loot.push({ x: x + 108, kind: 'coil', t: 2, item: take('wire'), chalk: true });
     B.props.push({ k: 'coil', x: x + 124 }); B.loot.push({ x: x + 124, kind: 'coil', t: 2, item: take('wire'), chalk: true });
-    let cxp = x + 24; while (it.length) { B.loot.push({ x: cxp, kind: 'crate', t: 2.1, item: it.shift(), chalk: true }); cxp += 18; }
+    let cxp = x + 34; while (it.length) { B.loot.push({ x: cxp, kind: 'crate', t: 2.1, item: it.shift(), chalk: true }); cxp += 15; }
+    B.props.push({ k: 'pallets', x: x + 8, hide: true }); B.props.push({ k: 'boxes', x: x + 152, hide: true });                                                      // lobster pots and boxes on the planks, to get down behind
     B.spots.push({ k: 'door', x0: x + 78, x1: x + 98, cx: x + 88 }); B.goal = { x0: x, x1: x + sh, x: x + 70 }; B.pier = { x0: x - 40, x1: x + w };
   },
   // the water tower on Pier Street: the highest thing in Zone B that isn't theirs
@@ -17345,6 +17349,7 @@ Object.assign(OBLOCK, {
     px(cxm - 5, 0, 1, OBASE, '#55626a'); px(cxm + 4, 0, 1, OBASE, '#55626a'); for (let j = 4; j < OBASE; j += 5) px(cxm - 5, j, 10, 1, '#7a8a90');                                                 // the ladder
     px(x + 10, 112, 34, 28, '#07090c'); px(x + 11, 113, 32, 27, '#39444b'); px(x + 11, 113, 32, 1, '#66747c'); oText(x + 13, 117, 'HARBOR', '#d9cfb3', 3); oText(x + 13, 124, 'WATER', '#d9cfb3', 3); px(x + 30, 126, 9, 14, '#1f272d');
     px(cxm - 12, 126, 24, 3, '#e0a33a'); for (let i = 0; i < 24; i += 4) px(cxm - 12 + i, 126, 2, 3, '#12171c');
+    px(x + 44, 112, 8, 28, '#12171c'); dith(x + 52, 112, 3, 28, '#12171c', 1); B.spots.push({ k: 'door', x0: x + 40, x1: x + 58, cx: x + 49, flat: true, say: 'BEHIND THE PUMP HOUSE' });
     B.goal = { x0: cxm - 12, x1: cxm + 12, x: cxm, tower: true }; B.loot.push({ x: cxm, kind: 'ladder', t: 1, item: 'tower' });
   },
   // where they closed the road
@@ -17399,8 +17404,9 @@ function oFore(B, wf) { // what stands between you and the street: poles, branch
   const k = '#020304', rim = '#0f1519'; let x = 60 + (R() * 80 | 0);
   while (x < wf - 20) {
     const r = R();
-    if (r < .3) { for (let i = 0; i < 9; i++) { const lx = x + i * 5; px(lx, 166 - (hash(i, x) * 6 | 0), 2, 16, k); px(lx - 1, 165 - (hash(i, x) * 6 | 0), 1, 3, k); } }                                                               // dead grass at the kerb
-    else if (r < .55) { let bx = x, by = 0; for (let i = 0; i < 26; i++) { const nx = bx + (R() * 9 | 0) - 2, ny = by + (R() * 7 | 0); line(bx, by, nx, ny, k); if (R() < .5) line(bx, by, bx + 6 + (R() * 9 | 0), by + 2 + (R() * 5 | 0), k); bx = nx; by = ny; if (by > 62) break; } }   // bare branches
+    if (r < .3) { const n = 8 + (R() * 6 | 0), rw = n * 5 + 5; px(x - 3, 162, rw, 2, k); px(x - 3, 162, rw, 1, rim); px(x - 3, 175, rw, 1, k); for (let i = 0; i < n; i++) { const lx = x + i * 5; px(lx, 157, 1, 23, k); px(lx - 1, 156, 3, 2, k); px(lx, 154, 1, 2, k); } px(x - 4, 155, 2, 25, k); px(x + n * 5 - 1, 155, 2, 25, k); px(x - 4, 155, 1, 25, rim); } // iron railings, spear-pointed, on your side of the road
+    else if (r < .55) { const dir = R() < .5 ? 1 : -1; let bx = x, by = -2; for (let i = 0; i < 18; i++) { const nx = bx + dir * (3 + (R() * 5 | 0)), ny = by + 1 + (R() * 3 | 0); line(bx, by, nx, ny, k); line(bx, by + 1, nx, ny + 1, k); if (i < 6) line(bx, by + 2, nx, ny + 2, k);
+        if (i > 1 && R() < .7) { let tx = nx, ty = ny; const td = R() < .5 ? 1 : -1; for (let j = 0, m = 2 + (R() * 4 | 0); j < m; j++) { const ux = tx + td * (2 + (R() * 4 | 0)), uy = ty + 2 + (R() * 4 | 0); line(tx, ty, ux, uy, k); tx = ux; ty = uy; } } bx = nx; by = ny; if (by > 40) break; } } // a bare bough across the top, and its twigs
     else if (r < .8) { for (let i = 0; i < 3; i++) { px(x + i * 20, 158, 5, 22, k); px(x + i * 20, 158, 1, 22, rim); px(x + i * 20 - 1, 156, 7, 3, k); } px(x, 164, 44, 1, k); px(x, 171, 44, 1, k); }       // bollards and a chain
     else { for (let i = 0; i < 7; i++) px(x + 6 - i + (i > 3 ? i - 3 : 0), 166 + i * 2, 58 + (i < 4 ? i * 2 : 6), 2, k); px(x + 8, 165, 54, 1, rim); px(x + 14, 168, 40, 3, '#0a1218'); px(x + 15, 168, 38, 1, '#16242c'); B.foreLed = B.foreLed || []; B.foreLed.push({ x: x + 62, y: 172 }); } // the roof of a robotaxi at the kerb, asleep
     x += 150 + (R() * 150 | 0);
@@ -17410,9 +17416,9 @@ function oFore(B, wf) { // what stands between you and the street: poles, branch
 // ---- the streets. The layout of a street never changes; who patrols it does ----
 const OUT_ROUTE = {
   market: { street: 'HARBOR STREET', seed: 11, end: 'market', ew: 232, blocks: ['ten', 'gap:a', 'shop:LAUNDROMAT', 'lot:opt', 'ten', 'gap:a', 'shop:NOODLES', 'gap:b', 'hall:13', 'gap:b', 'ten'] },
-  pharmacy: { street: 'PIER STREET', seed: 23, end: 'pharmacy', ew: 174, blocks: ['shop:HARBOR BAKERY', 'ten', 'gap:a', 'lot:harm', 'church', 'gap:a', 'stop', 'ten', 'gap:b', 'hall:14', 'gap:b', 'shop:PAWN'] },
+  pharmacy: { street: 'PIER STREET', seed: 23, end: 'pharmacy', ew: 220, blocks: ['shop:HARBOR BAKERY', 'ten', 'gap:a', 'lot:harm', 'church', 'gap:a', 'stop', 'ten', 'gap:b', 'hall:14', 'gap:b', 'shop:PAWN'] },
   garage: { street: '8TH STREET', seed: 37, end: 'garage', ew: 184, blocks: ['ten', 'shop:BYTE BARN', 'gap:a', 'hall:12', 'gap:a', 'ten', 'lot:thanks', 'shop:NOODLES', 'gap:b', 'hall:9', 'gap:b', 'shop:TYRES'] },
-  glass: { street: '5TH STREET', seed: 41, end: 'shelters', ew: 236, blocks: ['ten', 'gap', 'shop:LAUNDROMAT', 'lot:opt', 'ten', 'gap:a', 'hall:11', 'gap:a', 'stop', 'ten', 'lot:harm', 'shop:PAWN', 'gap', 'ten'] },
+  glass: { street: '5TH STREET', seed: 41, end: 'shelters', ew: 280, blocks: ['ten', 'gap', 'shop:LAUNDROMAT', 'lot:opt', 'ten', 'gap:a', 'hall:11', 'gap:a', 'stop', 'ten', 'lot:harm', 'shop:PAWN', 'gap', 'ten'] },
   pier: { street: 'PIER 9', seed: 53, end: 'chandlery', ew: 250, blocks: ['shop:NOODLES', 'ten', 'gap:a', 'hall:7', 'gap:a', 'ten', 'lot:thanks', 'ten', 'gap:b', 'hall:8', 'gap:b', 'ten', 'lot:opt', 'shop:BAIT'] },
   tower: { street: 'PIER STREET', seed: 23, end: 'tower', ew: 150, blocks: ['shop:HARBOR BAKERY', 'ten', 'gap:a', 'lot:harm', 'church', 'gap:a', 'stop', 'ten', 'gap:b', 'hall:14', 'gap:b', 'shop:PAWN', 'lot:opt', 'ten', 'gap', 'hall:15', 'ten'] }
 };
@@ -17456,7 +17462,9 @@ function outBuild(cfg) {
   for (let x = 150; x < W0 - 120; x += 90 + (R() * 80 | 0)) { if (taken(x)) continue; const seg = B.segs.find(s => x >= s.x0 && x < s.x1); if (!seg || !['ten', 'shop', 'lot'].includes(seg.k)) continue; const k = B.pick(['hydrant', 'box', 'bench', 'cart', 'cases', 'bike', 'cases', 'box']), D = OPROP[k]; B.props.push({ k, x, w: D.w, h: D.h, y: OBASE + 1 + D.dy }); }
   for (const l of B.loot) if (l.kind === 'crate') { const D = OPROP.crate; l.prop = { k: 'crate', x: l.x, w: D.w, h: D.h, y: OBASE + 1 + D.dy, loot: l }; B.props.push(l.prop); }
   // the last run: aerials to plug the radio into, on the way to the tower
-  if (cfg.final) { const n = cfg.final.relays, x0 = 330, x1 = B.goal.x - 150; for (let i = 0; i < n; i++) { let x = Math.round(x0 + (x1 - x0) * (n === 1 ? .5 : i / (n - 1))); while (blocked(x)) x += 11; B.loot.push({ x, kind: 'relay', t: 2.6, item: 'relay', chalk: true }); } }
+  if (cfg.final) { const n = cfg.final.relays, x0 = 330, x1 = B.goal.x - 150, beat = x => B.halls.some(h => x > h.x0 - 64 && x < h.x1 + 74) || B.loot.some(l => Math.abs(l.x - x) < 24); // never on a steward's doorstep
+    for (let i = 0; i < n; i++) { let x = Math.round(x0 + (x1 - x0) * (n === 1 ? .5 : i / (n - 1))); const step = n > 1 && i === n - 1 ? -11 : 11; while ((blocked(x) || beat(x)) && x > 300 && x < B.goal.x - 60) x += step; B.loot.push({ x, kind: 'relay', t: 2.6, item: 'relay', chalk: true }); } // the last one is this side of the last hall
+    B.loot.sort((a, b) => a.x - b.x); }
   B.props.sort((a, b) => a.y - b.y);
   B.W = W0; B.main = main; B.x0 = 34; B.x1 = W0 - 54;
   const vw = W; B.sky = oSky(); B.far = oFar(B, Math.ceil(vw + (W0 - vw) * .12) + 8); B.mid = oMid(B, Math.ceil(vw + (W0 - vw) * .4) + 8); B.fore = oFore(B, Math.ceil(vw + (W0 - vw) * 1.35) + 8);
@@ -17471,8 +17479,9 @@ function outPopulate(B, cfg) {
   B.lots.forEach((l, i) => { if (i === 0 || lv > .15) drone({ x0: l.x0 - 26, x1: l.x1 + 26, y: 26 + R() * 8 }); });
   B.halls.forEach((h, i) => {
     if (lv > .28) drone({ x0: (h.x0 + h.x1) / 2 - 6, x1: (h.x0 + h.x1) / 2 + 6, hover: true, span: 40 + lv * 14, sw: .7 + lv * .5, y: 28 });
-    steward({ x0: h.x0 - 50, x1: h.x1 + 30 });
-    if (lv > .4) steward({ x0: h.x0 - 60, x1: h.x1 + 60, x: h.dock, st: 'dock', dock: h.dock });
+    const edge = cfg.final && B.goal ? B.goal.x - 210 : 1e9;                                                                  // on the last night the tower has its own steward: nobody else's beat runs into it
+    steward({ x0: h.x0 - 50, x1: Math.min(h.x1 + 30, edge) });
+    if (lv > .4 && !(cfg.final && h.x1 > edge - 120)) steward({ x0: h.x0 - 60, x1: h.x1 + 60, x: h.dock, st: 'dock', dock: h.dock });
   });
   if (B.goal && !B.goal.tower) steward({ x0: B.goal.x0 - 170, x1: B.goal.x1 + 2 });
   if (lv > .5) drone({ x0: B.W * .25, x1: B.W * .8, v: 30 + lv * 10, y: 30 });
@@ -17626,6 +17635,8 @@ function outPaint(t) {
       if (v.wall) disc(Math.round(sx + Math.sin(ph * 7 + i * 2) * 10 + ph * 10 * wind), Math.round(122 + Math.sin(i * 1.7) * 13 - ph * 54 + (i % 3) * 8), Math.round(3 + ph * 8), `rgba(190,204,208,${(.3 * (1 - ph)).toFixed(3)})`);
       else disc(Math.round(sx + ph * 18 * wind + Math.sin(ph * 6 + i) * 2), Math.round(v.y - ph * 34), Math.round(1 + ph * 5), `rgba(90,104,112,${(.42 * (1 - ph)).toFixed(3)})`); }
   }
+  if (O.rat) { const r = O.rat, sx = sxOf(r.x), hop = r.wait > 0 ? 0 : (t / 70 | 0) % 2; px(sx - 3, OBASE - hop, 6, 2, '#4a3c34'); px(sx + (r.dir > 0 ? 3 : -5), OBASE - 1 - hop, 2, 2, '#4a3c34'); px(sx + (r.dir > 0 ? -6 : 3), OBASE + 1, 3, 1, '#7a6258'); px(sx + (r.dir > 0 ? 4 : -5), OBASE - 1 - hop, 1, 1, '#d9cfb3'); } // a rat, with somewhere to be
+  { const li = O.litter, sx = sxOf(li.x), fr = (li.ph | 0) % 4, ly = Math.round(OGY - 2 - Math.abs(Math.sin(li.ph * .6)) * 6); if (sx > -6 && sx < vw + 6) { if (fr % 2) { px(sx, ly, 5, 1, '#b4aa8c'); px(sx + 1, ly + 1, 3, 1, '#8f8770'); } else { px(sx, ly - 1, 3, 4, '#b4aa8c'); px(sx + 1, ly, 1, 2, '#8f8770'); } } }   // yesterday's paper
   // things you left on the pavement
   for (const o of O.slicks) { const sx = sxOf(o.x); px(sx - 9, OGY, 18, 2, o.used ? '#12100c' : '#0a0806'); px(sx - 6, OGY - 1, 12, 1, '#0a0806'); if (!o.used) px(sx - 4, OGY, 5, 1, 'rgba(242,196,106,.35)'); else for (let i = 0; i < 4; i++) px(sx - 12 + i * 7, OGY + 1 + (i % 2), 4, 1, '#0a0806'); }
   for (const n of O.nests) { const sx = sxOf(n.x); for (let i = 0; i < 8; i++) { const a = hash(n.x, i) * 6.28, b = hash(i, n.x) * 6.28; line(sx + Math.round(Math.cos(a) * 7), OGY - 2 + Math.round(Math.sin(a) * 2), sx + Math.round(Math.cos(b) * 7), OGY - 2 + Math.round(Math.sin(b) * 2), n.used ? '#3a2a1a' : '#8a6a40'); } }
@@ -17638,10 +17649,10 @@ function outPaint(t) {
   const figY = f => f.st === 'in' ? 138.2 : f.st === 'duck' && f.spot && f.spot.prop ? f.spot.prop.y - .5 : OGY;
   const drawFig = (f, pal, bag) => {
     const sx = Math.round(f.x - cx0), inn = f.st === 'in', gap = inn && f.spot && f.spot.k === 'gap';
-    const mode = f.st === 'dead' ? (O.dead && O.dead.t > .45 ? 'dead' : 'duck') : f.st === 'duck' ? 'duck' : f.st === 'search' ? 'search' : f.st === 'held' ? 'held' : inn ? 'in' : f.mode || 'idle';
+    const mode = f.st === 'dead' ? (O.dead && O.dead.kind === 'relocated' ? 'held' : O.dead && O.dead.t > .45 ? 'dead' : 'duck') : f.st === 'duck' ? 'duck' : f.st === 'search' ? 'search' : f.st === 'held' ? 'held' : inn ? 'in' : f.mode || 'idle';
     if (f.st === 'thru') return;
     if (gap) { L.save(); L.beginPath(); L.rect(Math.round(f.spot.cx - cx0) - 4, 0, 8, H); L.clip(); }
-    oFigure(sx, inn ? (gap ? OBASE + 2 : OBASE - 3) : OGY, { dir: f.dir, mode, ph: f.ph, t, pal, bag, breath: f.breath });
+    oFigure(sx, inn ? (gap || f.spot.flat ? OBASE + 2 : OBASE - 3) : OGY, { dir: f.dir, mode, ph: f.ph, t, pal, bag, breath: f.breath });
     if (gap) L.restore();
     if (inn) { L.fillStyle = gap ? 'rgba(2,3,4,.72)' : 'rgba(2,3,4,.5)'; L.fillRect(sx - 9, OBASE - 46, 18, 48); }
   };
@@ -17716,6 +17727,11 @@ function outPaint(t) {
   for (const p of O.parts) { const k = p.t / p.life; px(Math.round(p.x - cx0), Math.round(p.y), p.s || 1, p.s || 1, rgba(p.c, 1 - k)); }
   L.drawImage(O.fore, Math.round(cx0 * 1.35), 0, vw, H, 0, 0, vw, H);
   if (O.foreLed) for (const f of O.foreLed) { const sx = Math.round(f.x - cx0 * 1.35); if (sx > 0 && sx < vw && (t / 1300 | 0) % 2) px(sx, f.y, 2, 1, '#7a2116'); }
+  if (O.taxi) { const tx = Math.round(O.taxi.wx - cx0 * 1.35), d = O.taxi.dir, k = '#020304';                                              // a robotaxi, on your side of the road, with nobody in it
+    px(tx - 42, 166, 84, 14, k); px(tx - 30, 158, 57, 8, k); px(tx - 35, 162, 5, 4, k); px(tx + 27, 162, 6, 4, k); px(tx - 42, 166, 84, 1, '#141c21');
+    px(tx - 27, 160, 24, 5, '#10262c'); px(tx, 160, 24, 5, '#10262c'); px(tx - 27, 160, 51, 1, '#1d4a58'); px(tx - 6, 156, 12, 2, k); if ((t / 400 | 0) % 2) px(tx - 1, 155, 3, 1, '#2fb589');
+    px(tx + (d > 0 ? 40 : -42), 169, 2, 3, '#ffe6a6'); px(tx + (d > 0 ? -42 : 40), 169, 2, 3, '#b8321f'); glow(tx + d * 45, 170, 13, '255,230,166', .55, 3); glow(tx - d * 44, 170, 7, '184,50,31', .5, 3);
+    L.globalCompositeOperation = 'lighter'; L.fillStyle = 'rgba(255,230,166,.09)'; L.beginPath(); L.moveTo(tx + d * 42, 169); L.lineTo(tx + d * 160, 152); L.lineTo(tx + d * 160, 180); L.lineTo(tx + d * 42, 174); L.fill(); L.globalCompositeOperation = 'source-over'; }
   if (me.st === 'thru') outSqueezeView(t, vw);
   L.drawImage(VIGNETTE, 0, 0, W, H, 0, 0, vw, H); grain(t, 50);
   const danger = outDanger(); if (danger > .05) { const g3 = L.createRadialGradient(vw / 2, 90, 70, vw / 2, 90, 190), a = danger * (.3 + .12 * Math.sin(t / 110)); g3.addColorStop(0, 'rgba(0,0,0,0)'); g3.addColorStop(1, `rgba(122,33,22,${a.toFixed(3)})`); L.fillStyle = g3; L.fillRect(0, 0, vw, H); }
@@ -17779,14 +17795,15 @@ function outStart(cfg) { // cfg: { dest, lv, day, loot, tools, pal, cap, nests, 
   sfx.init(); try { closeLaptop(); closePhone(); closeKitchen(); } catch (e) {}
   const B = outBuild(cfg);
   OUT = Object.assign(B, {
-    t: 0, len: cfg.len || 300, left: cfg.len || 300, dawn: 0, camX: 0, shake: 0, flash: 0, fade: 1, keys: {},
+    t: 0, len: cfg.len || clamp(Math.round(B.W * .23), 300, 400), left: 0, dawn: 0, camX: 0, shake: 0, flash: 0, fade: 1, keys: {},
     me: { x: B.home.x, dir: 1, vx: 0, st: 'free', mode: 'idle', heat: .28, wind: 1, gasp: 0, ph: 0, spot: null, loot: null, sT: 0, busy: 0, onBusy: null, breakK: 0, held: null, thru: null, known: null, noise: 0, breath: 0, breathT: 1.5, stepK: 0 },
     pal: cfg.pal ? { x: B.home.x - 12, dir: 1, ph: 0, st: 'free', mode: 'idle', spot: null, sayT: 5 } : null,
     bag: [], cap: cfg.cap || 6, tools: Object.assign({ glass: 0, oil: 0, wire: 0 }, cfg.tools || {}), used: { glass: 0, oil: 0, wire: 0 },
     mirrors: [], slicks: [], nests: [], parts: [], pops: [], shots: [], hint: null, hintT: 0, seenHint: {}, banner: null, relays: 0, breaks: 1,
-    stats: { seen: 0, grabs: 0, hid: 0, gaps: 0, tricks: 0 }, dead: null, done: null, prompt: [], humN: null, beatT: 0, distT: 16, distN: 0, servoT: 0
+    stats: { seen: 0, grabs: 0, hid: 0, gaps: 0, tricks: 0 }, dead: null, done: null, prompt: [], warn: null, humN: null, beatT: 0, distT: 16, distN: 0, servoT: 0,
+    rat: null, ratT: 5, litter: { x: B.home.x + 260, ph: 0 }, taxi: null, taxiT: 11
   });
-  const O = OUT, R = outRng(B.seed + 77 + (cfg.day || 0));
+  const O = OUT, R = outRng(B.seed + 77 + (cfg.day || 0)); O.left = O.len;
   for (let i = 0; i < (cfg.nests || 0); i++) { let x = 0, n = 0; do { x = 330 + R() * (O.W - 720); } while (O.spots.some(s => s.cx != null && Math.abs(s.cx - x) < 22) && ++n < 30); O.nests.push({ x, w: 14, used: false }); } // wire the ferry crew left out
   O.camX = clamp(O.me.x - cam.vw * .4, 0, O.W - cam.vw);
   scene = 'out'; document.body.classList.add('outside'); setSpeed(1); requestAnimationFrame(fitRoom);
@@ -17951,7 +17968,7 @@ function outGrab(s) { const O = OUT, me = O.me; if (me.st === 'held' || me.st ==
 function outDrone(d, dt) {
   const O = OUT, me = O.me, k = outAir(), dawnK = 1 + (O.dawn || 0) * 1.6;
   if (d.st === 'away') { d.T -= dt; const dx = d.tx - d.x; d.x += clampN(dx, -1, 1) * Math.min(Math.abs(dx) * 3, 90) * dt; d.tilt = clampN(dx / 30, -1, 1); if (d.T <= 0) { d.st = 'patrol'; d.see = 0; } return; }
-  const inCone = k > 0 && Math.abs(me.x - (d.x + d.aim)) < d.hw + 2, read = Math.max(0, me.heat - O_COLD) * 2.3 * k * dawnK + (O.dawn > .5 ? .5 * k : 0), lv = O.cfg.lv || 0; // cold reads as nothing, until it's light
+  const inCone = k > 0 && Math.abs(me.x - (d.x + d.aim)) < d.hw + 2, read = Math.max(0, me.heat - O_COLD) * 2.3 * k * dawnK + (O.dawn > .5 ? .5 * k : 0), lv = O.cfg.lv || 0, slow = lv < .3 ? .7 : 1; // cold reads as nothing, until it's light. On the first nights it takes its time
   const want = d.st === 'lock' ? 14 : d.st === 'sus' ? 20 : 25; d.hw += (want - d.hw) * Math.min(1, dt * 4);
   switch (d.st) {
     case 'patrol':
@@ -17960,12 +17977,12 @@ function outDrone(d, dt) {
       d.see = clampN(d.see + dt * (inCone && read > 0 ? read : -.5), 0, 1); if (d.see > .35) { d.st = 'sus'; outHint('drone'); } break;
     case 'sus': { // it thinks it saw something warm. It stops and brings the light over
       const want2 = clampN(me.x - d.x, -48, 48); if (inCone) d.aim += (want2 - d.aim) * Math.min(1, dt * 3.2); d.x += clampN(me.x - d.x, -1, 1) * 12 * dt * (inCone ? 1 : 0); d.tilt *= .9;
-      d.see = clampN(d.see + dt * (inCone && read > 0 ? read * 1.15 : -.42), 0, 1);
+      d.see = clampN(d.see + dt * (inCone && read > 0 ? read * 1.15 * slow : -.42), 0, 1);
       if (d.see >= 1) { d.st = 'lock'; d.lock = 0; d.lost = 0; d.lastX = me.x; d.beep = 0; O.stats.seen++; outSummon(me.x); O.shake = Math.max(O.shake, 3); if (!snd('alarm', { v: .4 })) sfx.alarm(); }
       else if (d.see <= .04) d.st = 'patrol'; break; }
     case 'lock': { // it has you. One and a half seconds
       const dx = me.x - d.x; d.x += clampN(dx, -1, 1) * Math.min(Math.abs(dx) * 3, 66) * dt; d.tilt = clampN(dx / 20, -1, 1); d.aim += (clampN(dx, -50, 50) - d.aim) * Math.min(1, dt * 9);
-      if (inCone) { d.lock += dt * (.6 + .5 * me.heat + lv * .15) * dawnK; d.lost = 0; d.lastX = me.x; } else { d.lost += dt; d.lock = Math.max(0, d.lock - dt * .45); if (d.lost > 1.3) { d.st = 'search'; d.T = 6.5; d.see = .5; outSummon(d.lastX); } }
+      if (inCone) { d.lock += dt * (.6 + .5 * me.heat + lv * .15) * dawnK * slow; d.lost = 0; d.lastX = me.x; } else { d.lost += dt; d.lock = Math.max(0, d.lock - dt * .45); if (d.lost > 1.3) { d.st = 'search'; d.T = 6.5; d.see = .5; outSummon(d.lastX); } }
       d.beep -= dt; if (d.beep <= 0) { d.beep = .5 - d.lock * .42; sfx.tone(1250 + d.lock * 700, .05, 'square', .035); }
       if (d.lock >= 1) { O.shots.push({ x0: d.x, y0: d.y + 8, x1: me.x, y1: OGY - 22, t: 0 }); outKill('drone', d); } break; }
     case 'search': { // it lost you. It waits over the place it saw you last
@@ -17986,6 +18003,13 @@ function outThings(dt) {
   if (O.banner) { O.banner.t -= dt; if (O.banner.t <= 0) O.banner = null; }
   O.shake *= Math.pow(.02, dt); O.flash = Math.max(0, O.flash - dt * 2.4);
   if (O.drones.some(d => Math.abs(d.x - me.x) < 150)) outHint('drone'); if (O.stewards.some(s => s.st === 'dock' && Math.abs(s.x - me.x) < 70)) outHint('dock'); if (O.drones.some(d => d.st === 'search')) outHint('search'); if (O.stewards.some(s => s.st !== 'dock' && Math.abs(s.x - me.x) < 130)) outHint('steward'); if (O.loot.some(l => l.chalk && !l.done && Math.abs(l.x - me.x) < 46)) outHint('loot');
+  // the street has other business: a rat along the wall, yesterday's paper, a robotaxi with nobody in it
+  O.ratT -= dt; if (O.ratT <= 0 && !O.rat) { O.ratT = 8 + Math.random() * 13; const gs = O.spots.filter(s => (s.k === 'gap' || s.k === 'low') && s.cx != null && Math.abs(s.cx - me.x) < 200 && Math.abs(s.cx - me.x) > 34);
+    if (gs.length) { const a = gs[(Math.random() * gs.length) | 0], b = O.spots.filter(s => s !== a && (s.k === 'gap' || s.k === 'low') && s.cx != null && Math.abs(s.cx - a.cx) < 190).sort((p, q) => Math.abs(p.cx - a.cx) - Math.abs(q.cx - a.cx))[0], to = b ? b.cx : a.cx + (Math.random() < .5 ? -110 : 110); O.rat = { x: a.cx, dir: to > a.cx ? 1 : -1, to, wait: .3 }; } }
+  if (O.rat) { const r = O.rat; if (r.wait > 0) r.wait -= dt; else { r.x += r.dir * 82 * dt; if (Math.random() < dt * .9) r.wait = .2 + Math.random() * .5; } if ((r.to - r.x) * r.dir <= 0) O.rat = null; }
+  { const li = O.litter; li.x -= (24 + 12 * Math.sin(O.t * .7)) * dt; li.ph += dt * 5; if (li.x < O.camX - 40) li.x = O.camX + cam.vw + 30 + Math.random() * 220; }
+  O.taxiT -= dt; if (O.taxiT <= 0 && !O.taxi) { const dir = Math.random() < .5 ? 1 : -1; O.taxi = { wx: O.camX * 1.35 + (dir > 0 ? -100 : cam.vw + 100), dir }; O.taxiT = 26 + Math.random() * 30; }
+  if (O.taxi) { O.taxi.wx += O.taxi.dir * 96 * dt; const sx = O.taxi.wx - O.camX * 1.35; if (sx < -160 || sx > cam.vw + 160) O.taxi = null; }
   // what you could do here
   const pr = [];
   if (me.st === 'held') pr.push(['E', O.breaks > 0 ? 'TEAR FREE' : '…']);
@@ -17994,10 +18018,21 @@ function outThings(dt) {
   else if (me.st === 'free' && me.busy <= 0) {
     const l = outLootNear(); if (l) pr.push(['E', l.kind === 'lou' ? 'TALK TO LOU' : l.kind === 'relay' ? 'PLUG THE RADIO IN' : l.kind === 'ladder' ? 'CLIMB' : 'SEARCH']);
     else if (outNear(['home'], 2) && !O.cfg.final) pr.push(['E', 'GO IN']);
-    const s = outNear(['door', 'gap']); if (s) pr.push(['↑', s.k === 'gap' ? 'INTO THE GAP' : 'INTO THE DOORWAY']);
+    const s = outNear(['door', 'gap']); if (s) pr.push(['↑', s.say || (s.k === 'gap' ? 'INTO THE GAP' : 'INTO THE DOORWAY')]);
     if (outNear(['low'])) pr.push(['↓', 'DUCK']);
   }
   O.prompt = pr;
+  // what is about to end it, and the nearest way out
+  O.warn = null;
+  if (me.st === 'free' || me.st === 'search') {
+    const lockD = O.drones.find(d => d.st === 'lock'), chaser = O.stewards.find(s => s.st === 'chase' && Math.abs(s.x - me.x) < 140);
+    if (chaser || (lockD && outAir() > 0)) {
+      let best = null, bd = 130;
+      for (const s of O.spots) { if (s.cx == null || !(s.k === 'gap' || (!chaser && s.k === 'door'))) continue; const d = Math.abs(s.cx - me.x); if (chaser && (s.cx - me.x) * (chaser.x - me.x) > 0 && d > Math.abs(chaser.x - me.x) - 12) continue; if (d < bd) { bd = d; best = s; } }
+      O.warn = best ? { text: bd < 6 ? '↑ GET IN' : `${best.k === 'gap' ? 'GAP' : best.say ? 'COVER' : 'DOORWAY'} ${Math.max(1, Math.round(bd / 6))} m`, dir: bd < 6 ? 0 : best.cx > me.x ? 1 : -1, red: true }
+        : { text: chaser ? 'RUN' : 'NO COVER · KEEP MOVING', dir: chaser ? (me.x >= chaser.x ? 1 : -1) : 0, red: true };
+    } else if (O.drones.some(d => d.st === 'sus' && Math.abs(me.x - (d.x + d.aim)) < d.hw + 8) && outAir() > 0 && me.heat > O_COLD) O.warn = { text: 'STAND STILL', dir: 0 };
+  }
   // the last night: the buildings you linked make noise somewhere else
   const F = O.cfg.final;
   if (F && F.noises && F.noises.length) { O.distT -= dt; if (O.distT <= 0) { O.distT = 24; const who = F.noises[O.distN++ % F.noises.length]; O.banner = { text: who, t: 4 }; const far = me.x < O.W / 2 ? O.W - 80 : 80; for (const d of O.drones) { d.st = 'away'; d.T = 8; d.tx = clamp(far + (Math.random() - .5) * 160, 40, O.W - 40); d.see = 0; d.lock = 0; } for (let i = 0; i < 5; i++) sfx.tone(392 - i * 12, 1.1, 'sine', .05, 0, i * .6); } }
@@ -18026,7 +18061,7 @@ function outTick(dt) {
   const O = OUT; if (!O) return; dt = Math.min(dt, .05);
   if (O.done) { O.done.t += dt; O.fade = Math.min(1, O.done.t / .7); if (O.done.t > .9 && !O.done.sent) { O.done.sent = true; const r = O.done, cb = O.cfg.onDone; outStop(); if (cb) cb(r); } return; }
   if (!speed || !$('modal').hidden || !$('pauseMenu').hidden) { if (O.humN && O.humN.g && sfx.ctx) O.humN.g.gain.setTargetAtTime(0, sfx.ctx.currentTime, .05); return; }
-  if (O.dead) { O.dead.t += dt; outThings(dt); for (const d of O.drones) if (d !== O.dead.by) outDrone(d, dt * .2); if (O.dead.t > 2.2 && !O.dead.sent) { O.dead.sent = true; outHumStop(); triggerDeath(O.dead.kind); } return; }
+  if (O.dead) { O.dead.t += dt; O.fade = Math.max(0, O.fade - dt * 1.8); outThings(dt); for (const d of O.drones) if (d !== O.dead.by) outDrone(d, dt * .2); if (O.dead.t > 2.2 && !O.dead.sent) { O.dead.sent = true; outHumStop(); triggerDeath(O.dead.kind); } return; }
   O.t += dt; if (O.me.st !== 'thru') O.fade = Math.max(0, O.fade - dt * 1.8); else O.fade = 0;
   outMe(dt); if (O.pal) outPal(dt);
   for (const s of O.stewards) outSteward(s, dt);
@@ -18080,6 +18115,9 @@ function outHud(g, vw, t) {
   if (me.st === 'held') { const w = 78; g.fillStyle = PAL.k0; g.fillRect(vw / 2 - w / 2 - .6, 53.4, w + 1.2, 20.2); g.fillStyle = PAL.r1; g.fillRect(vw / 2 - w / 2, 54, w, 19); mgText(g, O.breaks > 0 ? 'HAMMER  E' : 'IT HAS YOU', vw / 2, 63, { size: 7, color: PAL.p4, align: 'center', bold: true }); g.fillStyle = PAL.k0; g.fillRect(vw / 2 - 32, 66, 64, 4); g.fillStyle = PAL.a3; g.fillRect(vw / 2 - 31.4, 66.6, 62.8 * clampN(me.breakK, 0, 1), 2.8); }
   else if (me.st === 'search' && me.loot) { g.fillStyle = PAL.k0; g.fillRect(mx - 14, 101, 28, 4); g.fillStyle = PAL.a3; g.fillRect(mx - 13.4, 101.6, 26.8 * clampN(me.sT, 0, 1), 2.8); }
   else if (me.busy <= 0) O.prompt.forEach(([key, text], i) => { g.font = mgFont({ size: 5 }); const tw = g.measureText(text).width, kw = g.measureText(key).width + 4, w = tw + kw + 7, x = mx - w / 2, y = 102 - (O.prompt.length - 1 - i) * 8.6; g.fillStyle = 'rgba(7,8,10,.8)'; g.fillRect(x, y - 6.6, w, 8); g.fillStyle = PAL.a2; g.fillRect(x + 1, y - 5.6, kw, 6); mgText(g, key, x + 1 + kw / 2, y - .9, { size: 5, color: PAL.k0, align: 'center', bold: true }); mgText(g, text, x + kw + 4, y - .9, { size: 5, color: PAL.ink }); });
+  if (O.warn && me.st !== 'held') { const wn = O.warn, s = (wn.dir < 0 ? '◀ ' : '') + wn.text + (wn.dir > 0 ? ' ▶' : ''), o = { size: 6, bold: true }; g.font = mgFont(o);
+    const w = g.measureText(s).width + 8, y = 100 - (me.busy <= 0 && me.st !== 'search' ? O.prompt.length : 1) * 8.6, x = clampN(mx - w / 2, 3, vw - w - 3), on = !wn.red || (t / 150 | 0) % 2;
+    g.fillStyle = PAL.k0; g.fillRect(x - .6, y - 8.4, w + 1.2, 10.6); g.fillStyle = wn.red ? (on ? PAL.e3 : PAL.r1) : PAL.a2; g.fillRect(x, y - 7.8, w, 9.4); mgText(g, s, x + w / 2, y - .9, Object.assign({ color: wn.red ? PAL.p4 : PAL.k0, align: 'center' }, o)); }
   // a word of advice, the first couple of times: up top, out of the way of your feet
   if (O.hint && !O.banner) { const o = { size: 5.5, font: 'read' }, w = Math.min(214, vw - 160), lines = outWrap(g, O.hint, w - 10, o), h = lines.length * 7 + 5, y = 24; g.globalAlpha = clampN(O.hintT * 2, 0, 1); g.fillStyle = PAL.k0; g.fillRect(vw / 2 - w / 2 - .6, y - .6, w + 1.2, h + 1.2); g.fillStyle = PAL.p2; g.fillRect(vw / 2 - w / 2, y, w, h); g.fillStyle = PAL.p4; g.fillRect(vw / 2 - w / 2, y, w, .7); lines.forEach((l, i) => mgText(g, l, vw / 2, y + 7.6 + i * 7, Object.assign({ color: PAL.k1, align: 'center' }, o))); g.globalAlpha = 1; }
   if (O.banner) { const w = Math.min(230, vw - 120); g.globalAlpha = clampN(O.banner.t, 0, 1); g.fillStyle = PAL.k0; g.fillRect(vw / 2 - w / 2 - .6, 25.4, w + 1.2, 13.2); g.fillStyle = PAL.a2; g.fillRect(vw / 2 - w / 2, 26, w, 12); mgText(g, O.banner.text, vw / 2, 34.4, { size: 5.5, color: PAL.k0, align: 'center', bold: true, max: w - 8 }); g.globalAlpha = 1; }
