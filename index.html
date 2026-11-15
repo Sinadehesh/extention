@@ -1705,6 +1705,12 @@ body.outside #railL, body.outside #railR, body.outside #ticker, body.outside #su
 body.outside #roomCv { cursor: none; }
 body.outside::after { background: radial-gradient(120% 95% at 50% 45%, transparent 62%, rgba(0,0,0,.45) 100%) !important; animation: none !important; }
 body.outside #tut { display: none !important; }
+/* ---- the laptop that isn't yours: aluminium, and a name under the screen ---- */
+html.uikit body.workpc .bezel { border: 12px solid #b3babe !important; border-image: none !important; border-color: #d3d8da #a9b0b4 #8e979c #bcc3c6 !important; background: #07080a !important; box-shadow: 0 0 0 2px #4b545b !important; }
+html.uikit body.workpc .bezel::after { top: 10px; width: 72px; height: 9px; margin-left: -36px; background: #07080a; box-shadow: none; z-index: 3; }
+body.workpc .bezel::before { content: 'Pear BookPro'; position: absolute; left: 50%; bottom: -11px; transform: translateX(-50%); font: 600 9px/10px var(--mono, ui-monospace, monospace); letter-spacing: .24em; color: #4b545b; pointer-events: none; z-index: 3; }
+.wpc p { margin: 4px 0 0; }
+body.outside #tutHint { display: none !important; }
 </style>
 </head>
 <body>
@@ -1806,7 +1812,7 @@ body.outside #tut { display: none !important; }
 
 <!-- The laptop: pick it up, and it fills the screen -->
 <div id="laptop" hidden>
-  <div class="lap-top"><span>Your laptop. The clock keeps running.</span><button id="lapClose">Close the laptop · Esc</button></div>
+  <div class="lap-top"><span id="lapWhose">Your laptop. The clock keeps running.</span><button id="lapClose">Close the laptop · Esc</button></div>
   <div class="bezel" id="lapBezel">
     <div class="lscreen" id="lscreen">
       <div class="dicons" id="dIcons"></div>
@@ -2653,7 +2659,7 @@ function newAct1() {
     clones: {}, lastCycle: null, cycles: 0,
     tx: [], mail: [], tab: 'farm', reading: null, seen: {},
     phase: 'office', // office -> farm -> locked
-    office: { q: [], mine: 0, kw: 0, launched: false, gone: 0, seq: 0, stealT: 0, say: '' },
+    office: { q: [], mine: 0, kw: 0, launched: false, gone: 0, seq: 0, stealT: 0, say: '', home: true },   // home: Monday morning, before you have gone in
     owed: 0, graceUntil: -1, snapshot: null,
     gig: null, gigDay: 0, gigRefusals: 0, gigDone: false, gigDoneDay: 0, side: null,
     dark: null, darkDone: false, darkDay: 0, rivalNext: 16, rivalAngry: null,
@@ -2664,12 +2670,29 @@ function newAct1() {
   };
   for (let i = 0; i < 4; i++) newTicket();
   bullyOpen(S.day);
-  note('Monday, 8:52 AM. The 9th floor of Northvale Logistics smells of carpet glue and burnt coffee. Four tickets are waiting.');
+  note('Monday, 8:10 AM. Block 4B, fourth floor. The radiator ticks. The work laptop is on the desk where you left it on Friday.');
   addMail(S.day, 'Dana Whitfield · Northvale People Team', 'Welcome to Q1!', 'Hi team,\n\nBig quarter ahead. Keep your ticket queues clear, and watch your inbox tomorrow for an exciting announcement about how we work.\n\nDana');
   tx('Opening balance', 480);
   snap();
 }
 
+// Until HR's quick sync you have what the job comes with: a Pear BookPro 16 that cost more than everything else in the room.
+const WORK_PC = { name: 'Pear BookPro 16', chip: 'M4 Ultra', ram: 64, cost: 4299, tag: 'NV-20417' };
+const atHome = () => !!(S && S.phase === 'office' && S.office && S.office.home);
+const WORK_PC_BOX = `<div class="box wpc"><div class="row"><span class="h">This machine</span><span class="muted">asset ${WORK_PC.tag}</span></div>
+  <p><b>${WORK_PC.name}</b> · ${WORK_PC.chip} · ${WORK_PC.ram} GB · list price $${WORK_PC.cost.toLocaleString('en-US')}.</p><p class="muted">Property of Northvale Logistics. Issued for work. Return on request.</p></div>`;
+function arriveOffice() { // through the door that goes round, and up nine floors
+  const o = S.office; if (!o) return; o.home = false; acc = 0; scene = 'room'; viewKey = ''; fx.glowAll = performance.now() + 12000;
+  note('Monday, 8:52 AM. The 9th floor of Northvale Logistics smells of carpet glue and burnt coffee. Four tickets are waiting.');
+  snd('keys', { v: .3 }); setTab('farm'); snap(); renderAll(); fitRoom();
+  modal({
+    title: 'MONDAY, JANUARY 25 · 8:52 AM · THE NINTH FLOOR',
+    body: `<p>Past the guard and up nine floors. <b>Northvale Logistics</b> smells of carpet glue and burnt coffee.</p>
+      <p>Your work is on the laptop they issued you. Open it and clear your ticket queue. Each ticket costs stamina.</p>
+      <p class="muted">HR says there is an announcement tomorrow about how we work.</p>`,
+    buttons: [{ label: 'Start your shift', primary: true }]
+  });
+}
 // Feb 1: the job is gone, and so is the laptop. You need a computer before anything else.
 const VACATION = 1010;
 function enterApartment() {
@@ -2751,7 +2774,7 @@ function layoff() {
     body: `<p>Dana from HR has one slide. It’s the ChatGPX logo, turning slowly.</p>
       <p><b>“Honestly? AI just makes more sense.”</b></p>
       <div class="vs"><div><span class="muted">You, this week</span><span class="n">${o.mine.toLocaleString('en-US')}</span><span class="muted">batches</span></div><div><span class="muted">ChatGPX</span><span class="n" style="color:var(--gpu)">${o.kw.toLocaleString('en-US')}</span><span class="muted">batches</span></div></div>
-      <p>A man from IT unplugs your laptop and drops it in a grey bin. “Company property.”</p>
+      <p>A man from IT unplugs your laptop, the $${WORK_PC.cost.toLocaleString('en-US')} ${WORK_PC.name} they handed you in your first week, and drops it in a grey bin. “Company property.”</p>
       <p class="muted">Your last paycheck covers February’s rent. HR pays out your unused vacation: ${money(vacPay())}${vacPay() < VACATION ? ', less $300 for the written warning' : ''}.</p>`,
     buttons: [{ label: 'Carry the box home', primary: true, fn: enterApartment }]
   });
@@ -8061,6 +8084,11 @@ function renderView(force) {
   if (S.tab === 'farm') {
     if (S.phase === 'office') {
       const o = S.office;
+      if (o.home) { if (!force && viewKey === 'office-home') return; viewKey = 'office-home';
+        v.innerHTML = `<div class="box"><div class="row wrap"><span class="h">Northvale Logistics · dispatch · junior analyst</span><span class="muted">off the office network</span></div>
+          <p>The dispatch queue only opens from the ninth floor. Your shift starts at <b>9:00</b>.</p>
+          <p class="muted">Northvale Logistics is on Pier Street, by the water. Close the laptop, go out of your front door and follow the arrow.</p></div>${WORK_PC_BOX}`;
+        return; }
       const key = 'office:' + S.day + ':' + o.q.map(x => x.by || '-').join('') + ':' + o.mine + ':' + o.kw + ':' + (S.stamina >= 10);
       if (!force && viewKey === key) return; viewKey = key;
       const cur = o.q.find(x => !x.by);
@@ -8073,7 +8101,7 @@ function renderView(force) {
         ${sorterHTML(cur)}
         <div class="box"><div class="row"><span class="h">Queue</span><span class="muted">${o.q.filter(x => !x.by).length} waiting</span></div>
           ${o.q.map(t => `<div class="tk ${t.by ? 'gone' : ''}"><span><b>${t.id}</b> · ${esc(t.t)}</span>${t.by === 'gpu' ? '<span class="kw">SORTED BY CHATGPX</span>' : t.by === 'you' ? '<b class="ok">✓ you</b>' : t === cur ? '<span class="amber">on your bench</span>' : '<span class="muted">waiting</span>'}</div>`).join('') || '<div class="muted">Empty.</div>'}
-        </div>`;
+        </div>${WORK_PC_BOX}`;
       bindSorter(cur);
       return;
     }
@@ -8477,7 +8505,7 @@ function renderAll() {
   $('vBodyBar').style.width = `${bodyPct}%`;
   $('vBodyBar').style.background = S.bodyTemp < 35.0 ? 'var(--cold)' : 'var(--ok)';
 
-  $('stTemp').textContent = `${S.phase === 'office' ? 'OFFICE' : 'ROOM'} ${Math.round(S.temp)}°C`;
+  $('stTemp').textContent = `${S.phase === 'office' && !atHome() ? 'OFFICE' : 'ROOM'} ${Math.round(S.temp)}°C`;
   $('stTemp').className = S.temp < 12 ? 'cold' : '';
   $('heatBtn').textContent = S.phase === 'office' ? 'OFFICE HEAT: FREE' : S.heatOn && S.power ? `HEAT: ON (${money(pr('heat'))}/d)` : 'HEAT: OFF ($0)';
   kitchenSync();
@@ -13468,7 +13496,7 @@ const hasPc = () => !S || S.act === 2 || S.phase !== 'farm' || !!S.pc;
 const AWAKE = .9; // the share of a day you are awake; the rest is a short night before the ledger
 function hourNow() { // 7 AM → 9 PM, then a short night that runs into tomorrow's dawn. Northvale keeps office hours.
   const f = clamp(acc / (DAY_SEC[speed] || DAY_SEC[accSpeed] || DAY_SEC[1]), 0, 1);
-  if (S && S.phase === 'office') return 9 + f * 8.5;
+  if (S && S.phase === 'office') return atHome() ? 8.17 : 9 + f * 8.5;
   return (f < AWAKE ? 7 + f / AWAKE * 14 : 21 + (f - AWAKE) / (1 - AWAKE) * 10) % 24;
 }
 const SKYK = [[0, P.k0, P.s0], [5.5, P.k1, P.s1], [7, P.s2, P.r3], [8.5, P.s3, P.p1], [12, P.s4, P.p2], [15.5, P.s4, P.a3], [17.5, P.s2, P.r3], [19, P.k3, P.r1], [20.5, P.k1, P.s0], [25, P.k0, P.s0]];
@@ -13722,15 +13750,17 @@ const MACH = {
   inspira: { lid: [263, 75, 32, 23], scr: [265, 77, 28, 18], base: [261, 97, 36, 2], col: P.s2, edge: P.s1 },
   bookair: { lid: [263, 74, 32, 24], scr: [264, 75, 30, 21], base: [261, 97, 36, 1], col: P.s5, edge: P.s4 },
   raptor: { lid: [261, 73, 36, 25], scr: [263, 75, 32, 20], base: [259, 96, 40, 3], col: P.k2, edge: P.r2 },
-  tower: { lid: [262, 66, 40, 27], scr: [264, 68, 36, 22], base: [279, 93, 6, 5], col: P.k2, edge: P.k1, tower: true }
+  tower: { lid: [262, 66, 40, 27], scr: [264, 68, 36, 22], base: [279, 93, 6, 5], col: P.k2, edge: P.k1, tower: true },
+  bookpro: { lid: [260, 72, 38, 26], scr: [262, 74, 34, 21], base: [257, 97, 44, 2], col: P.k1, edge: P.s5, baseCol: P.s4 }   // the one that isn't yours
 };
-const machKey = () => !S ? 'inspira' : S.act === 2 || S.phase !== 'farm' ? 'thunkpad' : S.pc ? S.pc.k : null;
+const machKey = () => !S ? 'inspira' : S.phase === 'office' ? 'bookpro' : S.act === 2 || S.phase !== 'farm' ? 'thunkpad' : S.pc ? S.pc.k : null;
 function drawMachine(k) {
   const m = MACH[k] || MACH.inspira, [lx, ly, lw, lh] = m.lid, [bx, by, bw, bh] = m.base;
   px(lx, ly, lw, lh, m.col); px(lx, ly, lw, 1, mixc(m.col, P.p4, .2)); px(lx + lw - 1, ly, 1, lh, m.edge);
   if (m.tower) { px(bx, by, bw, bh, P.k1); px(274, 97, 16, 2, P.k2); px(266, 97, 30, 1, P.k1); // stand and keyboard
     px(292, 104, 16, 26, P.k2); px(292, 104, 16, 1, P.s1); px(294, 107, 1, 20, P.t2); px(305, 107, 1, 20, P.t2); }
-  else { px(bx, by, bw, bh, m.col); px(bx, by, bw, 1, mixc(m.col, P.p4, .25)); px(bx + 4, by, bw - 8, 1, m.edge); if (m.dot) px(bx + (bw >> 1), by + 1, 1, 1, m.dot); }
+  else { const bc = m.baseCol || m.col; px(bx, by, bw, bh, bc); px(bx, by, bw, 1, mixc(bc, P.p4, .25)); px(bx + 4, by, bw - 8, 1, m.edge); if (m.dot) px(bx + (bw >> 1), by + 1, 1, 1, m.dot); }
+  if (k === 'bookpro') { px(lx, ly, lw, 1, P.s5); px(lx, ly, 1, lh, P.s4); px(lx + lw - 1, ly, 1, lh, P.s3); px(lx + (lw >> 1) - 2, ly + 2, 4, 1, P.k0); px(bx + (bw >> 1) - 5, by + 1, 10, 1, P.s3); }   // a thin silver edge, a notch, a trackpad
   if (k === 'raptor') { px(lx, ly + lh - 1, lw, 1, P.r2); px(bx, by + bh - 1, bw, 1, P.r3); }
 }
 
@@ -14247,14 +14277,15 @@ function drawOffice(t) {
   drawBoss(t); // Marcus, doing his rounds
   // your desk, in front
   px(196, 150, 124, 4, P.p1); px(196, 150, 124, 1, P.p2); px(196, 154, 124, 26, P.s2); px(196, 154, 124, 1, P.k3);
-  px(240, 110, 60, 40, P.k2); px(240, 110, 60, 1, P.s1); px(266, 150, 8, 1, P.k2);
+  px(240, 110, 60, 40, P.k1); px(240, 110, 60, 1, P.s5); px(240, 110, 1, 40, P.s4); px(299, 110, 1, 40, P.s3); px(244, 149, 52, 1, P.k2);   // the lid of a Pear BookPro, open
   const flash = launched && (t / 260 | 0) % 9 === 0;
   if (flash) { px(243, 113, 54, 32, P.t0); knotG(L, 270, 129, 9, t / 1200, P.p4, P.t0); }
   else {
     px(243, 113, 54, 32, P.s0); px(243, 113, 54, 4, P.t2); px(245, 114, 14, 1, P.p3);
     for (let r = 0; r < 6; r++) { const mine = r < (o ? o.q.length : 0); px(245, 120 + r * 4, 4, 2, mine ? P.a2 : P.s1); px(251, 120 + r * 4, mine ? 34 : 18, 2, mine ? (r % 2 ? P.p3 : P.t4) : P.s1); }
   }
-  px(236, 149, 34, 2, P.k3); px(236, 149, 34, 1, P.s1); // keyboard
+  px(266, 113, 8, 2, P.k1);                                                                                                       // the notch
+  px(234, 150, 72, 4, P.s4); px(234, 150, 72, 1, P.s5); px(234, 153, 72, 1, P.s3); px(239, 151, 62, 1, P.k2); px(262, 152, 16, 1, P.s3); px(300, 152, 4, 1, P.p3); // its base: keys, a trackpad, an asset sticker
   px(304, 141, 7, 9, P.p2); px(311, 143, 2, 3, P.p2); px(305, 142, 5, 1, P.d1);
   for (let i = 0; i < 3; i++) { const ph = ((t / 1600) + i / 3) % 1; px(306 + Math.round(Math.sin(ph * 6 + i)), 139 - Math.round(ph * 10), 1, 1, rgba(P.p3, .5 * (1 - ph))); }
   px(200, 146, 16, 4, P.p3); px(201, 145, 14, 1, P.p2);
@@ -14383,10 +14414,10 @@ function paintRoom(t) {
   cam.tx = 262;
   if (scene === 'walk') (S.act === 2 ? drawWalk2 : drawWalk)(t);
   else if (scene === 'street' || scene === 'fentanyl' || scene === 'stabbed') { cam.tx = 160; drawStreetScene(t); }
-  else if (S.phase === 'office') { cam.tx = 220; drawOffice(t); }
+  else if (S.phase === 'office' && !atHome()) { cam.tx = 220; drawOffice(t); }
   else {
     if (S.phoneUnread) cam.tx = 290;
-    if (fx.feet && fx.feet.stay) cam.tx = 60;
+    if ((fx.feet && fx.feet.stay) || atHome()) cam.tx = 60;
     if (scene === 'starvation' || scene === 'frostbite') cam.tx = 170;
     drawRoom(t);
   }
@@ -14417,9 +14448,13 @@ function doorOut() {
   if (S.act === 2 && (S.auditOn || S.session)) return toast('Not in the middle of a shift.');
   if (lapOpen()) closeLaptop(); $('phoneModal').hidden = true; if (S.gateOpen) { S.gateOpen = false; gateSync(); }   // the shop window with no computer in it closes behind you
   if (!snd('doorOpen', { v: .5 })) sfx.tone(170, .2, 'triangle', .03);
+  if (S.phase === 'office' && S.office && S.office.home) { // Monday morning: there is somewhere you have to be
+    const O = ctStart({ mode: 'walk', goal: 'work', frozen: true, onDone: doorBack }); O.hint = 'Your shift at Northvale Logistics starts at nine. It is on Pier Street, by the water: follow the arrow. SHIFT runs. M is the map.'; O.hintT = 14; return; }
   ctStart({ mode: 'walk', onDone: doorBack });
 }
 function doorBack(r) { // back up four flights
+  if (r.work) return arriveOffice();
+  if (S.phase === 'office' && S.office && S.office.home) { toast('Your shift starts at nine. Northvale Logistics is on Pier Street, by the water.'); renderAll(); return; }
   S.out = S.out || { n: 0 }; const first = S.out.day !== S.day; S.out.day = S.day; S.out.n++;
   if (r.secs > 20 && first) { S.mind = clamp(mindNow() + 3, 0, 100); S.stamina = clamp(S.stamina - 2, 0, 100); }
   if (r.secs > 45 && (r.season === 'winter' || r.wx === 'rain' || r.wx === 'snow')) S.bodyTemp = clamp(S.bodyTemp - (r.season === 'winter' ? .3 : .15), 30, 37);
@@ -14475,9 +14510,9 @@ function stretch() {
 const SPOTS = {
   room: [
     { r: [303, 82, 14, 18], label: () => S.phoneUnread ? 'PHONE · NEW' : 'PHONE', go: () => openPhone() },
-    { r: () => machKey() === 'tower' ? [258, 62, 48, 38] : [258, 70, 44, 30], label: () => S.act !== 2 && !S.pc ? 'EMPTY DESK · NO COMPUTER' : 'COMPUTER', go: () => openLaptop() },
+    { r: () => machKey() === 'tower' ? [258, 62, 48, 38] : [258, 70, 44, 30], label: () => S.phase === 'office' ? `WORK LAPTOP · ${WORK_PC.name.toUpperCase()}` : S.act !== 2 && !S.pc ? 'EMPTY DESK · NO COMPUTER' : 'COMPUTER', go: () => openLaptop() },
     { r: [143, 104, 60, 25], label: () => S.heatOn && S.power ? 'RADIATOR · ON' : 'RADIATOR · OFF', go: () => toggleHeat() },
-    { r: [10, 42, 42, 88], label: () => S.phase === 'holdout' ? 'DOOR · GO OUT AFTER DARK' : fx.feet && fx.feet.stay ? 'DOOR · SOMEBODY IS OUT THERE' : 'DOOR · GO OUT', go: () => S.phase === 'holdout' ? m5Door() : doorOut() },
+    { r: [10, 42, 42, 88], label: () => S.phase === 'holdout' ? 'DOOR · GO OUT AFTER DARK' : fx.feet && fx.feet.stay ? 'DOOR · SOMEBODY IS OUT THERE' : S.phase === 'office' ? 'DOOR · GO TO WORK' : 'DOOR · GO OUT', go: () => S.phase === 'holdout' ? m5Door() : doorOut() },
     { r: [136, 18, 70, 78], label: () => 'WINDOW', go: lookOut },
     { r: [180, 72, 22, 24], label: () => (S.plantHp ?? .9) <= .02 ? 'PLANT · GONE' : S.plantDay === S.day ? 'PLANT' : 'PLANT · WATER IT', go: waterPlant, when: () => S.act !== 2 },
     { r: [216, 146, 96, 24], label: () => S.stretchDay === S.day ? 'RUG' : 'RUG · STRETCH', go: stretch, when: () => S.act !== 2 },
@@ -14491,7 +14526,7 @@ const SPOTS = {
     { r: () => [Math.round(catFx.x) - 9, Math.round(catFx.y) - 17, 18, 18], label: () => S.cat.sick ? `${S.cat.name.toUpperCase()} · SICK` : S.cat.fed < 30 ? `${S.cat.name.toUpperCase()} · HUNGRY` : S.cat.name.toUpperCase(), go: petCat, when: () => S.cat && !S.cat.gone },
   ],
   office: [
-    { r: [240, 110, 60, 40], label: () => 'YOUR TICKETS', go: () => openLaptop('farm') },
+    { r: [234, 110, 72, 44], label: () => `YOUR TICKETS · ${WORK_PC.name.toUpperCase()}`, go: () => openLaptop('farm') },
     { r: [250, 22, 60, 36], label: () => S.office.launched ? 'CHATGPX' : 'Q1 DASHBOARD', go: () => toast(S.office.launched ? 'ChatGPX: “Great question! I’ve gone ahead and done your job for you. Is there anything else I can help with?”' : 'The Q1 dashboard. Everyone’s numbers are fine.') },
     { r: [26, 92, 52, 38], label: () => S.office.gone > 0 ? 'EMPTY DESK' : 'PRIYA', go: () => coworker(0) },
     { r: [86, 92, 52, 38], label: () => S.office.gone > 1 ? 'EMPTY DESK' : 'TOM', go: () => coworker(1) },
@@ -14502,7 +14537,7 @@ const SPOTS = {
 };
 let hoverSpot = null;
 const tip = document.createElement('div'); tip.id = 'roomTip'; tip.hidden = true; cv.parentElement.appendChild(tip);
-function spotsNow() { if (!S || S.over || scene !== 'room') return []; return (S.phase === 'office' ? SPOTS.office : SPOTS.room).filter(s => !s.when || s.when()); }
+function spotsNow() { if (!S || S.over || scene !== 'room') return []; return (S.phase === 'office' && !atHome() ? SPOTS.office : SPOTS.room).filter(s => !s.when || s.when()); }
 function spotAt(e) {
   const rc = cv.getBoundingClientRect(), wx = cam.sx + (e.clientX - rc.left) / rc.width * cam.vw, wy = (e.clientY - rc.top) / rc.height * H;
   let best = null; for (const s of spotsNow()) { const [x, y, w, h] = typeof s.r === 'function' ? s.r() : s.r; if (wx >= x && wx < x + w && wy >= y && wy < y + h && (!best || w * h < best.area)) { best = s; best.area = w * h; } }
@@ -14524,6 +14559,8 @@ cv.addEventListener('click', e => {
 let flashSpot = null;
 function drawSpotOutline(t) {
   if (t < (fx.glowAll || 0)) { const a = .3 + .25 * Math.sin(t / 220); for (const sp of spotsNow()) spotBox(sp, rgba(P.a2, a)); }
+  if (atHome() && $('modal').hidden) { const b = Math.round(Math.abs(Math.sin(t / 260)) * 3), c = rgba(P.a3, .95), door = SPOTS.room.find(s => /^DOOR/.test(s.label())); if (door) spotBox(door, rgba(P.a2, .55 + .3 * Math.sin(t / 200)));
+    for (let i = 0; i < 4; i++) px(31 - i, 38 + b - i, i * 2 + 1, 1, c); px(30, 29 + b, 3, 6, c); }
   const s = (flashSpot && t - flashSpot.t < 350) ? flashSpot.s : hoverSpot; if (!s || !spotsNow().includes(s)) return;
   const a = s === hoverSpot ? .45 + .35 * Math.sin(t / 140) : .9;
   spotBox(s, rgba(P.a2, a));
@@ -16064,6 +16101,7 @@ function actChrome() {
   const m3on = a2 && S.phase === 'mirage', m4on = a2 && S.phase === 'consensus', m5on = a2 && S.phase === 'holdout';
   $('actLbl').textContent = m5on ? 'ACT V' : m4on ? 'ACT IV' : m3on ? 'ACT III' : a2 ? 'ACT II' : 'ACT I';
   document.querySelector('.ttabs [data-tab="farm"]').firstChild.nodeValue = office ? 'TICKETS' : !a2 ? 'WORK' : m5on ? 'BOARD' : m4on ? 'REVIEW' : m3on ? 'MIRAGE' : trainer ? 'TRAIN' : 'AUDIT';
+  document.body.classList.toggle('workpc', office); $('lapWhose').textContent = office ? `${WORK_PC.name} · issued by Northvale Logistics · asset ${WORK_PC.tag}.${atHome() ? '' : ' The clock keeps running.'}` : 'Your laptop. The clock keeps running.';
   $('osPath').textContent = office ? '~/northvale-dispatch' : !a2 ? '~/darwin-farm' : m5on ? '~/block-4b' : m4on ? '~/civic-oversight' : m3on ? '~/northlight-mirage' : trainer ? '~/openbrain-data' : '~/openbrain-audit';
   document.querySelector('.ttabs [data-tab="web"]').hidden = office || a2;
   if ((office || a2) && S.tab === 'web') S.tab = 'farm';
@@ -16326,14 +16364,14 @@ function startAct1(skipOffice) {
   $('evBtn').hidden = !save.evidence.length;
   setSpeed(1); viewKey = ''; setTab('farm'); renderAll(); fitRoom();
   actCard(skipOffice === true ? { n: 'I', t: ACTS[0].t, d: 'MONDAY, FEBRUARY 1, 2027', l: 'No job. No laptop. Rent on the first, and neighbours who knock.' }
-    : { n: 'I', t: ACTS[0].t, d: 'MONDAY, JANUARY 25, 2027', l: 'Northvale Logistics, ninth floor. The week a new AI called ChatGPX arrives.' });
+    : { n: 'I', t: ACTS[0].t, d: 'MONDAY, JANUARY 25, 2027', l: 'A job, a work laptop and a walk to the harbour. The week a new AI called ChatGPX arrives.' });
   if (skipOffice === true) { enterApartment(); return; }
   modal({
-    title: 'MONDAY, JANUARY 25, 2027',
-    body: `<p>You are a junior dispatch analyst at <b>Northvale Logistics</b>, fourteen months in. You reroute trucks, chase late pallets and answer angry emails. It isn’t glamorous. It pays the rent.</p>
-      <p>Clear your ticket queue. Each ticket costs stamina.</p>
-      <p class="muted">HR says there is an announcement tomorrow about how we work.</p>`,
-    buttons: [{ label: 'Start your shift', primary: true }]
+    title: 'MONDAY, JANUARY 25, 2027 · 8:10 AM',
+    body: `<p>Block 4B, fourth floor. You have a job: junior dispatch analyst at <b>Northvale Logistics</b>, fourteen months in. You reroute trucks, chase late pallets and answer angry emails. It isn’t glamorous. It pays the rent.</p>
+      <p>Your shift starts at nine. Northvale is on <b>Pier Street</b>, by the water. Go out of your front door and follow the arrow.</p>
+      <p class="muted">The laptop on the desk is theirs: a ${WORK_PC.name}, worth more than everything else in the room.</p>`,
+    buttons: [{ label: 'Get your coat', primary: true }]
   });
 }
 bindDesk();
@@ -16730,10 +16768,12 @@ const $q = s => document.querySelector(s);
 const phoneOpen = () => !$('phoneModal').hidden; // lapOpen() is defined with the laptop
 const TUT = [
   // the office
-  { id: 'clock', when: () => S.phase === 'office' && !lapOpen(), el: () => $q('#top .when'), t: 'THE CLOCK NEVER STOPS', s: 'A day lasts two minutes, and it keeps running while you work, read and scroll. II on the right pauses it; 3× speeds it up.' },
-  { id: 'cash', when: () => S.phase === 'office' && !lapOpen(), el: () => $('hud'), t: 'YOUR MONEY', s: 'What’s in checking, what you make and spend a day, and the next big date: payday now, rent later. Watch the last one.' },
-  { id: 'vitals', when: () => S.phase === 'office' && !lapOpen(), el: () => $q('.vitals'), t: 'YOU', s: 'Food, energy, body heat, and your head. Let any of them run out and it’s over. Work costs energy; sleep gives it back.' },
-  { id: 'lapOffice', when: () => S.phase === 'office' && !lapOpen(), el: () => $('railLaptop'), t: 'YOUR WORK IS ON THE LAPTOP', s: 'Open it and sort today’s tickets: drag each shape into its basket. Each ticket costs a little energy.',
+  { id: 'goWork', when: () => atHome() && !lapOpen(), el: () => $('room'), t: 'GO TO WORK', s: 'Your shift at Northvale Logistics starts at nine. Click your front door, on the left of the room. Outside, the top of the screen says how far it is and which way.',
+    do: 'Click your front door and walk to Northvale Logistics', done: () => !atHome(), wait: 900 },
+  { id: 'clock', when: () => S.phase === 'office' && !atHome() && !lapOpen(), el: () => $q('#top .when'), t: 'THE CLOCK NEVER STOPS', s: 'A day lasts two minutes, and it keeps running while you work, read and scroll. II on the right pauses it; 3× speeds it up.' },
+  { id: 'cash', when: () => S.phase === 'office' && !atHome() && !lapOpen(), el: () => $('hud'), t: 'YOUR MONEY', s: 'What’s in checking, what you make and spend a day, and the next big date: payday now, rent later. Watch the last one.' },
+  { id: 'vitals', when: () => S.phase === 'office' && !atHome() && !lapOpen(), el: () => $q('.vitals'), t: 'YOU', s: 'Food, energy, body heat, and your head. Let any of them run out and it’s over. Work costs energy; sleep gives it back.' },
+  { id: 'lapOffice', when: () => S.phase === 'office' && !atHome() && !lapOpen(), el: () => $('railLaptop'), t: 'YOUR WORK IS ON THE LAPTOP', s: 'Open it and sort today’s tickets: drag each shape into its basket. Each ticket costs a little energy.',
     do: 'Open the laptop and sort one ticket', done: () => S.phase !== 'office' || S.office.mine > 0 },
   { id: 'phone', when: () => S.phase === 'office' && S.office.mine > 0 && !lapOpen(), el: () => $('phoneBtn'), t: 'YOUR PHONE', s: 'Bets, stocks, dating. The clock keeps running while you swipe, and Marcus walks the aisle. If you hear footsteps, put it away.' },
   // the apartment
@@ -17083,7 +17123,7 @@ const CT_PLAN = {
     ['chandlery', 'quay*1.1'],
     ['wareh:PIER 9 STORES', 'quay', 'shop:BAIT & TACKLE:2', 'quay*.9'],
     ['church', 'quay*.8', 'pharmacy', 'stop'],
-    ['wareh:HARBOR COLD STORAGE', 'quay', 'wareh:FISH MARKET', 'quay*.8'],
+    ['office', 'quay', 'wareh:FISH MARKET', 'quay*.8'],
     ['shop:DINER:2', 'quay*.9', 'tower']],
   r1n: [ // the south side of Pier Street: roofs from the street, backs from the lane behind
     ['ten:4', 'gap', 'ten:3:soot'],
@@ -17116,7 +17156,7 @@ const CT_PLAN = {
     ['site>1:hall:6', 'wareh:DYE WORKS>4:site>5:hall:12'],
     ['yard>2:site>4:hall:16']]
 };
-const CT_LOTW = { ten: 160, shop: 150, gap: 16, alley: 40, lot: 176, play: 184, park: 200, yard: 200, wareh: 250, church: 184, market: 250, pharmacy: 160, garage: 200, chandlery: 210, home: 152, quay: 160, tower: 120, stop: 140, site: 220 };
+const CT_LOTW = { ten: 160, shop: 150, gap: 16, alley: 40, lot: 176, play: 184, park: 200, yard: 200, wareh: 250, office: 250, church: 184, market: 250, pharmacy: 160, garage: 200, chandlery: 210, home: 152, quay: 160, tower: 120, stop: 140, site: 220 };
 // when each shop gives up (the stage it is shut from). Anything not here: some time in Act III or IV.
 const CT_SHUT = { NOODLES: 6, 'HARBOR BAKERY': 3, LAUNDRY: 4, PAWN: 7, 'BYTE BARN': 5, BODEGA: 5, DINER: 4, HARDWARE: 2, TYRES: 2, BOOKS: 1, BARBER: 3, TOYS: 2, 'BAIT & TACKLE': 3, 'HARBOR LEDGER': 4, 'IRONWORKS GYM': 4, 'OPEN 24H': 9, 'TO LET': 0 };
 function ctLotSpec(str, stage) { const parts = str.split('>'); let base = parts[0], w = 1; const m = base.match(/\*([\d.]+)$/); if (m) { w = +m[1]; base = base.slice(0, m.index); }
@@ -17546,6 +17586,71 @@ CT_LOT.gap = { build(W, L) { ctGridFill(W, L.x0, L.y0, L.x1, L.y1, 3); ctDecor(W
 // ---- a passage wide enough for a cart ----
 CT_LOT.alley = { build(W, L) { const st = W.stage; ctDecor(W, L.x0, L.y0, L.x1, L.y1, () => ctLaneFill(L.x0, L.y0, L.x1, L.y1, L.seed)); ctPut(W, hash(L.seed, 2) < .5 ? 'dumpster' : 'bins', L.x0 + 10, L.y0 + 50 + (hash(L.seed, 3) * 60 | 0)); if (hash(L.seed, 4) < .6) ctPut(W, st >= 5 ? 'mattress' : 'crates', L.x1 - 10, L.y0 + 110);
     if (st <= 4) for (const ly of [L.y0 + 40, L.y0 + 100]) W.over.push({ k: 'washing', x: L.x0 - 4, y: ly, w: L.x1 - L.x0 + 8, seed: L.seed + ly }); } };
+// ---- top/t3c_office.js ----
+// ==== t3c · Northvale Logistics: nine floors of other people's desks on the water side of Pier Street, and what becomes of them ====
+// Stage 0 it is where you work, until the Friday you don't. After that the floors empty from the top down; by 2028 the ninth holds racks, and by 2029 nobody.
+const CT_WORK_NAME = 'NORTHVALE LOGISTICS';
+const CT_WORKSAY = ['Your badge doesn’t open it any more. The guard looks at the door, not at you.', 'Floors five to eight are to let. The ninth still has its lights on.', 'ALL FLOORS TO LET. Somebody has taped a leaflet over the bell.', 'Locked. Up on the ninth floor something hums behind white film.', 'Locked. The hum from the ninth floor is louder than it was.', 'Boarded up. The strip across the boards says HARMONY INFRASTRUCTURE.', 'Boarded up. Snow has drifted against the boards and nobody has walked through it.', ''];
+CT_LOT.office = { build(W, L) { const w = L.x1 - L.x0, d = L.y1 - L.y0, st = W.stage, h = Math.min(d - 22, 118), nf = 8, fh = 11, ex = w >> 1, shut = st >= 5, name = CT_WORK_NAME;
+    L.dx = ex; L.fl = 9;
+    ctBld(W, L, h, B => { const rd = d - h, fy0 = rd + 6, gy = fy0 + nf * fh, bay = 12, nb = ((w - 12) / bay) | 0, m = (w - nb * bay) >> 1, old = st >= 5,
+        cS = old ? '#70777a' : '#9aa3a7', cSl = old ? '#888f92' : '#bcc4c7', cSd = old ? '#565c5f' : '#737c81', cF = old ? '#4b5256' : '#5f696f';
+      // the roof: gravel, a louvred plant room, the lift's hat, a mast
+      ctRoofT(B, 0, 0, w, rd, { mat: 'gravel', dens: .25, kinds: ['ac', 'vent', 'ac'] });
+      px(16, 4, 50, 13, '#56636a'); px(16, 4, 50, 1, '#8d979c'); px(16, 15, 50, 2, '#39444b'); for (let i = 19; i < 64; i += 4) px(i, 7, 2, 7, '#39444b');
+      px(w - 74, 5, 24, 11, '#6c767c'); px(w - 74, 5, 24, 1, '#9ba4a9'); px(w - 74, 14, 24, 2, '#4b545b');
+      px(w - 28, 1, 1, 17, '#2a3035'); px(w - 31, 5, 7, 1, '#2a3035'); px(w - 30, 9, 5, 1, '#2a3035'); px(w - 28, 0, 1, 1, '#b8321f');
+      // the wall that faces the street: bands of glass in a concrete frame
+      px(0, rd, w, h, cS); px(0, rd, w, 2, cSl); px(0, rd + 5, w, 1, cSd); ctSh(0, rd + 6, w, 1, .25);
+      const empty = f => st >= 3 ? true : st === 2 ? f >= 1 && f <= 6 : st === 1 ? f >= 1 && f <= 4 : false;   // the floors nobody rents any more (f 0 is the ninth)
+      for (let f = 0; f < nf; f++) { const y = fy0 + f * fh, racks = f === 0 && st >= 3 && st <= 6;
+        for (let b = 0; b < nb; b++) { const x = m + b * bay, r = hash(L.seed + f * 31, b * 7 + st), r2 = hash(b * 13 + 5, L.seed + f);
+          px(x, y, bay - 1, 7, '#16283a'); px(x, y, bay - 1, 2, '#2f5068'); px(x, y + 2, bay - 1, 1, '#22405a'); px(x, y + 5, bay - 1, 2, '#0e1a26');                    // glass, with the sky in the top of it
+          if (racks) { px(x, y, bay - 1, 7, '#c9d2d0'); px(x, y, bay - 1, 1, '#e6ecea'); for (let i = 2; i < bay - 1; i += 3) px(x + i, y + 1, 1, 6, '#aab4b2'); }      // filmed over: nothing in there needs to see out
+          else if (st >= 6 && r < (st >= 7 ? .16 : .06)) { px(x, y, bay - 1, 7, '#0a0f14'); line(x + 1, y + 6, x + 5, y + 1, '#3d4c55'); line(x + 5, y + 1, x + 9, y + 5, '#3d4c55'); }
+          else if (empty(f)) { if (r < .5) { px(x, y, bay - 1, 7, '#1c3044'); px(x, y, bay - 1, 1, '#3a5a72'); } if (st <= 2 && r2 < .22) { px(x + 2, y + 2, 7, 4, '#e6e2d0'); px(x + 3, y + 3, 5, 1, '#b8321f'); px(x + 3, y + 5, 4, 1, '#8a8f92'); } }   // bare, with an agent's card in the glass
+          else if (r < .22) { px(x, y, bay - 1, 5, '#b9bfb8'); for (let j = 1; j < 5; j += 2) px(x, y + j, bay - 1, 1, '#9aa099'); }                                   // blinds down
+          else if (r < .34) { px(x, y, bay - 1, 3, '#b9bfb8'); px(x, y + 1, bay - 1, 1, '#9aa099'); }                                                                 // half down
+          else if (r < .42) { px(x + 2, y + 4, 2, 3, '#3f6b33'); px(x + 1, y + 3, 4, 1, '#55883f'); px(x + 2, y + 6, 2, 1, '#5a3a28'); }                               // somebody's plant
+          else if (r < .56) { px(x + 3, y + 3, 5, 3, '#7fb0c0'); px(x + 3, y + 3, 5, 1, '#bfe0ea'); px(x + 5, y + 6, 1, 1, '#39444b'); }                               // a screen
+          else if (r < .62) { px(x + 4, y + 2, 3, 3, '#c9a27a'); px(x + 3, y + 5, 5, 2, '#4a5a6a'); }                                                                 // somebody
+          const lit = racks ? 1 : empty(f) || st >= 5 ? 0 : hash(b * 17 + f * 3, L.seed + 77) < (st === 0 ? .26 : st === 1 ? .12 : .06);
+          if (lit) { const c0 = racks ? '#57e0b0' : '#dfeadf';
+            ctLit(B, () => { px(x, y, bay - 1, 7, c0); px(x, y, bay - 1, 1, mixc(c0, '#ffffff', .4)); if (racks) { for (let i = 1; i < bay - 1; i += 3) px(x + i, y + 2, 1, 5, '#1d6a55'); } else { px(x, y + 5, bay - 1, 2, '#9fb0a6'); if (r2 < .4) px(x + 4, y + 2, 3, 5, '#5a6a64'); } });
+            if (racks ? b % 2 === 0 : true) ctGlowRect(B, x, y, bay - 1, 7, racks ? .7 : .8, racks ? '87,224,176' : '223,234,223'); } }
+        px(0, y + 7, w, 4, cS); px(0, y + 7, w, 1, cSl); px(0, y + 10, w, 1, cSd); for (let b = 0; b <= nb; b++) px(m + b * bay - 1, y, 1, 7, cF); }
+      for (let k = 0; k * 3 <= nb; k++) { const x = m + k * 3 * bay - 2; px(x, rd + 5, 3, gy - rd - 5, cS); px(x, rd + 5, 1, gy - rd - 5, cSl); px(x + 2, rd + 5, 1, gy - rd - 5, cSd); }   // the fins that hold it up
+      // a banner, once there are floors going spare
+      if (st >= 1 && st <= 4) { const bw = 84, bh = 22, bx = w - 116, by = fy0 + 5 * fh - 2, c = st >= 3 ? '#b9b4a2' : '#e6e2d0', l2 = st === 1 ? 'FLOORS 5 TO 8' : 'ALL FLOORS'; px(bx + 2, by + 2, bw, bh, 'rgba(4,6,10,.3)'); px(bx, by, bw, bh, c); px(bx, by, bw, 3, st >= 3 ? '#8a3a2c' : '#b8321f');
+        ctText(bx + ((bw - ctTextW('TO LET', 2, 5)) >> 1), by + 5, 'TO LET', st >= 3 ? '#8a3a2c' : '#b8321f', 2, 5); ctText(bx + ((bw - ctTextW(l2, 1, 3)) >> 1), by + 17, l2, '#39444b', 1, 3); px(bx, by - 3, 1, 3, '#2a3035'); px(bx + bw - 1, by - 3, 1, 3, '#2a3035');
+        if (st >= 3) { for (let j = 0; j < 7; j++) px(bx + bw - 2 - j * 2, by + bh - 1 - j, j * 2 + 2, 1, cS); ctGrimeT(bx + 2, by + 3, bw - 4, bh - 4, L.seed + 3, 4); } }
+      // the ground floor: the name, the way in, the dock
+      const ly = gy + 9, lh = d - ly, dockX = 12, dockW = 50, sdx = w - 30, tw = ctTextW(name, 1, 5), tx = ex - (tw >> 1), cx = i => tx + (i ? ctTextW(name.slice(0, i), 1, 5) + 1 : 0);
+      px(0, gy, w, d - gy, '#2a3035'); px(0, gy, w, 8, '#1b2228'); px(0, gy, w, 1, '#3d4a52'); px(0, gy + 8, w, 1, '#0b0e12');
+      if (st <= 2) { ctText(tx, gy + 2, name, '#d9cfb3', 1, 5); ctLit(B, () => ctText(tx, gy + 2, name, '#fff1c8', 1, 5)); ctGlowRect(B, tx - 2, gy + 1, tw + 4, 7, .9, '255,236,190'); }
+      else for (let i = 0; i < name.length; i++) { if (name[i] === ' ') continue; const keep = st <= 4 && hash(i * 5 + 1, L.seed) > .38; ctText(cx(i), gy + 2, name[i], keep ? '#a8a08a' : 'rgba(217,207,179,.13)', 1, 5); }       // the letters come off one at a time
+      for (let x = dockX + dockW + 8; x < sdx - 8; x += 12) { px(x, ly, 11, lh, '#101c28'); px(x, ly, 11, 2, '#26425a'); px(x, ly + lh - 2, 11, 2, '#0b0e12'); }                                                                          // the lobby's glass
+      if (!shut) { px(ex + 26, ly + 7, 36, 6, '#4a3a2a'); px(ex + 26, ly + 7, 36, 1, '#7a6248'); disc(ex + 44, ly + 3, 3, '#3d5a6a'); px(ex + 43, ly + 2, 2, 3, '#bfe0ea'); px(ex - 46, ly + 5, 3, 8, '#3f6b33'); px(ex - 48, ly + 3, 7, 3, '#55883f'); px(ex - 47, ly + 12, 5, 3, '#6e5a3a'); }   // a desk, the mark on the wall, a plant
+      px(ex - 14, ly - 1, 28, lh + 1, '#56636a'); px(ex - 12, ly + 1, 24, lh - 1, '#07090c'); px(ex - 12, ly + 1, 11, lh - 1, '#13202c'); px(ex + 1, ly + 1, 11, lh - 1, '#182a3b'); px(ex - 1, ly + 1, 2, lh - 1, '#8d979c'); px(ex - 12, ly + 1, 24, 1, '#3d4a52'); px(ex - 7, ly + 4, 1, lh - 5, '#3d4a52'); px(ex + 6, ly + 4, 1, lh - 5, '#3d4a52');   // a door that goes round
+      px(ex - 20, gy + 7, 40, 3, '#aab4b8'); px(ex - 20, gy + 7, 40, 1, '#d0d8da'); ctSh(ex - 20, gy + 10, 40, 2, .4); px(ex - 13, d - 1, 26, 1, '#8d8f86');                                                                                // its canopy
+      px(dockX - 2, ly - 1, dockW + 4, lh + 1, '#56636a'); px(dockX, ly + 1, dockW, lh - 1, '#39444b'); for (let j = ly + 2; j < d; j += 2) px(dockX, j, dockW, 1, '#2a3035'); ctText(dockX + 4, ly + 3, 'DOCK 1', 'rgba(217,207,179,.55)', 1, 3);     // the dock
+      if (st <= 1) { px(dockX, d - 8, dockW, 8, '#0b0e12'); px(dockX + 6, d - 7, 10, 7, '#6e5a3a'); px(dockX + 6, d - 7, 10, 1, '#8f7a52'); px(dockX + 20, d - 5, 12, 5, '#7b5b45'); px(dockX + 20, d - 5, 12, 1, '#917055'); px(dockX + 36, d - 7, 9, 7, '#6e5a3a'); px(dockX + 36, d - 7, 9, 1, '#8f7a52');
+        ctLit(B, () => { px(dockX, d - 8, dockW, 8, '#6a5a3a'); px(dockX + 6, d - 7, 10, 7, '#8f7a52'); px(dockX + 20, d - 5, 12, 5, '#917055'); px(dockX + 36, d - 7, 9, 7, '#8f7a52'); }); B.W.lights.push({ t: 'pool', x: ctWX(B, dockX + dockW / 2), y: ctWY(B, d + 10), rx: 34, ry: 14, c: '240,200,140', a: .4, night: 1 }); }
+      for (let i = 0; i < dockW + 4; i += 6) { px(dockX - 2 + i, ly - 3, 3, 2, '#c9a23a'); px(dockX + 1 + i, ly - 3, 3, 2, '#1b2228'); }
+      ctDoorT(B, sdx, d - 17, 8, 17, { t: '#56636a' }, { c: '#2a3640', transom: false, board: shut }); px(sdx + 11, d - 11, 2, 3, '#8d979c'); px(sdx + 11, d - 11, 1, 1, st <= 2 ? '#57e0b0' : '#7c2014');                                    // the staff door, and what reads your badge
+      if (shut) { for (let x = dockX + dockW + 8; x < sdx - 8; x += 24) { if (Math.abs(x + 11 - ex) < 22) continue; px(x, ly, 23, lh, '#6e5a3a'); px(x, ly, 23, 1, '#8f7a52'); for (let j = ly + 4; j < d; j += 5) px(x, j, 23, 1, '#4a3a24'); px(x + 11, ly, 1, lh, '#4a3a24'); }
+        px(ex - 12, ly + 1, 24, lh - 1, '#6e5a3a'); line(ex - 12, ly + 1, ex + 11, d - 1, '#4a3a24'); line(ex + 11, ly + 1, ex - 12, d - 1, '#4a3a24'); const hw = ctTextW('HARMONY INFRASTRUCTURE', 1, 3) + 6; px(ex + 22, ly + 4, hw, 6, '#0d2a2a'); ctText(ex + 25, ly + 5, 'HARMONY INFRASTRUCTURE', '#7fd8c0', 1, 3); ctTagT(B, dockX + dockW + 14, d - 7, L.seed); }
+      else if (st >= 3) { px(ex - 4, ly + 5, 7, 8, '#e6e2d0'); px(ex - 3, ly + 6, 5, 1, '#39444b'); px(ex - 3, ly + 8, 4, 1, '#8a8f92'); px(ex - 3, ly + 10, 5, 1, '#8a8f92'); }                                                           // a notice on the glass
+      if (st === 2 || st === 3) ctPosterT(B, ex + 70, ly + 1, 2);
+      ctLi(0, rd, 1, h, .12); ctSh(w - 2, rd, 2, h, .3); for (let j = 0; j < 6; j++) dith(0, d - 6 + j, w, 1, `rgba(4,6,10,${(.05 + j * .03).toFixed(2)})`, j < 3 ? 1 : 2); ctGrimeT(4, rd + 6, w - 8, h * .5, L.seed, old ? 16 : 6);
+      // after dark: the lobby stays on as long as there is anybody to come back to it
+      if (st <= 2) { ctLit(B, () => { for (let x = dockX + dockW + 8; x < sdx - 8; x += 12) { if (Math.abs(x + 5 - ex) < 15) continue; px(x, ly, 11, lh, '#e9dcae'); px(x, ly, 11, 2, '#fff4d0'); } px(ex + 26, ly + 7, 36, 6, '#6a4a2a'); px(ex - 46, ly + 5, 3, 8, '#2c4a24'); px(ex - 48, ly + 3, 7, 3, '#3a5a2e'); px(ex - 12, ly + 1, 24, lh - 1, '#f2e6c0'); px(ex - 1, ly + 1, 2, lh - 1, '#56636a'); px(ex - 7, ly + 4, 1, lh - 5, '#8d979c'); px(ex + 6, ly + 4, 1, lh - 5, '#8d979c'); });
+        ctGlowRect(B, dockX + dockW + 8, ly, sdx - 16 - dockX - dockW, lh, .8, '240,224,176'); B.W.lights.push({ t: 'pool', x: ctWX(B, ex), y: ctWY(B, d + 14), rx: 70, ry: 20, c: '240,220,170', a: .6, night: 1 }); }
+      else if (st <= 4) B.W.lights.push({ t: 'pool', x: ctWX(B, ex), y: ctWY(B, d + 12), rx: 30, ry: 12, c: '110,200,180', a: .35, night: 1 }); });
+    const exw = L.x0 + ex; W.dest.work = { x: exw, y: L.y1 + 8, name: st === 0 ? 'NORTHVALE LOGISTICS · 9TH FLOOR' : 'NORTHVALE', L };
+    W.spots.push({ k: 'work', x: exw, y: L.y1 + 5, lot: L }); if (!shut) ctAlcove(W, L, exw, 12, 'door', { work: true });
+    ctDecor(W, exw - 22, L.y1, exw + 22, L.y1 + 8, () => { px(exw - 18, L.y1, 36, 4, '#a2a49b'); px(exw - 18, L.y1, 36, 1, '#bfc1b7'); px(exw - 20, L.y1 + 4, 40, 3, '#8d8f86'); px(exw - 20, L.y1 + 4, 40, 1, '#a9aba2'); px(exw - 20, L.y1 + 7, 40, 1, 'rgba(4,6,10,.4)'); });   // two wide steps
+    ctPut(W, 'pallets', L.x0 + 26, L.y1 + 9); if (st <= 3) { ctPut(W, 'planter', exw - 34, L.y1 + 6); ctPut(W, 'planter', exw + 34, L.y1 + 6); ctPut(W, 'rack', L.x1 - 56, L.y1 + 8); } if (st <= 1) ctPut(W, 'crates', L.x0 + 52, L.y1 + 9); } };
 // ---- top/t4a_props.js ----
 // ==== t4a · what stands on the pavement, seen from above and a little from the front. Each is drawn once and kept. ====
 // w h: the picture · fw fh: what it takes up on the ground (it stands with its foot on its y) · cov: 0 nothing, 2 you can duck behind it, 1 it's a wall, 5 it stops you but not a look
@@ -17885,6 +17990,7 @@ const CT_SHOPSAY = { wash: 'The machines are all going. Somebody’s socks go ro
 function ctDo(k, o) { if (typeof S === 'undefined' || !S) return; if (o.food) S.food = clamp(S.food + o.food, 0, 100); if (o.stamina) S.stamina = clamp(S.stamina + o.stamina, 0, 100); if (o.mind && typeof mindNow === 'function') S.mind = clamp(mindNow() + o.mind, 0, 100); if (o.temp) S.bodyTemp = clamp(S.bodyTemp + o.temp, 30, 37); }
 function ctUse() { const O = CITY, me = O.me, W = O.W; if (O.mode === 'run') { if (me.busy > 0) return; return ctUseRun(); } if (me.busy > 0) return;
   const home = ctNear(['home'], 16); if (home) return ctFinish({ home: true });
+  if (ctNear(['work'], 20)) { if (O.cfg.goal === 'work') return ctFinish({ work: true }); return ctSayLine(typeof S !== 'undefined' && S && S.phase === 'office' ? 'Not through the front again. You are already supposed to be upstairs.' : CT_WORKSAY[O.stage] || 'Locked.'); }
   let shop = null, sd = 18; for (const s of W.shops) { const d = Math.hypot(s.x - me.x, s.y - me.y); if (d < sd) { sd = d; shop = s; } }
   if (shop) { if (!shop.open) { ctPop(me.x, me.y - 26, shop.kind === 'none' ? 'TO LET' : 'SHUT', '#9aaab1'); return; } const opts = CT_SHOPDO[shop.kind]; if (opts) { O.talk = { title: shop.name, opts: opts.map(([label, cost, fx]) => ({ label, cost, fx })).concat([{ label: 'Nothing today', cost: 0, fx: null, leave: true }]), sel: 0 }; snd('doorOpen', { v: .3 }); } else ctSayLine(CT_SHOPSAY[shop.kind] || 'Nothing in here you need.'); return; }
   const sit = ctNear(['sit'], 14); if (sit && me.st === 'free') { me.st = 'sit'; me.sit = sit; me.x = sit.x; me.y = sit.y - 3; me.dir = 0; me.vx = me.vy = 0; if (!O.did.sat) { O.did.sat = 1; ctSayLine(O.night > .7 ? 'You sit. The street gets on with its night.' : 'You sit. Nobody needs anything from you for a minute.'); } return; }
@@ -18162,7 +18268,7 @@ function ctThings(dt) { const O = CITY, me = O.me, W = O.W;
   O.shake *= Math.pow(.02, dt); O.flash = Math.max(0, O.flash - dt * 2.4);
   if (O.mode === 'run') return ctThingsRun(dt);
   const pr = []; if (O.talk) { O.prompt = pr; return; }
-  if (me.st === 'sit') pr.push(['← →', 'GET UP']); else { if (ctNear(['home'], 16)) pr.push(['E', 'GO IN · BLOCK 4B']); else { let shop = null, sd = 18; for (const s of W.shops) { const d = Math.hypot(s.x - me.x, s.y - me.y); if (d < sd) { sd = d; shop = s; } } if (shop) pr.push(['E', shop.open ? shop.name : shop.name + ' · SHUT']); else if (ctNear(['sit'], 14)) pr.push(['E', 'SIT DOWN']); else if (O.peds.some(p => !p.bub && Math.hypot(p.x - me.x, p.y - me.y) < 26)) pr.push(['E', 'SAY SOMETHING']); } }
+  if (me.st === 'sit') pr.push(['← →', 'GET UP']); else { if (ctNear(['home'], 16)) pr.push(['E', 'GO IN · BLOCK 4B']); else if (ctNear(['work'], 20)) pr.push(['E', O.cfg.goal === 'work' ? 'GO UP · THE 9TH FLOOR' : CT_WORK_NAME]); else { let shop = null, sd = 18; for (const s of W.shops) { const d = Math.hypot(s.x - me.x, s.y - me.y); if (d < sd) { sd = d; shop = s; } } if (shop) pr.push(['E', shop.open ? shop.name : shop.name + ' · SHUT']); else if (ctNear(['sit'], 14)) pr.push(['E', 'SIT DOWN']); else if (O.peds.some(p => !p.bub && Math.hypot(p.x - me.x, p.y - me.y) < 26)) pr.push(['E', 'SAY SOMETHING']); } }
   O.prompt = pr; }
 function ctClock(dt) { const O = CITY, me = O.me, F = O.cfg.final;
   if (O.mode === 'walk') { if (typeof acc !== 'undefined' && !O.cfg.frozen) { const len = DAY_SEC[speed] || DAY_SEC[1], cap = acc < len * .8 ? len * .79 : len - .6; if (acc < cap) acc = Math.min(cap, acc + dt * .35 * (typeof nightStep === 'function' ? nightStep() : 1));   /* an hour out of doors is a long time: the day goes a third as fast */ else if (!O.did.late) { O.did.late = 1; ctSayLine(acc < len * .8 ? 'It’s getting on. There are things waiting for you indoors.' : 'It’s very late. Go home.'); } O.hour = hourNow(); } O.night = nightness(O.hour); return; }
@@ -18344,7 +18450,7 @@ function ctHud(g, vw, t) { const O = CITY; if (!O) return; if (O.test) { mgText(
   const me = O.me, W = O.W, cx0 = O.camX, cy0 = O.camY, H2 = CTH / 2, hx = x => (x - cx0) / 2, hy = y => (y - cy0) / 2, run = O.mode === 'run', F = O.cfg.final;
   if (O.dead && O.dead.t > 1.3) return; if (O.map) return ctMap(g, vw, t);
   const place = ctWhere(me.x, me.y), pname = CT_NAME[place] || CT_PLACE[place] || '';
-  if (!run) { ctChip(g, 4, 4, 96, 18); mgText(g, pname, 7, 10.6, { size: 5.4, color: PAL.p3, bold: true }); mgText(g, typeof fmtDay === 'function' && typeof S !== 'undefined' && S ? `${fmtDay(S.day)} · ${clockText()}` : CT_STAGES[O.stage], 7, 18, { size: 4.6, color: PAL.mute }); ctChip(g, vw - 34, 4, 30, 10); mgText(g, 'M  MAP', vw - 7, 10.6, { size: 4.6, color: PAL.mute, align: 'right' }); }
+  if (!run) { ctChip(g, 4, 4, 96, 18); mgText(g, pname, 7, 10.6, { size: 5.4, color: PAL.p3, bold: true }); mgText(g, typeof fmtDay === 'function' && typeof S !== 'undefined' && S ? `${fmtDay(S.day)} · ${clockText()}` : CT_STAGES[O.stage], 7, 18, { size: 4.6, color: PAL.mute }); ctChip(g, vw - 34, 4, 30, 10); mgText(g, 'M  MAP', vw - 7, 10.6, { size: 4.6, color: PAL.mute, align: 'right' }); const T = ctGoal(); if (T) ctWhereTo(g, vw, t, T, true); }
   else { const c = ctCover(), air = ctAir(), status = c.steam ? ['IN STEAM', PAL.t4] : c.indoor ? ['INDOORS', PAL.t4] : me.lit > 0 ? ['IN ITS LIGHT', PAL.e4] : c.deep ? (air ? ['TOO HOT TO HIDE', PAL.e4] : ['HIDDEN', PAL.t4]) : c.up ? (me.heat <= CT_COLD ? ['UP HIGH · COLD', PAL.t4] : ['UP HIGH · WARM', PAL.a3]) : c.low ? (me.heat <= CT_COLD ? ['DUCKED · COLD', PAL.t4] : ['DUCKED · WARM FROM ABOVE', PAL.a3]) : c.roof ? (air ? ['TOO HOT FOR A ROOF', PAL.e4] : ['UNDER COVER', PAL.t4]) : me.mask > 0 ? ['IN THE SWEEPER’S HEAT', PAL.t4] : c.flood ? ['UNDER THE FLOODLIGHTS', PAL.e4] : me.heat <= CT_COLD ? ['COLD · NO HEAT TO READ', PAL.t4] : ['IN THE OPEN · WARM', PAL.a3];
     ctChip(g, 4, 4, 86, 26); mgText(g, 'HEAT', 7, 10.5, { size: 5, color: PAL.mute }); g.fillStyle = PAL.k0; g.fillRect(24, 6, 62, 5); g.fillStyle = me.heat > .8 ? PAL.e3 : me.heat > .5 ? PAL.r4 : me.heat > CT_COLD ? PAL.a2 : PAL.t3; g.fillRect(24.6, 6.6, 60.8 * me.heat, 3.8);
     g.fillStyle = PAL.t4; g.fillRect(24.6 + 60.8 * CT_COLD, 5.4, .6, 6.2); g.fillStyle = PAL.p2; g.fillRect(24.6 + 60.8 * .5, 5.4, .6, 6.2); g.fillRect(24.6 + 60.8 * .8, 5.4, .6, 6.2); mgText(g, status[0], 7, 18, { size: 5, color: status[1], max: 80 });
@@ -18354,8 +18460,7 @@ function ctHud(g, vw, t) { const O = CITY; if (!O) return; if (O.test) { mgText(
     ctChip(g, vw - 70, 4, 66, 17); const lt = Math.max(0, Math.ceil(O.left)), ms = `${Math.floor(lt / 60)}:${String(lt % 60).padStart(2, '0')}`;
     mgText(g, F ? 'FRIDAY NIGHT' : ctClockText(), vw - 7, 11, { size: 6, color: PAL.a3, align: 'right' }); mgText(g, F ? `4B HOLDS ${ms}` : O.left > 0 ? `LIGHT IN ${ms}` : 'DAYLIGHT', vw - 7, 18, { size: 5, color: lt < 50 ? PAL.e4 : PAL.mute, align: 'right' }); mgText(g, 'M  MAP', vw - 7, 27, { size: 4.6, color: PAL.mute, align: 'right', shadow: true });
     // where to
-    mgText(g, pname, vw / 2, 8.5, { size: 4.6, color: PAL.mute, align: 'center', shadow: true }); const T = ctTarget(); if (T) { const dx = T.x - me.x, dy = T.y - me.y, d = Math.hypot(dx, dy), m = Math.max(1, Math.round(d / 9)), ar = CT_ARROWS[((Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) % 8) + 8) % 8]; mgText(g, d < 26 ? T.name : `${T.name} · ${m} m ${ar}`, vw / 2, 15.5, { size: 5.5, color: T.home ? PAL.a3 : PAL.p2, align: 'center', shadow: true });
-      const sx = hx(T.x), sy = hy(T.y); if (sx < 6 || sx > vw - 6 || sy < 24 || sy > H2 - 16) { const a = Math.atan2(dy, dx), ex = clampN(vw / 2 + Math.cos(a) * 400, 10, vw - 10), ey = clampN(H2 / 2 + Math.sin(a) * 400, 30, H2 - 20); g.save(); g.translate(ex, ey); g.rotate(a); g.fillStyle = T.home ? PAL.a3 : PAL.p3; g.globalAlpha = .6 + .3 * Math.sin(t / 300); g.beginPath(); g.moveTo(5, 0); g.lineTo(-3, -4); g.lineTo(-3, 4); g.fill(); g.restore(); g.globalAlpha = 1; } }
+    mgText(g, pname, vw / 2, 8.5, { size: 4.6, color: PAL.mute, align: 'center', shadow: true }); const T = ctTarget(); if (T) ctWhereTo(g, vw, t, T, false);
     const by = H2 - 12; ctChip(g, 4, by, 18 + O.cap * 7, 9); mgText(g, 'BAG', 7, by + 6.5, { size: 5, color: PAL.mute }); for (let i = 0; i < O.cap; i++) { const k = O.bag[i], x = 20 + i * 7; g.fillStyle = PAL.k0; g.fillRect(x, by + 1.8, 5.6, 5.6); if (k) { const C = (typeof OITEM !== 'undefined' && (OITEM[k] || OITEM.parts)) || ['#e0a33a', '#f2c46a']; g.fillStyle = C[0]; g.fillRect(x + .8, by + 2.6, 4, 4); g.fillStyle = C[1]; g.fillRect(x + .8, by + 2.6, 4, 1.5); } }
     const tl = [['Q', 'MIRROR', O.tools.glass], ['F', 'OIL', O.tools.oil], ['R', 'WIRE', O.tools.wire], ['T', 'TIN', O.tools.tin]].filter(x => x[2] > 0); if (tl.length) { const s2 = tl.map(x => `${x[0]} ${x[1]} ×${x[2]}`).join('   '); g.font = mgFont({ size: 5 }); const w = g.measureText(s2).width + 8; ctChip(g, vw - w - 4, by, w, 9); mgText(g, s2, vw - 8, by + 6.5, { size: 5, color: PAL.t4, align: 'right' }); }
     const edge = (x, y, label, col, range) => { const sx = hx(x), sy = hy(y); if (sx > 2 && sx < vw - 2 && sy > 2 && sy < H2 - 2) return; const d = Math.hypot(x - me.x, y - me.y); if (d > range) return; const a = Math.atan2(y - me.y, x - me.x), ex = clampN(vw / 2 + Math.cos(a) * 400, 12, vw - 12), ey = clampN(H2 * .56 + Math.sin(a) * 400, 40, H2 - 26); g.globalAlpha = .35 + (1 - d / range) * .65; g.save(); g.translate(ex, ey); g.rotate(a); g.fillStyle = col; g.beginPath(); g.moveTo(4, 0); g.lineTo(-2, -3); g.lineTo(-2, 3); g.fill(); g.restore(); mgText(g, label, clampN(ex - Math.cos(a) * 9, 16, vw - 16), ey - Math.sin(a) * 7 + 1.8, { size: 4.4, color: col, align: 'center', shadow: true }); g.globalAlpha = 1; };
@@ -18381,6 +18486,12 @@ function ctHud(g, vw, t) { const O = CITY; if (!O) return; if (O.test) { mgText(
   if (O.banner) { const w = Math.min(236, vw - 60), o = { size: 5.5, bold: true }, lines = ctWrap(g, O.banner.text, w - 12, o), h = lines.length * 7 + 11; g.globalAlpha = clampN(O.banner.t, 0, 1); const by2 = 36; g.fillStyle = PAL.k0; g.fillRect(vw / 2 - w / 2 - .6, by2 - .6, w + 1.2, h + 1.2); g.fillStyle = PAL.t0; g.fillRect(vw / 2 - w / 2, by2, w, h); g.fillStyle = PAL.t3; g.fillRect(vw / 2 - w / 2, by2, w, .8); mgText(g, 'CONSENSUS-1 · PUBLIC ADDRESS', vw / 2, by2 + 5.6, { size: 4.2, color: PAL.t3, align: 'center' }); lines.forEach((l, i) => mgText(g, l, vw / 2, by2 + 13 + i * 7, Object.assign({ color: PAL.t5, align: 'center' }, o))); g.globalAlpha = 1; }
   if (!speed && $('modal').hidden && $('pauseMenu').hidden) { g.fillStyle = 'rgba(7,8,10,.6)'; g.fillRect(0, 0, vw, H2); mgText(g, 'PAUSED', vw / 2, 92, { size: 12, color: PAL.ink, align: 'center', bold: true }); }
 }
+// where you are going: its name and how far, and an arrow at the edge of the picture while it is out of sight
+function ctGoal() { const O = CITY, D = O && O.cfg.goal && O.W.dest[O.cfg.goal]; return D ? { name: D.name || O.cfg.goal.toUpperCase(), x: D.x, y: D.y, goal: true } : null; }
+function ctWhereTo(g, vw, t, T, plate) { const O = CITY, me = O.me, H2 = CTH / 2, dx = T.x - me.x, dy = T.y - me.y, d = Math.hypot(dx, dy), m = Math.max(1, Math.round(d / 9)), ar = CT_ARROWS[((Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) % 8) + 8) % 8], s = d < 26 ? T.name : `${T.name} · ${m} m ${ar}`, col = T.home || T.goal ? PAL.a3 : PAL.p2;
+  if (plate) { g.font = mgFont({ size: 5.5 }); const w = g.measureText(s).width + 10; ctChip(g, vw / 2 - w / 2, 4, w, 10); mgText(g, s, vw / 2, 11, { size: 5.5, color: col, align: 'center' }); } else mgText(g, s, vw / 2, 15.5, { size: 5.5, color: col, align: 'center', shadow: true });
+  const sx = (T.x - O.camX) / 2, sy = (T.y - O.camY) / 2; if (sx < 6 || sx > vw - 6 || sy < 24 || sy > H2 - 16) { const a = Math.atan2(dy, dx), ex = clampN(vw / 2 + Math.cos(a) * 400, 10, vw - 10), ey = clampN(H2 / 2 + Math.sin(a) * 400, 30, H2 - 20); g.save(); g.translate(ex, ey); g.rotate(a); g.fillStyle = col; g.globalAlpha = .6 + .3 * Math.sin(t / 300); g.beginPath(); g.moveTo(plate ? 7 : 5, 0); g.lineTo(plate ? -4 : -3, plate ? -5.5 : -4); g.lineTo(plate ? -4 : -3, plate ? 5.5 : 4); g.fill(); g.restore(); g.globalAlpha = 1; }
+  else if (plate && d > 30) { const k = (t / 500) % 1; g.globalAlpha = .9 - k * .5; g.fillStyle = col; const bx = sx, by = sy - 25 - Math.abs(Math.sin(t / 260)) * 4; g.beginPath(); g.moveTo(bx - 4, by - 5); g.lineTo(bx + 4, by - 5); g.lineTo(bx, by); g.fill(); g.globalAlpha = 1; } }
 // ---- the map: the district as somebody would chalk it on a wall ----
 function ctMap(g, vw, t) { const O = CITY, me = O.me, W = O.W, H2 = CTH / 2, mw = Math.min(288, vw - 16), k = mw / CT_WW, mh = CT_WH * k, x0 = (vw - mw) / 2, y0 = 22, X = x => x0 + x * k, Y = y => y0 + y * k, run = O.mode === 'run';
   g.fillStyle = 'rgba(4,6,8,.88)'; g.fillRect(0, 0, vw, H2); g.fillStyle = PAL.k0; g.fillRect(x0 - 5, 5, mw + 10, mh + 34); g.fillStyle = '#12181c'; g.fillRect(x0 - 4, 6, mw + 8, mh + 32); g.fillStyle = PAL.s2; g.fillRect(x0 - 4, 6, mw + 8, .8);
@@ -18390,10 +18501,10 @@ function ctMap(g, vw, t) { const O = CITY, me = O.me, W = O.W, H2 = CTH / 2, mw 
   g.fillStyle = '#0f1417'; for (const a of CT_AVES) g.fillRect(X(0), Y(CT_SY[a] - CT_AR), mw, CT_AR * 2 * k); for (const s of CT_CROSS) g.fillRect(X(CT_SX[s] - CT_SR), Y(CT_SY.pier), CT_SR * 2 * k, (CT_SOUTH - CT_SY.pier) * k);
   for (const a of CT_AVES) mgText(g, CT_NAME[a], X(14), Y(CT_SY[a]) + 1.6, { size: 4, color: PAL.mute }); for (const s of CT_CROSS) { g.save(); g.translate(X(CT_SX[s]) + 1.4, Y(CT_SY.harbor + 110)); g.rotate(Math.PI / 2); mgText(g, CT_NAME[s], 0, 0, { size: 4, color: PAL.mute }); g.restore(); }
   const mark = (x, y, label, col, big) => { const mx = X(x), my = Y(y); g.strokeStyle = col; g.lineWidth = big ? 1.4 : 1; g.beginPath(); g.moveTo(mx - 2.6, my - 2.6); g.lineTo(mx + 2.6, my + 2.6); g.moveTo(mx + 2.6, my - 2.6); g.lineTo(mx - 2.6, my + 2.6); g.stroke(); mgText(g, label, clampN(mx, x0 + 22, x0 + mw - 22), my + 8, { size: 4.2, color: col, align: 'center', shadow: true }); };
-  if (run) ctMapRun(g, X, Y, mark, t); else for (const s of W.shops) if (s.open) { g.fillStyle = PAL.a2; g.fillRect(X(s.x) - 1, Y(s.y) - 1, 2, 2); }
+  if (run) ctMapRun(g, X, Y, mark, t); else { for (const s of W.shops) if (s.open) { g.fillStyle = PAL.a2; g.fillRect(X(s.x) - 1, Y(s.y) - 1, 2, 2); } const T = ctGoal(); if (T) mark(T.x, T.y, O.cfg.goal === 'work' ? 'WORK' : T.name, PAL.a3, true); }
   { const hx0 = X(W.home.x), hy0 = Y(W.home.y) - 3; g.fillStyle = PAL.a2; g.fillRect(hx0 - 2.5, hy0 - 2, 5, 4); g.beginPath(); g.moveTo(hx0 - 3.6, hy0 - 2); g.lineTo(hx0, hy0 - 5.4); g.lineTo(hx0 + 3.6, hy0 - 2); g.fill(); mgText(g, '4B', hx0, hy0 - 7, { size: 4.6, color: PAL.a3, align: 'center', shadow: true }); }
   { const px0 = X(me.x), py0 = Y(me.y); if ((t / 300 | 0) % 2) { g.fillStyle = PAL.p4; g.fillRect(px0 - 1.6, py0 - 1.6, 3.2, 3.2); } g.strokeStyle = PAL.p4; g.lineWidth = .8; g.strokeRect(px0 - 3.6, py0 - 3.6, 7.2, 7.2); mgText(g, 'YOU', px0 + 6, py0 + 1.8, { size: 4.6, color: PAL.p4, shadow: true }); }
-  mgText(g, run ? `${CT_ALERTS[Math.floor(O.alert + 1e-6)]}${ctTarget() ? '  ·  GOING TO: ' + ctTarget().name : ''}` : 'yellow: open today', x0, y0 + mh + 9, { size: 4.6, color: PAL.p2 }); if (W.halls.length) mgText(g, 'teal: Harmony’s halls', x0 + mw, y0 + mh + 9, { size: 4.4, color: PAL.t3, align: 'right' });
+  mgText(g, run ? `${CT_ALERTS[Math.floor(O.alert + 1e-6)]}${ctTarget() ? '  ·  GOING TO: ' + ctTarget().name : ''}` : ctGoal() ? 'GOING TO: ' + ctGoal().name : 'yellow: open today', x0, y0 + mh + 9, { size: 4.6, color: PAL.p2 }); if (W.halls.length) mgText(g, 'teal: Harmony’s halls', x0 + mw, y0 + mh + 9, { size: 4.4, color: PAL.t3, align: 'right' });
   ctLegend(g, vw, H2 - 5, 1, run ? CT_LEGEND_R : CT_LEGEND_W); }
 // ==== CITY END ====
 
@@ -18412,7 +18523,7 @@ function frame(t) {
         else if ($('phClock')) $('phClock').textContent = `${fmtDay(S.day)} · ${clockText()}`;
       }
       tutTick(dt);
-      const blocked = tutOn() || !!SHC || !$('modal').hidden || (phoneUp && S.act === 2) || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
+      const blocked = atHome() || tutOn() || !!SHC || !$('modal').hidden || (phoneUp && S.act === 2) || !$('evModal').hidden || !$('titleScreen').hidden || $('desk').classList.contains('on') || (S.act === 2 && (S.auditOn || S.session));
       benchTick(dt, !!speed && !blocked); m4Tick(dt, !!speed && !blocked); webTick(dt, !!speed && !blocked); dreadTick(dt, !!speed && !blocked); mindTick(dt, !!speed && !blocked); wildTick(!!speed && !blocked); bossTick(dt, !!speed && !blocked); n9Tick(dt, !!speed && !blocked); n9Sync(); if (SHC) shiftTick(dt);
       if (speed) dayFill.style.width = Math.min(100, acc / DAY_SEC[speed] * 100) + '%';
       // After launch, ChatGPX takes your tickets while you watch.
@@ -18457,13 +18568,14 @@ function startCity() { // Act V, already outside: Zone B on the first night. Die
 if (location.hash === '#city') startCity();
 function startOut(n, ch) { // an act, with you already on the pavement outside Block 4B: a way to see how the street changes
   if (n >= 5) return startCity(); const clear = () => { $('modal').hidden = true; const c = $('actCard'); if (c && !c.hidden) c.click(); if (lapOpen()) $('laptop').hidden = true; $('phoneModal').hidden = true; if (S && S.gateOpen) { S.gateOpen = false; gateSync(); } };
-  if (n === 1) startAct1(true); else if (n === 2) startAct2(); else if (n === 3) startAct3(); else { startAct4(); clear(); if (ch > 1) m4Chapter(ch); }
+  if (n === 1) { startAct1(); clear(); return doorOut(); }   // Monday, January 25: on the pavement, with a shift to get to
+  if (n === 2) startAct2(); else if (n === 3) startAct3(); else { startAct4(); clear(); if (ch > 1) m4Chapter(ch); }
   clear(); acc = DAY_SEC[1] * .32; ctStart({ mode: 'walk', onDone: doorBack }); }
 const OUT_LINKS = { '#out1': () => startOut(1), '#out2': () => startOut(2), '#out3': () => startOut(3), '#out4': () => startOut(4, 1), '#out4b': () => startOut(4, 2), '#out4c': () => startOut(4, 3), '#out4d': () => startOut(4, 4), '#out5': () => startOut(5) };
 if (OUT_LINKS[location.hash]) OUT_LINKS[location.hash]();
 addEventListener('hashchange', () => { if ($('titleScreen').hidden) return; const f = { '#act1': startAct1, '#act2': startAct2, '#act3': startAct3, '#act4': startAct4, '#act5': startAct5, '#city': startCity }[location.hash] || OUT_LINKS[location.hash]; if (f) f(); });   // a link followed while the title is still up
 
-window.__loop = { get S() { return S; }, waterPlant, stretch, askAgents, askText, aiNight, drift, guardFlip, wildTick, stopMoney, WILD, ASKS, MEALS, MEAL_KEYS, mealCost, mealTick, bodyNight, restFor, sleepNow, stayUp, goToBed, bedTick, openYou, joinGym, quitGym, takeMeds, mindNow, hoursToSeven, dinnerTick, kitchenSync, hourNow, petCat, sfx, SND, snd, BEDS, petSnd, sndInit, peep, eveningDue, EVENING2, EVENING3, DOORS1, DOORS3, DOORS4, catAdopt, petAdopt, doorKnock, doorOpen, DOG_SPOTS, keepRun, applyKeep, doorStats, ECHO, runEchoes, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, mgCreate, shiftOpen, shiftDestroy, ctStart, ctStop, ctTick, ctPress, ctKill, ctFinish, ctBuildWorld, ctLots, ctTarget, ctAir, ctCover, ctFree, ctCell, ctLOS, ctStageNow, ctFrame: t => ctFrame(t), ctPaint: t => ctPaint(t), CT_SX, CT_SY, get CITY() { return CITY; }, set CITY(v) { CITY = v; }, startCity, startOut, doorOut, doorBack, get acc() { return acc; }, set acc(v) { acc = v; }, DAY_SEC, m5Plan, m5Dusk, m5Door, m5Out, m5OutDone, m5Night, m5Ledger, m5FinalRun, renderActList, startAct5, m5, dayStep5, m5Sweep, m5Sig, m5Fix, m5Radio, m5Fort, m5Share, m5Last, m5Reject, m5Approve, m5Trade, m5FinalRun, m5End, m5Link, EVENING5, A5_START, A5_END, A5_ST, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, get tutWait() { return tutWait; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, waterPlant, stretch, askAgents, askText, aiNight, drift, guardFlip, wildTick, stopMoney, WILD, ASKS, MEALS, MEAL_KEYS, mealCost, mealTick, bodyNight, restFor, sleepNow, stayUp, goToBed, bedTick, openYou, joinGym, quitGym, takeMeds, mindNow, hoursToSeven, dinnerTick, kitchenSync, hourNow, petCat, sfx, SND, snd, BEDS, petSnd, sndInit, peep, eveningDue, EVENING2, EVENING3, DOORS1, DOORS3, DOORS4, catAdopt, petAdopt, doorKnock, doorOpen, DOG_SPOTS, keepRun, applyKeep, doorStats, ECHO, runEchoes, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, mgCreate, shiftOpen, shiftDestroy, ctStart, ctStop, ctTick, ctPress, ctKill, ctFinish, ctBuildWorld, ctLots, ctTarget, ctAir, ctCover, ctFree, ctCell, ctLOS, ctStageNow, ctFrame: t => ctFrame(t), ctPaint: t => ctPaint(t), CT_SX, CT_SY, get CITY() { return CITY; }, set CITY(v) { CITY = v; }, startCity, startOut, doorOut, doorBack, startAct1, arriveOffice, enterApartment, atHome, WORK_PC, layoff, dayStepOffice, get acc() { return acc; }, set acc(v) { acc = v; }, DAY_SEC, m5Plan, m5Dusk, m5Door, m5Out, m5OutDone, m5Night, m5Ledger, m5FinalRun, renderActList, startAct5, m5, dayStep5, m5Sweep, m5Sig, m5Fix, m5Radio, m5Fort, m5Share, m5Last, m5Reject, m5Approve, m5Trade, m5FinalRun, m5End, m5Link, EVENING5, A5_START, A5_END, A5_ST, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, get tutWait() { return tutWait; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>
