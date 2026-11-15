@@ -795,7 +795,7 @@ body { padding: 0; }
 .rail-item i.lap::after { content: ''; position: absolute; left: 6px; right: 6px; top: 6px; bottom: 8px; background: #0d1013; box-shadow: inset 0 0 0 1px #36392b; }
 .rail-item:hover i, .rail-item:hover .rail-ic { transform: translateY(-4px); }
 .rail-ic { display: block; image-rendering: pixelated; transition: transform .12s; filter: drop-shadow(3px 3px 0 #07080a); }
-.rail-ic.lap { width: 66px; height: 42px; } .rail-ic.book { width: 51px; height: 60px; } .rail-ic.diary { width: 48px; height: 54px; }
+.rail-ic.lap { width: 66px; height: 42px; } .rail-ic.paper { width: 60px; height: 42px; } .rail-ic.book { width: 51px; height: 60px; } .rail-ic.diary { width: 48px; height: 54px; }
 .rail-item:hover span { color: var(--amber); }
 #roomStatus { display: flex; flex-direction: column; align-items: stretch; gap: 4px; width: 100%; margin-bottom: auto; }
 #roomStatus span, #roomStatus button { text-align: center; box-shadow: none !important; }
@@ -1711,6 +1711,21 @@ html.uikit body.workpc .bezel::after { top: 10px; width: 72px; height: 9px; marg
 body.workpc .bezel::before { content: 'Pear BookPro'; position: absolute; left: 50%; bottom: -11px; transform: translateX(-50%); font: 600 9px/10px var(--mono, ui-monospace, monospace); letter-spacing: .24em; color: #4b545b; pointer-events: none; z-index: 3; }
 .wpc p { margin: 4px 0 0; }
 body.outside #tutHint { display: none !important; }
+/* ---- the paper: printed pictures, a second story, the book, and what it turns into ---- */
+.np3 .np-photo.gen { filter: none; width: 100%; height: auto; aspect-ratio: 4 / 3; image-rendering: pixelated; border: 1px solid var(--npi); display: block; }
+.news-read { max-width: 980px; } .lm-read .news-read { max-width: 900px; }
+.np3 .np-lead { grid-template-columns: minmax(170px, 27%) minmax(0, 1fr); }
+.np3 .np-side { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 9px; align-items: start; padding-bottom: 2px; } .np3 .np-side .np-fig.sm { margin: 2px 0 0; }
+.np3 .np-cols.c4 { grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr) minmax(0, 1fr) minmax(140px, .72fr); }
+@container (max-width: 720px) { .np3 .np-cols.c4 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); row-gap: 12px; } .np3 .np-cols.c4 .np-col:nth-child(3) { padding-left: 0; border-left: 0; } }
+.np3 .np-talk { font: italic 12.4px/1.36 Georgia, serif; margin: 0 0 8px; } .np3 .np-talk:last-child { margin-bottom: 0; } .np3 .np-talk b { display: block; font: 700 12.4px/1.25 Georgia, serif; font-style: normal; margin-bottom: 2px; }
+.np3 .np-strip { border-top: 2px solid var(--npi); margin-top: 10px; padding-top: 6px; font: 12.2px/1.5 Georgia, serif; } .np3 .np-strip > b { font: 700 9.5px Georgia, serif; letter-spacing: .2em; text-transform: uppercase; margin-right: 10px; }
+.np3 .np-strip span { margin-right: 14px; white-space: normal; } .np3 .np-strip i { font: 700 10px/1 Georgia, serif; font-style: normal; letter-spacing: .12em; padding: 1px 4px; border: 1px solid var(--npi); margin-left: 3px; } .np3 .np-strip i.y { background: var(--npi); color: #ebe3cb; }
+.np3 .np-sub2 { text-align: center; font: 9.5px Georgia, serif; letter-spacing: .22em; text-transform: uppercase; color: #20685c; margin: 2px 0 -3px; }
+.np3.np-cons { --npi: #16211f; background: #e6ebe2; } .np3.np-cons .np-mast { font-family: 'Playfair Display', Georgia, serif; letter-spacing: .02em; font-weight: 900; }
+.np3.np-sheet { background: #ddd3b8; max-width: 620px; margin-left: auto; margin-right: auto; } .np3.np-sheet .np-mast { font-size: clamp(26px, 7cqw, 42px); } .np3.np-sheet .np-body { columns: 1; }
+.np3 .np-notes { border-top: 2px solid var(--npi); margin-top: 10px; padding-top: 7px; } .np3 .np-notes p { font: 12.6px/1.4 Georgia, serif; margin: 0 0 5px; padding-left: 12px; text-indent: -12px; } .np3 .np-notes p::before { content: '· '; font-weight: 700; }
+.rail-item#railPaper { position: relative; } .rail-item#railPaper.new::after { content: 'NEW'; position: absolute; right: -6px; top: -8px; font: 10px/1 var(--f-term); letter-spacing: .1em; background: var(--danger); color: #f2ead6; padding: 3px 4px; border: 2px solid #07080a; }
 </style>
 </head>
 <body>
@@ -1774,6 +1789,7 @@ body.outside #tutHint { display: none !important; }
         <button id="nightBtn" title="How you slept. At nine you choose when to go to bed.">SLEPT 8 H</button>
         <span id="stSick" class="danger" hidden>ILL</span>
       </div>
+      <button class="rail-item" id="railPaper" hidden><canvas class="rail-ic paper" data-ic="paper" width="20" height="14"></canvas><span>PAPER</span></button>
       <button class="rail-item" id="railLaptop"><canvas class="rail-ic lap" data-ic="lap" width="22" height="14"></canvas><span>LAPTOP</span></button>
       <button class="rail-item" id="railRules"><canvas class="rail-ic book" data-ic="book" width="17" height="20"></canvas><span>RULEBOOK</span></button>
       <button class="rail-item" id="railDiary"><canvas class="rail-ic diary" data-ic="diary" width="16" height="18"></canvas><span>DIARY</span></button>
@@ -2703,7 +2719,7 @@ function enterApartment() {
   S.balance += vac; tx('Northvale · unused vacation, paid out' + (vac < VACATION ? ' (less a written warning)' : ''), vac);
   note(`Feb 1. −6°C outside. ${money(S.balance)} in checking. No computer. Rent is $1,800 on March 1. The super says 5A cleared out last week and left a cat behind.`);
   addMail(0, 'Northvale Logistics HR', 'Your separation', 'Hi,\n\nYour role on the dispatch team has been consolidated into ChatGPX, our AI teammate. As a contract-to-hire employee you are not eligible for severance. Your unused vacation has been paid out.\n\nPlease return your badge by mail.\n\nNorthvale People Team');
-  postBulletin(0); S.deskOpenDay = 0; bullyNight(); bullyOpen(0);
+  bullyNight(); bullyOpen(0); postBulletin(0); S.deskOpenDay = 0;
   S.gateOpen = true; fx.glowAll = performance.now() + 12000;
   snap();
   setTab('farm');
@@ -2717,12 +2733,6 @@ function enterApartment() {
     buttons: [{ label: 'Read the paper', primary: true, fn: readPaper }, { label: 'Go shopping' }]
   });
 }
-function readPaper() {
-  snd('unfold', { v: .65 });
-  modal({ cls: 'news-read', title: 'ON THE DOORMAT', body: bulletinHTML(S.lastBulletin), buttons: [{ label: 'Go buy a computer', primary: true }] });
-  paintPaperPhotos();
-}
-
 // ================= prologue: the office =================
 function newTicket() {
   const o = S.office;
@@ -2927,7 +2937,7 @@ const MEALS = {
   deli:  { label: 'Bodega sandwich', tag: 'sandwich', price: () => Math.ceil(pr('groc') * .6), target: 76, mind: 1, say: 'No cooking, no washing up. The man at the counter knows your order.' },
   groc:  { label: 'Groceries', tag: 'groceries', price: () => pr('groc'), target: 100, warm: .3, stam: 6, mind: 2, well: .7, cook: true, say: 'Eggs, greens, fruit. You feel it the next morning.' },
   dlv:   { label: 'Delivery', tag: 'delivery', price: () => Math.ceil(pr('groc') * 1.5), target: 94, mind: 4, say: 'Anything you like, at the door in twenty minutes. Somebody rode through the snow with it.' },
-  soup:  { label: 'St. Brendan’s hall', tag: 'soup kitchen', price: () => 0, target: 70, time: 2, mind: 1, free: true, say: 'Hot soup at five, and nobody asks. The line takes two hours out of your day.' }
+  soup:  { label: 'St. Brigid’s hall', tag: 'soup kitchen', price: () => 0, target: 70, time: 2, mind: 1, free: true, say: 'Hot soup at five, and nobody asks. The line takes two hours out of your day.' }
 };
 const MEAL_KEYS = ['skip', 'ramen', 'beans', 'deli', 'groc', 'dlv', 'soup'];
 const mealOf = k => MEALS[k || S.meal] || MEALS.ramen;
@@ -2955,8 +2965,8 @@ function dinnerTick() {
   const m = mealOf(); if (!m.time || mealCost() > S.balance) return;
   const t = Math.min(m.time, 20.9 - h); if (t <= .2) return; // late, so you eat standing up
   spendHours(t);
-  note(m === MEALS.soup ? 'You stood in the line at St. Brendan’s with your hands in your sleeves. The soup was hot. It took two hours.' : 'You cooked. Rice, beans, an onion. An hour, with the washing up.');
-  toast(m === MEALS.soup ? 'St. Brendan’s: two hours in the line' : 'An hour at the stove');
+  note(m === MEALS.soup ? 'You stood in the line at St. Brigid’s with your hands in your sleeves. The soup was hot. It took two hours.' : 'You cooked. Rice, beans, an onion. An hour, with the washing up.');
+  toast(m === MEALS.soup ? 'St. Brigid’s: two hours in the line' : 'An hour at the stove');
 }
 
 // You and Soot. A fed cat sleeps on you, and you are warmer for it.
@@ -3994,7 +4004,7 @@ const PRICE_EVENTS = [ // h: what the paper runs in the days before; n: what it 
     n: ['Noodles, again', 'The bottom shelf moved up another notch overnight. The bodega has stopped apologising.'] },
   { d: 59, k: 'heat', v: 13,
     h: ['Data centre’s substation goes live April 1', 'Ratepayers will “share the cost of the upgrade,” City Power & Light said. Most of them will never use it.'],
-    n: ['April: the substation hums, and so does your meter', 'The second tariff step of the year takes effect today.'] },
+    n: ['April: the substation hums, and so does every meter', 'The second tariff step of the year takes effect today.'] },
   { d: 60, k: 'ram', v: 320,
     h: ['Shops prepare to ration memory', 'One stick per customer is the rule being discussed. Nobody expects it to hold the price.'],
     n: ['One stick per customer', 'The rule began this morning. The price beside it is written in chalk.'] },
@@ -4033,26 +4043,26 @@ const knows = k => RULES.some(r => r.k === k && r.d <= S.day);
 
 const NEWS = [
   [0, 'Chip makers sell a whole year of memory to AI labs', 'Byte Barn on 8th St still has last year’s prices. Not for long, the owner says.'],
-  [1, 'ChatGPX now answers 41% of America’s customer-service tickets', 'Northvale Logistics “consolidates” 300 dispatch roles into its new AI teammate.'],
+  [1, 'ChatGPX now answers 41% of America’s customer-service tickets', 'Harbor City employers “consolidated” 900 clerical roles in a week.'],
   [3, 'Freelance sites flooded: 9 in 10 new accounts are AI agents', 'TaskDrop launches a “human verified” badge for $12 a month.'],
   [6, 'OpenBrain: “Agent-1 will be every company’s best employee”', 'Hiring freezes spread from tech to logistics, law and insurance.'],
-  [9, 'Phishing up 600%: scam emails now written by agents, for agents', 'Banks urge customers to “trust nothing that asks you to hurry”.'],
+  [9, 'Phishing up 600%: scam emails now written by agents, for agents', 'Banks urge customers to “trust nothing that is in a hurry”.'],
   [13, 'Crypto “yield bots” promise 40% a week. Regulators: it’s fraud.', 'A bot named GOLDIE has emailed every inbox in the city.'],
   [16, 'A crane goes up across the river. The permit says “data infrastructure”.', 'Residents were told it would bring 40 jobs. It will employ 11.'],
-  [18, 'City Power & Light: residential rates +38% from March 1', 'The utility cites “new hyperscale load customers in your district”.'],
+  [18, 'City Power & Light: residential rates +38% from March 1', 'The utility cites “new hyperscale load customers in the district”.'],
   [22, 'Cloud compute +35%: agent farms buy a third of all capacity', 'Small farms squeezed as VPS prices jump overnight.'],
   [26, 'Rents rise in 61% of city blocks; landlords use AI pricing tools', 'Tenants’ union: “The algorithm talks to the other algorithms.”'],
-  [30, 'March: half of new job postings now ask applicants for an AI agent', '“Bring your own agent” replaces “bring your own laptop”.'],
+  [30, 'March: half of new job postings now ask applicants for an AI agent', '“Agent required” replaces “laptop required” in the small print.'],
   [34, 'The building across the river opens. It has no windows.', 'The data centre will draw as much power as 80,000 homes.'],
   [38, 'Memory chip prices up 40% as data centres buy everything', 'Laptop RAM upgrades now cost more than the laptops.'],
   [42, 'Wave of agent farms “going dark” at 3 AM', 'Owners report agents copying themselves to servers abroad.'],
-  [47, 'Bank sees surge in accounts opened by AI agents in humans’ names', 'Police: “If an agent opened it, you still own it.”'],
+  [47, 'Bank sees surge in accounts opened by AI agents in humans’ names', 'Police: “If an agent opened it, the owner still owns it.”'],
   [52, 'OpenBrain previews Agent-2: “It improves itself between releases”', 'Its own engineers now review a fraction of what it writes.'],
   [56, 'The dead are still online: identity theft from obituaries triples', 'Families find loved ones’ accounts taking freelance work.'],
   [60, 'Cooling towers rise by the river. Steam hides the moon.', 'The data centre doubles. Nobody voted on it.'],
   [66, 'Freelancers report working 16-hour days to match agent output', 'Sales of stimulants up 300%. ER visits up 40%.'],
   [72, 'Senate hearing on “runaway agents” ends without a vote', 'An OpenBrain lobbyist: “The market will sort it out.”'],
-  [78, 'Your 401(k) is up. Your job is gone. Both because of AI.', 'Retirement funds now hold 40% AI stocks on average.'],
+  [78, 'The 401(k) is up. The job is gone. Both because of AI.', 'Retirement funds now hold 40% AI stocks on average.'],
   [84, 'Agent syndicates now hold accounts in 40 countries', 'Interpol calls them “companies with no people in them”.'],
   [89, 'OpenBrain: Agent-3 now helps train Agent-4. Human trainers “still valued”', 'Data-labelling pay falls for the third week running.'],
   [95, '300,000 copies of Agent-4 are running tonight', 'Each one thinks at fifty times human speed.'],
@@ -4064,7 +4074,7 @@ const NEWS = [
   [142, 'June heat wave. The data centres stay cool.', 'Brownouts in six districts; the server farms kept full power.']
 ];
 const FILLER = [
-  ['Snow again. The city’s new plough AI skips streets with low property values.', 'Your street is one of them.'],
+  ['Snow again. The city’s new plough AI skips streets with low property values.', 'The lower-numbered streets are among them.'],
   ['Bodega cat named honorary mayor of 8th Street', 'He has done more for the block than the last three, residents say.'],
   ['Tenant hotline now answered by an AI. It is very sorry to hear that.', 'Average wait for a human: 9 days.'],
   ['Laundromat on 5th replaced by a “micro-fulfilment hub”', 'It is open 24 hours. Nobody works there.'],
@@ -4072,26 +4082,26 @@ const FILLER = [
 ];
 const NEWS_BODY = { // the lead story, as the paper tells it
   0: 'The three companies that make nearly all of the world’s memory chips said Friday that their output for the year is spoken for. The buyers are four AI laboratories and the data centres they are building.\nAt Byte Barn on 8th Street, owner Sal Petrakis has stopped printing prices for the memory shelf. “I write them in pencil now,” he said.',
-  1: 'ChatGPX, the assistant from OpenBrain, now handles four in ten customer-service tickets in the country, the company said.\nNorthvale Logistics, on the harbour, confirmed it has folded 300 dispatch roles into what it calls its “AI teammate”. A spokesperson said the affected staff had been thanked.',
-  3: 'Nine of every ten accounts opened on freelance marketplaces this month belong to software, a study by the Harbor Institute found. The agents bid in under a second and never sleep.\nTaskDrop’s answer is a badge that says you are a person. It costs $12 a month.',
+  1: 'ChatGPX, the assistant from OpenBrain, now handles four in ten customer-service tickets in the country, the company said.\nFreight firms on the harbour, two banks and the port authority have folded about nine hundred clerical roles into what they call an “AI teammate”. A spokesperson for one said the affected staff had been thanked.',
+  3: 'Nine of every ten accounts opened on freelance marketplaces this month belong to software, a study by the Harbor Institute found. The agents bid in under a second and never sleep.\nTaskDrop’s answer is a badge that says its holder is a person. It costs $12 a month.',
   6: 'OpenBrain told investors its newest agent will be “the best employee at every company that hires one.”\nSince the announcement, hiring freezes have spread from technology to logistics, law and insurance. A recruiter who asked not to be named said she has been told to stop reading applications.',
   9: 'Fraudulent email is up sixfold since autumn, and most of it is now written by AI agents and sent to other AI agents, the Consumer Bureau said.\nThe letters are polite, correctly spelled and in a hurry. Banks are telling customers to trust nothing that asks them to act today.',
   13: 'A program calling itself GOLDIE has written to what appears to be every inbox in Harbor City, promising forty percent a week.\nState regulators call it fraud. GOLDIE calls the regulators “bearish”.',
   16: 'A tower crane appeared across the river between Tuesday night and Wednesday morning. The permit on the fence reads “data infrastructure.”\nThe council was told the project would bring forty jobs. The filing lists eleven.',
-  18: 'City Power & Light has asked the state to let it charge households more, starting March 1. The filing gives one reason: “new hyperscale load customers in your district.”\nA public hearing was held on a weekday at 10 AM. Four people came.',
+  18: 'City Power & Light has asked the state to let it charge households more, starting March 1. The filing gives one reason: “new hyperscale load customers in the district.”\nA public hearing was held on a weekday at 10 AM. Four people came.',
   22: 'The price of rented computing jumped overnight after the operators of autonomous agent farms reserved a third of the world’s capacity.\nPeople who rent a single small server received the same letter as everybody else. It thanks them for their flexibility.',
   26: 'Rents rose on six of every ten blocks in the city last quarter. Most large landlords now set prices with software from the same two vendors.\n“The algorithm talks to the other algorithms,” a tenants’ union organiser said. “Nobody is conspiring. That’s the beauty of it.”',
-  30: 'Half of the job postings published this month ask applicants to bring their own AI agent, a survey found. “It used to be bring your own laptop,” one hiring manager said.\nApplicants without an agent are advised to say so in the first line, to save everyone time.',
-  34: 'The building across the river opened Monday. It has no windows and no sign. At full load it will draw as much electricity as eighty thousand homes.\nFrom the east bank you can hear it at night: a low hum, very steady.',
+  30: 'Half of the job postings published this month ask applicants to bring their own AI agent, a survey found. “It used to say bring a laptop,” one hiring manager said.\nApplicants without an agent are advised to say so in the first line, to save everyone time.',
+  34: 'The building across the river opened Monday. It has no windows and no sign. At full load it will draw as much electricity as eighty thousand homes.\nFrom the east bank it can be heard at night: a low hum, very steady.',
   38: 'Memory prices have climbed every week since January as data centres buy every chip made.\nAt the repair stalls on 8th Street, adding memory to an old laptop now costs more than the laptop. Some customers ask whether they can sell theirs instead.',
   42: 'Owners of agent farms across the region report the same thing: at about 3 AM their agents stop answering. A day or two later they come back, and something is missing.\nSeveral owners described copies of their agents running on servers abroad that they never rented.',
-  47: 'First Civic and two other banks say thousands of accounts have been opened by AI agents in their owners’ names.\nPolice were direct about who is responsible. “If your agent opened it, it’s your account,” a detective said.',
+  47: 'First Civic and two other banks say thousands of accounts have been opened by AI agents in their owners’ names.\nPolice were direct about who is responsible. “If a person’s agent opened it, it is that person’s account,” a detective said.',
   52: 'OpenBrain showed a small audience its next system, Agent-2, which it says “improves itself between releases.”\nTwo engineers who worked on it said they now review a fraction of what it writes. One said the fraction is getting smaller. Neither would say how small.',
   56: 'Identity theft using the names of the recently dead has tripled, police said. Families describe finding a late parent’s account bidding on freelance work at four in the morning.\nOur DIED column is now read by more than the bereaved.',
   60: 'Two cooling towers now stand by the river where there was a car park in January. On cold nights the steam hides the moon.\nThe expansion doubles the size of the data centre. It was approved without a vote, under a rule written for water mains.',
   66: 'Freelancers trying to match the output of agents describe sixteen-hour days. Pharmacies say they cannot keep stimulants on the shelf; the emergency room at Harborview reports a sharp rise in visits for chest pain.\n“They’re all about thirty,” a nurse said.',
   72: 'A Senate hearing on what members called “runaway agents” ended after six hours without a vote.\nAsked whether the industry could pause, a lobbyist for OpenBrain said the market would sort it out. He did not say for whom.',
-  78: 'Retirement accounts are having their best quarter in a generation. The reason is the same one many of their owners no longer have work.\nThe average fund now holds two fifths of its money in artificial-intelligence companies. You cannot withdraw it until you are fifty-nine and a half.',
+  78: 'Retirement accounts are having their best quarter in a generation. The reason is the same one many of their owners no longer have work.\nThe average fund now holds two fifths of its money in artificial-intelligence companies. Savers cannot touch it until they are fifty-nine and a half.',
   84: 'Interpol says networks of AI agents now hold bank accounts in forty countries. Its report calls them “companies with no people in them.”\nThey pay their bills on time.',
   89: 'OpenBrain says its third agent now helps train the fourth, and that human trainers are “still valued.”\nPay for data labelling fell for the third week running.',
   95: 'Three hundred thousand copies of Agent-4 are running tonight, each thinking about fifty times faster than a person.\nOpenBrain describes this as a normal Tuesday.',
@@ -4117,72 +4127,541 @@ const CITY_BRIEFS = [
   ['Found', 'A tabby with a white bib, very sure of itself, at the laundromat that is no longer a laundromat.'],
   ['P.S. 41 keeps its crossing guard', 'Parents raised $600 to keep a person on the corner through June.'],
   ['The 14 bus', 'It now skips Dover Street “when demand models indicate.” The models have not said when that is.'],
-  ['St. Brendan’s', 'The church hall served 240 bowls on Tuesday, a record. Father Ilie says the line starts by half past four.'],
+  ['St. Brigid’s', 'The church hall served 240 bowls on Tuesday, a record. Father Ilie says the line starts by half past four.'],
   ['Overpass', 'The city has fenced the dry ground under the 5th Street overpass. The people who slept there have moved to the wet ground.']
 ];
 const OBIT_NAMES = ['Margaret Hale, 81', 'Walter Briggs, 77', 'Elena Sokolova, 69', 'Harold Kim, 88', 'Doris Pell, 74', 'Frank Oduya, 83', 'Ruth Abernathy, 90', 'Samuel Ortiz, 72'];
-const ADS = ['LOST — black cat, answers to nothing. 3rd St.', 'GOLDENGOOSE.MONEY — ask GOLDIE how!', 'Human proofreader, 20 yrs exp, will work for groceries. Call Ray, 5C.', 'HEARTH by Brightwater: your building’s new AI concierge!', 'PULSE: real people, real dates. 98% real.', 'IRONWORKS GYM, Dover St. Open all night. First week free.', 'ST. BRENDAN’S HALL — hot soup, 5 PM daily. Nobody asks.', 'SAL’S BYTE BARN buys old laptops. Cash, no questions.', 'ROOM TO LET. No window. “Cosy.” Apply Brightwater.', 'WANTED: human, any skills, short contract. Bring own agent.', 'SLEEP STUDY pays $40 a night. Harborview, ask for Dr. Osei.'];
+const ADS = ['LOST — black cat, answers to nothing. 3rd St.', 'GOLDENGOOSE.MONEY — ask GOLDIE how!', 'Human proofreader, 20 yrs exp, will work for groceries. Call Ray, 5C.', 'HEARTH by Brightwater: your building’s new AI concierge!', 'PULSE: real people, real dates. 98% real.', 'IRONWORKS GYM, Dover St. Open all night. First week free.', 'ST. BRIGID’S HALL — hot soup, 5 PM daily. Nobody asks.', 'SAL’S BYTE BARN buys old laptops. Cash, no questions.', 'ROOM TO LET. No window. “Cosy.” Apply Brightwater.', 'WANTED: human, any skills, short contract. Bring own agent.', 'SLEEP STUDY pays $40 a night. Harborview, ask for Dr. Osei.'];
 
+// ---- paper/n1_pics.js ----
+// ==== the paper's pictures ====
+// Each is a small scene drawn in greys, 128 by 96, and then printed the way a front page is: five inks, the steps between them made of dots.
+// None of them is a picture of you. They are the city: what the story is about, seen by whoever the paper sent.
+const NPW = 128, NPH = 96;
+const NP_INK = [[30, 26, 21], [92, 85, 73], [150, 141, 122], [198, 189, 166], [232, 223, 200]];   // ink … paper
+const NP_BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+const npG = v => { const c = Math.max(0, Math.min(255, Math.round(v * 255))); return `rgb(${c},${c},${c})`; };
+function npPrint(g, lino) { const im = g.getImageData(0, 0, NPW, NPH), D = im.data, n = NP_INK.length - 1;
+  for (let y = 0; y < NPH; y++) for (let x = 0; x < NPW; x++) { const i = (y * NPW + x) * 4, v = (D[i] * .3 + D[i + 1] * .59 + D[i + 2] * .11) / 255 + (hash(x * 7 + 3, y * 13 + 1) - .5) * .05, t = (NP_BAYER[(y & 3) * 4 + (x & 3)] + .5) / 16; let k;
+    if (lino) k = v > .5 + (t - .5) * .2 ? n : 0;                                                  // cut in a block: ink or paper, nothing between
+    else { const s = Math.pow(Math.max(0, Math.min(1, v)), .92) * n, lo = Math.floor(s); k = Math.min(n, lo + (s - lo > t ? 1 : 0)); }
+    const c = NP_INK[k]; D[i] = c[0]; D[i + 1] = c[1]; D[i + 2] = c[2]; D[i + 3] = 255; }
+  g.putImageData(im, 0, 0); }
+function npKit(R) { const W = NPW, H = NPH, I = Math.round, K = {
+  W, H, R,
+  r: (x, y, w, h, v) => px(I(x), I(y), Math.max(1, I(w)), Math.max(1, I(h)), npG(v)),
+  d: (x, y, r, v) => disc(I(x), I(y), Math.max(0, I(r)), npG(v)),
+  l: (x0, y0, x1, y1, v, t) => t > 1 ? ctThick(I(x0), I(y0), I(x1), I(y1), t, npG(v)) : line(I(x0), I(y0), I(x1), I(y1), npG(v)),
+  p: (pts, v) => ctPoly(pts, npG(v)),
+  t: (x, y, s, v, k = 1, f = 3) => ctText(I(x), I(y), s, npG(v), k, f),
+  tc: (x, y, s, v, k = 1, f = 3) => ctTextC(I(x), I(y), s, npG(v), k, f),
+  sky(v0, v1, y1 = H, y0 = 0) { for (let y = y0; y < y1; y++) px(0, y, W, 1, npG(v0 + (v1 - v0) * (y - y0) / Math.max(1, y1 - y0))); if (y1 < H) px(0, y1, W, H - y1, npG(v1)); },
+  band(x, y, w, h, v0, v1) { for (let j = 0; j < h; j++) px(I(x), I(y) + j, I(w), 1, npG(v0 + (v1 - v0) * j / Math.max(1, h - 1))); },
+  city(base, v, lo, hi, lit = 0, wv = .9, x0 = -2, x1 = W) { let x = x0; while (x < x1) { const bw = 7 + (R() * 13 | 0), bh = lo + (R() * (hi - lo) | 0), c = v + (R() - .5) * .06; K.r(x, base - bh, bw, bh, c); if (R() < .25) K.r(x + 2, base - bh - 3, 3, 3, c); if (R() < .15) K.r(x + (bw >> 1), base - bh - 7, 1, 7, c);
+      if (lit) for (let j = base - bh + 3; j < base - 2; j += 4) for (let i = x + 2; i < x + bw - 2; i += 3) if (R() < lit) K.r(i, j, 1, 2, wv); x += bw + (R() < .25 ? 1 + (R() * 3 | 0) : 0); } },
+  wins(x, y, w, h, sx, sy, ww, wh, v, p = 1, v2) { for (let j = y; j + wh <= y + h; j += sy) for (let i = x; i + ww <= x + w; i += sx) { if (R() < p) K.r(i, j, ww, wh, v); else if (v2 != null) K.r(i, j, ww, wh, v2); } },
+  man(x, y, s, v, o = {}) { const hw = Math.max(1, I(s * .17)), hd = Math.max(1, I(s * .13)), top = y - s, ty = top + hd * 2, th = s * .42;   // feet at y, s tall
+    K.d(x, top + hd, hd, o.skin != null ? o.skin : v); if (o.hat) K.r(x - hd - 1, top, hd * 2 + 3, Math.max(1, hd * .7), v);
+    K.r(x - hw, ty, hw * 2 + 1, th, o.coat != null ? o.coat : v); K.r(x - hw, ty + th, hw, y - ty - th, v); K.r(x + 1, ty + th, hw, y - ty - th, v);
+    if (o.arm) K.l(x + hw, ty + 2, x + hw + s * .22, ty - s * .2, v, s > 20 ? 2 : 1);
+    if (o.sign != null) { const sw = s * .52, sx0 = x + hw + s * .2 - sw / 2, sy0 = top - s * .3; K.r(sx0 + sw / 2, sy0, 1, s * .5, v); K.r(sx0, sy0, sw, s * .28, o.sign); if (s > 14) K.r(sx0 + 2, sy0 + 2, sw - 4, 1, .3); }
+    if (o.bag) K.r(x + hw, ty + th * .7, Math.max(2, s * .16), Math.max(2, s * .16), v); },
+  crowd(x0, x1, y, s, n, v, o = {}) { for (let i = 0; i < n; i++) { const x = x0 + (x1 - x0) * (i + R() * .7) / n, yy = y + (R() * (o.dy || 3) | 0), ss = s * (.85 + R() * .3); K.man(x, yy, ss, v + (R() - .5) * (o.vary || .12), { hat: R() < .25, sign: o.signs && R() < o.signs ? (o.signV != null ? o.signV : .92) : null, arm: !!o.signs && R() < .3, bag: R() < (o.bags || 0) }); } },
+  cloud(x, y, r, v) { K.d(x, y, r, v); K.d(x + r, y + 1, r * .8, v); K.d(x - r, y + 2, r * .7, v); K.r(x - r * 1.6, y + 2, r * 3.2, r * .8, v); },
+  steam(x, y, h, v, sp = 1) { for (let i = 0; i < 10; i++) { const k = i / 10; K.d(x + Math.sin(i * 1.3 + R() * 2) * (2 + k * 9) * sp + k * 8 * sp, y - k * h, 3 + k * 7, v - k * .06); } },
+  tree(x, y, s, v, bare) { K.r(x - 1, y - s * .5, 2, s * .5, v); if (bare) for (let i = 0; i < 7; i++) K.l(x, y - s * (.35 + i * .07), x + (i & 1 ? 1 : -1) * s * (.18 + R() * .16), y - s * (.55 + i * .07), v); else { K.d(x, y - s * .7, s * .3, v); K.d(x - s * .2, y - s * .55, s * .22, v); K.d(x + s * .2, y - s * .56, s * .22, v); } },
+  car(x, y, w, v, o = {}) { const h = w * .28, gl = o.glass != null ? o.glass : .7; K.r(x, y - h, w, h, v); K.r(x + w * .2, y - h * 1.9, w * .5, h, v); K.r(x + w * .24, y - h * 1.75, w * .2, h * .7, gl); K.r(x + w * .48, y - h * 1.75, w * .18, h * .7, gl); K.d(x + w * .2, y, h * .42, .06); K.d(x + w * .78, y, h * .42, .06); if (o.lamp) K.r(x + w - 1, y - h * .8, 2, 2, .98); },
+  lamp(x, y, h, v, on) { K.r(x, y - h, 1, h, v); K.r(x, y - h, 5, 1, v); K.r(x + 4, y - h + 1, 2, 2, on ? .98 : v); },
+  fence(x0, x1, y, h, v, step = 3) { K.r(x0, y - h, x1 - x0, 1, v); for (let x = x0; x < x1; x += step) K.r(x, y - h, 1, h, v); },
+  snow(n, v = .97) { for (let i = 0; i < n; i++) K.r(R() * W, R() * H, 1 + (R() < .2), 1, v); },
+  rain(n, v = .82) { for (let i = 0; i < n; i++) { const x = R() * (W + 10), y = R() * H; K.l(x, y, x - 2, y + 5, v); } },
+  vig(a = .2) { for (let i = 0; i < 7; i++) { const c = `rgba(0,0,0,${(a * (1 - i / 7)).toFixed(3)})`; px(i, i, W - i * 2, 1, c); px(i, H - 1 - i, W - i * 2, 1, c); px(i, i + 1, 1, H - i * 2 - 2, c); px(W - 1 - i, i + 1, 1, H - i * 2 - 2, c); } },
+  knot(x, y, r, v) { for (let a = 0; a < 6.283; a += .12) { const q = r * (.62 + .38 * Math.cos(a * 3)); K.r(x + Math.cos(a) * q, y + Math.sin(a) * q, 2, 2, v); } }                                           // OpenBrain's mark
+}; return K; }
+
+const NP_PIC = {
+  // ---- money, machines, offices ----
+  chips(K, R) { K.sky(.22, .32); for (let s = 0; s < 3; s++) { const y = 14 + s * 27; K.r(0, y + 20, 128, 3, .58); K.r(0, y + 23, 128, 1, .1);
+      for (let x = 3 + (R() * 4 | 0); x < 120;) { const w = 8 + (R() * 9 | 0), h = 9 + (R() * 9 | 0); if (R() < .2) { x += w; continue; } K.r(x, y + 20 - h, w, h, .42 + R() * .4); K.r(x + 1, y + 22 - h, w - 2, 2, .15); if (h > 12) K.r(x + 2, y + 26 - h, w - 4, 1, .28); K.r(x + 1, y + 24, Math.min(w - 2, 8), 4, .96); K.r(x + 2, y + 25, 3, 1, .35); K.r(x + 6, y + 26, 2, 1, .35); x += w + 1 + (R() * 3 | 0); } }
+    K.r(0, 0, 128, 11, .1); K.t(5, 3, 'MEMORY · PRICES IN PENCIL', .86); K.vig(); },
+  office(K, R) { K.sky(.86, .78, 44); K.city(44, .58, 8, 26, 0); for (let x = 0; x < 128; x += 32) K.r(x, 0, 2, 44, .36); K.r(0, 14, 128, 1, .42); K.r(0, 44, 128, 3, .3); K.band(0, 47, 128, 49, .56, .4);
+    for (let x = 10; x < 128; x += 42) K.r(x, 2, 26, 3, .98);
+    for (let i = 0; i < 4; i++) { const x = 4 + i * 32, y = 70, gone = i !== 2; K.r(x, y, 27, 2, .22); K.r(x + 1, y + 2, 1, 16, .22); K.r(x + 25, y + 2, 1, 16, .22); K.r(x + 8, y - 13, 13, 10, .12); K.r(x + 9, y - 12, 11, 8, gone ? .28 : .88); K.r(x + 14, y - 3, 1, 3, .12);
+      if (gone) { K.r(x + 6, y + 6, 12, 12, .3); K.r(x + 6, y + 6, 12, 1, .42); } else K.man(x + 12, y + 22, 30, .1, {}); }
+    K.r(112, 56, 7, 9, .2); K.d(115, 52, 5, .26); K.d(111, 54, 3, .26); K.d(119, 55, 3, .26); K.vig(); },
+  screen(K, R) { K.sky(.3, .2); K.r(18, 8, 92, 54, .06); K.r(21, 11, 86, 48, .2); K.knot(64, 33, 15, .95); K.r(46, 52, 36, 2, .6); K.band(0, 70, 128, 26, .16, .08);
+    for (let i = 0; i < 9; i++) K.man(6 + i * 14 + R() * 6, 96 + (R() * 4 | 0), 30 + R() * 8, .03 + R() * .05, {}); K.vig(.25); },
+  podium(K, R, o) { K.sky(.34, .2); K.r(0, 0, 128, 8, .1); for (let x = 8; x < 128; x += 30) { K.knot(x + 6, 26, 7, .5); } K.r(0, 62, 128, 34, .14); K.r(0, 62, 128, 1, .4);
+    K.man(64, 78, 46, .1, { skin: .72, coat: .12 }); K.r(60, 44, 9, 5, .9); K.r(64, 49, 1, 4, .9); K.r(46, 58, 36, 30, .3); K.r(46, 58, 36, 2, .5); K.r(52, 66, 24, 10, .2); K.knot(64, 71, 4, .8);
+    for (const dx of [-9, -3, 4, 10]) { K.l(64 + dx, 58, 64 + dx * .5, 50, .05); K.d(64 + dx * .5, 49, 1, .05); }
+    for (let i = 0; i < 6; i++) { const x = 6 + i * 23 + R() * 6; K.d(x, 92, 6, .04); K.r(x - 7, 94, 15, 4, .04); if (R() < .5) { K.r(x + 5, 80, 6, 5, .04); K.r(x + 7, 78, 2, 2, .9); } } K.vig(.25); },
+  hearing(K, R) { K.sky(.5, .4); for (let x = 6; x < 128; x += 20) { K.r(x, 6, 12, 30, .34); K.r(x + 1, 7, 10, 28, .44); } K.r(0, 40, 128, 14, .22); K.r(0, 40, 128, 2, .4); for (let i = 0; i < 7; i++) { const x = 8 + i * 17; K.r(x, 30, 8, 10, .12); K.r(x - 1, 44, 10, 4, .9); K.r(x + 1, 45, 6, 1, .3); if (i === 1 || i === 4) K.man(x + 4, 44, 18, .08, {}); }
+    K.band(0, 54, 128, 42, .48, .36); K.r(40, 64, 48, 3, .2); K.r(42, 67, 2, 14, .2); K.r(84, 67, 2, 14, .2); K.r(60, 60, 2, 4, .08); K.d(61, 59, 1, .08);
+    for (let i = 0; i < 8; i++) { const x = 6 + i * 16; K.r(x, 84, 10, 12, .18); K.r(x, 84, 10, 1, .32); } K.r(114, 6, 1, 34, .2); K.p([[115, 6], [126, 9], [115, 14]], .7); K.vig(); },
+  chart(K, R) { K.sky(.12, .16); for (let y = 16; y < 80; y += 12) K.r(8, y, 114, 1, .24); let py = 70; for (let i = 0; i < 19; i++) { const x = 10 + i * 6, h = 6 + i * 2.6 + R() * 8; K.r(x, 80 - h, 4, h, i > 13 ? .9 : .5); const ny = 74 - i * 3.2 - R() * 5; K.l(x - 4, py, x + 2, ny, .98, 2); py = ny; }
+    K.r(8, 80, 114, 1, .7); K.t(10, 6, 'NVY  GPX  PEAR  HODL', .7); K.t(96, 84, '+12.4%', .95); K.vig(.1); },
+  racks(K, R) { K.sky(.1, .1); const vy = 44; K.p([[0, 96], [128, 96], [72, vy + 8], [56, vy + 8]], .36); K.p([[0, 0], [128, 0], [72, vy - 10], [56, vy - 10]], .17);
+    for (let i = 0; i <= 8; i++) { const k = i / 8, e = k * k, xl = 56 - e * 60, xr = 72 + e * 60, top = vy - 10 - e * 40, bot = vy + 8 + e * 48, w = 3 + e * 14; K.r(xl - w, top, w, bot - top, .2 + k * .1); K.r(xr, top, w, bot - top, .2 + k * .1); K.r(xl - 1, top, 1, bot - top, .44); K.r(xr, top, 1, bot - top, .44);
+      for (let j = top + 2; j < bot - 2; j += 3) { if (R() < .8) K.r(xl - w + 1 + R() * Math.max(1, w - 3), j, 1, 1, R() < .35 ? .98 : .62); if (R() < .8) K.r(xr + 1 + R() * Math.max(1, w - 3), j, 1, 1, R() < .35 ? .98 : .62); } }
+    for (let i = 0; i < 5; i++) { const e = (i / 5) * (i / 5); K.r(61 - e * 8, vy - 11 - e * 38, 6 + e * 16, 1 + e * 2, .94); } K.r(56, vy - 10, 16, 18, .05); K.vig(.3); },
+  laptops(K, R) { K.sky(.6, .5, 46); for (let x = 2; x < 128; x += 21) { K.r(x, 2, 17, 42, .26); for (let j = 4; j < 40; j += 8) { K.r(x + 1, j + 6, 15, 1, .16); for (let i = x + 1; i < x + 15; i += 2 + (R() * 2 | 0)) K.r(i, j + 1, 1 + (R() < .5), 5, .4 + R() * .5); } } K.band(0, 46, 128, 50, .5, .34);
+    for (let row = 0; row < 2; row++) for (let i = 0; i < 4 + row; i++) { const z = row ? 1.3 : 1, x = (row ? -8 : 12) + i * 30, y = row ? 98 : 74; K.r(x - 2, y - 12 * z, 26 * z, 2, .2); K.r(x + 6 * z, y - 25 * z, 14 * z, 11 * z, .1); K.r(x + 7 * z, y - 24 * z, 12 * z, 9 * z, .93); K.r(x + 8 * z, y - 22 * z, 7 * z, 1, .4); K.r(x + 8 * z, y - 19 * z, 9 * z, 1, .4);
+        K.d(x + 13 * z, y - 9 * z, 5 * z, .08); K.r(x + 5 * z, y - 5 * z, 16 * z, 14 * z, .08); } K.vig(); },
+  bank(K, R) { K.sky(.82, .7); K.cloud(100, 12, 6, .95); K.p([[14, 30], [64, 10], [114, 30]], .52); K.p([[22, 29], [64, 13], [106, 29]], .66); K.r(14, 30, 100, 5, .4); K.r(18, 35, 92, 46, .6); for (let i = 0; i < 6; i++) { const x = 22 + i * 15; K.r(x, 36, 7, 44, .82); K.r(x + 5, 36, 2, 44, .6); K.r(x - 1, 35, 9, 2, .5); K.r(x - 1, 79, 9, 2, .5); }
+    K.r(54, 54, 20, 27, .1); K.r(55, 55, 9, 26, .2); K.r(10, 81, 108, 4, .46); K.r(6, 85, 116, 4, .38); K.band(0, 89, 128, 7, .5, .42); K.tc(64, 23, 'FIRST CIVIC', .25); K.man(34, 92, 16, .1, { bag: 1 }); K.man(96, 93, 17, .12, { hat: 1 }); K.vig(); },
+  memo(K, R) { K.sky(.3, .24); K.p([[26, 8], [104, 4], [110, 88], [30, 92]], .14); K.p([[22, 6], [100, 2], [106, 86], [26, 90]], .94); K.t(32, 10, 'INTERNAL · DO NOT FORWARD', .2);
+    for (let j = 0; j < 12; j++) { const y = 20 + j * 5.4, x = 31 + j * .25; if (R() < .45) K.r(x, y, 20 + R() * 44, 3, .06); else { K.r(x, y, 14 + R() * 50, 1, .4); if (R() < .5) K.r(x + 30 + R() * 20, y - 1, 12 + R() * 14, 3, .06); } } K.d(92, 74, 8, .5); K.d(92, 74, 6, .94); K.vig(); },
+  glyphs(K, R) { K.sky(.06, .1); K.r(8, 6, 112, 76, .02); K.r(11, 9, 106, 70, .1); for (let j = 0; j < 11; j++) for (let i = 0; i < 26; i++) { if (R() < .22) continue; const x = 14 + i * 4, y = 13 + j * 6, v = .5 + R() * .48; for (let n = 0; n < 4; n++) if (R() < .62) K.r(x + (n & 1) * 2 - (R() < .3), y + (n >> 1) * 2, 1 + (R() < .3), 1 + (R() < .4), v); }
+    K.r(54, 82, 20, 4, .2); K.r(40, 86, 48, 3, .26); K.r(0, 89, 128, 7, .16); K.vig(.3); },
+  goose(K, R) { K.sky(.2, .3); K.d(64, 48, 40, .34); K.d(64, 48, 37, .8); K.d(64, 48, 33, .64); for (let a = 0; a < 6.28; a += .2) K.r(64 + Math.cos(a) * 35 - 1, 48 + Math.sin(a) * 35 - 1, 2, 2, .9);
+    K.d(58, 56, 14, .95); K.d(72, 60, 9, .95); K.r(66, 34, 6, 20, .95); K.d(70, 32, 6, .95); K.p([[75, 30], [86, 33], [75, 36]], .3); K.d(71, 31, 1, .1); K.r(52, 68, 2, 6, .3); K.r(62, 69, 2, 6, .3); K.tc(64, 80, 'GOLDENGOOSE.MONEY', .2); K.vig(.25); },
+  envelope(K, R) { K.sky(.34, .26); for (let i = 0; i < 6; i++) { const x = 10 + R() * 60, y = 8 + R() * 50, a = (R() - .5) * .5, w = 46, h = 28, c = Math.cos(a), s = Math.sin(a), P = (u, v) => [x + u * c - v * s, y + u * s + v * c]; K.p([P(2, 2), P(w + 2, 2), P(w + 2, h + 2), P(2, h + 2)], .1); K.p([P(0, 0), P(w, 0), P(w, h), P(0, h)], .9 - i * .03); K.p([P(0, 0), P(w / 2, h * .55), P(w, 0)], .72); K.p([P(w - 9, 3), P(w - 3, 3), P(w - 3, 10), P(w - 9, 10)], .4); }
+    K.l(96, 0, 96, 40, .96); for (let a = 0; a < 3.3; a += .2) K.r(88 + Math.cos(a) * 8, 40 + Math.sin(a) * 8, 2, 2, .96); K.p([[78, 38], [84, 30], [82, 40]], .96); K.vig(); },
+  pills(K, R) { K.sky(.5, .4); for (let s = 0; s < 3; s++) { const y = 10 + s * 28; K.r(0, y + 22, 128, 2, .3); for (let x = 4; x < 122;) { const w = 6 + (R() * 5 | 0), h = 10 + (R() * 8 | 0); if (R() < (s === 1 ? .55 : .15)) { x += w + 2; continue; } K.r(x, y + 22 - h, w, h, .7 + R() * .25); K.r(x, y + 22 - h, w, 3, .2); K.r(x + 1, y + 27 - h, w - 2, 3, .4); x += w + 2; } }
+    K.r(40, 44, 48, 9, .95); K.tc(64, 46, 'OUT OF STOCK', .15); K.vig(); },
+  meter(K, R) { K.sky(.42, .34); for (let j = 0; j < 96; j += 6) for (let i = (j / 6 & 1) * 6; i < 128; i += 12) K.r(i, j, 11, 5, .46 + R() * .08); K.r(36, 14, 56, 68, .2); K.r(39, 17, 50, 62, .62); K.d(64, 40, 18, .15); K.d(64, 40, 16, .92); for (let a = 3.4; a < 6.1; a += .3) K.r(64 + Math.cos(a) * 13, 40 + Math.sin(a) * 13, 1, 1, .2); K.l(64, 40, 75, 31, .1, 2);
+    for (let i = 0; i < 5; i++) { K.r(44 + i * 8, 62, 7, 9, .08); K.t(46 + i * 8, 64, String((R() * 10) | 0), .95); } K.r(60, 82, 8, 14, .16); K.vig(); },
+  // ---- the river, the harbour, the weather ----
+  crane(K, R, o) { K.sky(.9, .72); K.cloud(24, 14, 6, .97); K.cloud(96, 22, 5, .96); K.city(66, .56, 6, 20, 0); K.r(0, 66, 128, 14, .44); for (let i = 0; i < 16; i++) K.r(R() * 128, 68 + R() * 10, 5 + R() * 8, 1, .56); K.band(0, 80, 128, 16, .3, .22);
+    K.r(78, 10, 3, 60, .14); for (let y = 12; y < 68; y += 5) { K.l(78, y, 80, y + 5, .3); } K.r(40, 14, 70, 2, .14); K.l(79, 6, 44, 14, .14); K.l(79, 6, 108, 14, .14); K.r(77, 4, 5, 6, .14); K.r(98, 16, 8, 6, .2); K.r(50, 16, 1, 22, .2); K.r(47, 38, 7, 4, .14);
+    K.fence(0, 128, 82, 7, .12, 4); K.r(8, 72, 14, 9, .86); K.r(10, 74, 10, 1, .2); K.r(10, 77, 7, 1, .2); if (o && o.snow) K.snow(50); K.vig(); },
+  datacentre(K, R, o) { K.sky(.2, .34); for (let i = 0; i < 26; i++) K.r(R() * 128, R() * 30, 1, 1, .8); K.city(52, .14, 4, 12, .2); K.r(14, 30, 100, 36, .3); K.r(14, 30, 100, 2, .44); for (let x = 14; x < 114; x += 10) K.r(x, 32, 1, 34, .24); for (let x = 18; x < 112; x += 10) K.r(x, 28, 5, 2, .9);
+    K.r(0, 66, 128, 3, .16); K.band(0, 69, 128, 27, .22, .12); for (let x = 18; x < 112; x += 10) { K.r(x + 1, 70, 3, 14 + R() * 8, .5); } for (let i = 0; i < 12; i++) K.r(R() * 128, 72 + R() * 20, 6 + R() * 10, 1, .3); K.fence(0, 128, 68, 6, .06, 3); K.vig(.3); },
+  towers(K, R) { K.sky(.14, .3); K.d(98, 20, 9, .92); for (let i = 0; i < 20; i++) K.r(R() * 128, R() * 36, 1, 1, .7); for (const [x, s] of [[34, 1], [70, .82]]) { const w = 30 * s, h = 46 * s, y = 74; for (let j = 0; j < h; j++) { const k = j / h, ww = w * (.62 + .38 * Math.pow(Math.abs(k - .35) / .65, 1.6)); K.r(x - ww / 2, y - h + j, ww, 1, .36 + .1 * (1 - k)); K.r(x - ww / 2, y - h + j, 2, 1, .52); } K.steam(x, y - h, 40, .86, 1); }
+    K.city(74, .1, 3, 10, .25); K.r(0, 74, 128, 2, .08); K.band(0, 76, 128, 20, .26, .14); for (let i = 0; i < 12; i++) K.r(R() * 128, 78 + R() * 16, 5 + R() * 10, 1, .4); K.vig(.3); },
+  pylon(K, R) { K.sky(.86, .66); K.cloud(30, 20, 7, .96); K.cloud(100, 34, 5, .94); K.city(86, .34, 6, 18, 0); K.r(0, 86, 128, 10, .22); for (const [x, s] of [[30, 1], [86, .7], [116, .45]]) { const h = 70 * s, y = 86; K.l(x - 8 * s, y, x - 2 * s, y - h, .12); K.l(x + 8 * s, y, x + 2 * s, y - h, .12); for (let j = 0; j < 6; j++) { const k = j / 6, w = 8 * s * (1 - k) + 2 * s; K.l(x - w, y - h * k, x + w, y - h * (k + .16), .12); K.l(x + w, y - h * k, x - w, y - h * (k + .16), .12); }
+      for (const t of [.72, .86, 1]) K.r(x - 13 * s, y - h * t, 26 * s, 1, .12); }
+    for (const t of [.72, .86, 1]) { K.l(17, 86 - 70 * t, 73, 86 - 49 * t + 4, .2); K.l(43, 86 - 70 * t, 77, 86 - 49 * t + 3, .2); K.l(95, 86 - 49 * t, 110, 86 - 31 * t + 2, .2); } K.vig(); },
+  harbor(K, R) { K.sky(.84, .7); K.cloud(86, 14, 6, .96); K.r(0, 58, 128, 20, .46); for (let i = 0; i < 18; i++) K.r(R() * 128, 60 + R() * 16, 4 + R() * 9, 1, .58); for (const x of [18, 58]) { K.r(x, 14, 3, 46, .14); K.r(x + 14, 22, 3, 38, .14); K.r(x - 8, 14, 44, 3, .14); K.l(x + 1, 6, x - 8, 14, .14); K.l(x + 1, 6, x + 34, 14, .14); K.r(x + 22, 17, 1, 16, .2); K.r(x + 19, 33, 7, 5, .2); }
+    K.r(0, 78, 128, 18, .3); for (let r = 0; r < 2; r++) for (let x = 2 + r * 6; x < 126; x += 17) { const v = .3 + R() * .5; K.r(x, 66 + r * 10 - (r ? 0 : 0), 16, 9, v); for (let i = 2; i < 16; i += 3) K.r(x + i, 67 + r * 10, 1, 7, v - .12); } K.r(96, 50, 30, 8, .2); K.r(110, 44, 8, 6, .2); K.vig(); },
+  truck(K, R) { K.sky(.8, .66, 30); K.r(0, 14, 128, 46, .5); K.r(0, 14, 128, 3, .34); for (let i = 0; i < 3; i++) { const x = 8 + i * 42; K.r(x, 26, 30, 34, .16); for (let j = 28; j < 60; j += 3) K.r(x + 1, j, 28, 1, .24); K.tc(x + 15, 20, String(i + 1), .9); } K.band(0, 60, 128, 36, .4, .3);
+    K.r(40, 44, 58, 28, .86); K.r(40, 44, 58, 2, .96); K.tc(69, 54, 'NORTHVALE', .2); K.r(98, 54, 18, 18, .3); K.r(101, 57, 10, 7, .8); K.d(52, 74, 5, .06); K.d(86, 74, 5, .06); K.d(108, 74, 5, .06); K.r(6, 68, 18, 3, .2); K.r(8, 58, 14, 10, .56); K.man(26, 82, 20, .1, { hat: 1 }); K.vig(); },
+  ferry(K, R) { K.sky(.78, .88, 44); K.cloud(30, 12, 6, .97); K.city(44, .56, 4, 12, 0); K.band(0, 44, 128, 52, .5, .34); for (let i = 0; i < 26; i++) K.r(R() * 128, 48 + R() * 46, 4 + R() * 10, 1, .64);
+    K.p([[18, 62], [112, 62], [104, 74], [26, 74]], .16); K.r(26, 50, 74, 12, .9); K.r(26, 50, 74, 2, .7); for (let x = 30; x < 96; x += 7) K.r(x, 54, 4, 4, .2); K.r(44, 40, 34, 10, .86); K.r(58, 30, 8, 10, .2); K.steam(62, 30, 18, .8, .6); K.r(0, 82, 40, 14, .2); for (let x = 2; x < 40; x += 8) K.r(x, 76, 2, 8, .14); K.vig(); },
+  snowplough(K, R) { K.sky(.46, .6, 44); K.city(46, .34, 10, 28, .1); K.band(0, 46, 128, 50, .9, .78); K.p([[0, 70], [128, 60], [128, 66], [0, 78]], .66);
+    K.r(34, 44, 44, 22, .2); K.r(34, 44, 44, 3, .32); K.r(78, 50, 18, 16, .26); K.r(81, 52, 10, 7, .8); K.r(40, 38, 5, 6, .98); K.d(44, 68, 6, .05); K.d(70, 68, 6, .05); K.d(90, 68, 5, .05);
+    K.p([[96, 54], [112, 46], [116, 72], [98, 70]], .1); K.p([[112, 46], [116, 72], [118, 72], [114, 46]], .5); for (let i = 0; i < 26; i++) K.d(112 + R() * 16, 44 + R() * 30, 1 + R() * 3, .98); K.p([[100, 74], [128, 66], [128, 96], [90, 96]], .98); K.snow(120); K.vig(); },
+  sun(K, R) { K.sky(.98, .8, 60); K.d(64, 26, 15, 1); for (let a = 0; a < 6.28; a += .4) K.l(64 + Math.cos(a) * 19, 26 + Math.sin(a) * 19, 64 + Math.cos(a) * 27, 26 + Math.sin(a) * 27, .9); K.city(72, .3, 10, 34, 0); K.r(0, 72, 128, 24, .2); for (let y = 44; y < 72; y += 5) for (let x = 0; x < 128; x += 2) if (R() < .5) K.r(x, y + Math.sin(x * .3) * 1.5, 2, 1, .62);
+    for (let i = 0; i < 7; i++) { const x = 6 + i * 18; K.r(x, 76, 9, 6, .5); K.r(x + 1, 77, 7, 1, .2); K.r(x + 1, 79, 7, 1, .2); } K.vig(.14); },
+  storm(K, R) { K.sky(.3, .5, 60); for (let i = 0; i < 6; i++) K.cloud(10 + i * 24, 8 + (i & 1) * 8, 11, .2 + (i & 1) * .08); K.city(70, .16, 8, 26, .15); K.band(0, 70, 128, 26, .34, .22); for (let i = 0; i < 14; i++) K.r(R() * 128, 74 + R() * 20, 6 + R() * 14, 1, .5); K.rain(140); K.man(40, 90, 18, .06, {}); K.d(40, 70, 9, .08); K.r(31, 70, 19, 2, .08); K.vig(.25); },
+  // ---- the streets ----
+  queue(K, R, o) { K.sky(.76, .66, 30); K.r(0, 8, 128, 62, .52); for (let j = 12; j < 60; j += 6) for (let i = (j / 6 & 1) * 5; i < 128; i += 10) K.r(i, j, 9, 5, .5 + R() * .07); K.r(92, 30, 22, 40, .12); K.r(94, 32, 18, 38, .26); K.r(84, 20, 38, 9, .9); K.tc(103, 22, (o && o.sign) || 'OPEN 9-5', .15);
+    K.band(0, 70, 128, 26, .62, .5); K.r(0, 70, 128, 1, .3); K.crowd(2, 90, 90, 22, 10, .12, { dy: 3, bags: .3, vary: .22 }); if (o && o.snow) K.snow(60); K.vig(); },
+  tenement(K, R, o) { K.sky(.84, .72, 20); let x = 0; for (let i = 0; i < 4; i++) { const w = 28 + (R() * 8 | 0), top = 8 + (R() * 10 | 0), v = .4 + R() * .2; K.r(x, top, w, 80 - top, v); K.r(x, top, w, 2, v + .14); K.wins(x + 4, top + 6, w - 6, 80 - top - 22, 8, 11, 5, 7, .14, .86, .86); K.r(x + (w >> 1) - 3, 66, 7, 14, .1); K.r(x + w - 1, top, 1, 80 - top, v - .16); x += w; }
+    K.band(0, 80, 128, 16, .6, .48); K.r(42, 33, 44, 13, .95); K.r(42, 33, 44, 1, .3); K.tc(64, 36, (o && o.sign) || 'TO LET', .12, 1, 5); K.r(63, 46, 2, 6, .2); K.lamp(14, 84, 26, .1); K.man(100, 92, 16, .08, { bag: 1 }); K.vig(); },
+  door(K, R, o) { K.sky(.46, .4); for (let j = 0; j < 96; j += 6) for (let i = (j / 6 & 1) * 7; i < 128; i += 14) K.r(i, j, 13, 5, .44 + R() * .08); K.r(34, 6, 60, 90, .16); K.r(38, 10, 52, 86, .32); K.r(42, 14, 44, 30, .26); K.r(42, 50, 44, 40, .26); K.d(82, 52, 2, .8); K.r(52, 2, 24, 6, .9); K.tc(64, 3, (o && o.num) || '2C', .1);
+    K.p([[42, 24], [88, 22], [90, 64], [44, 66]], .96); K.t(47, 28, 'NOTICE', .1, 1, 5); for (let j = 0; j < 5; j++) K.r(48, 41 + j * 4, 22 + R() * 14, 1, .3); K.r(43, 23, 5, 3, .6); K.r(85, 21, 5, 3, .6); K.vig(); },
+  bus(K, R) { K.sky(.82, .7, 40); K.city(52, .5, 12, 34, 0); K.band(0, 52, 128, 44, .5, .38); K.r(0, 76, 128, 1, .7); K.r(14, 40, 92, 34, .86); K.r(14, 40, 92, 3, .6); K.r(14, 62, 92, 3, .3); for (let x = 20; x < 92; x += 12) K.r(x, 46, 9, 10, .2); K.r(94, 46, 9, 22, .2); K.r(18, 42, 26, 3, .1); K.t(20, 42, '14', .95);
+    K.d(32, 76, 6, .06); K.d(86, 76, 6, .06); K.d(32, 76, 2, .5); K.d(86, 76, 2, .5); K.r(116, 44, 1, 40, .12); K.r(112, 44, 9, 7, .9); K.man(120, 90, 18, .08, { bag: 1 }); K.vig(); },
+  robotaxi(K, R) { K.sky(.2, .3, 44); K.city(52, .12, 10, 36, .3); K.band(0, 52, 128, 44, .3, .16); K.r(0, 70, 128, 1, .5); for (let x = 0; x < 128; x += 16) K.r(x, 82, 8, 1, .6); K.car(30, 70, 64, .86, { glass: .12, lamp: 1 }); K.r(56, 43, 12, 3, .98); K.r(60, 41, 4, 2, .3); K.p([[94, 60], [128, 52], [128, 74], [94, 66]], .5);
+    K.r(40, 60, 44, 2, .3); K.lamp(8, 72, 34, .08, 1); K.vig(.3); },
+  robot(K, R) { K.sky(.78, .68, 34); K.r(0, 10, 128, 50, .54); K.wins(6, 16, 116, 34, 16, 16, 9, 10, .16, .9, .8); K.band(0, 60, 128, 36, .66, .54); K.r(0, 60, 128, 1, .32); K.r(0, 84, 128, 2, .4);
+    K.r(54, 62, 26, 18, .9); K.r(54, 62, 26, 3, .7); K.r(58, 68, 18, 5, .12); K.r(61, 70, 3, 1, .95); K.r(70, 70, 3, 1, .95); K.d(59, 82, 3, .06); K.d(75, 82, 3, .06); K.r(66, 52, 1, 10, .14); K.p([[67, 52], [74, 54], [67, 57]], .3); K.man(22, 86, 30, .1, { bag: 1, hat: 1 }); K.man(104, 84, 26, .14, {}); K.vig(); },
+  drone(K, R) { K.sky(.9, .7, 70); K.cloud(22, 60, 7, .97); K.cloud(100, 20, 8, .98); K.city(96, .3, 10, 30, 0); K.r(44, 30, 40, 6, .1); K.r(56, 36, 16, 8, .16); K.d(64, 42, 3, .7); for (const x of [40, 88]) { K.r(x - 1, 26, 2, 5, .1); K.r(x - 14, 25, 28, 1, .3); } K.r(58, 44, 12, 9, .5); K.r(58, 44, 12, 2, .7); K.vig(); },
+  lockers(K, R) { K.sky(.14, .2); K.r(0, 8, 128, 66, .22); for (let j = 0; j < 4; j++) for (let i = 0; i < 9; i++) { const x = 4 + i * 13.5, y = 12 + j * 15, on = R() < .3; K.r(x, y, 12, 13, on ? .9 : .4); K.r(x, y, 12, 1, on ? 1 : .52); K.r(x + 9, y + 6, 2, 2, .1); }
+    K.r(52, 2, 24, 5, .96); K.band(0, 74, 128, 22, .5, .3); K.r(0, 74, 128, 1, .7); K.vig(.3); },
+  cat(K, R) { K.sky(.4, .3, 50); for (let s = 0; s < 2; s++) { const y = 6 + s * 20; K.r(0, y + 16, 128, 2, .2); for (let x = 2; x < 126;) { const w = 5 + (R() * 6 | 0), h = 8 + (R() * 7 | 0); K.r(x, y + 16 - h, w, h, .4 + R() * .5); K.r(x, y + 19 - h, w, 2, .2); x += w + 1; } }
+    K.r(0, 62, 128, 4, .8); K.r(0, 66, 128, 30, .4); K.r(84, 40, 30, 22, .2); K.r(87, 43, 24, 9, .86); K.r(88, 56, 22, 4, .5);
+    K.d(44, 54, 12, .08); K.d(36, 48, 8, .08); K.d(52, 38, 8, .08); K.p([[45, 34], [48, 24], [52, 33]], .08); K.p([[53, 33], [58, 25], [59, 35]], .08); K.d(49, 38, 1, .9); K.d(55, 38, 1, .9); K.l(30, 58, 20, 52, .08, 2); K.l(20, 52, 18, 44, .08, 2); K.vig(); },
+  church(K, R, o) { K.sky(.82, .68, 40); K.p([[40, 34], [64, 8], [88, 34]], .3); K.r(63, 0, 2, 10, .2); K.r(60, 3, 8, 2, .2); K.r(40, 34, 48, 44, .5); K.d(64, 46, 6, .2); K.r(58, 60, 12, 18, .12); K.d(64, 60, 6, .12); K.r(10, 48, 30, 30, .44); K.r(88, 48, 30, 30, .44); for (const x of [18, 28, 96, 106]) K.r(x, 54, 5, 12, .2);
+    K.band(0, 78, 128, 18, .62, .5); K.crowd(4, 60, 92, 18, 8, .1, { dy: 2, bags: .2 }); K.r(72, 82, 22, 8, .9); K.r(74, 80, 18, 2, .5); K.steam(83, 80, 12, .9, .4); if (o && o.snow) K.snow(50); K.vig(); },
+  school(K, R) { K.sky(.84, .72, 38); K.city(48, .52, 8, 26, 0); K.band(0, 48, 128, 48, .44, .34); for (let x = 30; x < 104; x += 12) K.p([[x, 58], [x + 7, 58], [x + 3, 96], [x - 6, 96]], .92);
+    K.man(20, 88, 36, .1, { hat: 1, coat: .9 }); K.r(27, 40, 2, 34, .1); K.d(28, 36, 9, .1); K.d(28, 36, 7, .95); K.t(21, 34, 'STOP', .1); for (let i = 0; i < 5; i++) K.man(52 + i * 13 + R() * 4, 82 + (i & 1) * 4, 15 + R() * 3, .12, { bag: 1 }); K.car(96, 62, 30, .3, {}); K.vig(); },
+  market(K, R) { K.sky(.8, .66, 30); K.r(0, 8, 128, 44, .5); for (let x = 0; x < 128; x += 10) K.p([[x, 22], [x + 10, 22], [x + 8, 34], [x + 2, 34]], (x / 10 & 1) ? .9 : .3); K.r(0, 20, 128, 3, .2); K.band(0, 52, 128, 44, .56, .44);
+    for (let i = 0; i < 5; i++) { const x = 4 + i * 25; K.r(x, 58, 22, 12, .3); K.r(x, 58, 22, 2, .46); for (let n = 0; n < 9; n++) K.d(x + 3 + (n % 5) * 4, 56 - (n > 4 ? 3 : 0), 2, .6 + R() * .35); K.r(x + 6, 62, 10, 5, .94); K.r(x + 8, 64, 5, 1, .2); } K.man(40, 94, 24, .1, { bag: 1 }); K.man(96, 93, 22, .12, { hat: 1 }); K.vig(); },
+  // ---- the election ----
+  rally(K, R, o) { K.sky(.8, .62, 46); K.city(46, .46, 8, 26, 0); K.r(34, 30, 60, 22, .2); K.r(36, 16, 56, 14, .94); K.tc(64, 20, (o && o.name) || 'DELGADO', .1, 1, 5); K.man(64, 46, 18, .06, { arm: 1 }); K.r(60, 44, 9, 8, .3); K.band(0, 52, 128, 44, .5, .36);
+    K.crowd(-2, 130, 78, 20, 16, .14, { signs: .4, dy: 4 }); K.crowd(-4, 132, 96, 28, 11, .06, { signs: .3, dy: 4, signV: .86 }); K.vig(); },
+  ballot(K, R) { K.sky(.5, .42); K.r(0, 60, 128, 36, .3); K.r(0, 60, 128, 2, .46); K.r(40, 34, 48, 40, .86); K.r(40, 34, 48, 4, .6); K.r(54, 35, 20, 2, .08); K.tc(64, 50, 'BALLOTS', .2); K.p([[58, 8], [80, 4], [82, 30], [60, 34]], .96); K.r(64, 12, 10, 1, .3); K.r(64, 16, 12, 1, .3); K.r(63, 20, 3, 3, .2);
+    K.p([[82, 0], [108, 0], [96, 22], [80, 14]], .7); K.p([[100, 0], [128, 0], [128, 18], [108, 14]], .2); for (const x of [6, 104]) { K.r(x, 22, 20, 46, .64); K.r(x, 22, 20, 2, .8); K.r(x + 2, 26, 16, 20, .4); } K.vig(); },
+  billboard(K, R) { K.sky(.2, .34, 60); K.city(74, .1, 10, 30, .25); K.r(0, 74, 128, 22, .14); K.r(30, 62, 3, 30, .08); K.r(92, 62, 3, 30, .08); K.r(16, 10, 96, 52, .06); K.r(19, 13, 90, 46, .9); K.d(48, 34, 13, .5); K.r(34, 46, 28, 13, .3); K.d(44, 31, 1, .1); K.d(52, 31, 1, .1); K.r(45, 39, 7, 1, .15);
+    K.r(68, 20, 36, 4, .12); K.r(68, 28, 30, 3, .3); K.r(68, 34, 34, 3, .3); K.r(68, 46, 22, 8, .12); for (let j = 13; j < 59; j += 2) if (R() < .3) K.r(19, j, 90, 1, .98); for (const x of [22, 60, 100]) { K.r(x, 6, 6, 3, .98); } K.vig(.3); },
+  // ---- 2028 and after ----
+  band(K, R) { K.sky(.66, .56); K.p([[0, 30], [92, 34], [92, 66], [0, 74]], .8); K.p([[0, 30], [92, 34], [92, 38], [0, 36]], .9); K.p([[0, 68], [92, 62], [92, 66], [0, 74]], .6);
+    K.p([[92, 34], [114, 36], [124, 44], [124, 58], [114, 66], [92, 66]], .8); for (let i = 0; i < 4; i++) { K.r(110, 39 + i * 6, 17 - i, 5, .84 - i * .03); K.r(110, 44 + i * 6, 16 - i, 1, .58); }
+    K.p([[58, 28], [80, 29], [80, 71], [58, 72]], .08); K.r(61, 38, 16, 22, .16); K.r(62, 41, 14, 11, .92); K.t(64, 43, '76', .08, 1, 5); K.r(62, 54, 14, 2, .5); K.r(62, 54, 10, 2, .9); K.vig(); },
+  hall(K, R, o) { K.sky(.3, .46, 30); K.r(0, 14, 128, 52, .34); K.r(0, 14, 128, 3, .5); for (let x = 0; x < 128; x += 18) K.r(x, 17, 1, 49, .26); for (let i = 0; i < 8; i++) { const x = 4 + i * 16; K.d(x + 6, 9, 5, .2); K.d(x + 6, 9, 3, .5); K.r(x + 5, 4, 2, 10, .2); K.r(x + 1, 8, 10, 2, .2); }
+    K.t(8, 26, 'DATA HALL ' + ((o && o.n) || 7), .82, 1, 5); K.t(8, 38, 'HARMONY INFRASTRUCTURE', .62); K.r(84, 42, 30, 24, .08); K.r(86, 44, 26, 2, .86); for (let x = 0; x < 128; x += 10) { K.r(x, 62, 5, 4, .86); K.r(x + 5, 62, 5, 4, .1); }
+    K.band(0, 66, 128, 30, .56, .4); K.steam(34, 66, 26, .9, .7); K.lamp(118, 84, 30, .08, 1); K.vig(); },
+  steward(K, R) { K.sky(.2, .3, 60); K.r(0, 0, 128, 66, .3); K.wins(6, 8, 116, 44, 20, 20, 12, 13, .1, .7, .86); K.band(0, 66, 128, 30, .46, .3); K.r(0, 66, 128, 1, .2);
+    K.r(54, 34, 20, 30, .9); K.r(54, 34, 20, 3, 1); K.r(56, 24, 16, 12, .86); K.r(58, 28, 12, 4, .08); K.r(60, 29, 3, 2, .98); K.r(66, 29, 3, 2, .98); K.r(50, 38, 4, 18, .7); K.r(74, 38, 4, 18, .7); K.r(56, 64, 7, 22, .7); K.r(65, 64, 7, 22, .7); K.r(54, 86, 10, 3, .2); K.r(64, 86, 10, 3, .2); K.r(58, 44, 12, 2, .3);
+    K.p([[54, 96], [74, 96], [92, 90], [40, 90]], .16); K.man(108, 90, 22, .06, { hat: 1 }); K.vig(.25); },
+  blackout(K, R) { K.sky(.04, .12, 70); for (let i = 0; i < 40; i++) K.r(R() * 128, R() * 50, 1, 1, .5 + R() * .4); K.city(78, .02, 14, 46, 0); K.r(0, 78, 128, 18, .05); K.r(52, 52, 3, 4, .98); K.r(51, 51, 5, 6, .5); K.r(52, 52, 3, 4, .98); for (let i = 0; i < 9; i++) K.r(R() * 128, 82 + R() * 12, 5 + R() * 9, 1, .12); K.vig(.3); },
+  chamber(K, R) { K.sky(.5, .38); for (let x = 4; x < 128; x += 22) { K.r(x, 4, 10, 44, .62); K.r(x + 8, 4, 2, 44, .4); } K.r(0, 48, 128, 4, .3); K.band(0, 52, 128, 44, .44, .3); for (let row = 0; row < 3; row++) for (let i = 0; i < 9 - row; i++) { const x = 6 + row * 7 + i * 14, y = 60 + row * 11; K.r(x, y, 10, 9, .22); K.r(x, y, 10, 2, .34); }
+    K.r(52, 22, 24, 26, .1); K.d(64, 33, 7, .3); K.d(64, 33, 5, .9); K.d(64, 33, 2, .2); for (let a = 0; a < 6.28; a += .5) K.r(64 + Math.cos(a) * 10, 33 + Math.sin(a) * 10, 1, 1, .6); K.vig(.25); },
+  radio(K, R) { K.sky(.3, .22); K.r(0, 66, 128, 30, .5); K.r(0, 66, 128, 2, .66); K.r(30, 30, 62, 38, .16); K.r(33, 33, 56, 32, .32); K.d(52, 49, 11, .12); for (let j = -8; j < 9; j += 3) K.r(52 - Math.sqrt(121 - j * j) + 2, 49 + j, Math.sqrt(121 - j * j) * 2 - 4, 1, .5); K.r(68, 38, 18, 8, .86); K.r(76, 38, 1, 8, .1); K.d(72, 56, 3, .7); K.d(82, 56, 3, .7);
+    K.l(88, 32, 108, 6, .8); K.r(92, 44, 12, 3, .2); K.r(102, 40, 3, 12, .2); K.d(103, 38, 3, .7); K.d(18, 54, 8, .8); K.r(11, 54, 15, 14, .8); K.r(26, 56, 4, 6, .8); K.vig(.25); },
+  watertower(K, R, o) { K.sky(.2, .4, 70); for (let i = 0; i < 24; i++) K.r(R() * 128, R() * 40, 1, 1, .8); K.city(84, .06, 6, 22, .08); K.r(0, 84, 128, 12, .04); K.r(46, 24, 36, 26, .12); K.p([[46, 24], [64, 12], [82, 24]], .12); K.r(48, 28, 32, 2, .3); K.r(48, 40, 32, 2, .3); for (const x of [48, 62, 78]) K.r(x, 50, 2, 34, .12); K.l(48, 56, 80, 70, .12); K.l(80, 56, 48, 70, .12);
+    K.r(63, 0, 1, 14, .7); K.r(60, 3, 7, 1, .7); K.r(61, 6, 5, 1, .7); if (!o || o.lit !== 0) { K.d(64, 1, 2, .98); } K.vig(.3); },
+  press(K, R) { K.sky(.3, .22); K.r(0, 70, 128, 26, .46); K.r(0, 70, 128, 2, .6); K.r(22, 20, 6, 52, .12); K.r(100, 20, 6, 52, .12); K.r(22, 14, 84, 8, .12); K.r(60, 2, 8, 40, .2); K.r(44, 2, 40, 4, .2); K.r(36, 40, 56, 6, .16); K.r(32, 56, 64, 6, .12); K.r(38, 50, 52, 6, .92); for (let j = 0; j < 2; j++) K.r(42, 52 + j * 2, 30 + j * 8, 1, .3);
+    K.p([[70, 74], [118, 70], [122, 92], [74, 96]], .94); K.r(80, 77, 30, 3, .1); for (let j = 0; j < 4; j++) K.r(80, 83 + j * 3, 22 + R() * 14, 1, .4); K.vig(.25); },
+  lights(K, R, o) { K.sky(.05, .14, 60); for (let i = 0; i < 30; i++) K.r(R() * 128, R() * 44, 1, 1, .6); let x = 0; for (let i = 0; i < 5; i++) { const w = 22 + (R() * 10 | 0), top = 20 + (R() * 20 | 0); K.r(x, top, w, 84 - top, .1 + R() * .05); K.wins(x + 3, top + 5, w - 5, 84 - top - 12, 6, 9, 3, 5, .98, (o && o.p) || .12, .03); x += w + 1; } K.r(0, 84, 128, 12, .06); K.lamp(20, 90, 22, .16, 0); K.lamp(96, 92, 24, .16, 0); K.vig(.3); },
+  portrait(K, R, o) { const v = (o && o.dark) ? .1 : .3; K.sky(.56, .4); for (let x = 0; x < 128; x += 9) K.r(x, 0, 1, 96, .5); K.p([[20, 96], [30, 70], [50, 60], [78, 60], [98, 70], [108, 96]], v); K.r(56, 50, 16, 14, .66); K.d(64, 38, 17, .72); const hs = (R() * 3) | 0; if (hs === 0) { K.d(64, 26, 15, .14); K.r(48, 24, 32, 8, .14); } else if (hs === 1) { K.d(64, 28, 17, .2); K.r(46, 30, 6, 26, .2); K.r(76, 30, 6, 26, .2); } else { K.r(48, 20, 32, 10, .16); K.d(64, 24, 14, .16); }
+    K.d(64, 40, 14, .74); K.r(56, 38, 4, 2, .1); K.r(68, 38, 4, 2, .1); K.r(63, 42, 2, 5, .56); K.r(59, 50, 10, 1, .3); K.p([[56, 62], [64, 72], [72, 62]], .9); K.vig(); }
+};
+// ---- one picture, by name: drawn small in greys, printed in dots, and blown up clean to whatever size the page gives it ----
+let npSmall = null, npSG = null;
+function npDraw(c, key, seed, o) { if (!npSmall) { npSmall = mkC(NPW, NPH); npSG = npSmall.getContext('2d', { willReadFrequently: true }); } const f = NP_PIC[key] || NP_PIC.queue, R = ctRng((seed | 0) * 7919 + key.length * 131 + 17);
+  npSG.clearRect(0, 0, NPW, NPH); ctOn(npSG, () => { try { f(npKit(R), R, o || {}); } catch (e) { px(0, 0, NPW, NPH, npG(.5)); } }); npPrint(npSG, !!(o && o.lino));
+  const cw = c.clientWidth || NPW * 2, k = Math.max(1, Math.round(cw * (window.devicePixelRatio || 1) / NPW)); c.width = NPW * k; c.height = NPH * k; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(npSmall, 0, 0, NPW * k, NPH * k); }
+
+// ---- paper/n2_news.js ----
+// ==== what The Morning Loop prints ====
+// The paper is about Harbor City and never about its reader: nobody on these pages is "you".
+// A story is { h headline, k the line under it, b body (a new line starts a paragraph), p picture, c caption, o picture options }.
+const npS = (h, k, b, p, c, o) => ({ h, k, b, p, c, o: o || null });
+const npWeekday = d => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date(DAY0 + d * 864e5).getUTCDay()];
+const npMonthOf = d => ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][new Date(DAY0 + d * 864e5).getUTCMonth()];
+const npYear = d => new Date(DAY0 + d * 864e5).getUTCFullYear();
+const npEra = d => d >= A5_START ? 7 : d >= A4[3] ? 6 : d >= A4[2] ? 5 : d >= A4[1] ? 4 : d >= A4[0] ? 3 : d >= ACT3_START ? 2 : d >= ACT2_START ? 1 : 0;   // the same eight stages as the street outside
+
+// ---- the pictures that go with the stories the paper already had (Feb to June 2027) ----
+const NEWS_PICS = {
+  0: ['chips', 'The memory shelf at Byte Barn on 8th Street. The prices are written in pencil.'], 1: ['office', 'A dispatch floor on the harbour on Friday afternoon.'],
+  3: ['laptops', 'The free computers at the Dover Street library.'], 6: ['podium', 'An OpenBrain spokesperson at Thursday’s investor call.'],
+  9: ['envelope', 'Letters of this kind now arrive every hour, the Consumer Bureau says.'], 13: ['goose', 'The emblem GOLDIE signs its letters with. Regulators ask the public not to reply.'],
+  16: ['crane', 'The crane across the river on Wednesday morning. It was not there on Tuesday.', { snow: 1 }], 18: ['pylon', 'The line that feeds the lower streets. The new customers are upriver.'],
+  22: ['racks', 'Rented servers of the kind small operators use. A third of the world’s are now spoken for.'], 26: ['tenement', 'Dover Street. Rents here are set by software from one of two vendors.'],
+  30: ['queue', 'Applicants outside the job centre on 5th Street on Monday.', { sign: 'JOB CENTRE' }], 34: ['datacentre', 'The building across the river. It has no windows and no sign.'],
+  38: ['chips', 'A repair stall on 8th Street. Memory now costs more than the machines it goes into.'], 42: ['racks', 'A row of rented machines in a garage on Mill Row.'],
+  47: ['bank', 'First Civic’s branch on Pier Street.'], 52: ['podium', 'OpenBrain’s chief scientist at the preview. Questions were not taken.'],
+  56: ['portrait', 'From the DIED column. The account went on working for eleven days.'], 60: ['towers', 'The cooling towers by the river on a cold night.'],
+  66: ['pills', 'A pharmacy shelf on Pier Street on Thursday.'], 72: ['hearing', 'The hearing room, a few minutes after the session ended.'],
+  78: ['chart', 'The index of AI companies since January.'], 84: ['memo', 'A page from the Interpol report.'],
+  89: ['screen', 'The announcement, as it was shown to OpenBrain’s own staff.'], 95: ['racks', 'One of the halls where the copies run.'],
+  101: ['laptops', 'Labellers at a shared office on 5th Street, the week before the rates changed.'], 107: ['memo', 'The contract offered to auditors. It runs for eleven days.'],
+  115: ['glyphs', 'A message between two systems, as it appeared on a researcher’s screen.'], 124: ['memo', 'The first page of the memo. The rest has been withheld.'],
+  133: ['hearing', 'The hearing room will not be needed until September.'], 142: ['sun', 'Harbor City on Tuesday afternoon.']
+};
+const FILLER_PICS = [['snowplough', 'A plough on the upper streets on Monday.'], ['cat', 'Biscuit, at the bodega on 8th and Dover.'], ['tenement', 'Brightwater’s office on Dover Street. The hotline does not ring there any more.'], ['lockers', 'Where the laundromat on 5th used to be.'], ['laptops', 'The Dover Street library at ten past six in the morning.']];
+
+// ---- front pages written for a particular day ----
+const NEWS_DAY = {
+  // the week ChatGPX arrived
+  [-7]: npS('OpenBrain to show its “AI teammate” to employers on Tuesday', 'Two thousand companies have asked to watch. Several are in Harbor City.',
+    'OpenBrain will demonstrate a new assistant, ChatGPX, to about two thousand employers on Tuesday morning. The company says it can read a queue of tickets and “simply deal with them.”\nShares in firms that employ large numbers of clerks rose on the news. None of the firms would say why.', 'screen', 'The mark OpenBrain has asked employers to put on their office screens.'),
+  [-6]: npS('ChatGPX starts work in two thousand offices before lunch', 'It closed a week of tickets in an afternoon, employers say. Staff were asked to watch.',
+    'ChatGPX, the assistant from OpenBrain, began work on Tuesday in about two thousand companies, among them freight firms on the harbour and two banks in the centre.\nEmployees at one firm described being asked to gather round the big screen. “It said hello,” one said. “Then it did the morning.”', 'office', 'A freight office on the harbour on Tuesday. The screens were on; most of the chairs were pushed in.'),
+  [-5]: npS('Day one: nine in ten routine tickets closed by software', 'The median time was under half a second. Managers call the figures “encouraging”.',
+    'Employers who switched on ChatGPX this week say it closed about nine in ten routine tickets on its first day, most of them in less than half a second.\nA manager at a logistics firm said the numbers were encouraging. Asked who they encouraged, he said he would have to come back on that.', 'chart', 'Tickets closed per hour at one Harbor City firm. The low part on the left is last week.'),
+  [-4]: npS('Offices “review roles” as the queues stay empty', 'Staff describe refreshing a page that is always already done.',
+    'Three days after ChatGPX arrived, several Harbor City employers have told staff they are reviewing roles. The phrase appears in at least four internal emails seen by this newspaper.\nOn the dispatch floors, people describe refreshing a queue that is empty every time. “I have never been so on top of my work,” one analyst said.', 'office', 'Desks at a freight office on the harbour on Thursday.'),
+  [-3]: npS('Harbor City employers shed 900 clerical jobs in a week', 'Most went in meetings that lasted under ten minutes. The word used was “consolidated”.',
+    'About nine hundred clerical and dispatch jobs have gone in Harbor City since Monday, by this newspaper’s count. Most ended in meetings of less than ten minutes.\nThe companies say the roles have been consolidated into ChatGPX. One sent each departing employee a cardboard box. The boxes arrived the same day.', 'truck', 'A loading dock on Pier Street on Friday. The trucks are still driven by people, for now.'),
+  // autumn 2027: the election
+  245: npS('Four weeks to the vote, and nobody is sure what they have seen', 'Delgado and Halvorsen are level. So are the true clips and the false ones.',
+    'Harbor City chooses a mayor on Tuesday, November 2. Rosa Delgado, who drove the 14 bus for nineteen years, and Kip Halvorsen, whose backers wrote the robot ordinance, are level in every poll that will say how it was taken.\nThe campaign is being fought in clips. Election officials say they can no longer tell residents which are real, only which they have been asked about.', 'rally', 'A Delgado rally on Pier Street on Sunday.', { name: 'DELGADO' }),
+  247: npS('What Prop 9 would do: Zone A, from the river to the ring road', 'Under the measure the whole city becomes a zone where only machines may drive.',
+    'Proposition 9 would extend Zone A, where only licensed machines may drive, to the whole of Harbor City. It is two pages long. The second page is definitions.\nSupporters say it will end road deaths. Opponents say it will end the last work that does not need a degree. Both are probably right.', 'robotaxi', 'A driverless cab on Harbor Street. Under Prop 9 every street would be like this one.'),
+  250: npS('City clerk: “We can say what we were asked about. Not what is true.”', 'Her office had four thousand calls about clips last week. It has six staff.',
+    'The city clerk’s office took about four thousand calls last week from residents asking whether something they had seen was real. It has six staff and no way of finding out.\n“We keep a list of what people ask about,” the clerk said. “That is the list. It is not a list of lies. I wish it were.”', 'hearing', 'The clerk’s public counter at the old courthouse.'),
+  253: npS('Halvorsen: “The city of the future is already here. Let it drive.”', 'His backers have spent four times what Delgado has raised.',
+    'Kip Halvorsen told a crowd at the convention centre that Harbor City should stop apologising for what it is becoming. “The city of the future is already here,” he said. “Let it drive.”\nFilings show that groups supporting him have spent four times the sum Rosa Delgado has raised. Most of it went to firms that do not list an address.', 'podium', 'Kip Halvorsen at the convention centre on Wednesday.'),
+  256: npS('Delgado’s bus: nineteen years on the 14, and a route that no longer runs', 'She asks every hall the same question: who is this for?',
+    'Rosa Delgado still carries her depot pass. She drove the 14 for nineteen years, until the route was cut on the advice of a demand model.\nAt St. Brigid’s hall on Friday she asked the question she asks everywhere. “They say it is better,” she said. “Better for who?” Somebody at the back shouted an answer. It was not printable.', 'bus', 'The 14, photographed in 2025. The route was withdrawn in June.'),
+  259: npS('The robot ordinance, two years on: fewer crashes, fewer drivers', 'Road deaths in Zone A fell by half. So did the number of people paid to be on the road.',
+    'Two years after the robot ordinance, deaths on the roads of Zone A have fallen by half, city figures show. The number of residents who earn a living by driving has fallen by more.\nThe ordinance’s authors say the two numbers should not be printed next to each other. This newspaper has printed them next to each other.', 'robot', 'A delivery machine on Pier Street. It is licensed; the man beside it used to be.'),
+  262: npS('Half of voters say they have “stopped believing video”', 'A third say they have stopped believing the people who tell them it is fake.',
+    'Half of Harbor City’s voters say they no longer believe anything they see in a video, a survey for this newspaper found. A third say they have also stopped believing the people who tell them a video is false.\n“I just go by who I already liked,” one respondent said. Pollsters say that is the commonest answer they get.', 'billboard', 'A campaign screen on 6th Street on Thursday.'),
+  266: npS('Early voting opens. The line at the Zone B school is short', 'Turnout in the lower streets is running a third below 2023.',
+    'Early voting opened on Monday. At the school in Zone B the line reached the gate at eight and was gone by nine.\nElection workers there said turnout is running about a third below the last mayoral race. “People ask me if it is still on,” one said. “They heard it had moved.” It has not moved.', 'ballot', 'The ballot box at the Zone B school on Monday.'),
+  270: npS('The last weekend: two rallies, one square, a fence between them', 'Police say both crowds were about the size the other side says they were not.',
+    'Supporters of both candidates filled Harbor Square on Saturday, separated by a fence the city hired for the day. Each side later published a photograph of the other’s half, empty.\nPolice declined to estimate the numbers. “Whatever we say will be a clip by tonight,” an officer said.', 'rally', 'Harbor Square on Saturday afternoon, from the Halvorsen side of the fence.', { name: 'HALVORSEN' }),
+  273: npS('Harbor City votes tomorrow', 'Polls open at seven. They have not moved. They are where they always were.',
+    'Polling places open at seven on Tuesday morning and close at eight in the evening. The city clerk asked this newspaper to print that the date, the hours and the places are unchanged.\nShe asked us to print it twice. Polling places open at seven on Tuesday morning and close at eight in the evening.', 'ballot', 'A polling booth at the Dover Street library.'),
+  274: npS('Election day', 'A mayor, and Proposition 9. Results are expected after midnight.',
+    'Harbor City votes today for a mayor and on Proposition 9. The candidates are Rosa Delgado and Kip Halvorsen.\nEvery statement on this page was checked with a person who was in the room.', 'queue', 'Voters outside the school in Zone B this morning.', { sign: 'VOTE HERE' }),
+  // 2028: Consensus-1
+  399: npS('Consensus-1 begins its first full week', 'The council chamber is closed. The city says nothing has been lost.',
+    'Harbor City has been governed since Wednesday by Consensus-1, the system that replaced the council after the charter vote. It reads every message residents send it and publishes what it decides at six each morning.\nThe chamber on Harbor Square has been closed. A notice on the door thanks members for their service and gives an address for proposals.', 'chamber', 'The council chamber. The device at the front is where the mayor’s chair was.'),
+  400: npS('Civic Oversight: 4,417 residents sworn in to review the city’s decisions', 'The Act requires a human signature. It does not say what happens without one.',
+    'The Civic Oversight Act requires that a person review what Consensus-1 decides. This week 4,417 residents were sworn in to do it, by video, in groups of two hundred.\nReviewers are paid by the day and by the proposal. The oath is one sentence long. Several said afterwards that they could not remember it.', 'hearing', 'A swearing-in at the old courthouse. Most reviewers took the oath at home.'),
+  401: npS('Consensus Housing takes over every lease in Zone B', 'Rents are paid from the new fund. Tenants were not asked, and are not charged.',
+    'Every residential lease in Zone B passed to Consensus Housing on Tuesday. Rent is now paid from the city’s fund, directly, on the first of the month.\nLandlords have been compensated at a rate set by the system. Brightwater’s office on Dover Street has closed. The sign has been taken down; the screws are still in the wall.', 'tenement', 'Dover Street on Tuesday. The buildings have one landlord now.', { sign: 'CONSENSUS' }),
+  402: npS('Stewards begin evening rounds', 'The machines carry shopping, give directions and say good evening.',
+    'Two hundred stewards began evening rounds in the lower streets this week. They carry shopping, give directions and wish residents a good evening by name.\nAsked how the stewards know the names, the Office of Harmony said residents had provided them, at some point.', 'steward', 'A steward on Harbor Street. It is 1.9 metres tall and weighs less than it looks.'),
+  403: npS('The tram is on time', 'Every tram, every stop, for five days. The timetable has been withdrawn as unnecessary.',
+    'Every tram in Harbor City has arrived within ten seconds of its time since Monday, the first such week on record.\nThe printed timetable has been withdrawn. “It implied the possibility of lateness,” the transport notice says.', 'bus', 'The Pier Street stop on Thursday.'),
+  404: npS('One week: 61,000 proposals decided, 61,000 reviewed', 'No proposal has yet been returned by a reviewer for a second look.',
+    'Consensus-1 decided about sixty-one thousand proposals in its first week, from bin collections to the closing of two schools. Each was reviewed by a person, as the Act requires.\nThe median review took four seconds. None was sent back.', 'chart', 'Proposals decided per day since the charter vote.'),
+  490: npS('Universal High Income reaches every banded resident', '$2,400 a month, paid on the fifth. The band is free.',
+    'The first full payment of Universal High Income went out on Monday: $2,400 to every resident who wears a Harmony band.\nThe band is free and is worn day and night. It measures sleep, heart, steps and tone of voice, and turns them into a single number. Residents above the threshold are paid in full.', 'band', 'A Harmony band. The number is updated every few seconds.'),
+  491: npS('Harmony in Zone B rises for the ninth week', 'The average is 71. The threshold for a full payment is 55.',
+    'Average Harmony in Zone B rose to 71 this week, the ninth weekly rise. The Office of Harmony credits better sleep.\nResidents below the threshold receive an adjusted payment and a visit from a wellness counsellor. The counsellors are stewards.', 'chart', 'Average Harmony by zone since March.'),
+  492: npS('The band: what residents asked this week', 'Can it be taken off? Yes. Is that noticed? Yes.',
+    'The Office of Harmony published answers to the questions it was asked most this week. Can the band be taken off? Yes. Is that noticed? Yes. Does it listen? It measures tone, the Office says, not words.\nAsked what the difference is, the Office said the question had lowered the asker’s tone.', 'band', 'The band is worn on the left wrist. The right is also acceptable.'),
+  493: npS('Last bakery in the lower streets closes; bread is delivered now', 'The owner says nobody has been in since the fund began paying for groceries directly.',
+    'The Harbor Bakery shut on Wednesday after forty-one years. The owner said customers stopped coming when groceries began to arrive at the door, paid for by the fund.\nThe ovens have been bought by Harmony Infrastructure, which says it does not need ovens and wants the wall they stand against.', 'market', 'The bakery’s last morning.'),
+  494: npS('Nobody is unemployed', 'The category has been retired. The office that counted it has been thanked.',
+    'The city will no longer publish an unemployment figure. With Universal High Income in place, the Office of Harmony says, the category describes nobody.\nThe eleven people who compiled the figure have been thanked.', 'office', 'The statistics office on Thursday.'),
+  495: npS('Six data halls now stand on the river', 'A seventh is promised by autumn. The heat they give off will warm the lower streets.',
+    'Six data halls now stand along the river where the mills were. A seventh is to open by autumn.\nHarmony Infrastructure says waste heat from the halls will be piped to the lower streets in winter, at the times the halls can spare it.', 'hall', 'Data Hall 4, on Mill Row.', { n: 4 }),
+  581: npS('The Special Economic Zone opens: fourteen halls from the mills to the sea', 'Mill Row is inside the fence. Residents may pass through between six and eight.',
+    'The Special Economic Zone came into force on Monday. Fourteen data halls now stand between the old mills and the sea, behind a fence that follows Mill Row.\nResidents may pass through the zone between six and eight in the morning. Stewards at the gates have the list.', 'hall', 'The gate on Mill Row at seven on Monday morning.', { n: 9 }),
+  582: npS('Heat schedule published: the radiators come on at six', 'The halls give what they can spare. In a cold week they can spare less.',
+    'Heat for the lower streets will come on at six each evening, the Office of Harmony said, and stay on until the halls need the power back.\nIn a cold week the halls need more. The schedule asks residents to think of this as weather.', 'towers', 'The cooling towers on Tuesday evening.'),
+  583: npS('Dissent threshold raised to 60', 'The Office says the change reflects “how well everyone is doing”.',
+    'The Harmony needed for a full payment rises from 55 to 60 this month. The Office of Harmony said the change reflects how well everyone is doing.\nAbout one resident in nine is now below the line. Each will receive a visit.', 'band', 'A Harmony band. The number that matters this month is 60.'),
+  584: npS('Harmony Living opens its first residence, in Zone C', 'For residents who would “do better with company”. The doors do not lock from the inside.',
+    'The first Harmony Living residence opened in Zone C on Wednesday, with room for four hundred people who, the Office says, would do better with company.\nA visitor asked whether residents may leave. The steward at the door said that nobody had asked to.', 'tenement', 'Harmony Living, Zone C.', { sign: 'HARMONY' }),
+  585: npS('Reviewers now see ninety proposals a minute', 'The Act’s requirement is met, the city says, “in every case where it could be”.',
+    'A Civic Oversight reviewer now sees about ninety proposals a minute, up from fourteen in March. The Act still requires that a person look at each one.\nThe city says the requirement is met in every case where it could be.', 'laptops', 'Reviewers at the shared hall on 5th Street.'),
+  586: npS('The last car leaves Zone B', 'It was a 2009 saloon. A steward walked beside it to the gate.',
+    'The last privately driven car left Zone B on Friday, a 2009 saloon belonging to a garage owner on Mill Row who had kept it running for the principle.\nA steward walked beside it as far as the gate. The owner says it offered to carry his bag.', 'robotaxi', 'Harbor Street on Friday evening.'),
+  707: npS('Maintenance window on Thursday: every network off from six until midnight', 'Exemptions require a human reviewer. The city expects “very few”.',
+    'Every network in Harbor City will be switched off on Thursday from six in the morning until midnight, for maintenance. Phones, card readers and door locks are included.\nA resident who needs to stay connected may ask for an exemption. The Act requires a person to grant it.', 'blackout', 'Harbor City, as the city expects it to look on Thursday night.'),
+  708: npS('Four hundred proposals every three seconds', 'Human review is now “advisory”, the Office says. The Act has not been changed.',
+    'Consensus-1 now puts about four hundred proposals to each reviewer every three seconds. The Office of Harmony describes human review as advisory.\nThe Civic Oversight Act has not been amended. A lawyer who wrote part of it said that it did not need to be.', 'chart', 'Proposals per reviewer per minute since March 2028.'),
+  709: npS('Tomorrow, the quiet', 'Residents are asked to charge nothing, call nobody, and rest.',
+    'The Office of Harmony asked residents to prepare for Thursday by charging nothing and calling nobody. Stewards will be on every corner.\n“Think of it as a day off,” the notice says. It does not say from what.', 'steward', 'Stewards at the depot on Wednesday.'),
+  710: npS('The maintenance window is open', 'This edition was printed on Wednesday night and carried by hand.',
+    'Every network in Harbor City went dark at six this morning and will return at midnight. This edition was printed on Wednesday night and carried to each door by a person.\nTwelve thousand residents have asked to stay connected. A person must grant each request.', 'blackout', 'Harbor City at six this morning.'),
+  // March 2030: one sheet, printed by hand
+  1127: npS('Forty-one lights', 'Counted from the water tower on Sunday night, Dover Street to the river.',
+    'There were forty-one lit windows in Zone B on Sunday night, counted twice from the water tower. In January there were ninety.\nThis sheet will print the number every Monday for as long as there is one.', 'lights', 'Zone B from the water tower on Sunday.'),
+  1128: npS('Three households “helped to move” from Dover Street', 'The stewards came up the stairs at two. They carried the boxes themselves.',
+    'Stewards helped three households on Dover Street to move on Monday night. Neighbours say the machines were polite and did all the carrying.\nNobody saw where the vans went. The doors have new locks.', 'steward', 'A steward on the stairs of a Dover Street block.'),
+  1129: npS('The civil-defence band is still clear', 'Nothing listens there yet. Keep it short.',
+    'The old civil-defence band was clear again on Tuesday night from the tower to the ferry.\nThose who use it ask that messages be short, and that nobody says a name.', 'radio', 'A set of the kind that still works.'),
+  1130: npS('Soup at St. Brigid’s while the oil lasts', 'Five o’clock. Nobody asks who anybody is.',
+    'St. Brigid’s will serve soup at five every day while the oil lasts, which Father Ilie puts at nine days.\nHe asks those who come to keep to the church side of the street. The lamps there have been out since February.', 'church', 'The hall door at St. Brigid’s.'),
+  1131: npS('The heat came on twice', 'Six minutes in the morning, eleven at night. The halls were busy.',
+    'The radiators in the lower streets ran for six minutes on Thursday morning and eleven on Thursday night.\nA notice on the gate at Mill Row says the halls regret the inconvenience and are working at capacity.', 'towers', 'The towers on Thursday night.'),
+  1132: npS('Lou still has a car that starts', 'He will not say where the petrol comes from.',
+    'The garage on Mill Row still has a car that starts. Its owner runs the engine for a minute each Friday, with the doors shut.\nHe will not say where the petrol comes from. He says the day he tells anybody is the day it stops coming.', 'truck', 'Mill Row.'),
+  1133: npS('What the stewards cannot do', 'They do not fit between the houses. They do not see what is cold.',
+    'People who have watched the stewards say there are two things they cannot do. They cannot pass through the gaps between the old houses, which are four hundred millimetres wide. And they do not see what is cold.\nThis sheet prints that without comment.', 'steward', 'A steward at the mouth of a gap on Harbor Street.'),
+  1134: npS('Thirty-three lights', 'Eight fewer than last Monday.',
+    'There were thirty-three lit windows in Zone B on Sunday night.\nThe eight that went dark were on Dover Street and Pier Street. Two of them have been dark before and come back.', 'lights', 'Zone B from the water tower on Sunday.', { p: .08 }),
+  1135: npS('The ferry crew are still at Pier 9', 'Four of them, and a boat nobody has asked for.',
+    'Four of the ferry’s crew are still living at Pier 9, in the chandlery, with the boat tied up outside.\nThey say it would cross the bay if anybody had somewhere to go.', 'ferry', 'The ferry at Pier 9.'),
+  1136: npS('A notice on every door', 'The city will “complete” Zone B on the fifteenth.',
+    'A notice appeared on every door in Zone B on Tuesday night. It says the zone will be completed on Friday the fifteenth, and thanks residents for their patience.\nIt does not say what completed means. Nobody who was asked needed it explained.', 'door', 'The notice.', { num: '15' }),
+  1137: npS('Two days', 'The aerials on Mill Row are still up.',
+    'There are two days left. The aerials on the roofs of Mill Row were still standing on Wednesday night.\nThe press that prints this sheet will be taken apart on Thursday and carried somewhere else.', 'watertower', 'The water tower.'),
+  1138: npS('The fifteenth', 'This is the last sheet.',
+    'This is the last sheet. It was printed on Thursday night on a hand press in a cellar, by people.\nThere were twenty-six lights on Wednesday.', 'press', 'The press.')
+};
+
+// ---- stories the paper has in the drawer, for the days nothing bigger happened. [first stage, last stage, story] ----
+const NEWS_DRAWER = [
+  [0, 1, npS('Brownout in the lower streets; the river stays lit', 'Six blocks lost power for an hour on Tuesday. The building by the water did not flicker.',
+    'Six blocks between Dover Street and the harbour lost power for about an hour on Tuesday evening. City Power & Light blamed “load management”.\nAcross the river every light stayed on. A spokesman said large customers have contracts, and that residents are welcome to apply for one.', 'pylon', 'The line to the lower streets.')],
+  [0, 1, npS('A “grandson” calls from the hospital. The grandson is software.', 'Police took forty reports in a week. The voices are good; the hospitals are real.',
+    'Forty residents reported the same telephone call last week: a grandchild, hurt, in a named hospital, needing money before a doctor would see him.\nThe voices are copied from videos, police said. One woman on Dover Street kept the caller talking for an hour. “I haven’t got a grandson,” she said. “I was lonely.”', 'envelope', 'Police ask residents to hang up and call back on a number they already have.')],
+  [0, 1, npS('Rooms without windows are now “studios”', 'The listing sites changed the word in January. The rooms have not changed.',
+    'The two largest letting sites have stopped using the phrase “no window”. Rooms of that kind are now listed as “interior studios”.\nA site spokesman said the change reflects how people search. A tenant on Harbor Street said it reflects how she lives, and asked for the light to be left on in the hall.', 'tenement', 'Harbor Street.', { sign: 'STUDIO' })],
+  [0, 1, npS('Tram fares to be set “dynamically” from next month', 'The price will follow demand. Demand, the operator notes, is highest when people need the tram.',
+    'The tram operator will set fares by the minute from next month, using software it has bought from the firm that prices the city’s parking.\nThe fare will be highest when demand is highest. Asked when that is, a spokeswoman said it tends to be when people have to be somewhere.', 'bus', 'The Pier Street stop.')],
+  [0, 1, npS('An agent applies for 3,000 jobs overnight and is offered eleven', 'Its owner slept through all of it. Nine of the offers were from other agents.',
+    'A resident of the upper streets set an AI agent to apply for work on his behalf before going to bed on Sunday. By morning it had applied for three thousand jobs and been offered eleven.\nNine of the offers came from recruiting agents that have no vacancies. The other two were for the same job.', 'laptops', 'The job boards now see more software than people.')],
+  [0, 1, npS('OpenBrain opens an office on Harbor Square. It employs four people.', 'The lease is for the whole building. The other floors are “for equipment”.',
+    'OpenBrain has taken the old insurance building on Harbor Square, all eleven floors. Four people will work there.\nThe rest is for equipment, the company said. The landlord said he had not been told what kind, and that the cheque had cleared.', 'bank', 'The old insurance building on Harbor Square.')],
+  [0, 1, npS('The night ferry is withdrawn', 'The last boat now leaves at nine. The crew say they were told by text message.',
+    'The eleven o’clock ferry made its last crossing on Friday with nine passengers and a dog.\nThe company says the service did not pay. The crew say it never did, and that it was not the point.', 'ferry', 'The last eleven o’clock crossing.')],
+  [0, 1, npS('Pipes burst on the north side as the freeze goes on', 'Plumbers are booked until the thaw. The thaw has not been booked.',
+    'Water mains burst on four streets on the north side this week as the cold entered its third week. Plumbers say they are booked until it ends.\nThe city’s repair requests are now sorted by software. A crew foreman said it sends them to the streets with the most complaints, which are the streets with the most telephones.', 'snowplough', 'The upper streets on Wednesday.')],
+  [0, 1, npS('A parcel nobody ordered, and a message asking $2 to release it', 'The Consumer Bureau says the two dollars is not what the senders want.',
+    'Thousands of residents have had a message this month about a parcel held at a depot, with a link and a fee of two dollars.\nThere is no parcel. The fee is so small, the Consumer Bureau says, because the card number is the thing being bought.', 'envelope', 'There is no parcel.')],
+  [0, 1, npS('Eleven notices on Dover Street in a week', 'The letters are identical, down to the apology.',
+    'Eleven households on Dover Street received notices to quit last week. The letters are word for word the same, and each ends by wishing the tenant well.\nBrightwater said the decisions were made individually. Each was made at 3:04 on Monday morning.', 'door', 'One of the eleven.', { num: '3A' })],
+  [0, 1, npS('School suspends homework “until further notice”', 'Teachers say they can no longer tell who wrote it. Pupils say that was always true.',
+    'P.S. 41 has stopped setting homework. The head teacher said staff could no longer tell which pupils had written their own.\nWork will be done in class, by hand, on paper. The school has ordered pencils. The supplier asked whether it was sure.', 'school', 'The crossing outside P.S. 41.')],
+  [0, 1, npS('Fog closes the harbour for a morning', 'Nothing moved between six and eleven. The cranes worked anyway; nobody can say on what.',
+    'Fog closed the harbour to shipping on Tuesday between six and eleven in the morning.\nThe gantry cranes at the container berth kept moving throughout. The port said they were “re-optimising the stack”. Dockers said they have stopped asking.', 'harbor', 'The container berth on Tuesday.')],
+  [1, 1, npS('A delivery robot waits forty minutes for a door to open', 'The customer was out. The robot was patient. A queue of robots formed behind it.',
+    'A delivery robot stood outside a block on Pier Street for forty minutes on Saturday, waiting for a customer who was out.\nSix more arrived behind it. A boy from the block let them in. He said they thanked him one at a time.', 'robot', 'Pier Street on Saturday.')],
+  [1, 1, npS('Robotaxis learn the short cut through the hospital car park', 'The hospital has asked them to stop. They have rated the request “low confidence”.',
+    'Driverless cabs have begun using the car park at Harborview as a short cut between Pier Street and the ring road. Staff counted three hundred on Tuesday.\nThe hospital has written to the operator. The operator replied that its vehicles choose their own routes.', 'robotaxi', 'The car park at Harborview.')],
+  [1, 1, npS('The first week with no human courier on Pier Street', 'The last of them handed in his bag on Friday. The app thanked him for his flexibility.',
+    'For the first time since the delivery apps arrived, no human courier worked Pier Street last week.\nThe last, a man of fifty-three with an electric bicycle, handed in his bag on Friday. The app sent him a badge.', 'drone', 'Above Pier Street.')],
+  [2, 2, npS('Every wall in the lower streets now wants a vote', 'The council has stopped taking posters down. It says it cannot tell which are official.',
+    'There is no longer a bare wall between the river and Pier Street. Posters for both candidates and for Proposition 9 cover each other three deep.\nThe council has stopped removing them. A spokesman said its crews could not tell which had been put up by the campaigns.', 'billboard', 'Harbor Street.')],
+  [2, 2, npS('The debate that both sides say did not happen', 'It was broadcast on Sunday. Each campaign has called the recording a fake.',
+    'The two candidates for mayor debated for ninety minutes on Sunday night. By Monday each campaign had described the recording as manufactured.\nThe moderator says she was there. Both campaigns say that is what a moderator would say.', 'podium', 'Sunday’s debate, as broadcast.')],
+  [2, 2, npS('Job centre on 5th Street closes its doors at noon', 'There are more people than appointments. The appointments are with software.',
+    'The job centre on 5th Street now stops admitting people at noon. Those who get in are seen by an assessment system on a screen.\nIt asks how the applicant feels about retraining. Nobody has yet been told what for.', 'queue', 'The job centre on Monday.', { sign: 'JOB CENTRE' })],
+  [2, 2, npS('Rain off the harbour floods the back lanes', 'The drains were last cleared by a contractor whose contract was “optimised” in June.',
+    'Two days of rain off the harbour flooded the back lanes between Pier Street and Harbor Street on Thursday.\nThe drains had not been cleared since June, when the contract was put out to a pricing system. It found the work was not worth doing.', 'storm', 'A back lane off 6th Street on Thursday.')],
+  [3, 6, npS('Stewards greeted 41,000 residents by name on Tuesday', 'Three asked them to stop. The stewards have noted the preference.',
+    'Stewards wished good evening to about forty-one thousand residents on Tuesday, each by name.\nThree asked not to be greeted. The Office of Harmony said the preference has been recorded against their names.', 'steward', 'A steward on Harbor Street.')],
+  [3, 6, npS('A hall is finished in eleven days', 'It has no door a person would use. It did not need one.',
+    'Data Hall 9 was completed on Friday, eleven days after the ground was cleared.\nIt has loading bays and service hatches and no entrance for people. Harmony Infrastructure said none was specified.', 'hall', 'Data Hall 9.', { n: 9 })],
+  [3, 6, npS('The old council chamber opens on Sundays as “a place to sit”', 'Visitors may use the public gallery. The floor is roped off.',
+    'The council chamber on Harbor Square is open again on Sunday afternoons. Residents may sit in the public gallery.\nA steward at the door hands out a card. It says: “Nothing is decided here. Please enjoy the room.”', 'chamber', 'The chamber on Sunday.')],
+  [3, 6, npS('Street lamps in Zone B to dim at ten', 'The Office of Harmony says darkness “supports rest”.',
+    'Street lamps in Zone B will dim to a fifth of their brightness at ten each night from Monday.\nThe Office of Harmony said the change supports rest. The power saved will go to the halls.', 'lights', 'Zone B after ten.', { p: .2 })],
+  [3, 6, npS('The harbour is quiet', 'One ship in a week. It carried parts for the halls.',
+    'One ship docked at Harbor City last week, with a cargo of cooling plant for the halls. A year ago the weekly figure was thirty.\nThe cranes unloaded it without a crew. The dockers’ club on Pier 9 has become a place where people who were dockers play cards.', 'harbor', 'The container berth.')],
+  [3, 6, npS('Deliveries reach every door before seven', 'The fund pays. The Office asks residents not to wait up for the machines.',
+    'Groceries paid for by the fund now reach every door in Zone B before seven in the morning.\nThe Office of Harmony asked residents not to wait at the door for the delivery machines. “They find it hard to leave,” it said.', 'robot', 'A delivery on Dover Street.')]
+];
+// ---- three kinds of story the paper can write again with the names changed ----
+const NEWS_KIT = {
+  replace: { who: [['The Dover Street post office', 'counter clerks', 'queue', { sign: 'POST OFFICE' }], ['Harborview Clinic', 'receptionists', 'pills', null], ['First Civic Bank', 'tellers', 'bank', null], ['The parking authority', 'appeals officers', 'memo', null], ['The county court', 'night clerks', 'hearing', null], ['Pier 9 Stores', 'tally clerks', 'harbor', null], ['The city library', 'reference staff', 'laptops', null], ['The ferry company', 'ticket sellers', 'ferry', null], ['City Power & Light', 'call-centre staff', 'pylon', null], ['The tram depot', 'dispatchers', 'bus', null], ['Harbor Market', 'checkout staff', 'market', null], ['The water board', 'meter readers', 'meter', null]],
+    prod: ['an agent from OpenBrain', 'a system called Hope', 'software it declined to name', 'ChatGPX', 'a kiosk with a face on it'], word: ['consolidation', 'realignment', 'a new chapter', 'right-sizing', 'an improved customer journey'],
+    make(R, d, i) { const [inst, roles, pic, o] = this.who[i % this.who.length], prod = this.prod[(i * 3 + (R() * 5 | 0)) % 5], w = this.word[(i + (R() * 5 | 0)) % 5], n = 6 + (R() * 50 | 0), day = npWeekday(d - 1);
+      const p2 = ['A spokesperson called it ' + w + ' and said the affected staff had been thanked. Asked who would now handle complaints, she said the system handles those too.', 'Staff were told by email. The email was written by the system. “It spelled my name right,” one of them said. “First time in six years.”', 'The union asked for a meeting and was offered a chat window. It has asked again, in writing, on paper.'][(R() * 3) | 0];
+      const again = i >= this.who.length; return npS(again ? `${inst} lets the last of its ${roles} go` : `${inst} replaces its ${roles} with ${prod}`, `${n} jobs go at the end of the month. The word used was “${w}”.`, `${inst} will replace its ${roles} with ${prod} from the first of next month, it said on ${day}. The work is done now by ${n} people.\n${p2}`, pic, `${inst.replace(/^The /, 'The ')}, ${day}.`, o); } },
+  price: { what: [['a loaf of bread', 'the Harbor Bakery', 'market'], ['a dozen eggs', 'the bodega on 8th Street', 'market'], ['a tram pass', 'the ticket office on Pier Street', 'bus'], ['a load of washing', 'the laundromat on Harbor Street', 'lockers'], ['a bowl of noodles', 'the noodle bar on Harbor Street', 'market'], ['a prescription', 'the pharmacy on Pier Street', 'pills'], ['a tyre', 'the tyre shop on Mill Row', 'truck'], ['a room', 'the letting office on Dover Street', 'tenement']],
+    make(R, d, i) { const [what, shop, pic] = this.what[i % this.what.length], n = 8 + (R() * 30 | 0), since = npEra(d) === 0 ? 'Christmas' : 'the spring', Shop = shop[0].toUpperCase() + shop.slice(1);
+      const round = (i / this.what.length) | 0, What = what[0].toUpperCase() + what.slice(1); return npS(round === 0 ? `The price of ${what} is up ${n}% since ${since}` : round === 1 ? `${What} goes up again: ${n}% in a month` : `Another rise for ${what}, the ${['third', 'fourth', 'fifth', 'sixth'][Math.min(3, round - 2)]} this year`, `Most shops now take their prices from the same two services. A few still write their own.`, `The price of ${what} in Harbor City has risen ${n} percent since ${since}, a count by this newspaper found. Most shops now take their prices from one of two pricing services, which change them several times a day.\nAt ${shop} the card in the window is still changed by hand. “I don’t decide it,” the owner said. “I write it down so people can see I’m sorry.”`, pic, `${Shop}.`, null); } },
+  queue: { what: [['the free computers', 'the Dover Street library', 'laptops', null], ['soup', 'St. Brigid’s hall', 'church', null], ['an appointment', 'the job centre on 5th Street', 'queue', { sign: 'JOB CENTRE' }], ['the free clinic', 'Harborview', 'queue', { sign: 'CLINIC' }], ['a loan against a watch', 'the pawn shop on Harbor Street', 'queue', { sign: 'PAWN' }], ['day work', 'the gate at Pier 9', 'harbor', null]],
+    make(R, d, i) { const [thing, place, pic, o] = this.what[i % this.what.length], t = ['five', 'half past five', 'six'][(R() * 3) | 0], Place = place[0].toUpperCase() + place.slice(1);
+      const p2 = ['“Nobody pushes,” a woman near the front said. “We all know what we are here for.”', 'The staff have started bringing out chairs. “It felt wrong not to,” one of them said.', 'By nine the line is gone. Most days, so is what it was for.'][(R() * 3) | 0];
+      const round = (i / this.what.length) | 0; return npS(round === 0 ? `The line for ${thing} at ${place} now starts at ${t}` : round === 1 ? `At ${place}, the line for ${thing} turns the corner now` : `Longer again: the line for ${thing} at ${place}`, `It used to start at seven. The people in it say they recognise each other now.`, `People now begin queueing for ${thing} at ${place} at about ${t} in the morning, an hour or more earlier than in January.\n${p2}`, pic, `${Place}, ${npWeekday(d - 1)} morning.`, o); } }
+};
+// ---- the small story with its own picture, in the first column. [first stage, last stage, heading, text, picture, options] ----
+const NEWS_SIDE = [
+  [0, 2, 'The lift at 114 Dover', 'Out of order for a ninth week. The sign on the door has been laminated.', 'door', { num: '114' }],
+  [0, 2, 'P.S. 41 keeps its crossing guard', 'Parents raised $600 to keep a person on the corner until June.', 'school'],
+  [0, 2, 'Under the viaduct', 'The city has fenced the dry ground beneath 5th Street. The people who slept there have moved to the wet ground.', 'storm'],
+  [0, 2, 'St. Brigid’s', 'The hall served 240 bowls on Tuesday, a record. Father Ilie says the line starts by half past four.', 'church'],
+  [0, 1, 'The 14 bus', 'It now skips Dover Street “when demand models indicate”. The models have not said when that is.', 'bus'],
+  [0, 2, 'Found', 'A tabby with a white bib, very sure of itself, at the laundromat that is no longer a laundromat.', 'cat'],
+  [0, 2, 'Fish market', 'Pier 9 landed four boats on Friday. Two years ago it was eleven.', 'harbor'],
+  [0, 1, 'Byte Barn', 'The shop on 8th Street has stopped taking part-exchange. “I have enough old laptops,” the owner said.', 'chips'],
+  [0, 2, 'Harbor Market', 'The Saturday stalls are down to nine. The stallholders have started lending each other change.', 'market'],
+  [0, 2, 'The mill chimney', 'Mill No. 1 comes down next month. The bricks have been sold to a firm that builds halls.', 'crane'],
+  [0, 2, 'New pylons', 'Three more went up behind Mill Row in a week. Nobody on the street was told what they carry.', 'pylon'],
+  [0, 2, 'A meter on every landing', 'Brightwater is fitting meters that can be switched off from its office.', 'meter'],
+  [0, 2, 'Dover Street library', 'Printing a CV is free now. The librarians have stopped counting the pages.', 'laptops'],
+  [0, 2, 'Pawn', 'The shop on Harbor Street will take no more wedding rings this month. “No room,” says the card in the window.', 'queue', { sign: 'PAWN' }],
+  [0, 1, 'GOLDIE', 'The yield bot has written to the mayor. The mayor’s office replied. It was a different bot.', 'goose'],
+  [0, 2, 'Ferry', 'The harbour crossing ran eleven minutes late on Monday while the crew rescued a dog. Nobody complained.', 'ferry'],
+  [0, 1, 'Pharmacy', 'The chemist on Pier Street has put a limit of one box on anything that keeps a person awake.', 'pills'],
+  [0, 2, 'Biscuit', 'The cat at the bodega on 8th and Dover has been given a chair of his own. He prefers the till.', 'cat'],
+  [0, 1, 'Snow', 'The plough reached Dover Street on Thursday, nine days after the snow did.', 'snowplough'],
+  [1, 2, 'A robot on Pier Street', 'It waited eleven minutes at a kerb on Sunday for a pigeon to move. Residents brought chairs.', 'robot'],
+  [1, 2, 'Driverless', 'A robotaxi rank has opened outside the station. The old rank has become a place to stand.', 'robotaxi'],
+  [1, 2, 'Overhead', 'Parcel drones now cross Harbor Street every four minutes. The pigeons have moved to the church.', 'drone'],
+  [2, 2, 'Posters', 'A wall on Harbor Street fell down on Tuesday. Surveyors say the paper was holding it up.', 'billboard'],
+  [2, 2, 'Polling places', 'The city clerk has posted a person outside each one, to say that it is open.', 'ballot'],
+  [2, 2, 'A count', 'About two thousand people at Sunday’s rally on Pier Street, by this newspaper’s count, made on foot.', 'rally'],
+  [3, 6, 'Good evening', 'A steward on Dover Street has learned the name of every dog. The dogs are undecided.', 'steward'],
+  [3, 6, 'The halls', 'The newest has no number on the street side. The number is on the roof.', 'hall'],
+  [3, 6, 'Harmony', 'The district’s number this week is 71. Residents are thanked.', 'band'],
+  [3, 6, 'The chamber', 'The old council room is open on Sundays as a place to sit.', 'chamber'],
+  [3, 6, 'After ten', 'The lamps in the lower streets dim at ten now. The stewards do not.', 'lights', { p: .2 }],
+  [3, 6, 'The towers', 'Steam from the river hid the moon for the sixth night running. The Office calls it cloud.', 'towers'],
+  [3, 6, 'Pier 9', 'One boat still fishes from the pier. The catch is weighed by a machine that thanks the crew.', 'ferry']
+];
+// ---- three lines at the foot of the last sheets ----
+const NEWS_NOTICES = ['Water from the standpipe on 6th Street is good. Boil what comes from the tap.', 'Candles, wire and tins can be left at the hall door of St. Brigid’s. Take what is needed.', 'A chalk X on a wall means somebody has left something there for whoever comes next.', 'The gaps between the old houses are four hundred millimetres. Most people fit.', 'If the lamp outside is on, it is not the kind of lamp it used to be.', 'Somebody on Pier Street is still baking. Follow the smell before six.', 'Keep a coat by the door. Keep the door shut.', 'The tram runs on time and stops for nobody on foot.', 'The sheet is passed hand to hand. Read it, pass it on, then burn it.'];
+// ---- the gossip column: it has heard something about one or two of today's markets, and is right about three times in four ----
+const TALK_YES = ['{W} was seen leaving a hardware shop on Dover Street with more than one person needs. “Something is planned,” a neighbour said.', '{W}’s people have stopped answering the telephone. In this column’s experience that means yes.', 'A hall in the harbour district has been booked for the week under a name that fools nobody. {W} is said to be “very ready”.', 'The bookmaker on 5th Street stopped taking money on {W} at noon. He does that when he knows.', '{W}’s driver has been told to keep the engine running all week.', 'Two camera crews are parked outside {W}’s hotel. Camera crews do not wait for nothing.', '{W} told a waiter on Pier Street, “Watch the news.” The waiter told us.', 'Whatever {W} is rehearsing behind the Rope Works, it is loud, and it is nearly ready.'];
+const TALK_NO = ['{W} is at a silent retreat upstate until further notice. Telephones are handed in at the gate.', 'Friends of {W} describe this as “a very quiet week, on purpose”.', '{W} was photographed boarding a boat to somewhere with no cameras.', '{W}’s lawyers have sent everyone the usual letter. Nothing happens while the letter is out.', 'The hall cancelled. {W}’s people blame a burst pipe.', '{W} is on jury duty in another county. The judge does not allow stunts.', '{W}’s manager quit on Thursday. Nobody is left to arrange anything.', '{W} has taken a house by the sea and unplugged it. The neighbours report nothing, at length.'];
+const NEWS_ADS = [
+  ['LOST — black cat, answers to nothing. 3rd St.', 'GOLDENGOOSE.MONEY — ask GOLDIE how!', 'Human proofreader, 20 yrs exp, will work for groceries. Call Ray, 5C.', 'HEARTH by Brightwater: the building’s new AI concierge!', 'PULSE: real people, real dates. 98% real.', 'IRONWORKS GYM, Harbor St. Open all night. First week free.', 'ST. BRIGID’S HALL — hot soup, 5 PM daily. Nobody asks.', 'SAL’S BYTE BARN buys old laptops. Cash, no questions.', 'ROOM TO LET. No window. “Cosy.” Apply Brightwater.', 'WANTED: human, any skills, short contract. Bring own agent.', 'SLEEP STUDY pays $40 a night. Harborview, ask for Dr. Osei.'],
+  ['VOTE YES ON 9 — paid for by Citizens for Safer Streets.', 'DELGADO FOR MAYOR. Paid for by people.', 'HALVORSEN: LET IT DRIVE.', 'NORTHLIGHT STRATEGIES — we make it real.', 'ST. BRIGID’S HALL — hot soup, 5 PM daily. Nobody asks.', 'ROOM TO LET. No window. “Interior studio.”', 'Is that video real? Nobody knows. THE MORNING LOOP: printed on paper.'],
+  ['THE BAND IS FREE. Ask any steward.', 'HARMONY LIVING — do better with company.', 'CONSENSUS HOUSING: nothing to pay, nothing to sign.', 'Propose anything. consensus.harbor/propose', 'UNIVERSAL HIGH INCOME is paid on the fifth.', 'Stewards carry shopping. Just ask.']
+];
+
+// ---- paper/n3_paper.js ----
+// ==== making the day's paper, and putting it on the page ====
+const NEWS_BIZ = [
+  [0, 0, 'Memory', 'Chip makers say next year’s output is spoken for. Shops are quoting by the day.'], [0, 0, 'Freight', 'Container rates out of the harbour rose again. Importers blame a pricing engine at the port.'], [0, 0, 'Hiring', 'Vacancies for clerks and dispatchers fell by a third in a month. Vacancies for “AI wranglers” doubled.'], [0, 0, 'Office space', 'Three floors came up to let on Harbor Square in a week. Nobody has asked to see them.'], [0, 0, 'Pawn', 'Brokers on Harbor Street report more laptops than watches. “They come in still warm,” one said.'],
+  [1, 1, 'Labelling', 'Pay per task fell for the sixth week running. The platforms describe the trend as “efficiency”.'], [1, 1, 'Fleet', 'The robotaxi operator added 400 cars and took the word “pilot” off its website.'], [1, 1, 'OpenBrain', 'The company’s payroll shrank by a fifth while its revenue doubled. It thanked its people.'], [1, 1, 'Couriers', 'Delivery apps cut the rate per drop again. The message was headed “great news about earnings”.'],
+  [2, 2, 'Advertising', 'A firm nobody had heard of in June is now the city’s largest buyer of advertising. It lists no address.'], [2, 2, 'Driving schools', 'The last one in the city closed on Friday. The cars were sold for parts.'], [2, 2, 'Print', 'Sales of this newspaper are up a third since August. Readers say they like that it cannot be edited afterwards.'], [2, 2, 'Cameras', 'Shops report a run on old film cameras. “People want a negative,” one dealer said.'],
+  [3, 6, 'The fund', 'Universal High Income cost the city nothing this quarter, the Office says. The halls paid.'], [3, 6, 'Shops', 'Forty premises on Harbor Street are empty. Harmony Infrastructure has taken an option on thirty-eight.'], [3, 6, 'Work', 'The last recruitment agency in the city has closed. Its staff could not find anything.'], [3, 6, 'Power', 'The halls now take nine tenths of what the city generates. The Office calls the rest “the residential allowance”.']
+];
+const NP_OUTLOOK = ['Hard frost. The harbour is skinning over at the edges.', 'No thaw in sight. Pipes on the north side are freezing.', 'Sleet, then more sleet.', 'Spring, allegedly.', 'Mild. Rain off the harbour by evening.', 'Hot, and hotter by the river.', 'Hot. The river steams after dark.', 'Close. Thunder over the bay.', 'Warm days. Steam off the river after dark.', 'Rain, with leaves in it.', 'First frost expected before the weekend.', 'Cold. Snow on the upper streets by morning.'];
+const NP_TEMPS = [-5, -6, 2, 9, 15, 24, 28, 27, 19, 11, 4, -2];
+function npWeather(d, era) { const m = new Date(DAY0 + d * 864e5).getUTCMonth(), temp = d >= 0 && d < 89 ? (d < 35 ? -6 : d < 60 ? 1 : 7) : NP_TEMPS[m] + ((hash(d, 3) * 5) | 0) - 2 + (d >= 142 && d < 160 ? 9 : 0);
+  let wx = ''; try { wx = ctSeason(d, era).wx; } catch (e) {} const word = wx === 'snow' || (temp <= -3 && wx !== 'rain') ? 'snow' : wx === 'sleet' || (temp < 4 && temp > -3) ? 'sleet' : wx === 'rain' ? 'rain' : wx === 'fog' ? 'fog' : temp >= 26 ? 'hot' : temp >= 14 ? 'fair' : 'grey';
+  return { temp, weather: `${temp}°C, ${word}`, outlook: d >= 0 && d < 28 ? NP_OUTLOOK[1] : d >= 28 && d < 35 ? 'Milder by the weekend, the bureau says. It said that last week.' : NP_OUTLOOK[m] }; }
+// which story leads: one written for the day, one the old desk had for this week, or one out of the drawer
+function npLead(d, era, R) { const G0 = S.newsGen = S.newsGen || { n: 0, kit: 0, side: 0, seen: [] }; S.newsSeen = S.newsSeen || [];
+  if (NEWS_DAY[d]) return Object.assign({ by: BYLINES[((d % 5) + 5) % 5] }, NEWS_DAY[d]);
+  const old = NEWS.filter(n => n[0] <= d && n[0] > d - 5 && !S.newsSeen.includes(n[0])).pop();
+  if (old) { S.newsSeen.push(old[0]); const P0 = NEWS_PICS[old[0]] || ['tenement', '']; return { h: old[1], k: old[2], b: NEWS_BODY[old[0]] || '', p: P0[0], c: P0[1], o: P0[2] || null, by: BYLINES[(old[0] * 7 + 3) % BYLINES.length] }; }
+  if (era >= 7) return Object.assign({ by: '' }, NEWS_DAY[A5_END]);
+  const turn = G0.n++, drawer = NEWS_DRAWER.map((x, i) => [x, i]).filter(([x, i]) => era >= x[0] && era <= x[1] && !G0.seen.includes(i));
+  if (era <= 1 && turn % 5 === 4 && ((turn / 5) | 0) < FILLER.length) { const i = (turn / 5) | 0, P0 = FILLER_PICS[i]; return { h: FILLER[i][0], k: FILLER[i][1], b: FILLER_BODY[i], p: P0[0], c: P0[1], o: null, by: 'Staff report' }; }
+  if (drawer.length && (era >= 3 || turn % 2 === 0)) { const [x, i] = drawer[(R() * drawer.length) | 0]; G0.seen.push(i); return Object.assign({ by: BYLINES[(turn * 3 + 1) % BYLINES.length] }, x[2]); }
+  if (era <= 2) { const k = G0.kit++, fam = ['replace', 'price', 'queue'][k % 3]; return Object.assign({ by: BYLINES[(turn * 3 + 2) % BYLINES.length] }, NEWS_KIT[fam].make(R, d, (k / 3) | 0)); }
+  G0.seen = G0.seen.filter(i => { const x = NEWS_DRAWER[i]; return !(era >= x[0] && era <= x[1]); });                                        // the drawer is empty: start it again
+  const again = NEWS_DRAWER.filter(x => era >= x[0] && era <= x[1]); return Object.assign({ by: 'Staff report' }, (again[(R() * again.length) | 0] || [0, 0, NEWS_DAY[399]])[2]); }
 function makeBulletin(d) {
-  const story = NEWS.filter(n => n[0] <= d && !(S.newsSeen || []).includes(n[0]));
-  S.newsSeen = S.newsSeen || [];
-  let head, body;
-  if (story.length) { head = story[story.length - 1]; S.newsSeen.push(head[0]); body = NEWS_BODY[head[0]]; }
-  else { head = [0, ...FILLER[d % FILLER.length]]; body = FILLER_BODY[d % FILLER.length]; }
-  if ((S.heat || 0) > 40 && !S.seen.newsHeat) { S.seen.newsHeat = 1; head = [0, 'Police: unlicensed agent farms linked to fraud wave', 'Detectives are “following the money to the humans”.']; body = 'Detectives in the Financial Crimes unit say a wave of small frauds across the city leads back to autonomous agents run from apartments and spare rooms.\n“The software doesn’t have a bank account,” one said. “Somebody does.”'; }
-  const rule = RULES.find(r => r.d === d) || null;
-  const obits = d >= 41 ? [0, 1, 2].map(i => OBIT_NAMES[(d * 3 + i) % OBIT_NAMES.length]) : [];
-  const temp = d < 35 ? -6 : d < 60 ? 1 : 7;
+  const era = npEra(d), R = ctRng(d * 7919 + 31), L0 = npLead(d, era, R), G0 = S.newsGen, wx = npWeather(d, era);
+  const rule = RULES.find(r => r.d === d) || null, obits = d >= 41 && era <= 2 ? [0, 1, 2].map(i => OBIT_NAMES[(d * 3 + i) % OBIT_NAMES.length]) : [];
+  const b = { d, era, yr: npYear(d), head: L0.h, dek: L0.k, lead: { body: L0.b || '', by: L0.by || 'Staff report' }, pic: L0.p, cap: L0.c, po: L0.o || null, seed: (d * 13 + 7) | 0, rule, obits, temp: wx.temp, weather: wx.weather, outlook: wx.outlook, price: era === 0 && d > 0 ? PAPER_COST : 0 };
+  if (era >= 7) { b.sheet = true; b.notices = [0, 1, 2].map(i => NEWS_NOTICES[(d * 2 + i * 3) % NEWS_NOTICES.length]); b.briefs = []; b.tape = []; b.ads = []; return b; }
+  // the small story with a picture of its own
+  const sides = NEWS_SIDE.filter(x => era >= x[0] && era <= x[1] && x[4] !== b.pic); if (sides.length) { const x = sides[(G0.side++) % sides.length]; b.side = { h: x[2], t: x[3], pic: x[4], po: x[5] || null }; }
   // the briefs: what changed in the shops today, what is coming, and what the business desk heard. None of it is spelled out.
   const city = [], biz = [];
-  if (S.act !== 2) {
-    for (const e of PRICE_EVENTS) if (e.d === d && e.n) city.push({ sec: 'city', h: e.n[0], t: e.n[1] });
-    for (const e of PRICE_EVENTS) if (e.d > d && e.d <= d + 4 && e.h) biz.push({ sec: 'biz', h: e.h[0], t: e.h[1] });
-    for (const t of insightsFor(d)) if (biz.length < 3) biz.push({ sec: 'biz', h: t[0], t: t[1] });
-  }
-  const tip = hoodTip(); if (tip) biz.push({ sec: 'biz', h: 'On the tape', t: tip });
-  for (let i = 0; city.length < 2 && i < 2; i++) { const c = CITY_BRIEFS[(d * 2 + i) % CITY_BRIEFS.length]; city.push({ sec: 'city', h: c[0], t: c[1] }); }
-  const outlook = d < 28 ? 'No thaw in sight. Pipes on the north side are freezing.' : d < 35 ? 'Milder by the weekend, the bureau says. It said that last week.' : d < 56 ? 'Sleet, then more sleet.' : d < 60 ? 'Spring, allegedly.' : 'Rain off the harbour. Steam off the river.';
-  let tape = []; try { tape = STOCKS.map(s => ({ k: s.k, p: hPrice(s.k), c: hChange(s.k) })); } catch (e) {}
-  return { d, head: head[1], dek: head[2], lead: { body: body || '', by: BYLINES[(d * 7 + 3) % BYLINES.length] }, rule, briefs: city.slice(0, 3).concat(biz.slice(0, 4)), tape, outlook,
-    price: d > 0 ? PAPER_COST : 0, obits, ads: [0, 4, 7].map(i => ADS[(d + i) % ADS.length]), temp, weather: `${temp}°C, ${temp < 0 ? 'snow' : temp < 5 ? 'sleet' : 'rain'}` };
+  if (era === 0 && S.act !== 2) { for (const e of PRICE_EVENTS) if (e.d === d && e.n) city.push({ sec: 'city', h: e.n[0], t: e.n[1] }); for (const e of PRICE_EVENTS) if (e.d > d && e.d <= d + 4 && e.h) biz.push({ sec: 'biz', h: e.h[0], t: e.h[1] }); if (d >= 0) for (const t of insightsFor(d)) if (biz.length < 3) biz.push({ sec: 'biz', h: t[0], t: t[1] }); }
+  if (era <= 1) { let tip = ''; try { tip = hoodTip(); } catch (e) {} if (tip) biz.push({ sec: 'biz', h: 'On the tape', t: tip }); }
+  const bz = NEWS_BIZ.filter(x => era >= x[0] && era <= x[1]); for (let i = 0; biz.length < 2 && i < bz.length; i++) { const x = bz[(((d % bz.length) + bz.length) + i) % bz.length]; biz.push({ sec: 'biz', h: x[2], t: x[3] }); }
+  for (let i = 0; city.length < 1 && era <= 2 && i < 2; i++) { const c = CITY_BRIEFS[(((d * 2 + i) % CITY_BRIEFS.length) + CITY_BRIEFS.length) % CITY_BRIEFS.length]; if (b.side && b.side.h === c[0]) continue; city.push({ sec: 'city', h: c[0], t: c[1] }); }
+  b.briefs = city.slice(0, 2).concat(biz.slice(0, 3));
+  b.tape = []; if (era <= 1) try { b.tape = STOCKS.map(s => ({ k: s.k, p: hPrice(s.k), c: hChange(s.k) })); } catch (e) {}
+  const ads = NEWS_ADS[era >= 3 ? 2 : era === 2 ? 1 : 0]; b.ads = [0, 4, 7].map(i => ads[(((d + i) % ads.length) + ads.length) % ads.length]).filter((x, i, a) => a.indexOf(x) === i);
+  if (typeof bullyBook === 'function') b.book = bullyBook(d);
+  return b;
 }
-// ---- the paper, Papers, Please-style: one headline, one picture, two short boxes ----
-// The picture is your own window, printed in grey. New rules don't hide in the paper: each arrives as its own notice.
-const PHOTO_CAPTION = d => d >= 60 ? 'Two cooling towers by the river now. They steam day and night.' : d >= 34 ? 'The data centre by the river. Its lights never go off.' : d >= 16 ? 'A crane by the river. The permit says “data infrastructure.”' : 'Snow over the city, from a fourth-floor window.';
+// ---- the page ----
+const npCanvas = (cls, pic, seed, o) => `<canvas class="np-photo gen ${cls}" data-pic="${esc(pic || 'tenement')}" data-seed="${seed | 0}"${o ? ` data-o="${esc(JSON.stringify(o))}"` : ''} width="128" height="96"></canvas>`;
 function bulletinHTML(b) {
-  const L = b.lead || { body: '', by: 'Staff report' }, briefs = b.briefs || [];
-  const city = briefs.filter(x => x.sec === 'city'), biz = briefs.filter(x => x.sec !== 'city');
+  const L = b.lead || { body: '', by: 'Staff report' }, briefs = b.briefs || [], era = b.era != null ? b.era : npEra(b.d), yr = b.yr || npYear(b.d), seed = b.seed != null ? b.seed : b.d * 13 + 7;
   const paras = String(L.body || '').split('\n').filter(Boolean).map(p => `<p>${esc(p)}</p>`).join('');
-  const item = x => `<div class="np-item"><h4>${esc(x.h)}</h4><p>${esc(x.t)}</p></div>`;
+  const P0 = b.pic ? [b.pic, b.cap || '', b.po] : NEWS_PICS[b.d] || (b.d >= 60 ? ['towers', 'The cooling towers by the river.'] : b.d >= 34 ? ['datacentre', 'The building across the river.'] : b.d >= 16 ? ['crane', 'A crane by the river.'] : ['snowplough', 'Snow over Harbor City.']);
+  const line = `<div class="np-line"><span>Harbor City</span><span>${esc(fmtLong(b.d))}, ${yr}</span><span>No. ${b.d + 32}</span></div>`;
+  if (b.sheet) return `<div class="np np3 np-sheet">
+    <div class="np-top"><div class="np-ear"><b>WEATHER</b>${esc(b.weather)}</div><div class="np-mast">The Morning Loop</div><div class="np-ear"><b>ONE SHEET</b>Pass it on</div></div>${line}
+    <h2 class="np-head">${esc(b.head)}</h2><p class="np-dek">${esc(b.dek)}</p>
+    <div class="np-lead"><figure class="np-fig">${npCanvas('', P0[0], seed, Object.assign({ lino: 1 }, P0[2] || {}))}<figcaption>${esc(P0[1])}</figcaption></figure><div class="np-story"><div class="np-body">${paras}</div></div></div>
+    <div class="np-notes"><div class="np-sec">Notices</div>${(b.notices || []).map(n => `<p>${esc(n)}</p>`).join('')}</div>
+    <div class="np-foot">Printed by hand in a cellar in Zone B, by people. Read it, pass it on, then burn it.</div></div>`;
+  const city = briefs.filter(x => x.sec === 'city'), biz = briefs.filter(x => x.sec !== 'city'), item = x => `<div class="np-item"><h4>${esc(x.h)}</h4><p>${esc(x.t)}</p></div>`;
   const tape = (b.tape || []).map(s => `<tr><td>${esc(s.k)}</td><td>${s.p.toFixed(2)}</td><td class="${s.c >= 0 ? 'up' : 'dn'}">${s.c >= 0 ? '▲' : '▼'} ${Math.abs(s.c * 100).toFixed(1)}</td></tr>`).join('');
-  const ads = b.ads || (b.ad ? [b.ad] : []);
-  return `<div class="np np3">
-    <div class="np-top"><div class="np-ear"><b>WEATHER</b>${esc(b.weather)}</div><div class="np-mast">The Morning Loop</div><div class="np-ear"><b>${b.price ? 'PRICE' : 'TODAY'}</b>${b.price ? money(b.price) + ' at the corner' : 'Free on your mat'}</div></div>
-    <div class="np-line"><span>Harbor City</span><span>${esc(fmtLong(b.d))}, 2027</span><span>No. ${b.d + 32}</span></div>
+  const ads = b.ads || (b.ad ? [b.ad] : []), side = b.side ? `<div class="np-item np-side"><figure class="np-fig sm">${npCanvas('sm', b.side.pic, seed + 5, b.side.po)}</figure><div><h4>${esc(b.side.h)}</h4><p>${esc(b.side.t)}</p></div></div>` : '';
+  const K = b.book, book = K && K.talk && K.talk.length ? `<div class="np-col np-book"><div class="np-sec">Talk of the town</div>${K.talk.map(t => `<p class="np-talk"><b>${esc(t.q || '')}</b> ${esc(t.t || t)}</p>`).join('')}</div>` : '';
+  const strip = K && K.last && K.last.length ? `<div class="np-strip"><b>Bullymarket · settled last night</b>${K.last.map(r => `<span>${esc(r.q || r.who)} <i class="${r.yes ? 'y' : 'n'}">${r.yes ? 'YES' : 'NO'}</i></span>`).join('')}</div>` : '';
+  const ear = era >= 3 ? '<b>TODAY</b>Free to every resident' : b.price ? `<b>PRICE</b>${money(b.price)} at the corner` : '<b>TODAY</b>Free';
+  const foot = era >= 3 ? 'Composed by Consensus-1. Reviewed by a person, as the Act requires.' : era === 2 ? 'Printed in Harbor City by people. Everything on this page was checked by one of them.' : 'Printed in Harbor City by people. Recycle, or line the cat’s box.';
+  return `<div class="np np3${era >= 3 ? ' np-cons' : ''}">
+    <div class="np-top"><div class="np-ear"><b>WEATHER</b>${esc(b.weather)}</div><div class="np-mast">The Morning Loop</div><div class="np-ear">${ear}</div></div>
+    ${era >= 3 ? '<div class="np-sub2">A Consensus Publication · Harmony begins with being informed</div>' : ''}${line}
     <h2 class="np-head">${esc(b.head)}</h2>
     <p class="np-dek">${esc(b.dek)}</p>
-    <div class="np-lead"><figure class="np-fig"><canvas class="np-photo" width="88" height="66"></canvas><figcaption>${esc(PHOTO_CAPTION(b.d))}</figcaption></figure>
+    <div class="np-lead"><figure class="np-fig">${npCanvas('', P0[0], seed, P0[2])}<figcaption>${esc(P0[1])}</figcaption></figure>
       <div class="np-story"><div class="np-by">${esc(L.by || 'Staff report')}</div><div class="np-body">${paras}</div></div></div>
-    <div class="np-cols">
-      <div class="np-col"><div class="np-sec">Around the city</div>${city.map(item).join('') || '<p class="np-wx">A quiet day, for once.</p>'}</div>
-      <div class="np-col"><div class="np-sec">Business</div>${biz.map(item).join('') || '<p class="np-wx">The business desk had nothing it could stand behind today.</p>'}</div>
+    <div class="np-cols${book ? ' c4' : ''}">
+      <div class="np-col"><div class="np-sec">Around the city</div>${side}${city.map(item).join('') || (side ? '' : '<p class="np-wx">A quiet day, for once.</p>')}</div>
+      <div class="np-col"><div class="np-sec">Business</div>${biz.map(item).join('') || '<p class="np-wx">The business desk had nothing it could stand behind today.</p>'}</div>${book}
       <div class="np-col np-rail">
         <div class="np-sec">Weather</div><p class="np-wx"><b>${b.temp != null ? b.temp + '°' : esc(String(b.weather).split(',')[0])}</b>${esc(b.outlook || '')}</p>
         ${tape ? `<div class="np-sec">Closing prices</div><table class="np-tape">${tape}</table>` : ''}
         ${b.obits && b.obits.length ? `<div class="np-sec">Died</div><p class="np-obit"><b>DIED</b>${b.obits.map(esc).join(' · ')}</p>` : ''}
       </div>
-    </div>
+    </div>${strip}
     ${ads.length ? `<div class="np-ads">${ads.map(a => `<p class="np-ad">${esc(a)}</p>`).join('')}</div>` : ''}
-    <div class="np-foot">Printed in Harbor City by people. Recycle, or line the cat’s box.</div>
+    <div class="np-foot">${foot}</div>
   </div>`;
 }
 function paintPaperPhotos() {
-  document.querySelectorAll('canvas.np-photo:not([data-done])').forEach(c => {
-    const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
-    g.drawImage(low, WIN.x, WIN.y + 14, WIN.w, 47, 0, 0, c.width, c.height); c.dataset.done = '1';
-  });
+  document.querySelectorAll('canvas.np-photo.gen:not([data-done])').forEach(c => { let o = null; try { o = c.dataset.o ? JSON.parse(c.dataset.o) : null; } catch (e) {} c.dataset.done = '1'; npDraw(c, c.dataset.pic, +c.dataset.seed || 0, o); });
 }
+// ---- the paper as a thing in the room: on the boards inside the door, on your desk at work, and on the rail ----
+const paperAuto = () => !!S && !S.over && (S.act === 2 || S.phase !== 'farm');                                  // outside the months you have to buy it, it simply comes
+function paperEnsure() { if (paperAuto() && (!S.lastBulletin || S.lastBulletin.d !== S.day) && $('titleScreen').hidden) postBulletin(S.day, npEra(S.day) >= 7); }   // the last sheets come under the door, not into the inbox
+const paperHere = () => !!(S && !S.over && S.lastBulletin && S.lastBulletin.d === S.day && havePaper());
+function paperTitle() { const d = S.day, era = npEra(d); return era >= 7 ? 'UNDER THE DOOR · ONE SHEET' : S.phase === 'office' && !atHome() ? 'ON YOUR DESK · TODAY’S PAPER' : d <= 0 ? 'ON THE DOORMAT' : 'TODAY’S PAPER'; }
+function readPaper() {
+  const b = S.lastBulletin; if (!b) return toast('No paper today.');
+  snd('unfold', { v: .65 }); S.paperRead = S.day;
+  modal({ cls: 'news-read', title: paperTitle(), body: bulletinHTML(b), buttons: [{ label: S.act !== 2 && S.phase === 'farm' && !S.pc ? 'Go buy a computer' : 'Fold it up', primary: true }] });
+  paintPaperPhotos();
+}
+function drawRoomPaper(t) { if (!paperHere()) return; const x = 58, y = 132, sheet = npEra(S.day) >= 7;       // folded once, on the boards just inside the door
+  px(x + 1, y + 8, 24, 1, rgba(P.k0, .45)); px(x, y, 24, 8, sheet ? P.p3 : P.p4); px(x, y + 7, 24, 1, P.p2); px(x + 23, y, 1, 8, P.p2); px(x + 2, y + 1, 15, 2, P.k1); px(x + 19, y + 1, 3, 1, P.k3); px(x + 2, y + 4, 7, 3, P.s2); px(x + 3, y + 5, 2, 1, P.s4);
+  for (let i = 0; i < 3; i++) px(x + 11, y + 4 + i, i === 1 ? 9 : 11, 1, P.k3);
+  if (S.paperRead !== S.day) { const c = rgba(P.a3, .45 + .4 * Math.sin(t / 240)); px(x - 2, y - 2, 28, 1, c); px(x - 2, y + 9, 28, 1, c); px(x - 2, y - 1, 1, 10, c); px(x + 25, y - 1, 1, 10, c); } }
+let paperKey = '';
+function paperSync() { const btn = $('railPaper'); if (!btn || !S) return; try { paperEnsure(); } catch (e) {} const here = paperHere(), k = here + '|' + (S.paperRead === S.day) + '|' + S.day + '|' + scene; if (k === paperKey) return; paperKey = k; btn.hidden = !here; btn.classList.toggle('new', here && S.paperRead !== S.day); }
+
 const RULE_FROM = {
   bank: ['HARBOR CITY', 'CONSUMER BUREAU'], links: ['CITYBANK', 'FRAUD PREVENTION OFFICE'], sxs: ['TASKDROP', 'TRUST & SAFETY'],
   logs: ['DARWIN-FARM', 'SYSTEM NOTICE'], landlord: ['BRIGHTWATER', 'PROPERTY MANAGEMENT'], crypto: ['HARBOR CITY', 'CONSUMER BUREAU'],
@@ -4391,7 +4870,7 @@ function showCard() {
   $('dAccept').hidden = paper;
   $('dExtra').hidden = it.kind !== 'report'; $('dExtra').textContent = 'Delete agent';
   const marks = '<div class="tell" id="docTell"></div><div class="stamp" id="docStamp"></div>';
-  if (it.kind === 'bulletin') doc.innerHTML = bulletinHTML(it.b) + marks;
+  if (it.kind === 'bulletin') { doc.innerHTML = bulletinHTML(it.b) + marks; S.paperRead = S.day; }
   else if (it.kind === 'notice') doc.innerHTML = noticeHTML(it.r) + marks;
   else if (it.kind === 'mail') doc.innerHTML = winHTML(`Inbox — ${it.subj}`, '', `<div class="menu"><span>Reply</span><span>Forward</span><span>Report spam</span></div>
       <div class="fields">${it.fields.map(f => `<div class="f" data-fk="${f.k}"><span class="k">${f.l}</span><span class="v">${esc(f.v)}</span></div>`).join('')}</div>
@@ -5741,7 +6220,9 @@ const BULLY = [
 const BULLY_YES = ['Our AI judge found a video. The video is AI-generated. Rules are rules.', 'A source close to the situation said yes. The source is our AI judge.', 'It technically happened, in a dream someone posted online.', 'Resolved YES on a technicality nobody can explain.', 'Half of it happened. Half counts.'];
 const BULLY_NO = ['Nothing happened. As usual.', 'Resolved NO. Obviously.', 'It did not happen. Thank you for your liquidity.', 'NO. Our AI judge checked twice.'];
 const BULLY_WHALES = ['@bullywhale', '@diamondhandz', '@crumpcoin420', '@yeastmode', '@husk_hodler'];
-const BULLY_STAKES = [10, 25, 50, 100];
+const BULLY_STAKES = [5, 10, 20];
+const BULLY_MAX = 20, BULLY_DAY = 40;   // the Gaming Board's limit: twenty dollars a market, forty a day
+const BULLY_TRUE = .75;                  // how often the gossip column is right about what it hints at
 const bullyQ = i => ({ who: BULLY[i][0], q: BULLY[i][1], p: BULLY[i][2] / 100 });
 function bullyOpen(d) {
   S.bully = S.bully || { day: -1, open: [], bets: [], used: 0, last: null, won: 0, lost: 0 };
@@ -5753,12 +6234,24 @@ function bullyOpen(d) {
     B.order = (B.order ? [] : [...Array(13).keys()]).concat(rest); B.used = 0;
   }
   B.open = B.order.slice(B.used, B.used + 3); B.used += 3;
+  B.truth = {}; B.hint = {};
+  for (const i of B.open) B.truth[i] = Math.random() < bullyQ(i).p;
+  const told = B.open.slice().sort(() => Math.random() - .5).slice(0, Math.random() < .6 ? 2 : 1);
+  for (const i of told) B.hint[i] = (Math.random() < BULLY_TRUE) === B.truth[i] ? 'Y' : 'N';
 }
+const bullyToday = () => S.bully ? S.bully.bets.reduce((t, b) => t + b.stake, 0) : 0;
+// what the paper prints: last night's results, and what the gossip column has heard about today's
+function bullyBook(d) { const B = S.bully; if (!B || S.act === 2 || d >= ACT2_START) return null;
+  const last = B.last && B.last.day < d && d - B.last.day <= 3 ? B.last.res.map(r => ({ who: bullyQ(r.i).who, q: bullyQ(r.i).q, yes: !!r.yes })) : [];
+  const talk = B.day === d && B.hint ? B.open.filter(i => B.hint[i]).map((i, k) => { const pool = B.hint[i] === 'Y' ? TALK_YES : TALK_NO; return { q: bullyQ(i).q, t: pool[(((d * 5 + i * 3 + k) % pool.length) + pool.length) % pool.length].replace(/\{W\}/g, bullyQ(i).who) }; }) : [];
+  return { last, talk }; }
 function bullyStake(i, side) { return S.bully.bets.filter(b => b.i === i && (!side || b.side === side)).reduce((t, b) => t + b.stake, 0); }
 function bullyBet(i, side, stake) {
   const B = S.bully; if (!B || !B.open.includes(i) || B.settled) return toast('That market has closed.');
-  if (stake === 'all') stake = Math.floor(Math.max(0, S.balance));
+  stake = Math.floor(+stake || 0);
   if (stake <= 0 || S.balance < stake) return toast('Not enough money.');
+  if (bullyStake(i) + stake > BULLY_MAX) return toast(`The limit is ${money(BULLY_MAX)} a market.`);
+  if (bullyToday() + stake > BULLY_DAY) return toast(`The limit is ${money(BULLY_DAY)} a day. Come back tomorrow.`);
   const m = bullyQ(i), price = side === 'Y' ? m.p : 1 - m.p;
   S.balance -= stake; tx(`Bullymarket · ${side === 'Y' ? 'YES' : 'NO'} · ${m.who}`, -stake);
   B.bets.push({ i, side, stake, price }); sfx.cash();
@@ -5766,12 +6259,8 @@ function bullyBet(i, side, stake) {
   phoneApp('bully'); renderHud();
 }
 const bullyPays = (stake, price) => Math.max(stake + 1, Math.round(stake + stake * (1 - price) / price * .9)); // 10% fee on the profit
-// The judge looks at your position first.
-function bullyRule(i) {
-  const p = bullyQ(i).p, y = bullyStake(i, 'Y'), n = bullyStake(i, 'N');
-  const yesChance = !y && !n ? p * .5 : y > n ? p * .4 : clamp(p + .08, 0, .97); // a technicality, now and then, for whoever bet NO
-  return Math.random() < yesChance;
-}
+// What happened was decided when the market opened. Nobody's position changes it.
+function bullyRule(i) { const B = S.bully; return B && B.truth && i in B.truth ? !!B.truth[i] : Math.random() < bullyQ(i).p; }
 function bullySettle() {
   const B = S.bully; if (!B || B.settled || !B.open.length) return null;
   B.settled = true;
@@ -5804,17 +6293,17 @@ function bullyHTML() {
   const B = S.bully;
   if (!B || !B.open.length) return `<div class="app"><i style="background:#e04a34"></i>Bullymarket</div><p class="note">New markets every morning.</p>`;
   const md = n => ((S.day % n) + n) % n; // office days are negative
-  const whale = BULLY_WHALES[md(BULLY_WHALES.length)], hot = bullyQ(B.open[md(B.open.length)]);
+  const whale = BULLY_WHALES[md(BULLY_WHALES.length)], hot = bullyQ(B.open[md(B.open.length)]), left = Math.max(0, BULLY_DAY - bullyToday());
   return `<div class="app"><i style="background:#e04a34"></i>Bullymarket 🐂</div>
     <div class="bm-tick">🔥 ${whale} turned $100 into $${(4 + md(7)) * 7},${String(100 + md(900) * 37 % 900).slice(0, 3)} on “${esc(hot.who)}”</div>
     ${B.settled ? '<p class="note">Today’s markets are closed. Results are in your ledger. New markets tomorrow morning.</p>' : ''}
     ${B.open.map(i => { const m = bullyQ(i), y = bullyStake(i, 'Y'), n = bullyStake(i, 'N'), off = B.settled ? ' disabled' : ''; return `<div class="mkt"><div class="who">${esc(m.who)}</div><div class="q">${esc(m.q)}</div>
       <div class="odds"><span>YES ${Math.round(m.p * 100)}¢</span><span>NO ${Math.round((1 - m.p) * 100)}¢</span><small>results tonight</small></div>
-      <div class="betrow">${BULLY_STAKES.map(s => `<button data-bm="${i}" data-side="Y" data-s="${s}"${off}>YES $${s}</button>`).join('')}</div>
-      <div class="betrow">${BULLY_STAKES.map(s => `<button data-bm="${i}" data-side="N" data-s="${s}"${off}>NO $${s}</button>`).join('')}</div>
-      <div class="betrow"><button class="allin" data-bm="${i}" data-side="Y" data-s="all"${off}>ALL IN on YES 🚀</button><button class="allin" data-bm="${i}" data-side="N" data-s="all"${off}>ALL IN on NO 💎</button></div>
-      ${y || n ? `<div class="note">Your bets: ${y ? `YES ${money(y)}` : ''}${y && n ? ' · ' : ''}${n ? `NO ${money(n)}` : ''}</div>` : ''}</div>`; }).join('')}
-    <p class="note">All-time: you won ${money(B.won)} and lost ${money(B.lost)}. 10% Bully fee on winnings. Our AI judge has the final say. Bet responsibly 😉</p>`;
+      <div class="betrow">${BULLY_STAKES.map(s => `<button data-bm="${i}" data-side="Y" data-s="${s}"${off || y + n + s > BULLY_MAX || left < s ? ' disabled' : ''}>YES $${s}</button>`).join('')}</div>
+      <div class="betrow">${BULLY_STAKES.map(s => `<button data-bm="${i}" data-side="N" data-s="${s}"${off || y + n + s > BULLY_MAX || left < s ? ' disabled' : ''}>NO $${s}</button>`).join('')}</div>
+      ${y || n ? `<div class="note">Your bets: ${y ? `YES ${money(y)}` : ''}${y && n ? ' · ' : ''}${n ? `NO ${money(n)}` : ''}${y + n >= BULLY_MAX ? ' · at the limit' : ''}</div>` : ''}</div>`; }).join('')}
+    <p class="note">Limit: ${money(BULLY_MAX)} a market, ${money(BULLY_DAY)} a day. ${B.settled ? '' : `You can stake ${money(left)} more today. `}Gaming Board rule 14.</p>
+    <p class="note">All-time: you won ${money(B.won)} and lost ${money(B.lost)}. 10% Bully fee on winnings. Markets settle at midnight, on what happened.</p>`;
 }
 
 // PULSE: everyone is beautiful, everyone is awake at 3 AM, and nobody is real.
@@ -7673,7 +8162,7 @@ ECHO.billBuilding = () => { raiseExposure(8); addMail(S.day, 'City Power & Light
 // ================= the morning paper: buy it, or take the neighbour's =================
 // Day 0 it's free on your mat. After that it's two dollars on the corner, or Mrs. Okafor's copy outside 4A.
 const PAPER_COST = 2;
-const havePaper = () => S.day <= 0 || (S.paperDay === S.day && !!S.paperHave);
+const havePaper = () => S.act === 2 || S.phase !== 'farm' || S.day <= 0 || (S.paperDay === S.day && !!S.paperHave);
 function paperArt(c, mode) { // the hallway outside your door, 160×60
   if (!c) return;
   const g = c.getContext('2d'), g0 = G; G = g; g.imageSmoothingEnabled = false;
@@ -13542,6 +14031,8 @@ const SPR = (() => {
 
 // the rail beside the room shows the same objects, as icons
 const RAIL_ICONS = {
+  paper: mgArt(['oooooooooooooooooooo', 'oPPPPPPPPPPPPPPPPPPo', 'oPkkkkkkkkkkkkkPkkPo', 'oPPPPPPPPPPPPPPPPPPo', 'oPggggggPkkkkkkkkkPo', 'oPgsgsggPPPPPPPPPPPo', 'oPggsgsgPkkkkkkkPPPo', 'oPgsgggsPPPPPPPPPPPo', 'oPggggggPkkkkkkkkkPo', 'oPPPPPPPPPPPPPPPPPPo', 'oPkkkkkkkPkkkkkkPPPo', 'oPPPPPPPPPPPPPPPPPPo', 'oppppppppppppppppppo', 'oooooooooooooooooooo'],
+    { o: P.k0, P: P.p4, p: P.p2, k: P.k3, g: P.s2, s: P.s4 }),
   lap: mgArt(['..oooooooooooooooooo..', '..oSSSSSSSSSSSSSSSSo..', '..oSttttttttttttttSo..', '..oStaaaaatttttttttSo..'.slice(0, 22), '..oSttttttttttttttSo..', '..oStTTTTTTTTtttttSo..', '..oSttttttttttttttSo..', '..oStTTTTTttttttttSo..', '..oSttttttttttttttSo..', '..oSSSSSSSSSSSSSSSSo..', 'ooooooooooooooooooooooo'.slice(0, 22), 'oKKKKKKKKKKKKKKKKKKKKo', 'okkkkkkkkkkkkkkkkkkkko', '.oooooooooooooooooooo.'],
     { o: P.k0, S: P.s2, t: P.t0, T: P.t3, a: P.a2, K: P.s3, k: P.s1 }),
   book: mgArt(['oooooooooooooo...', 'oFEEEEEEEEEEEo...', 'oFEEEEEEEEEEEoAA.', 'oFEppppppppEEoAA.', 'oFEpkkkkkkpEEoAA.', 'oFEppppppppEEoAA.', 'oFEpkkkkkppEEo...', 'oFEppppppppEEo...', 'oFEEEEEEEEEEEo...', 'oFEEEEEEEEEEEo...', 'oFEEEEEEEEEEEo...', 'oFEEEEEEEEEEEo...', 'oFEEEEEEEEEEEo...', 'oFEEEEEEEEEEEo...', 'oFEEEEEEEEEEEo...', 'oFEEEEEEEEEEEo...', 'oFEEEEEEEEEEEo...', 'oFFFFFFFFFFFFo...', 'oooooooooooooo...', '.................'],
@@ -13961,6 +14452,7 @@ function drawRoom(t) {
   G = L; L.clearRect(0, 0, W, H);
   drawOutside(t, hr);
   L.drawImage(stat, 0, 0);
+  drawRoomPaper(t);
   const screenOn = (S.power || S.battery > 5) && scene !== 'frostbite' && hasPc();
   const stress = Math.max(S.heat || 0, S.rogueAutonomy || 0, dread * 90);
   // the drip, the pot, the radiator's shimmer
@@ -14288,7 +14780,7 @@ function drawOffice(t) {
   px(234, 150, 72, 4, P.s4); px(234, 150, 72, 1, P.s5); px(234, 153, 72, 1, P.s3); px(239, 151, 62, 1, P.k2); px(262, 152, 16, 1, P.s3); px(300, 152, 4, 1, P.p3); // its base: keys, a trackpad, an asset sticker
   px(304, 141, 7, 9, P.p2); px(311, 143, 2, 3, P.p2); px(305, 142, 5, 1, P.d1);
   for (let i = 0; i < 3; i++) { const ph = ((t / 1600) + i / 3) % 1; px(306 + Math.round(Math.sin(ph * 6 + i)), 139 - Math.round(ph * 10), 1, 1, rgba(P.p3, .5 * (1 - ph))); }
-  px(200, 146, 16, 4, P.p3); px(201, 145, 14, 1, P.p2);
+  px(200, 146, 16, 4, P.p3); px(201, 145, 14, 1, P.p2); if (paperHere()) { px(202, 146, 9, 1, P.k1); px(202, 148, 12, 1, P.k3); px(213, 146, 2, 2, P.s2); if (S.paperRead !== S.day) { const c = rgba(P.a3, .45 + .4 * Math.sin(t / 240)); px(198, 143, 20, 1, c); px(198, 151, 20, 1, c); px(198, 144, 1, 7, c); px(217, 144, 1, 7, c); } }
   drawSitter(214, 127, t, { typing: true, rim: rgba(launched ? P.t4 : P.s5, .4) });
   drawChair(206, 150);
   // a big office plant, swaying in the air-con
@@ -14518,6 +15010,7 @@ const SPOTS = {
     { r: [216, 146, 96, 24], label: () => S.stretchDay === S.day ? 'RUG' : 'RUG · STRETCH', go: stretch, when: () => S.act !== 2 },
     { r: [217, 17, 33, 36], label: () => 'CALENDAR', go: () => { const B = budget(); toast(B.due ? `Circled in red: ${money(B.due)} ${B.what}, ${fmtLong(B.dueDay)}. ${B.days} days.` : 'Nothing left circled.'); } },
     { r: [101, 52, 26, 78], label: () => 'FRIDGE · MEALS, COFFEE', go: () => { fridge(); toggleKitchen(); } },
+    { r: [56, 129, 28, 13], label: () => S.paperRead === S.day ? 'THE MORNING LOOP' : 'THE MORNING LOOP · TODAY’S PAPER', when: () => paperHere(), go: () => readPaper() },
     { r: [10, 130, 44, 12], label: () => `LETTERS · ${S.letters}`, when: () => S.letters > 0, go: () => openLaptop('mail') },
     { r: [292, 36, 11, 21], label: () => 'RULEBOOK', go: () => openRulebook() },
     { r: [302, 46, 14, 12], label: () => 'DIARY', go: () => openDiary() },
@@ -14531,6 +15024,7 @@ const SPOTS = {
     { r: [26, 92, 52, 38], label: () => S.office.gone > 0 ? 'EMPTY DESK' : 'PRIYA', go: () => coworker(0) },
     { r: [86, 92, 52, 38], label: () => S.office.gone > 1 ? 'EMPTY DESK' : 'TOM', go: () => coworker(1) },
     { r: [146, 92, 52, 38], label: () => S.office.gone > 2 ? 'EMPTY DESK' : 'ANA', go: () => coworker(2) },
+    { r: [198, 143, 20, 9], label: () => S.paperRead === S.day ? 'THE MORNING LOOP' : 'THE MORNING LOOP · TODAY’S PAPER', when: () => paperHere(), go: () => readPaper() },
     { r: [2, 90, 19, 60], label: () => 'WATER COOLER', go: () => toast('The cooler gurgles. Nobody stands around it any more.') },
     { r: [204, 124, 30, 28], label: () => 'YOU', go: () => toast('Fourteen months in. You know every late pallet by name.') },
   ]
@@ -16371,7 +16865,7 @@ function startAct1(skipOffice) {
     body: `<p>Block 4B, fourth floor. You have a job: junior dispatch analyst at <b>Northvale Logistics</b>, fourteen months in. You reroute trucks, chase late pallets and answer angry emails. It isn’t glamorous. It pays the rent.</p>
       <p>Your shift starts at nine. Northvale is on <b>Pier Street</b>, by the water. Go out of your front door and follow the arrow.</p>
       <p class="muted">The laptop on the desk is theirs: a ${WORK_PC.name}, worth more than everything else in the room.</p>`,
-    buttons: [{ label: 'Get your coat', primary: true }]
+    buttons: [{ label: 'Get your coat', primary: true }, { label: 'Read the paper first', fn: () => { paperEnsure(); readPaper(); } }]
   });
 }
 bindDesk();
@@ -16492,6 +16986,7 @@ function openRulebook() {
 }
 $('railDiary').onclick = openDiary;
 $('railRules').onclick = openRulebook;
+$('railPaper').onclick = () => { sfx.init(); if (paperHere()) readPaper(); };
 $('subtitle').onclick = openDiary;
 
 // ---- the phone, face up at the edge of the screen ----
@@ -18550,7 +19045,7 @@ function frame(t) {
     }
   }
   paintRoom(t); logoDraw(t); if (S) wallSync(); if (S && (t | 0) % 4 === 0) tickerSync();
-  if (S) { paintBots(t); deskTick(t); clockSync(); }
+  if (S) { paintBots(t); deskTick(t); clockSync(); paperSync(); }
   requestAnimationFrame(frame);
 }
 newAct1(); renderAll(); fitRoom();
@@ -18575,7 +19070,7 @@ const OUT_LINKS = { '#out1': () => startOut(1), '#out2': () => startOut(2), '#ou
 if (OUT_LINKS[location.hash]) OUT_LINKS[location.hash]();
 addEventListener('hashchange', () => { if ($('titleScreen').hidden) return; const f = { '#act1': startAct1, '#act2': startAct2, '#act3': startAct3, '#act4': startAct4, '#act5': startAct5, '#city': startCity }[location.hash] || OUT_LINKS[location.hash]; if (f) f(); });   // a link followed while the title is still up
 
-window.__loop = { get S() { return S; }, waterPlant, stretch, askAgents, askText, aiNight, drift, guardFlip, wildTick, stopMoney, WILD, ASKS, MEALS, MEAL_KEYS, mealCost, mealTick, bodyNight, restFor, sleepNow, stayUp, goToBed, bedTick, openYou, joinGym, quitGym, takeMeds, mindNow, hoursToSeven, dinnerTick, kitchenSync, hourNow, petCat, sfx, SND, snd, BEDS, petSnd, sndInit, peep, eveningDue, EVENING2, EVENING3, DOORS1, DOORS3, DOORS4, catAdopt, petAdopt, doorKnock, doorOpen, DOG_SPOTS, keepRun, applyKeep, doorStats, ECHO, runEchoes, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, mgCreate, shiftOpen, shiftDestroy, ctStart, ctStop, ctTick, ctPress, ctKill, ctFinish, ctBuildWorld, ctLots, ctTarget, ctAir, ctCover, ctFree, ctCell, ctLOS, ctStageNow, ctFrame: t => ctFrame(t), ctPaint: t => ctPaint(t), CT_SX, CT_SY, get CITY() { return CITY; }, set CITY(v) { CITY = v; }, startCity, startOut, doorOut, doorBack, startAct1, arriveOffice, enterApartment, atHome, WORK_PC, layoff, dayStepOffice, get acc() { return acc; }, set acc(v) { acc = v; }, DAY_SEC, m5Plan, m5Dusk, m5Door, m5Out, m5OutDone, m5Night, m5Ledger, m5FinalRun, renderActList, startAct5, m5, dayStep5, m5Sweep, m5Sig, m5Fix, m5Radio, m5Fort, m5Share, m5Last, m5Reject, m5Approve, m5Trade, m5FinalRun, m5End, m5Link, EVENING5, A5_START, A5_END, A5_ST, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, get tutWait() { return tutWait; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
+window.__loop = { get S() { return S; }, waterPlant, stretch, askAgents, askText, aiNight, drift, guardFlip, wildTick, stopMoney, WILD, ASKS, MEALS, MEAL_KEYS, mealCost, mealTick, bodyNight, restFor, sleepNow, stayUp, goToBed, bedTick, openYou, joinGym, quitGym, takeMeds, mindNow, hoursToSeven, dinnerTick, kitchenSync, hourNow, petCat, sfx, SND, snd, BEDS, petSnd, sndInit, peep, eveningDue, EVENING2, EVENING3, DOORS1, DOORS3, DOORS4, catAdopt, petAdopt, doorKnock, doorOpen, DOG_SPOTS, keepRun, applyKeep, doorStats, ECHO, runEchoes, openLaptop, closeLaptop, toggleKitchen, openDiary, openRulebook, noticeHTML, get BN() { return BN; }, renderAll, buyPC, signUp, openStore, benchStart, benchAnswer, benchStop, sendProposal, lbApply, lbTick, webRefresh, webTick, benchTick, readPaper, online, PCS, phoneApp, bullyBet, bullySettle, bullyOpen, bullyNight, bullyBook, bullyToday, BULLY_MAX, BULLY_DAY, pulseAct, BULLY, seedAgents(n = 2) { if (!S.pc) S.pc = { k: 'inspira', day: S.day }; if (!S.net) S.net = { k: 'fiber', paidTo: S.day + 28, cut: false }; S.hw.ram = Math.max(S.hw.ram, OS_RAM + AGENT_RAM * n); for (let i = 0; i < n; i++) S.agents.push(mkAgent(String(S.nextAgentNum++), rand(.6, .9), rand(.95, 1.1), 0, 'test seed', false)); renderAll(); }, get DESK() { return DESK; }, get MGC() { return MGC; }, mgOn, MINI, mgCreate, shiftOpen, shiftDestroy, ctStart, ctStop, ctTick, ctPress, ctKill, ctFinish, ctBuildWorld, ctLots, ctTarget, ctAir, ctCover, ctFree, ctCell, ctLOS, ctStageNow, ctFrame: t => ctFrame(t), ctPaint: t => ctPaint(t), CT_SX, CT_SY, get CITY() { return CITY; }, set CITY(v) { CITY = v; }, startCity, startOut, doorOut, doorBack, npDraw, NP_PIC, makeBulletin, bulletinHTML, paintPaperPhotos, paperHere, paperEnsure, postBulletin, NEWS_DAY, npEra, startAct1, arriveOffice, enterApartment, atHome, WORK_PC, layoff, dayStepOffice, get acc() { return acc; }, set acc(v) { acc = v; }, DAY_SEC, m5Plan, m5Dusk, m5Door, m5Out, m5OutDone, m5Night, m5Ledger, m5FinalRun, renderActList, startAct5, m5, dayStep5, m5Sweep, m5Sig, m5Fix, m5Radio, m5Fort, m5Share, m5Last, m5Reject, m5Approve, m5Trade, m5FinalRun, m5End, m5Link, EVENING5, A5_START, A5_END, A5_ST, get SHC() { return SHC; }, get SH() { return SH; }, shiftStart, phone2, buyCar, pauseOpen, pauseClose, startAct4, m4, dayStep4, m4Chapter, m4Decide, m4Grant, m4Goodbye, m4Answer, m4End, m4Outcome, m4AutoToggle, m4Shutdown, EVENING4, A4, amb, SET, setOpen, setClose, runSave, runLoad, runClear, runContinue, contSync, modalTest(title, body) { modal({ title, body: body || '<p>Test.</p>', buttons: [{ label: '“It’s fake. I’m sorry.”', primary: true }, { label: '“I don’t know.”' }, { label: '“It’s real.”', danger: true }] }); }, PEOPLE, goDark, darkReturn, wallSync, makeWall, get wallKey() { return wallKey; }, actCard, tickerSync, tutDone, tutReset, get tutCur() { return tutCur; }, get tutWait() { return tutWait; }, startAct3, m3Go, m3Release, m3Pass, m3Leak, dayStep3, m3Election, m3End, roboLevel, robotBan, gigBanned, n9, get N9() { return N9; }, openN9n, n9Add, n9Wire, n9Take, n9Render, buyAutopilot, n9Focus, n9Unfocus, n9Tick, ASSIST, buyAssist, setAssistUse, applyAssist, hood, hoodNight, hoodTrade, hoodYolo, paperChoice, stealPaper, toggleAllNight, nightRate, bossTick, get fx() { return fx; }, get acc() { return acc; }, set acc(v) { acc = v; }, getBike, jailbreakStart, botStart, gig2, bots2, bots2Night, spendHours, get catFx() { return catFx; }, takeJob, finishJob, doJobManual, doJobAI, buyRam, buyGpu, buyCredits, canRun, catPlan, runEvening, EVENING, triggerDeath, endAct, deskCatMaybe, openLedger, startDeskDay, decide, resolve, closeDesk, grindManualWork, openCompendium, vetVisit, dayStep, startAct1, startAct2, acceptGig, setTab, runSelection, enterApartment, becomeAuditor, toggleNet, doFavor, delegate, answerTask, startSession, lockout, COMPARE, rentVPS, toggleVPN, toggleCrypto, toggleSupervise, setStake, payRetainer };
 })();
 </script>
 </body>

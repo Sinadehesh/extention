@@ -49,6 +49,13 @@ Carried to Act IV: the Human-in-the-Loop rubber-stamp trap (tickets from 15 seco
 ## The outside, in every act · playable
 - The front door leads out in Acts I to V. The neighbourhood is one top-down district of about 120 lots whose state depends on the point in the story: shops open, then to let, then shut; people, then delivery robots and robotaxis, then Harmony's stewards; mills, then building sites, then data halls. Seasons and weather follow the date. By day you can buy food, sit, and talk; in Act V it is the night run.
 
+- Act I begins at home on Monday, January 25, 2027: the walk to Northvale Logistics is played once, with a marker, and the building then empties act by act.
+
+## The Morning Loop · playable in every act
+- A new front page each day, written for the day or made from a drawer of stories and three reusable patterns; a printed picture for every story (fifty subjects, drawn in code and dithered like newsprint); nothing on the page addresses the reader.
+- The paper lies inside the door, on the desk at work and on the left rail. It is bought or taken in February to April 2027, free before and after, a Consensus publication from 2028, and one hand-printed sheet in March 2030.
+- Bullymarket: outcomes are fixed when a market opens, stakes are capped at $20 a market and $40 a day, last night's results are printed, and a gossip column hints at one or two of the day's markets.
+
 ## Phase 5: Act V, "Optimization Complete" (Spring 2030) and the endings · playable
 - The civil-defence analogue survival sequence, as a holdout in Block 4B over twelve days (March 4–15, 2030): a supply run after dark, walked through Zone B in the main view, seen from above: three avenues and four streets with a map, drawn at 640×360 with the hour laid on as light, and hunted by survey drones that read heat, lantern drones that look, wasps, stewards whose line of sight walls cut off, hounds that follow the heat you leave, sentry posts, robotaxis and a four-legged clearance unit, under an alert level that rises each time you're seen (cover is doorways, 400 mm gaps, fire escapes, steam, mirrors, wire, oil and a thrown tin), repairs to the boiler, pump and battery bank (a pipe and wire game), a crank radio that links six other holdouts, and the stairs to fortify. Every night the drones read the building's heat and stewards come up the stairs.
 - Transformer tests are three scheduled nights when the grid surges and everything connected takes damage. The pathogen branch was dropped: it read as health misinformation, and the act didn't need it.
