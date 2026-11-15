@@ -4597,7 +4597,7 @@ function makeBulletin(d) {
   for (let i = 0; city.length < 1 && era <= 2 && i < 2; i++) { const c = CITY_BRIEFS[(((d * 2 + i) % CITY_BRIEFS.length) + CITY_BRIEFS.length) % CITY_BRIEFS.length]; if (b.side && b.side.h === c[0]) continue; city.push({ sec: 'city', h: c[0], t: c[1] }); }
   b.briefs = city.slice(0, 2).concat(biz.slice(0, 3));
   b.tape = []; if (era <= 1) try { b.tape = STOCKS.map(s => ({ k: s.k, p: hPrice(s.k), c: hChange(s.k) })); } catch (e) {}
-  const ads = NEWS_ADS[era >= 3 ? 2 : era === 2 ? 1 : 0]; b.ads = [0, 4, 7].map(i => ads[(((d + i) % ads.length) + ads.length) % ads.length]).filter((x, i, a) => a.indexOf(x) === i);
+  const ads = NEWS_ADS[era >= 3 ? 2 : era === 2 ? 1 : 0]; b.ads = [0, 2, 4].map(i => ads[(((d + i) % ads.length) + ads.length) % ads.length]);
   if (typeof bullyBook === 'function') b.book = bullyBook(d);
   return b;
 }
@@ -4619,7 +4619,7 @@ function bulletinHTML(b) {
   const ads = b.ads || (b.ad ? [b.ad] : []), side = b.side ? `<div class="np-item np-side"><figure class="np-fig sm">${npCanvas('sm', b.side.pic, seed + 5, b.side.po)}</figure><div><h4>${esc(b.side.h)}</h4><p>${esc(b.side.t)}</p></div></div>` : '';
   const K = b.book, book = K && K.talk && K.talk.length ? `<div class="np-col np-book"><div class="np-sec">Talk of the town</div>${K.talk.map(t => `<p class="np-talk"><b>${esc(t.q || '')}</b> ${esc(t.t || t)}</p>`).join('')}</div>` : '';
   const strip = K && K.last && K.last.length ? `<div class="np-strip"><b>Bullymarket · settled last night</b>${K.last.map(r => `<span>${esc(r.q || r.who)} <i class="${r.yes ? 'y' : 'n'}">${r.yes ? 'YES' : 'NO'}</i></span>`).join('')}</div>` : '';
-  const ear = era >= 3 ? '<b>TODAY</b>Free to every resident' : b.price ? `<b>PRICE</b>${money(b.price)} at the corner` : '<b>TODAY</b>Free';
+  const ear = era >= 3 ? '<b>TODAY</b>Free to every resident' : b.price ? `<b>PRICE</b>${money(b.price)} at the corner` : era >= 1 ? '<b>TODAY</b>Free, thanks to our advertisers' : '<b>TODAY</b>Free';
   const foot = era >= 3 ? 'Composed by Consensus-1. Reviewed by a person, as the Act requires.' : era === 2 ? 'Printed in Harbor City by people. Everything on this page was checked by one of them.' : 'Printed in Harbor City by people. Recycle, or line the cat’s box.';
   return `<div class="np np3${era >= 3 ? ' np-cons' : ''}">
     <div class="np-top"><div class="np-ear"><b>WEATHER</b>${esc(b.weather)}</div><div class="np-mast">The Morning Loop</div><div class="np-ear">${ear}</div></div>
